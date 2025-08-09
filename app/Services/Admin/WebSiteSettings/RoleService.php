@@ -9,7 +9,12 @@ class RoleService
 {
     function getAll()
     {
+        $admin = auth()->guard('admin')->user();
+        $admin_id = $admin->hasRole('administrator')
+            ? $admin->id
+            : $admin->created_by;
         return Role::where('id', '!=', 1)
+            ->where('admin_id', $admin_id)
             ->orderBy('id', 'desc')
             ->paginate();
     }
@@ -32,13 +37,12 @@ class RoleService
     function storeRole($request)
     {
         $data = $request->validated();
-        $data['admin_id'] = auth()->guard('admin')->user()->id;
-        if ($data['admin_id'] == (1 || 2)) {
-            $role = Role::create($data);
-            $role->permissions()->sync($data['permission_id']);
-        } else {
-            return false;
-        }
+        $admin = auth()->guard('admin')->user();
+        $data['admin_id'] = $admin->hasRole('administrator')
+            ? $admin->id
+            : $admin->created_by;
+        $role = Role::create($data);
+        $role->permissions()->sync($data['permission_id']);
     }
 
     function updateRole($request, $role)

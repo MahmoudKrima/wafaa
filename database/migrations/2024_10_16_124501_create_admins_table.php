@@ -18,6 +18,11 @@ return new class extends Migration {
             $table->string('phone')
                 ->nullable();
             $table->string('password');
+            $table->foreignId('created_by')
+                ->nullable()
+                ->constrained('admins')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
             $table->string('image');
             $table->enum('status', ActivationStatusEnum::vals());
             $table->string('token')

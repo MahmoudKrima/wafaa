@@ -12,9 +12,7 @@ use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
-    public function __construct(private RoleService $roleService)
-    {
-    }
+    public function __construct(private RoleService $roleService) {}
 
     public function index()
     {
@@ -36,11 +34,7 @@ class RoleController extends Controller
 
     public function store(StoreRoleRequest $request)
     {
-        $role = $this->roleService->storeRole($request);
-        if (!$role) {
-            return back()
-                ->with('Error', __('admin.you_are_not_authorized_to_create_role'));
-        }
+        $this->roleService->storeRole($request);
         return back()
             ->with('Success', __('admin.created_successfully'));
     }
