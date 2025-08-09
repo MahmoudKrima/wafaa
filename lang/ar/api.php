@@ -1,0 +1,28 @@
+<?php
+
+return [
+    'validation_error' => 'خطأ فى التحقق',
+    'register_successfully' => 'تم انشاء حسابك بنجاح',
+    'unauthorized' => 'غير مسموح',
+    'unauthenticated' => 'غير مسجل',
+    'not_found' => 'لا يوجد بيانات',
+    'missing_data' => 'بيانات مفقودة',
+    'server_error' => 'خطأ فى الخادم',
+    'not_allowed_method' => 'وسيلة غير مسموحة',
+    'not_found_route' => 'الرابط غير موجود',
+    'this_action_is_unauthorized' => 'لا يوجد لديك صلاحية لهذا الأمر',
+    'credentials_invalid' => 'البيانات خاطئة',
+    'success_logout' => 'تم تسجيل الخروج',
+    'blocked_or_not_completed' => 'هذا المستخدم محظور',
+    'message_sent_successfully' => 'تم الارسال بنجاح',
+    'n/a' => 'لا يوجد',
+    'lang_changed' => 'تم تغيير اللغة بنجاح',
+    'otp_send_successfully' => 'تم ارسال كود التحقق على رقم جوالك بنجاح',
+    'invalid_otp' => 'كود التحقق غير صحيح',
+    'otp_success_complete' => 'تم التحقق بنجاح , من فضلك أكمل خطوات إعاده تعيين كلمة المرور',
+    'password_changed_successfully' => 'تم تغيير كلمة المرور بنجاح',
+    'created_successfully' => 'تمت الاضافة بنجاح',
+    'updated_successfully' => 'تم التعديل بنجاح',
+    'deleted_successfully' => 'تم الحذف بنجاح',
+    'Account Deleted' => 'الحساب محذوف',
+];
