@@ -2,9 +2,7 @@
 
 namespace App\Http\Requests\Admin\User;
 
-use App\Models\City;
 use Illuminate\Validation\Rule;
-use App\Enum\ActivationStatusEnum;
 use Illuminate\Foundation\Http\FormRequest;
 
 class SearchUserRequest extends FormRequest
@@ -24,11 +22,11 @@ class SearchUserRequest extends FormRequest
      */
     public function rules(): array
     {
-        $rules = [];
-        $rules['name'] = ['sometimes', 'nullable', 'string', 'max:255'];
-        $rules['email'] = ['sometimes', 'nullable', 'string', 'max:255'];
-        $rules['phone'] = ['sometimes', 'nullable', 'digits_between:1,15'];
-        $rules['status'] = ['sometimes', 'nullable', 'string', Rule::in(ActivationStatusEnum::vals())];
-        return $rules;
+        return [
+            'name' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'email' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'phone' => ['sometimes', 'nullable', 'string', 'regex:/^(05|5|9665|96605|009665|\+9665)[0-9]{8}$/'],
+            'city' => ['sometimes', 'nullable', 'integer', Rule::exists('cities', 'id')],
+        ];
     }
 }

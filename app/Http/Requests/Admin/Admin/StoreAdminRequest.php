@@ -5,7 +5,6 @@ namespace App\Http\Requests\Admin\Admin;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Foundation\Http\FormRequest;
-use Egulias\EmailValidator\Validation\Extra\SpoofCheckValidation;
 
 class StoreAdminRequest extends FormRequest
 {

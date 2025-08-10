@@ -1,10 +1,5 @@
 @extends('dashboard.layouts.app')
 @section('title', __('admin.create'))
-@push('css')
-<link href="{{ asset('assets_' . assetLang()) }}/assets/css/scrollspyNav.css" rel="stylesheet" type="text/css" />
-<link href="{{ asset('assets_' . assetLang()) }}/plugins/file-upload/file-upload-with-preview.min.css"
-    rel="stylesheet" type="text/css" />
-@endpush
 @push('breadcrumb')
 <nav class="breadcrumb-one" aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -31,45 +26,74 @@
                 <div class="widget-content widget-content-area">
                     <div class="row">
                         <div class="col-lg-12 col-12 mx-auto">
-                            <form action="{{ route('admin.users.create') }}" method="POST"
+                            <form action="{{ route('admin.users.store') }}" method="POST"
                                 enctype="multipart/form-data">
                                 @csrf
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
-                                            <label for="nameInput" class="text-dark">{{ __('admin.name') }}</label>
-                                            <input id="nameInput" type="text" name="name"
-                                                placeholder="{{ __('admin.name') }}" class="form-control"
-                                                value="{{ old('name') }}">
+                                            <label for="nameArInput" class="text-dark">{{ __('admin.name_ar') }}</label>
+                                            <input id="nameArInput" type="text" name="name_ar"
+                                                placeholder="{{ __('admin.name_ar') }}" class="form-control"
+                                                value="{{ old('name_ar') }}">
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            <label for="phoneInput" class="text-dark">{{ __('admin.phone') }}</label>
-                                            <input id="phoneInput" type="number" placeholder="05XXXXXXXX"
-                                                name="phone" placeholder="{{ __('admin.phone') }}"
-                                                class="form-control" value="{{ old('phone') }}">
+                                            <label for="nameEnInput"
+                                                class="text-dark">{{ __('admin.name_en') }}</label>
+                                            <input id="nameEnInput" type="text" name="name_en"
+                                                placeholder="{{ __('admin.name_en') }}" class="form-control"
+                                                value="{{ old('name_en') }}">
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-12 mb-3 custom-file-container" data-upload-id="image">
-                                            <label>{{ __('admin.image') }}
-                                                <a href="javascript:void(0)" class="custom-file-container__image-clear"
-                                                    title="{{ __('admin.clear_image') }}">
-                                                    <span
-                                                        style="background-color:#ababab;padding:5px;border-radius:50%;margin:0 10px;">X</span>
-                                                </a>
-                                            </label>
-                                            <label class="custom-file-container__custom-file">
-                                                <input type="file"
-                                                    class="custom-file-container__custom-file__custom-file-input"
-                                                    name="image">
-                                                <span
-                                                    class="custom-file-container__custom-file__custom-file-control"></span>
-                                            </label>
-                                            <div class="custom-file-container__image-preview"></div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="phoneInput" class="text-dark">{{ __('admin.phone') }}</label>
+                                            <input id="phoneInput" type="text" placeholder="05XXXXXXXX"
+                                                name="phone" placeholder="{{ __('admin.phone') }}"
+                                                class="form-control" value="{{ old('phone') }}">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="additional_phoneInput" class="text-dark">{{ __('admin.additional_phone') }}</label>
+                                            <input id="additional_phoneInput" type="text" placeholder="05XXXXXXXX"
+                                                name="additional_phone" placeholder="{{ __('admin.additional_phone') }}"
+                                                class="form-control" value="{{ old('additional_phone') }}">
+                                        </div>
+
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="emailInput" class="text-dark">{{ __('admin.email') }}</label>
+                                            <input id="emailInput" type="email" name="email"
+                                                placeholder="{{ __('admin.email') }}" class="form-control"
+                                                value="{{ old('email') }}">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="cityInput" class="text-dark">{{ __('admin.city') }}</label>
+                                            <select id="cityInput" name="city_id" class="form-control">
+                                                <option value="">{{ __('admin.choose_city') }}</option>
+                                                @foreach ($cities as $city)
+                                                <option value="{{ $city->id }}" {{ old('city_id') == $city->id ? 'selected' : '' }}>
+                                                    {{ $city->name }}
+                                                </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6 mb-3">
+                                            <label for="passwordInput"
+                                                class="text-dark">{{ __('admin.password') }}</label>
+                                            <input id="passwordInput" type="password" name="password"
+                                                placeholder="{{ __('admin.password') }}" class="form-control">
+                                        </div>
+                                        <div class="col-6 mb-3">
+                                            <label for="addressInput" class="text-dark">{{ __('admin.address') }}</label>
+                                            <textarea id="addressInput" name="address" rows="3"
+                                                placeholder="{{ __('admin.enter_address') }}"
+                                                class="form-control">{{ old('address') }}</textarea>
                                         </div>
                                     </div>
                                 </div>
-
                                 <hr>
                                 <div class="row">
                                     <div class="col-12">
@@ -86,10 +110,3 @@
     </div>
 </div>
 @endsection
-@push('js')
-<script src="{{ asset('assets_' . assetLang()) }}/assets/js/scrollspyNav.js"></script>
-<script src="{{ asset('assets_' . assetLang()) }}/plugins/file-upload/file-upload-with-preview.min.js"></script>
-<script>
-    var firstUpload = new FileUploadWithPreview('myFirstImage');
-</script>
-@endpush

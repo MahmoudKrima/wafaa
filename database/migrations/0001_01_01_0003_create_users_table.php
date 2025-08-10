@@ -15,8 +15,24 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('email')->unique();
+            $table->string('phone')->unique();
+            $table->string('additional_phone')->nullable();
+            $table->text('address');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->foreignId('created_by')
+                ->constrained('admins')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+            $table->foreignId('added_by')
+                ->nullable()
+                ->constrained('admins')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+            $table->foreignId('city_id')
+                ->constrained('cities')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
             $table->rememberToken();
             $table->timestamps();
         });

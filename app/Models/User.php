@@ -4,15 +4,16 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enum\ActivationStatusEnum;
+use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Notifications\Notifiable;
+use Spatie\Translatable\HasTranslations;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasRoles;
+    use HasFactory, Notifiable, HasRoles, HasTranslations;
 
     protected $guarded = ['created_at', 'updated_at'];
 
@@ -32,6 +33,7 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+    protected $translatable = ['name'];
 
     /**
      * Get the attributes that should be cast.
@@ -45,5 +47,32 @@ class User extends Authenticatable
             'password' => 'hashed',
             'status' => ActivationStatusEnum::class
         ];
+    }
+
+    public static $relatio = [
+        'city',
+        'createdByAdmin',
+        'addedByAdmin',
+    ];
+
+    public function scopeWithAllRelations($query)
+    {
+        return $query->with(self::$relatio);
+    }
+
+    public function city()
+    {
+        return $this->belongsTo(City::class);
+    }
+
+
+    public function createdByAdmin()
+    {
+        return $this->belongsTo(Admin::class, 'created_by');
+    }
+
+    public function addedByAdmin()
+    {
+        return $this->belongsTo(Admin::class, 'added_by');
     }
 }

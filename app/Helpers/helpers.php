@@ -53,3 +53,19 @@ if (!function_exists('createSlug')) {
         return str_replace(' ', '-', strtolower($string));
     }
 }
+
+if (!function_exists('getAdminIdOrCreatedBy')) {
+    function getAdminIdOrCreatedBy()
+    {
+        if (auth('admin')->check()) {
+            $admin = auth('admin')->user();
+            if ($admin->hasRole('administrator')) {
+                return $admin->id;
+            }
+
+            return $admin->created_by ?? $admin->id;
+        }
+
+        return null;
+    }
+}

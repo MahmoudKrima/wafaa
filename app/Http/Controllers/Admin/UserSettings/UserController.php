@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Admin\UserSettings;
 
+use App\Models\City;
 use App\Models\User;
 use Illuminate\Http\Request;
-use App\Enum\ActivationStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Services\Admin\UserSettings\UserService;
 use App\Http\Requests\Admin\User\StoreUserRequest;
+use App\Http\Requests\Admin\User\SearchUserRequest;
 use App\Http\Requests\Admin\User\UpdateUserRequest;
 
 class UserController extends Controller
@@ -17,22 +18,21 @@ class UserController extends Controller
     public function index()
     {
         $users = $this->userService->index();
-        $status = ActivationStatusEnum::cases();
-
-        return view('dashboard.pages.users.index', compact('users', 'status'));
+        $cities = City::all();
+        return view('dashboard.pages.users.index', compact('users',  'cities'));
     }
 
-    public function search(Request $request)
+    public function search(SearchUserRequest $request)
     {
         $users = $this->userService->search($request);
-        $status = ActivationStatusEnum::cases();
-
-        return view('dashboard.pages.users.index', compact('users', 'status'));
+        $cities = City::all();
+        return view('dashboard.pages.users.index', compact('users',  'cities'));
     }
 
     public function create()
     {
-        return view('dashboard.pages.users.create');
+        $cities = City::all();
+        return view('dashboard.pages.users.create', compact('cities'));
     }
 
     public function store(StoreUserRequest $request)
@@ -45,20 +45,13 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        return view('dashboard.pages.users.edit', compact('user'));
+        $cities = City::all();
+        return view('dashboard.pages.users.edit', compact('user', 'cities'));
     }
 
     public function update(UpdateUserRequest $request, User $user)
     {
         $this->userService->update($request, $user);
-        return redirect()
-            ->route('admin.users.index')
-            ->with('Success', __('admin.updated_successfully'));
-    }
-
-    public function updateStatus(Request $request, User $user)
-    {
-        $this->userService->updateStatus($request, $user);
         return redirect()
             ->route('admin.users.index')
             ->with('Success', __('admin.updated_successfully'));

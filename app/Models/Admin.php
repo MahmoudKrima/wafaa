@@ -25,4 +25,21 @@ class Admin extends Authenticatable
         'password' => 'hashed',
         'status' => ActivationStatusEnum::class
     ];
+
+    public static $relatio = [
+        'createdUsers',
+    ];
+
+    public function scopeWithAllRelations($query)
+    {
+        return $query->with(self::$relatio);
+    }
+
+    /**
+     * Get the users created by this admin.
+     */
+    public function createdUsers()
+    {
+        return $this->hasMany(User::class, 'created_by');
+    }
 }
