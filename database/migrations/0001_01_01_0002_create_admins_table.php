@@ -23,6 +23,11 @@ return new class extends Migration {
                 ->constrained('admins')
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
+            $table->foreignId('added_by')
+                ->nullable()
+                ->constrained('admins')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
             $table->string('image');
             $table->enum('status', ActivationStatusEnum::vals());
             $table->string('token')
