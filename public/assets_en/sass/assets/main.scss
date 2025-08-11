@@ -881,25 +881,25 @@ select.form-control.form-custom {
 
 .btn-primary {
   color: #fff !important;
-  background-color: #ee8020 !important;
-  border-color: #ee8020;
-  box-shadow: 0 10px 20px -10px #ee8020;
+  background-color: #F6950D !important;
+  border-color: #F6950D;
+  box-shadow: 0 10px 20px -10px #F6950D;
 
   &:hover, &:focus {
     color: #fff !important;
-    background-color: #ee8020;
+    background-color: #F6950D;
     box-shadow: none;
-    border-color: #ee8020;
+    border-color: #F6950D;
   }
 
   &:active, &.active {
-    background-color: #ee8020;
-    border-top: 1px solid #ee8020;
+    background-color: #F6950D;
+    border-top: 1px solid #F6950D;
   }
 
   &.disabled, &.btn[disabled], &:disabled {
-    background-color: #ee8020;
-    border-color: #ee8020;
+    background-color: #F6950D;
+    border-color: #F6950D;
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
     box-shadow: none;
@@ -939,15 +939,15 @@ select.form-control.form-custom {
 .btn-primary:not(:disabled):not(.disabled) {
   &.active, &:active {
     color: #fff !important;
-    background-color: #ee8020;
-    border-color: #ee8020;
+    background-color: #F6950D;
+    border-color: #F6950D;
   }
 }
 
 .show > .btn-primary.dropdown-toggle {
   color: #fff !important;
-  background-color: #ee8020;
-  border-color: #ee8020;
+  background-color: #F6950D;
+  border-color: #F6950D;
 }
 
 .btn-primary .caret {
@@ -2716,7 +2716,7 @@ table {
 /*-------text-colors------*/
 
 .text-primary {
-  color: #ee8020 !important;
+  color: #F6950D !important;
 }
 
 .text-success {
@@ -2778,7 +2778,7 @@ table {
 }
 
 .border-primary {
-  border-color: #ee8020 !important;
+  border-color: #F6950D !important;
 }
 
 .border-info {

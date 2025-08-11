@@ -2,7 +2,7 @@
 @section('title', __('admin.edit_bank'))
 
 @push('breadcrumb')
-    <nav class="breadcrumb-one" aria-label="breadcrumb">
+    <nav class="breadcrumb-one" aria-label="{{ __('admin.breadcrumb') }}">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ route('admin.dashboard.index') }}">{{ __('admin.dashboard') }}</a>
             </li>

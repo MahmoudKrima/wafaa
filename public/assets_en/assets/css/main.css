@@ -635,19 +635,19 @@ select.form-control.form-custom {
 /*      Default Buttons       */
 .btn-primary {
   color: #fff !important;
-  background-color: #ee8020 !important;
-  border-color: #ee8020; }
+  background-color: #F6950D !important;
+  border-color: #F6950D; }
   .btn-primary:hover, .btn-primary:focus {
     color: #fff !important;
-    background-color: #ee8020;
+    background-color: #F6950D;
     box-shadow: none;
-    border-color: #ee8020; }
+    border-color: #F6950D; }
   .btn-primary:active, .btn-primary.active {
-    background-color: #ee8020;
-    border-top: 1px solid #ee8020; }
+    background-color: #F6950D;
+    border-top: 1px solid #F6950D; }
   .btn-primary.disabled, .btn-primary.btn[disabled], .btn-primary:disabled {
-    background-color: #ee8020;
-    border-color: #ee8020;
+    background-color: #F6950D;
+    border-color: #F6950D;
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
     box-shadow: none; }
@@ -671,13 +671,13 @@ select.form-control.form-custom {
 
 .btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active {
   color: #fff !important;
-  background-color: #ee8020;
-  border-color: #ee8020; }
+  background-color: #F6950D;
+  border-color: #F6950D; }
 
 .show > .btn-primary.dropdown-toggle {
   color: #fff !important;
-  background-color: #ee8020;
-  border-color: #ee8020; }
+  background-color: #F6950D;
+  border-color: #F6950D; }
 
 .btn-primary .caret {
   border-top-color: #fff; }
@@ -1951,7 +1951,7 @@ table .badge-success, table .badge-primary, table .badge-warning, table .badge-d
 
 /*-------text-colors------*/
 .text-primary {
-  color: #ee8020 !important; }
+  color: #F6950D !important; }
 
 .text-success {
   color: #8dbf42 !important; }
@@ -1997,7 +1997,7 @@ table .badge-success, table .badge-primary, table .badge-warning, table .badge-d
   border-left: 1px solid !important; }
 
 .border-primary {
-  border-color: #ee8020 !important; }
+  border-color: #F6950D !important; }
 
 .border-info {
   border-color: #2196f3 !important; }

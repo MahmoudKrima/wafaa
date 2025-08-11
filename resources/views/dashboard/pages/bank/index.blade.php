@@ -1,7 +1,7 @@
 @extends('dashboard.layouts.app')
 @section('title', __('admin.banks'))
 @push('breadcrumb')
-<nav class="breadcrumb-one" aria-label="breadcrumb">
+<nav class="breadcrumb-one" aria-label="{{ __('admin.breadcrumb') }}">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('admin.dashboard.index') }}">{{ __('admin.dashboard') }}</a>
         </li>
@@ -10,7 +10,7 @@
 </nav>
 @endpush
 @section('content')
-<div class="layout-px-spacing">
+<div class="layout-px-spacing"> 
     <div class="row layout-top-spacing">
         <div id="tableCustomBasic" class="col-lg-12 col-12 layout-spacing">
             <div class="statbox widget box box-shadow">
@@ -196,7 +196,7 @@
                                             <a href="{{ route('admin.banks.edit', $bank->id) }}"
                                                 class="action-btn bs-tooltip me-2 mb-2 badge rounded-circle bg-warning p-2"
                                                 data-toggle="tooltip" data-placement="top"
-                                                aria-label="Edit bank" data-bs-original-title="Edit bank"
+                                                aria-label="{{ __('admin.edit_bank') }}" data-bs-original-title="{{ __('admin.edit_bank') }}"
                                                 title="{{ __('admin.edit_bank') }}"
                                                 style="margin-right: 10px;">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16"
@@ -216,13 +216,13 @@
                                                 method="POST" class="d-inline-block">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit"
-                                                    class="action-btn btn-alert bs-tooltip mb-2 badge rounded-circle bg-danger p-2"
-                                                    data-toggle="tooltip" data-placement="top"
-                                                    title="{{ __('admin.delete') }}"
-                                                    aria-label="Delete Service"
-                                                    data-bs-original-title="Delete Service"
-                                                    style="border: none; background:transparent; margin-right: 10px;">
+                                                                                            <button type="submit"
+                                                class="action-btn btn-alert bs-tooltip mb-2 badge rounded-circle bg-danger p-2"
+                                                data-toggle="tooltip" data-placement="top"
+                                                title="{{ __('admin.delete') }}"
+                                                aria-label="{{ __('admin.delete') }}"
+                                                data-bs-original-title="{{ __('admin.delete') }}"
+                                                style="border: none; background:transparent; margin-right: 10px;">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16"
                                                         height="16" viewBox="0 0 24 24" fill="none"
                                                         stroke="currentColor" stroke-width="2"

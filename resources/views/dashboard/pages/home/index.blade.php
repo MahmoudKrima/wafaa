@@ -1,5 +1,10 @@
 @extends('dashboard.layouts.app')
 @section('title', __('admin.dashboard'))
+@push('css')
+    <link href="{{ asset('assets_' . assetLang()) }}/plugins/apex/apexcharts.css" rel="stylesheet" type="text/css">
+    <link href="{{ asset('assets_' . assetLang()) }}/assets/css/dashboard/dash_1.css" rel="stylesheet" type="text/css"
+        class="dashboard-analytics" />
+@endpush
 @section('content')
     <div class="layout-px-spacing">
 
