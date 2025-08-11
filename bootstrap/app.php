@@ -16,6 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'auth' => \App\Http\Middleware\Authenticate::class,
             'guest.admin' => \App\Http\Middleware\GuestAdmin::class,
+            'guest.user' => \App\Http\Middleware\GuestUser::class,
+            'user' => \App\Http\Middleware\User::class,
             'active.admin' => \App\Http\Middleware\ActiveAdmin::class,
             'not.this.admin' => \App\Http\Middleware\NotThisAdmin::class,
             'has.permission' => \App\Http\Middleware\HasPermission::class,

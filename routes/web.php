@@ -10,3 +10,4 @@ use App\Http\Controllers\TestCitiesApiController;
 Route::get('/test-cities-api', [TestCitiesApiController::class, 'test']);
 
 require_once "admin.php";
+require_once "user.php";

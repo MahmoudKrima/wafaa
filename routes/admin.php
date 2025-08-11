@@ -2,10 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\Auth\AuthController;
+use App\Http\Controllers\Admin\Bank\BankController;
 use App\Http\Controllers\Admin\Home\HomeController;
 use App\Http\Controllers\Admin\Profile\ProfileController;
-use App\Http\Controllers\Admin\UserSettings\AdminController;
 use App\Http\Controllers\Admin\UserSettings\UserController;
+use App\Http\Controllers\Admin\UserSettings\AdminController;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use App\Http\Controllers\Admin\WebSiteSettings\RoleController;
 use App\Http\Controllers\Admin\WebSiteSettings\SettingsController;
@@ -22,11 +23,15 @@ use App\Http\Controllers\Admin\WebSiteSettings\SettingsController;
 */
 
 Route::middleware(['web'])->group(function () {
+    // Admin Auth Routes (no prefix, accessible at /en/admin/login, /en/admin, etc.)
     Route::controller(AuthController::class)
         ->as('admin.')
-        ->prefix(LaravelLocalization::setLocale())
+        ->prefix(LaravelLocalization::setLocale() . '/admin')
         ->group(function () {
             Route::get('/', 'loginForm')
+                ->name('auth.loginForm')
+                ->middleware('guest.admin');
+            Route::get('/login', 'loginForm')
                 ->name('auth.loginForm')
                 ->middleware('guest.admin');
             Route::post('/login', 'login')
@@ -48,6 +53,7 @@ Route::middleware(['web'])->group(function () {
                 ->middleware('guest.admin');
         });
 
+    // Admin Protected Routes (with /admin prefix)
     Route::group([
         'prefix' => LaravelLocalization::setLocale() . '/admin',
         'as' => 'admin.',
@@ -152,6 +158,40 @@ Route::middleware(['web'])->group(function () {
                 Route::post('/settings-update', 'update')
                     ->name('settings.update')
                     ->middleware('has.permission:settings.update');
+            });
+
+        Route::controller(BankController::class)
+            ->group(function () {
+                Route::get('/banks', 'index')
+                    ->name('banks.index')
+                    ->middleware('has.permission:banks.view');
+                Route::get('/banks-search', 'search')
+                    ->name('banks.search')
+                    ->middleware('has.permission:banks.view');
+                // Route::get('/banks-transactions/{bank}', 'showTransactions')
+                //     ->name('banks-transactions.showTransactions')
+                //     ->middleware('has.permission:banks.view', 'has.permission:plan_transaction.view');
+                // Route::get('/banks-transactions-search/{bank}', 'searchTransactions')
+                //     ->name('banks-transactions.searchTransactions')
+                //     ->middleware('has.permission:banks.view', 'has.permission:plan_transaction.view');
+                Route::get('/banks-create', 'create')
+                    ->name('banks.create')
+                    ->middleware('has.permission:banks.create');
+                Route::post('/banks-store', 'store')
+                    ->name('banks.store')
+                    ->middleware('has.permission:banks.create');
+                Route::get('/banks-edit/{bank}', 'edit')
+                    ->name('banks.edit')
+                    ->middleware('has.permission:banks.update');
+                Route::post('/banks-update/{bank}', 'update')
+                    ->name('banks.update')
+                    ->middleware('has.permission:banks.update');
+                Route::post('/banks-update-status/{bank}', 'updateStatus')
+                    ->name('banks.updateStatus')
+                    ->middleware('has.permission:banks.update');
+                Route::delete('/banks-delete/{bank}', 'delete')
+                    ->name('banks.delete')
+                    ->middleware('has.permission:banks.delete');
             });
     });
 });

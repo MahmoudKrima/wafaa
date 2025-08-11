@@ -1,10 +1,5 @@
 @extends('dashboard.layouts.app')
 @section('title', __('admin.edit_admin'))
-@push('css')
-    <link href="{{ asset('assets_' . assetLang()) }}/assets/css/scrollspyNav.css" rel="stylesheet" type="text/css" />
-    <link href="{{ asset('assets_' . assetLang()) }}/plugins/file-upload/file-upload-with-preview.min.css" rel="stylesheet"
-        type="text/css" />
-@endpush
 @section('content')
     <div class="layout-px-spacing">
         <div class="row layout-top-spacing">
