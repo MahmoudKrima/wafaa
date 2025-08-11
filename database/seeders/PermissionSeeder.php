@@ -3,8 +3,10 @@
 namespace Database\Seeders;
 
 use App\Models\Admin;
+use App\Models\Banks;
 use App\Models\Setting;
 use App\Models\User;
+use App\Models\UserWallet;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 
@@ -25,6 +27,8 @@ class PermissionSeeder extends Seeder
         $permissions = [
             ...Admin::$permissions,
             ...User::$permissions,
+            ...UserWallet::$permissions,
+            ...Banks::$permissions,
             ...Setting::$permissions,
             ...$rolePermission,
         ];

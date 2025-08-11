@@ -3,7 +3,6 @@
 namespace App\Services\Admin\UserSettings;
 
 use App\Models\Admin;
-use App\Models\Setting;
 use App\Traits\ImageTrait;
 use App\Filters\NameFilter;
 use App\Filters\RoleFilter;
@@ -21,16 +20,21 @@ class AdminService
 
     function getAll()
     {
-        return Admin::where('id', '!=', auth('admin')->id())
-            ->with('roles')
+        return Admin::withAllRelations()
+            ->where('id', '!=', auth('admin')->id())
+            ->where('created_by', getAdminIdOrCreatedBy())
             ->orderBy('id', 'desc')
             ->paginate();
     }
 
     function getRoles()
     {
-        return Role::get();
+        $admin_id = getAdminIdOrCreatedBy();
+        return Role::where('id', '!=', 1)
+            ->where('admin_id', $admin_id)
+            ->get();
     }
+
 
     function filterAdmin($request)
     {
@@ -45,8 +49,9 @@ class AdminService
                 ActivationStatusFilter::class,
             ])
             ->thenReturn()
-            ->with('roles')
+            ->withAllRelations()
             ->where('id', '!=', auth('admin')->id())
+            ->where('created_by', getAdminIdOrCreatedBy())
             ->orderBy('id', 'desc')
             ->paginate()
             ->withQueryString();
@@ -65,6 +70,8 @@ class AdminService
             $role = Role::where('id', $data['role'])
                 ->first();
             unset($data['role']);
+            $data['added_by'] = auth('admin')->id();
+            $data['created_by'] = getAdminIdOrCreatedBy();
             $admin = Admin::create($data);
             $admin->assignRole($role->name);
             DB::commit();

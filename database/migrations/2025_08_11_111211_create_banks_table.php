@@ -5,28 +5,29 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('admins', function (Blueprint $table) {
+        Schema::create('banks', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('email');
-            $table->string('phone')
-                ->nullable();
-            $table->string('password');
+            $table->foreignId('admin_id')
+                ->constrained('users')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
             $table->foreignId('created_by')
                 ->nullable()
                 ->constrained('admins')
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
+                ->nullOnDelete();
+            $table->string('name');
             $table->string('image');
+            $table->string('account_owner');
+            $table->string('account_number');
+            $table->string('iban_number');
             $table->enum('status', ActivationStatusEnum::vals());
-            $table->string('token')
-                ->nullable();
             $table->timestamps();
         });
     }
@@ -36,6 +37,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('admins');
+        Schema::dropIfExists('banks');
     }
 };

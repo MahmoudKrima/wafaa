@@ -21,5 +21,14 @@ class AdminSeeder extends Seeder
             'status' => 'active',
         ]);
         $admin->assignRole('administrator');
+        $admin2 = Admin::create([
+            'name' => 'admin2',
+            'email' => 'admin2@gmail.com',
+            'phone' => '0123456799',
+            'password' => '123456789',
+            'image' => 'defaults/admin.jpg',
+            'status' => 'active',
+        ]);
+        $admin2->assignRole('administrator');
     }
 }

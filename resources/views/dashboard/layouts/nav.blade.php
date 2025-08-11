@@ -39,14 +39,14 @@
 
                     <div class="dropdown-menu dropdown-menu-right animated fadeInUp" aria-labelledby="customDropdown">
                         @foreach (LaravelLocalization::getSupportedLocales() as $localeCode => $properties)
-                            @if ($localeCode == app()->getLocale())
-                                @continue
-                            @endif
-                            <a class="dropdown-item d-flex"
-                                href="{{ LaravelLocalization::getLocalizedURL($localeCode, null, [], true) }}"><img
-                                    src="{{ asset('assets_' . assetLang()) }}/assets/img/{{ $localeCode }}.png"
-                                    class="flag-width" alt="flag">
-                                <span class="align-self-center">&nbsp; {{ $properties['native'] }}</span></a>
+                        @if ($localeCode == app()->getLocale())
+                        @continue
+                        @endif
+                        <a class="dropdown-item d-flex"
+                            href="{{ LaravelLocalization::getLocalizedURL($localeCode, null, [], true) }}"><img
+                                src="{{ asset('assets_' . assetLang()) }}/assets/img/{{ $localeCode }}.png"
+                                class="flag-width" alt="flag">
+                            <span class="align-self-center">&nbsp; {{ $properties['native'] }}</span></a>
                         @endforeach
                     </div>
                 </div>
