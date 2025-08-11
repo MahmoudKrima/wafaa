@@ -23,7 +23,6 @@ use App\Http\Controllers\Admin\WebSiteSettings\SettingsController;
 */
 
 Route::middleware(['web'])->group(function () {
-    // Admin Auth Routes (no prefix, accessible at /en/admin/login, /en/admin, etc.)
     Route::controller(AuthController::class)
         ->as('admin.')
         ->prefix(LaravelLocalization::setLocale() . '/admin')

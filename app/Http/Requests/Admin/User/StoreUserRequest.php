@@ -55,11 +55,16 @@ class StoreUserRequest extends FormRequest
                 Rule::unique('users', 'phone'),
             ],
             'city_id' => ['required', 'integer', Rule::exists('cities', 'id')],
-            'password' => ['required', 'string', 'min:8', Password::min(8)
-                ->max(50)
-                ->letters()
-                ->mixedCase()
-                ->symbols()],
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                Password::min(8)
+                    ->max(50)
+                    ->letters()
+                    ->mixedCase()
+                    ->symbols()
+            ],
         ];
     }
 

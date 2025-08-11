@@ -23,6 +23,7 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $adminId = fake()->randomElement([1, 2]);
         return [
             'name' => [
                 'ar' => fake()->word(),
@@ -34,7 +35,8 @@ class UserFactory extends Factory
             'email_verified_at' => now(),
             'password' => '123456789',
             'city_id' => City::inRandomOrder()->value('id'),
-            'created_by' => fake()->randomElement([1, 2]),
+            'created_by' => $adminId,
+            'added_by' => $adminId,
             'address' => fake()->address(),
             'remember_token' => Str::random(10),
         ];

@@ -34,6 +34,11 @@ class Banks extends Model
         return $query->with(self::$relatio);
     }
 
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'active');
+    }
+
     public function admin()
     {
         return $this->belongsTo(Admin::class, 'admin_id');
@@ -42,5 +47,10 @@ class Banks extends Model
     public function createdBy()
     {
         return $this->belongsTo(Admin::class, 'created_by');
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class, 'banks_id', 'id');
     }
 }
