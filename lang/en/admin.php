@@ -188,4 +188,12 @@ return [
     'invalid_status' => 'Invalid status provided',
     'status_already_updated' => 'Status already updated',
     'choose_user' => 'Choose User',
+    'transaction_status_updated' => 'Transaction status updated to :status',
+    'shipment' => 'Shipment',
+    'other' => 'Other',
+    'wallet_logs' => 'Wallet Logs',
+    'transaction' => 'Transaction',
+    'transaction_type' => 'Transaction Type',
+    'deposit' => 'Deposit',
+    'deduct' => 'Deduct',
 ];

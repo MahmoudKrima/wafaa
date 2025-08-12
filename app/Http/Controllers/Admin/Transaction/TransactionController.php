@@ -35,9 +35,8 @@ class TransactionController extends Controller
     {
         $status = request('status');
         
-        // Validate status
-        if (!in_array($status, ['accepted', 'rejected'])) {
-            return back()->with('error', __('admin.invalid_status'));
+        if (!in_array($status, TransactionStatusEnum::vals())) {
+            return back()->with('Error', __('admin.invalid_status'));
         }
         
         $this->transactionService->updateStatus($transaction, $status);

@@ -123,6 +123,9 @@ Route::middleware(['web'])->group(function () {
                 Route::delete('/users/delete/{user}', 'delete')
                     ->name('users.delete')
                     ->middleware('has.permission:users.delete');
+                Route::get('/wallet-logs/{user}', 'walletLogs')
+                    ->name('wallet_logs.index')
+                    ->middleware('has.permission:wallet_logs.view');
             });
 
         Route::controller(RoleController::class)

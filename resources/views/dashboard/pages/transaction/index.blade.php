@@ -136,7 +136,7 @@
                                     </td>
                                     <td>
                                         <a href="{{ displayImage($transaction->attachment) }}"
-                                            class="btn btn-primary btn-sm" target="_blank">
+                                            class="btn btn-primary btn-sm " target="_blank">
                                             {{ __('admin.attachment') }}
                                         </a>
                                     </td>
@@ -144,19 +144,18 @@
                                         @if (auth('admin')->user()->hasAnyPermission(['transactions.update']))
                                         @if($transaction->status->value === 'pending')
                                         <button type="button"
-                                            class="{{ $transaction->status->badge() }} btn-sm"
+                                            class="{{ $transaction->status->badge() }}"
                                             data-toggle="modal"
                                             data-target="#statusModal{{ $transaction->id }}">
                                             {{ $transaction->status->lang() }}
                                         </button>
                                         @else
                                         <button type="button"
-                                            class="{{ $transaction->status->badge() }} btn-sm"
+                                            class="{{ $transaction->status->badge() }}"
                                             disabled
-                                            style="opacity: 0.6; cursor: not-allowed; pointer-events: none;"
+                                            style="cursor: not-allowed; pointer-events: none;"
                                             title="{{ __('admin.status_already_updated') }}">
                                             {{ $transaction->status->lang() }}
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-lock ml-1" style="opacity: 0.7;"></svg>
                                         </button>
                                         @endif
                                         @else
@@ -233,7 +232,7 @@
                             @csrf
                             <input type="hidden" name="status" value="accepted">
                             <button type="submit" class="btn btn-success btn-lg btn-block">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-check mr-2"></svg>{{ __('admin.accept') }}
+                                {{ __('admin.accept') }}
                             </button>
                         </form>
                     </div>
@@ -242,7 +241,7 @@
                             @csrf
                             <input type="hidden" name="status" value="rejected">
                             <button type="submit" class="btn btn-danger btn-lg btn-block">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x mr-2"></svg>{{ __('admin.reject') }}
+                                {{ __('admin.reject') }}
                             </button>
                         </form>
                     </div>

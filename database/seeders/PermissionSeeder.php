@@ -2,12 +2,13 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use App\Models\Admin;
 use App\Models\Banks;
 use App\Models\Setting;
-use App\Models\Transaction;
-use App\Models\User;
+use App\Models\WalletLog;
 use App\Models\UserWallet;
+use App\Models\Transaction;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 
@@ -32,6 +33,7 @@ class PermissionSeeder extends Seeder
             ...Banks::$permissions,
             ...Transaction::$permissions,
             ...Setting::$permissions,
+            ...WalletLog::$permissions,
             ...$rolePermission,
         ];
 

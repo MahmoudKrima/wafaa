@@ -184,4 +184,12 @@ return [
     'status_already_updated' => 'تم تحديث الحالة مسبقاً',
     'choose_user' => 'اختر المستخدم',
     'choose_bank' => 'اختر البنك',
+    'transaction_status_updated' => 'تم تحديث حالة التحويل الى :status',
+    'shipment' => 'الشحنة',
+    'other' => 'أخرى',
+    'wallet_logs' => 'سجل المحفظة',
+    'transaction' => 'تحويل',
+    'transaction_type' => 'نوع العملية',
+    'deposit' => 'إيداع',
+    'deduct' => 'إستقطاع',
 ];

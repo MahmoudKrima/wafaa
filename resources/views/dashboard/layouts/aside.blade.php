@@ -30,6 +30,7 @@
             auth('admin')->user()->hasAnyPermission([
             'admins.view',
             'users.view',
+            'wallet_logs.view',
             ])
             )
             <li class="menu {{ isRoute([
@@ -41,6 +42,7 @@
                     'admin.users.search',
                     'admin.users.create',
                     'admin.users.edit',
+                    'admin.wallet_logs.index',
                 ])
                     ? 'active'
                     : '' }}">
@@ -51,8 +53,9 @@
                     'admin.admins.edit',
                     'admin.users.index',
                     'admin.users.search',
-                    'admin.users.create',
+                    'admin.users.create',   
                     'admin.users.edit',
+                    'admin.wallet_logs.index',
                 ])
                     ? 'true'
                     : 'false' }}" class="menu-toggle">
@@ -167,6 +170,7 @@
         auth('admin')->user()->hasAnyPermission([
         'admins.view',
         'users.view',
+        'wallet_logs.view',
         ])
         )
         <div class="submenu" id="users_settings">
@@ -192,7 +196,7 @@
 
                 @haspermission('users.view', 'admin')
                 <li
-                    class="{{ isRoute(['admin.users.index', 'admin.users.search', 'admin.users.create', 'admin.users.edit']) ? 'active' : '' }}">
+                    class="{{ isRoute(['admin.users.index', 'admin.users.search', 'admin.users.create', 'admin.users.edit', 'admin.wallet_logs.index']) ? 'active' : '' }}">
                     <a href="{{ route('admin.users.index') }}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"

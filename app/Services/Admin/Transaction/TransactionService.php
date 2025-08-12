@@ -10,8 +10,10 @@ use App\Filters\CodeFilter;
 use App\Filters\UserFilter;
 use App\Models\Transaction;
 use App\Traits\TranslateTrait;
+use App\Enum\TransactionTypeEnum;
 use Illuminate\Pipeline\Pipeline;
 use App\Filters\ActivationStatusFilter;
+use App\Enum\TransactionStatusEnum;
 
 class TransactionService
 {
@@ -60,9 +62,21 @@ class TransactionService
 
     function updateStatus($transaction, $status)
     {
-        $transaction->update([
-            'status' => $status,
-        ]);
+        if ($status == 'accepted') {
+            $user = $transaction->user;
+            $user->wallet->update([
+                'balance' => $user->wallet->balance + $transaction->amount
+            ]);
+            $transaction->walletLogs()->create([
+                'user_id' => $transaction->user_id,
+                'amount' => $transaction->amount,
+                'type' => TransactionTypeEnum::DEPOSIT->value,
+                'description' => __('admin.transaction_status_updated', ['status' => TransactionStatusEnum::from($status)->lang()]),
+            ]);
+            $transaction->update(['status' => 'accepted']);
+        } else {
+            $transaction->update(['status' => 'rejected']);
+        }
     }
 
     function delete($transaction)
