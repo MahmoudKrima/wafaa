@@ -64,4 +64,10 @@ class UserController extends Controller
             ->route('admin.users.index')
             ->with('Success', __('admin.deleted_successfully'));
     }
+
+    public function walletLogs(User $user)
+    {
+        $walletLogs = $this->userService->walletLogs($user);
+        return view('dashboard.pages.users.wallet_logs', compact('walletLogs'));
+    }
 }

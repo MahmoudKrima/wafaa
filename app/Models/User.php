@@ -53,7 +53,9 @@ class User extends Authenticatable
         'city',
         'createdByAdmin',
         'addedByAdmin',
-        'wallet'
+        'wallet',
+        'transactions',
+        'walletLogs'
     ];
 
 
@@ -93,5 +95,10 @@ class User extends Authenticatable
     public function transactions()
     {
         return $this->hasMany(Transaction::class);
+    }
+
+    public function walletLogs()
+    {
+        return $this->hasMany(WalletLog::class);
     }
 }

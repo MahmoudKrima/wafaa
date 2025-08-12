@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\UserSettings\UserController;
 use App\Http\Controllers\Admin\UserSettings\AdminController;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use App\Http\Controllers\Admin\WebSiteSettings\RoleController;
+use App\Http\Controllers\Admin\Transaction\TransactionController;
 use App\Http\Controllers\Admin\WebSiteSettings\SettingsController;
 
 /*
@@ -122,6 +123,9 @@ Route::middleware(['web'])->group(function () {
                 Route::delete('/users/delete/{user}', 'delete')
                     ->name('users.delete')
                     ->middleware('has.permission:users.delete');
+                Route::get('/wallet-logs/{user}', 'walletLogs')
+                    ->name('wallet_logs.index')
+                    ->middleware('has.permission:wallet_logs.view');
             });
 
         Route::controller(RoleController::class)
@@ -167,12 +171,6 @@ Route::middleware(['web'])->group(function () {
                 Route::get('/banks-search', 'search')
                     ->name('banks.search')
                     ->middleware('has.permission:banks.view');
-                // Route::get('/banks-transactions/{bank}', 'showTransactions')
-                //     ->name('banks-transactions.showTransactions')
-                //     ->middleware('has.permission:banks.view', 'has.permission:plan_transaction.view');
-                // Route::get('/banks-transactions-search/{bank}', 'searchTransactions')
-                //     ->name('banks-transactions.searchTransactions')
-                //     ->middleware('has.permission:banks.view', 'has.permission:plan_transaction.view');
                 Route::get('/banks-create', 'create')
                     ->name('banks.create')
                     ->middleware('has.permission:banks.create');
@@ -191,6 +189,22 @@ Route::middleware(['web'])->group(function () {
                 Route::delete('/banks-delete/{bank}', 'delete')
                     ->name('banks.delete')
                     ->middleware('has.permission:banks.delete');
+            });
+
+        Route::controller(TransactionController::class)
+            ->group(function () {
+                Route::get('/transactions', 'index')
+                    ->name('transactions.index')
+                    ->middleware('has.permission:transactions.view');
+                Route::get('/transactions-search', 'search')
+                    ->name('transactions.search')
+                    ->middleware('has.permission:transactions.view');
+                Route::post('/transactions-update-status/{transaction}', 'updateStatus')
+                    ->name('transactions.updateStatus')
+                    ->middleware('has.permission:transactions.update');
+                Route::delete('/transactions-delete/{transaction}', 'delete')
+                    ->name('transactions.delete')
+                    ->middleware('has.permission:transactions.delete');
             });
     });
 });

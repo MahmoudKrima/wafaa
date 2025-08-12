@@ -68,4 +68,9 @@ class UserService
         $user->delete();
         return true;
     }
+
+    public function walletLogs(User $user)
+    {
+        return $user->walletLogs()->orderBy('id', 'desc')->paginate();
+    }
 }

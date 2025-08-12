@@ -1,4 +1,4 @@
-@extends('dashboard.layouts.app')
+@extends('user.layouts.app')
 @section('title', __('admin.dashboard'))
 @push('css')
     <link href="{{ asset('assets_' . assetLang()) }}/plugins/apex/apexcharts.css" rel="stylesheet" type="text/css">

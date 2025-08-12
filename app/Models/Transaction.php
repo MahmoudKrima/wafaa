@@ -21,6 +21,19 @@ class Transaction extends Model
         'status' => TransactionStatusEnum::class
     ];
 
+
+    public static $relatio = [
+        'user',
+        'bank',
+        'acceptedBy',
+        'walletLogs'
+    ];
+
+    public function scopeWithAllRelations($query)
+    {
+        return $query->with(self::$relatio);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -34,5 +47,10 @@ class Transaction extends Model
     public function bank()
     {
         return $this->belongsTo(Banks::class, 'banks_id', 'id');
+    }
+
+    public function walletLogs()
+    {
+        return $this->morphMany(WalletLog::class, 'loggable');
     }
 }
