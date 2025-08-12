@@ -192,4 +192,6 @@ return [
     'transaction_type' => 'نوع العملية',
     'deposit' => 'إيداع',
     'deduct' => 'إستقطاع',
+    'accepted_by' => 'مقبول بواسطة',
+    'edited_by' => 'تم التعديل بواسطة',
 ];

@@ -113,6 +113,7 @@
                                     <th scope="col">{{ __('admin.bank') }}</th>
                                     <th scope="col">{{ __('admin.amount') }}</th>
                                     <th scope="col">{{ __('admin.attachment') }}</th>
+                                    <th scope="col">{{ __('admin.edited_by') }}</th>
                                     <th scope="col">{{ __('admin.status') }}</th>
                                     @if (auth('admin')->user()->hasAnyPermission(['transactions.update', 'transactions.delete', 'plan_transaction.view']))
                                     <th class="text-center" scope="col">{{ trans('admin.actions') }}</th>
@@ -139,6 +140,9 @@
                                             class="btn btn-primary btn-sm " target="_blank">
                                             {{ __('admin.attachment') }}
                                         </a>
+                                    </td>
+                                    <td>
+                                        <p class="mb-0">{{ $transaction->acceptedBy?->name ?? __('admin.n/a') }}</p>
                                     </td>
                                     <td>
                                         @if (auth('admin')->user()->hasAnyPermission(['transactions.update']))

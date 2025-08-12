@@ -196,4 +196,6 @@ return [
     'transaction_type' => 'Transaction Type',
     'deposit' => 'Deposit',
     'deduct' => 'Deduct',
+    'accepted_by' => 'Accepted By',
+    'edited_by' => 'Edited By',
 ];
