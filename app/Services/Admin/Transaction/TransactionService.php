@@ -73,9 +73,15 @@ class TransactionService
                 'type' => TransactionTypeEnum::DEPOSIT->value,
                 'description' => __('admin.transaction_status_updated', ['status' => TransactionStatusEnum::from($status)->lang()]),
             ]);
-            $transaction->update(['status' => 'accepted']);
+            $transaction->update([
+                'status' => 'accepted',
+                'accepted_by' => auth('admin')->user()->id,
+            ]);
         } else {
-            $transaction->update(['status' => 'rejected']);
+            $transaction->update([
+                'status' => 'rejected',
+                'accepted_by' => auth('admin')->user()->id,
+            ]);
         }
     }
 
