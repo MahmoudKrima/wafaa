@@ -27,14 +27,14 @@
             </li>
 
             <li class="menu {{ isRoute([
-    'admin.transactions.index',
-    'admin.transactions.create',
+    'user.transactions.index',
+    'user.transactions.create',
 ])
     ? 'active'
     : '' }}">
                 <a href="#transactions_settings" data-active="{{ isRoute([
-    'admin.transactions.index',
-    'admin.transactions.create',
+    'user.transactions.index',
+    'user.transactions.create',
 ])
     ? 'true'
     : 'false' }}" class="menu-toggle">
