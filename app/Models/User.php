@@ -53,7 +53,16 @@ class User extends Authenticatable
         'city',
         'createdByAdmin',
         'addedByAdmin',
+        'wallet'
     ];
+
+
+    protected static function booted(): void
+    {
+        static::created(function (User $user) {
+            $user->wallet()->create();
+        });
+    }
 
     public function scopeWithAllRelations($query)
     {
@@ -74,5 +83,15 @@ class User extends Authenticatable
     public function addedByAdmin()
     {
         return $this->belongsTo(Admin::class, 'added_by');
+    }
+
+    public function wallet()
+    {
+        return $this->hasOne(UserWallet::class);
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
     }
 }

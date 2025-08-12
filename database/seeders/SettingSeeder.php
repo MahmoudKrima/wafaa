@@ -16,10 +16,10 @@ class SettingSeeder extends Seeder
     {
         Cache::forget('settings');
         $settings = [
-            'app_name_ar' => 'اتصل بى',
-            'app_name_en' => 'Call Me',
-            'address_ar' => '123 بيزنس , دبى , الامارات العربية المتحدة',
-            'address_en' => '123 Business , Dubai , UAE',
+            'app_name_ar' => 'شحن',
+            'app_name_en' => 'Shahn',
+            'address_ar' => 'عنوان',
+            'address_en' => 'Address',
             'phone' => '0512312584',
             'email' => 'admin@gmail.com',
             'whatsapp' => '0512312584',
