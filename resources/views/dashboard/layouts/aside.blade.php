@@ -76,6 +76,7 @@
             @if (
             auth('admin')->user()->hasAnyPermission([
             'banks.view',
+            'transactions.view',
             ])
             )
             <li class="menu {{ isRoute([
@@ -83,6 +84,8 @@
                     'admin.banks.search',
                     'admin.banks.create',
                     'admin.banks.edit',
+                    'admin.transactions.index',
+                    'admin.transactions.search',
                 ])
                     ? 'active'
                     : '' }}">
@@ -91,6 +94,8 @@
                     'admin.banks.search',
                     'admin.banks.create',
                     'admin.banks.edit',
+                    'admin.transactions.index',
+                    'admin.transactions.search',
                 ])
                     ? 'true'
                     : 'false' }}" class="menu-toggle">
@@ -225,6 +230,21 @@
                             <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                         </svg>
                         {{ __('admin.banks') }} </a>
+                </li>
+                @endhaspermission
+                @haspermission('transactions.view', 'admin')
+                <li
+                    class="{{ isRoute(['admin.transactions.index', 'admin.transactions.search']) ? 'active' : '' }}">
+                    <a href="{{ route('admin.transactions.index') }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="feather feather-users">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                        </svg>
+                        {{ __('admin.transactions') }} </a>
                 </li>
                 @endhaspermission
             </ul>

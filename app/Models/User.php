@@ -53,7 +53,8 @@ class User extends Authenticatable
         'city',
         'createdByAdmin',
         'addedByAdmin',
-        'wallet'
+        'wallet',
+        'transactions'
     ];
 
 

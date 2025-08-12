@@ -23,6 +23,9 @@
     <!-- BEGIN PAGE LEVEL PLUGINS/CUSTOM STYLES -->
     @stack('css')
     <!-- END PAGE LEVEL PLUGINS/CUSTOM STYLES -->
-   
+    <link href="{{ asset('assets_' . app()->getLocale()) }}/assets/css/scrollspyNav.css" rel="stylesheet" type="text/css" />
+    <link href="{{ asset('assets_' . app()->getLocale()) }}/plugins/file-upload/file-upload-with-preview.min.css"
+        rel="stylesheet" type="text/css" />
+
 
 </head>

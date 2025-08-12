@@ -3,7 +3,6 @@
 namespace App\Services\Admin\Bank;
 
 use App\Traits\ImageTrait;
-
 use App\Traits\TranslateTrait;
 use App\Filters\NameJsonFilter;
 use App\Filters\IbanNumberFilter;
@@ -43,39 +42,6 @@ class BankService
             ->paginate()
             ->withQueryString();
     }
-
-    // function showBankTransactions($bank)
-    // {
-    //     return PlanTransaction::where('bank_id', $bank->id)
-    //         ->with('plan', 'provider')
-    //         ->orderBy('id', 'DESC')
-    //         ->paginate();
-    // }
-
-    // function searchBankTransactions($request, $bank)
-    // {
-    //     $request->validated();
-    //     return app(Pipeline::class)
-    //         ->send(PlanTransaction::query())
-    //         ->through([
-    //             ProviderFilter::class,
-    //             PlanFilter::class,
-    //             NameFilter::class,
-    //             DateFromFilter::class,
-    //             DateToFilter::class,
-    //             PlanTransactionStatusFilter::class,
-    //             TransactionNumberFilter::class,
-    //             PaidAmountFromFilter::class,
-    //             PaidAmountToFilter::class
-    //         ])
-    //         ->thenReturn()
-    //         ->with('provider', 'plan')
-    //         ->where('bank_id', $bank->id)
-    //         ->orderBy('id', 'DESC')
-    //         ->paginate()
-    //         ->withQueryString();
-    // }
-
 
 
     function storeBank($request)

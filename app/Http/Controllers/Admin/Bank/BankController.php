@@ -2,15 +2,12 @@
 
 namespace App\Http\Controllers\Admin\Bank;
 
-use App\Models\Bank;
-use App\Enum\PlanTransactionEnum;
 use App\Enum\ActivationStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Services\Admin\Bank\BankService;
 use App\Http\Requests\Admin\Bank\StoreBankRequest;
 use App\Http\Requests\Admin\Bank\SearchBankRequest;
 use App\Http\Requests\Admin\Bank\UpdateBankRequest;
-use App\Http\Requests\Admin\Bank\SearchPlanTransactionRequest;
 use App\Models\Banks;
 
 class BankController extends Controller
@@ -30,24 +27,6 @@ class BankController extends Controller
         $status = ActivationStatusEnum::cases();
         return view('dashboard.pages.bank.index', compact('banks', 'status'));
     }
-
-    // public function showTransactions(Bank $bank)
-    // {
-    //     $planTransactions = $this->bankService->showBankTransactions($bank);
-    //     $plans = $this->bankService->getPlans($bank);
-    //     $providers = $this->bankService->getProviders($bank);
-    //     $status = PlanTransactionEnum::cases();
-    //     return view('dashboard.pages.bank.show_transaction', compact('plans', 'providers', 'status', 'bank', 'planTransactions'));
-    // }
-
-    // public function searchTransactions(SearchPlanTransactionRequest $request, Bank $bank)
-    // {
-    //     $planTransactions = $this->bankService->searchBankTransactions($request, $bank);
-    //     $plans = $this->bankService->getPlans($bank);
-    //     $providers = $this->bankService->getProviders($bank);
-    //     $status = PlanTransactionEnum::cases();
-    //     return view('dashboard.pages.bank.show_transaction', compact('plans', 'providers', 'status', 'bank', 'planTransactions'));
-    // }
 
     public function create()
     {

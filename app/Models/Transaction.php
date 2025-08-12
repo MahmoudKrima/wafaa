@@ -21,6 +21,18 @@ class Transaction extends Model
         'status' => TransactionStatusEnum::class
     ];
 
+
+    public static $relatio = [
+        'user',
+        'bank',
+        'acceptedBy'
+    ];
+
+    public function scopeWithAllRelations($query)
+    {
+        return $query->with(self::$relatio);
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);

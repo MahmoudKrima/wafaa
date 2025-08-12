@@ -6,10 +6,19 @@ use Illuminate\Support\Facades\Storage;
 if (!function_exists('displayImage')) {
     function displayImage($object)
     {
-        if (Storage::exists('public/' . $object)) {
-            return url(asset('storage/' . $object));
+        if (filter_var($object, FILTER_VALIDATE_URL)) {
+            return $object;
         }
-        return url(asset($object));
+
+        if (Storage::disk('public')->exists($object)) {
+            return asset('storage/' . ltrim($object, '/'));
+        }
+
+        if (file_exists(public_path($object))) {
+            return asset($object);
+        }
+
+        return asset('defaults/1.png');
     }
 }
 
