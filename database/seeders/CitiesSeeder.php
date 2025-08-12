@@ -15,28 +15,28 @@ class CitiesSeeder extends Seeder
     public function run(): void
     {
         $this->command->info('Starting to fetch cities from API...');
-        
+
         try {
             $response = Http::withHeaders([
                 'accept' => '*/*',
                 'x-api-key' => 'xwqn5mb5mpgf5u3vpro09i8pmw9fhkuu'
             ])->get('https://ghaya-express-staging-af597af07557.herokuapp.com/api/cities', [
-                'page' => 0,
-                'pageSize' => 100, // Increased to get more cities
-                'orderColumn' => 'createdAt',
-                'orderDirection' => 'desc'
-            ]);
+                        'page' => 0,
+                        'pageSize' => 100,
+                        'orderColumn' => 'createdAt',
+                        'orderDirection' => 'desc'
+                    ]);
 
             if ($response->successful()) {
                 $data = $response->json();
                 $cities = $data['results'] ?? [];
-                
+
                 $this->command->info("Found " . count($cities) . " cities to seed");
-                
+
                 foreach ($cities as $cityData) {
                     $this->seedCity($cityData);
                 }
-                
+
                 $this->command->info('Cities seeded successfully!');
             } else {
                 $this->command->error('Failed to fetch cities from API. Status: ' . $response->status());
@@ -80,7 +80,7 @@ class CitiesSeeder extends Seeder
             ]);
 
             $this->command->line("Seeded city: {$cityData['name']['en']} ({$cityData['name']['ar']}) - ID: {$cityData['id']}");
-            
+
         } catch (\Exception $e) {
             $this->command->error("Error seeding city {$cityData['name']['en']}: " . $e->getMessage());
             Log::error('City seeding error', [

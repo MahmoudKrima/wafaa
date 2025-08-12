@@ -61,4 +61,16 @@ class Admin extends Authenticatable
     {
         return $this->belongsTo(Admin::class, 'created_by');
     }
+
+    public function transactions()
+    {
+        return $this->hasManyThrough(
+            Transaction::class,
+            User::class,
+            'created_by',
+            'user_id',
+            'id',
+            'id'
+        );
+    }
 }

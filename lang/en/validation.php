@@ -252,6 +252,11 @@ return [
         'bio_en' => 'Bio En',
         'description_ar' => 'Description Ar',
         'description_en' => 'Description En',
+        'attachment' => 'Attachment',
+        'amount' => 'Amount',
+        'bank' => 'Bank',
+        'bank_id' => 'Bank',
+        'banks_id' => 'Bank',
     ],
 
 ];

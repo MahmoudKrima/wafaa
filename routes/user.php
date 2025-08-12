@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\User\Transaction\TransactionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\User\Auth\AuthController;
 use App\Http\Controllers\User\Home\HomeController;
@@ -52,6 +53,15 @@ Route::middleware(['web'])->group(function () {
                     ->name('profile.index');
                 Route::post('/update-profile', 'update')
                     ->name('profile.update');
+            });
+        Route::controller(TransactionController::class)
+            ->group(function () {
+                Route::get('/transactions', 'index')
+                    ->name('transactions.index');
+                Route::get('/create-transaction', 'create')
+                    ->name('transactions.create');
+                Route::post('/create-transaction', 'store')
+                    ->name('transactions.store');
             });
     });
 });
