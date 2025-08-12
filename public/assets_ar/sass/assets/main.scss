@@ -30,12 +30,12 @@ h1, h2, h3, h4, h5, h6 {
 
 ::-moz-selection {
   /* Code for Firefox */
-  color: #ee8020;
+  color: #F6950D;
   background: transparent;
 }
 
 ::selection {
-  color: #ee8020;
+  color: #F6950D;
   background: transparent;
 }
 
@@ -102,7 +102,7 @@ select.form-custom::-ms-expand {
   border-radius: 0;
 
   svg {
-    color: #ee8020;
+    color: #F6950D;
   }
 }
 
@@ -898,25 +898,25 @@ select.form-control.form-custom {
 
 .btn-primary {
   color: #fff !important;
-  background-color: #ee8020 !important;
-  border-color: #ee8020;
-  box-shadow: 0 10px 20px -10px #ee8020;
+  background-color: #F6950D !important;
+  border-color: #F6950D;
+  box-shadow: 0 10px 20px -10px #F6950D;
 
   &:hover, &:focus {
     color: #fff !important;
-    background-color: #ee8020;
+    background-color: #F6950D;
     box-shadow: none;
-    border-color: #ee8020;
+    border-color: #F6950D;
   }
 
   &:active, &.active {
-    background-color: #ee8020;
-    border-top: 1px solid #ee8020;
+    background-color: #F6950D;
+    border-top: 1px solid #F6950D;
   }
 
   &.disabled, &.btn[disabled], &:disabled {
-    background-color: #ee8020;
-    border-color: #ee8020;
+    background-color: #F6950D;
+    border-color: #F6950D;
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
     box-shadow: none;
@@ -2413,11 +2413,11 @@ table {
 }
 
 .toast-primary {
-  background: #ee8020;
+  background: #F6950D;
 }
 
 .toast-header {
-  background: #ee8020;
+  background: #F6950D;
   color: #fff;
   border-bottom: 1px solid rgba(33, 150, 243, 0.3411764706);
 
@@ -2448,8 +2448,8 @@ table {
 */
 
 .bg-primary {
-  background-color: #ee8020 !important;
-  border-color: #ee8020;
+  background-color: #F6950D !important;
+  border-color: #F6950D;
   color: #fff;
 }
 
@@ -2726,7 +2726,7 @@ table {
 /*-------text-colors------*/
 
 .text-primary {
-  color: #ee8020 !important;
+  color: #F6950D !important;
 }
 
 .text-success {
@@ -2788,7 +2788,7 @@ table {
 }
 
 .border-primary {
-  border-color: #ee8020 !important;
+  border-color: #F6950D !important;
 }
 
 .border-info {

@@ -1,5 +1,10 @@
-@extends('user.layouts.app')
-@section('title', __('user.dashboard'))
+@extends('dashboard.layouts.app')
+@section('title', __('admin.dashboard'))
+@push('css')
+    <link href="{{ asset('assets_' . assetLang()) }}/plugins/apex/apexcharts.css" rel="stylesheet" type="text/css">
+    <link href="{{ asset('assets_' . assetLang()) }}/assets/css/dashboard/dash_1.css" rel="stylesheet" type="text/css"
+        class="dashboard-analytics" />
+@endpush
 @section('content')
     <div class="layout-px-spacing">
 
@@ -567,5 +572,5 @@
 @endsection
 @push('js')
     <script src="{{ asset('assets_' . assetLang()) }}/plugins/apex/apexcharts.min.js"></script>
-    <script src="{{ asset('assets_' . assetLang()) }}/assets/js/dashboard/user_dashboard.js"></script>
+    <script src="{{ asset('assets_' . assetLang()) }}/assets/js/dashboard/dash_1.js"></script>
 @endpush

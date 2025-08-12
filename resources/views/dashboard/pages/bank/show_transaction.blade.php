@@ -1,7 +1,7 @@
 @extends('dashboard.layouts.app')
 @section('title', $bank->name)
 @push('breadcrumb')
-    <nav class="breadcrumb-one" aria-label="breadcrumb">
+    <nav class="breadcrumb-one" aria-label="{{ __('admin.breadcrumb') }}">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{{ route('admin.dashboard.index') }}">{{ __('admin.dashboard') }}</a>
             </li>
@@ -195,8 +195,8 @@
                                                                     class="action-btn btn-edit bs-tooltip me-2 badge rounded-pill bg-warning"
                                                                     style="padding:7px;" data-toggle="tooltip"
                                                                     title="{{ __('admin.edit_plan_transaction') }}"
-                                                                    data-placement="top" aria-label="Edit"
-                                                                    data-bs-original-title="Edit">
+                                                                    data-placement="top" aria-label="{{ __('admin.edit') }}"
+                                                                    data-bs-original-title="{{ __('admin.edit') }}">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="17"
                                                                         height="17" viewBox="0 0 24 24" fill="none"
                                                                         stroke="currentColor" stroke-width="2"
@@ -220,7 +220,7 @@
                                                                     type="submit"
                                                                     class="action-btn btn-alert bs-tooltip badge rounded-pill bg-danger"
                                                                     data-toggle="tooltip" data-placement="top"
-                                                                    aria-label="Delete" data-bs-original-title="Delete">
+                                                                    aria-label="{{ __('admin.delete') }}" data-bs-original-title="{{ __('admin.delete') }}">
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="17"
                                                                         height="17" viewBox="0 0 24 24" fill="none"
                                                                         stroke="currentColor" stroke-width="2"

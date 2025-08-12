@@ -17,6 +17,7 @@
     <link href="{{ asset('assets_' . assetLang()) }}/assets/css/plugins.css" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="{{ asset('vendor/toastr/build/toastr.min.css') }}">
 
+
     <!-- END GLOBAL MANDATORY STYLES -->
 
     <!-- BEGIN PAGE LEVEL PLUGINS/CUSTOM STYLES -->
