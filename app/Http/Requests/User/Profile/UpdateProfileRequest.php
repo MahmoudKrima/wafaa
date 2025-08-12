@@ -2,9 +2,9 @@
 
 namespace App\Http\Requests\User\Profile;
 
-use App\Models\User;
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Password;
 
 class UpdateProfileRequest extends FormRequest
 {
@@ -23,45 +23,53 @@ class UpdateProfileRequest extends FormRequest
      */
     public function rules(): array
     {
-        $types = User::$types;
         return [
-            'name' => ['required', 'string'],
-            'bio' => ['required', 'string'],
-            'address' => ['required', 'string'],
-            'email' => ['required', 'email', 'unique:Users,email,' . auth('web')->id()],
-            'phone' => ['required', 'digits_between:8,15', 'unique:Users,phone,' . auth('web')->id()],
-            'whatsapp' => ['required', 'digits_between:8,15', 'unique:Users,whatsapp,' . auth('web')->id()],
-            'password' => ['nullable', 'min:8', 'max:30'],
-            'country_id' => ['required', 'exists:countries,id'],
-            'image' => ['image', 'mimetypes:image/jpeg,image/png,image/webp,image/gif', 'mimes:jpg,jpeg,jfif,png,gif,webp'],
-            'sales_hours' => ['required', 'string'],
-            'type' => ['required', Rule::in($types), function ($attribute, $value, $fail) {
-                $currentUserType = auth('web')->user()->type->value;
-                $inputType = request()->input('type');
-
-                if ($currentUserType == 'private' && $inputType == 'agency') {
-                    // User is changing from private to agency, so cover is required
-                    if (!request()->hasFile('cover')) {
-                        $fail(__('validation.required', ['attribute' => __('admin.cover')]));
-                    }
-                } elseif ($currentUserType == 'agency' && $inputType == 'private') {
-                    // User is changing from agency to private
-                    if (request()->hasFile('cover')) {
-                        // User provided a cover, which is not allowed
-                        $fail(__('validation.cover_not_allowed'));
-                    }
-                } elseif ($currentUserType == 'agency' && $inputType == 'agency' && auth('web')->user()->cover == null) {
-                    if (!request()->hasFile('cover')) {
-                        $fail(__('validation.required', ['attribute' => __('admin.cover')]));
+            'name_ar' => ['required', 'string', 'max:255'],
+            'name_en' => ['required', 'string', 'max:255'],
+            'address' => ['required', 'string', 'max:999'],
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users', 'email')->ignore(auth('web')->id()),
+                Rule::unique('admins', 'email'),
+                function ($attribute, $value, $fail) {
+                    if (!$this->validateEmailDeliverability($value)) {
+                        $fail(__('admin.wrong_mail'));
                     }
                 }
-            }],
-            'cover' => [
-                'nullable',
-                'image',
-                'mimetypes:image/jpeg,image/png,image/webp,image/gif',
-                'mimes:jpg,jpeg,jfif,png,gif,webp'
             ],
+            'phone' => [
+                'required',
+                'string',
+                'regex:/^(05|5|9665|96605|009665|\+9665)[0-9]{8}$/',
+                Rule::unique('users', 'phone')->ignore(auth('web')->id()),
+                Rule::unique('users', 'additional_phone'),
+                Rule::unique('admins', 'phone'),
+            ],
+            'additional_phone' => [
+                'nullable',
+                'string',
+                'regex:/^(05|5|9665|96605|009665|\+9665)[0-9]{8}$/',
+                Rule::unique('users', 'additional_phone')->ignore(auth('web')->id()),
+                Rule::unique('admins', 'phone'),
+                Rule::unique('users', 'phone'),
+            ],
+            'city_id' => ['required', 'integer', Rule::exists('cities', 'id')],
+            'password' => ['nullable', 'string', 'confirmed', 'min:8', Password::min(8)
+                ->max(50)
+                ->letters()
+                ->mixedCase()
+                ->symbols()],
+
         ];
+    }
+
+    protected function validateEmailDeliverability($email)
+    {
+        $domain = substr(strrchr($email, "@"), 1);
+        if (!checkdnsrr($domain, 'MX')) {
+            return false;
+        }
+        return true;
     }
 }

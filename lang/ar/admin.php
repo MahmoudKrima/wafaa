@@ -102,7 +102,7 @@ return [
     'cities' => 'المدن',
     'choose_city' => 'اختر المدينة',
     'no_city' => 'لا توجد مدينة',
-    'additional_phone' => 'هاتف اضافى',
+    'additional_phone' => 'هاتف إضافي',
     'created_by' => 'تم الإنشاء بواسطة',
     'choose_admin' => 'اختر المدير',
     'no_admin' => 'لا يوجد مدير',
@@ -194,4 +194,7 @@ return [
     'deduct' => 'إستقطاع',
     'accepted_by' => 'مقبول بواسطة',
     'edited_by' => 'تم التعديل بواسطة',
+    'additional_phone' => 'هاتف إضافي',
+    'password_optional' => 'اتركه فارغاً للاحتفاظ بكلمة المرور الحالية',
+    'choose_city' => 'اختر المدينة',
 ];

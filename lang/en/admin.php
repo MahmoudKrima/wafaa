@@ -198,4 +198,5 @@ return [
     'deduct' => 'Deduct',
     'accepted_by' => 'Accepted By',
     'edited_by' => 'Edited By',
+    'password_optional' => 'Leave blank to keep current password',
 ];

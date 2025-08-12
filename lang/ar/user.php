@@ -37,6 +37,7 @@ return [
     'back' => 'رجوع',
     'update_profile' => 'تحديث الملف الشخصي',
     'profile_updated_successfully' => 'تم تحديث الملف الشخصي بنجاح',
+    'profile_update_failed' => 'فشل في تحديث الملف الشخصي. يرجى المحاولة مرة أخرى.',
     'phone_number' => 'رقم الهاتف',
     'address' => 'العنوان',
     'city' => 'المدينة',
