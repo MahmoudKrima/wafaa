@@ -199,4 +199,12 @@ return [
     'accepted_by' => 'Accepted By',
     'edited_by' => 'Edited By',
     'password_optional' => 'Leave blank to keep current password',
+    'home_page' => 'Home Page',
+    'sliders' => 'Sliders',
+    'create_slider' => 'Create Slider',
+    'edit_slider' => 'Edit Slider',
+    'slider' => 'Slider',
+    'button_text' => 'Button Text',
+    'subtitle' => 'Subtitle',
+    'button_url' => 'Button URL',
 ];
