@@ -207,4 +207,11 @@ return [
     'button_text' => 'Button Text',
     'subtitle' => 'Subtitle',
     'button_url' => 'Button URL',
+    'about_section' => 'About Section',
+    'about_items' => 'About Items',
+    'about' => 'About',
+    'edit_items' => 'Edit Items',
+    'edit_about' => 'Edit About',
+    'edit_about_items' => 'Edit About Item',
+    'item' => 'Item',
 ];

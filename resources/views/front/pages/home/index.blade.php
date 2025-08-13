@@ -2,9 +2,8 @@
 @section('title', __('admin.home_page'))
 
 @section('content')
-
 <div id="home-3" class="homepage-slides owl-carousel">
-    @forelse($sliders as $slider)
+    @foreach($sliders as $slider)
     <div class="single-slide-item d-flex align-items-center"
         data-background="{{ displayImage($slider->image)}}">
         <div class="overlay"></div>
@@ -27,107 +26,41 @@
             </div>
         </div>
     </div>
-    @empty
-    {{-- Fallback to default slider if no sliders exist --}}
-    <div class="single-slide-item d-flex align-items-center" data-background="{{ asset('front/assets/img/hero-bg-3.jpg') }}">
-        <div class="overlay"></div>
-        <div class="hero-area-content">
-            <div class="container">
-                <div class="row align-items-center">
-                    <div class="col-xl-12 col-lg-12 wow fadeInUp animated" data-wow-delay=".2s">
-                        <div class="section-title">
-                            <h1 class="text-white">شحن سريع وموثوق</h1>
-                        </div>
-                        <p class="text-white"> ارسل شحناتك معنا بسرعة وثقة على مدار الساعة بخيارات متعددة </p>
-                        <a href="#" class="theme-btn mt-40">تسجيل الدخول</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    @endforelse
+    @endforeach
 </div>
 
-
-
-
-
-<!-- About Section  -->
 <div id="about" class="faq-section section-padding theme_right" style="padding-top:150px;">
     <div class="container">
         <div class="row">
             <div class="col-xl-6 col-lg-6 wow fadeInUp animated" data-wow-delay="200ms">
                 <div class="section-title">
-                    <h6>من نحن</h6>
-                    <h2>إعرف أكر عن <span>MW Express</span></h2>
+                    <h6>{{ $about->subtitle}}</h6>
+                    <h2>{{ $about->title}} <span>{{ app('settings')['app_name_' . assetLang()] }}</span></h2>
                 </div>
                 <div class="faq-wrap mt-0">
                     <div class="cp-custom-accordion mt-60">
                         <div class="accordions" id="accordionExample">
-
-
+                            @foreach($aboutItems as $index => $item)
                             <div class="accordion-items">
-                                <h2 class="accordion-header" id="headingOne">
-                                    <button class="accordion-buttons" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                        <span>01</span>من نحن ؟
+                                <h2 class="accordion-header" id="heading{{ $index + 1 }}">
+                                    <button class="accordion-buttons {{ $index == 0 ? '' : 'collapsed' }}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ $index + 1 }}" aria-expanded="{{ $index == 0 ? 'true' : 'false' }}" aria-controls="collapse{{ $index + 1 }}">
+                                        <span>{{ str_pad($index + 1, 2, '0', STR_PAD_LEFT) }}</span>{{ $item->title }}
                                     </button>
                                 </h2>
-                                <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                <div id="collapse{{ $index + 1 }}" class="accordion-collapse collapse {{ $index == 0 ? 'show' : '' }}" aria-labelledby="heading{{ $index + 1 }}" data-bs-parent="#accordionExample">
                                     <div class="accordion-body">
-                                        هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة، لقد تم توليد هذا النص من مولد النص العربى، حيث يمكنك أن تولد مثل هذا النص أو العديد من النصوص الأخرى إضافة إلى زيادة عدد الحروف التى يولدها التطبيق.
+                                        {{ $item->description }}
                                     </div>
                                 </div>
                             </div>
-
-
-                            <div class="accordion-items">
-                                <h2 class="accordion-header" id="headingTwo">
-                                    <button class="accordion-buttons collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                        <span>02</span>رؤيتنا
-                                    </button>
-                                </h2>
-                                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
-                                    <div class="accordion-body">
-                                        It is a long established fact t a reader will be distracted by the mabn readable content of ajlijkl page when looking at its layout. Lorem Ipsum is simpl
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div class="accordion-items">
-                                <h2 class="accordion-header" id="headingThree">
-                                    <button class="accordion-buttons collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                        <span>03</span>رسالتنا
-                                    </button>
-                                </h2>
-                                <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
-                                    <div class="accordion-body">
-                                        It is a long established fact t a reader will be distracted by the mabn readable content of ajlijkl page when looking at its layout. Lorem Ipsum is simpl
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="accordion-items">
-                                <h2 class="accordion-header" id="headingThree">
-                                    <button class="accordion-buttons collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                        <span>03</span>أهدافنا
-                                    </button>
-                                </h2>
-                                <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
-                                    <div class="accordion-body">
-                                        It is a long established fact t a reader will be distracted by the mabn readable content of ajlijkl page when looking at its layout. Lorem Ipsum is simpl
-                                    </div>
-                                </div>
-                            </div>
-
-
+                            @endforeach
                         </div>
                     </div>
                 </div>
             </div>
             <div class="col-xl-6 col-lg-6 wow fadeInRight animated" data-wow-delay="200ms">
                 <div class="faq-img-wrap">
-                    <img src="{{ asset('front/assets/img/faq-img.png') }}" alt="" style="float:left;">
+                    <img src="{{displayImage($about->image) }}" alt="{{ $about->title }}" style="float:left;">
                 </div>
             </div>
         </div>
@@ -135,8 +68,6 @@
 </div>
 
 
-
-<!-- clients Section  -->
 <div id="clients" class="about-section gray-bg theme_right" style="padding-top:120px;">
     <div class="container">
         <div class="row align-items-center">

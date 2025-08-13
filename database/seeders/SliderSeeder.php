@@ -20,7 +20,7 @@ class SliderSeeder extends Seeder
                 'subtitle' => null,
                 'button_text' => 'تسجيل الدخول',
                 'button_url' => '#',
-                'image' => null,
+                'image' => 'defaults/admin.jpg',
                 'status' => 'active',
             ],
             [
@@ -29,7 +29,7 @@ class SliderSeeder extends Seeder
                 'subtitle' => 'Smart Solutions',
                 'button_text' => 'Learn More',
                 'button_url' => 'about.html',
-                'image' => null,
+                'image' => 'defaults/admin.jpg',
                 'status' => 'active',
             ],
             [
@@ -38,7 +38,7 @@ class SliderSeeder extends Seeder
                 'subtitle' => 'خدمة 24/7',
                 'button_text' => 'تواصل معنا',
                 'button_url' => 'contact.html',
-                'image' => null,
+                'image' => 'defaults/admin.jpg',
                 'status' => 'active',
             ],
         ];
