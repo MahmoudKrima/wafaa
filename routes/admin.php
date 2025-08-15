@@ -11,6 +11,8 @@ use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use App\Http\Controllers\Admin\WebSiteSettings\RoleController;
 use App\Http\Controllers\Admin\Transaction\TransactionController;
 use App\Http\Controllers\Admin\WebSiteSettings\SettingsController;
+use App\Http\Controllers\Admin\FrontSettings\Slider\SliderController;
+use App\Http\Controllers\Admin\FrontSetting\About\AboutController;
 
 /*
 |--------------------------------------------------------------------------
@@ -205,6 +207,50 @@ Route::middleware(['web'])->group(function () {
                 Route::delete('/transactions-delete/{transaction}', 'delete')
                     ->name('transactions.delete')
                     ->middleware('has.permission:transactions.delete');
+            });
+
+        Route::controller(SliderController::class)
+            ->group(function () {
+                Route::get('/sliders', 'index')
+                    ->name('sliders.index')
+                    ->middleware('has.permission:sliders.view');
+                Route::get('/sliders-search', 'search')
+                    ->name('sliders.search')
+                    ->middleware('has.permission:sliders.view');
+                Route::get('/sliders/create', 'create')
+                    ->name('sliders.create')
+                    ->middleware('has.permission:sliders.create');
+                Route::post('/sliders/store', 'store')
+                    ->name('sliders.store')
+                    ->middleware('has.permission:sliders.create');
+                Route::get('/sliders/edit/{slider}', 'edit')
+                    ->name('sliders.edit')
+                    ->middleware('has.permission:sliders.update');
+                Route::post('/sliders/update/{slider}', 'update')
+                    ->name('sliders.update')
+                    ->middleware('has.permission:sliders.update');
+                Route::post('/sliders/update-status/{slider}', 'updateStatus')
+                    ->name('sliders.updateStatus')
+                    ->middleware('has.permission:sliders.update');
+                Route::delete('/sliders/delete/{slider}', 'delete')
+                    ->name('sliders.delete')
+                    ->middleware('has.permission:sliders.delete');
+            });
+
+        Route::controller(AboutController::class)
+            ->group(function () {
+                Route::get('/about', 'index')
+                    ->name('about.index')
+                    ->middleware('has.permission:about.view');
+                Route::get('/about/edit', 'edit')
+                    ->name('about.edit')
+                    ->middleware('has.permission:about.update');
+                Route::post('/about/update-about/{about}', 'updateAbout')
+                    ->name('about.update')
+                    ->middleware('has.permission:about.update');
+                Route::post('/about/update-item/{aboutItem}', 'updateAboutItem')
+                    ->name('about.update-item')
+                    ->middleware('has.permission:about-items.update');
             });
     });
 });

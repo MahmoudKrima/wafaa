@@ -9,6 +9,9 @@ use App\Models\Setting;
 use App\Models\WalletLog;
 use App\Models\UserWallet;
 use App\Models\Transaction;
+use App\Models\Slider;
+use App\Models\About;
+use App\Models\AboutItem;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 
@@ -34,6 +37,9 @@ class PermissionSeeder extends Seeder
             ...Transaction::$permissions,
             ...Setting::$permissions,
             ...WalletLog::$permissions,
+            ...Slider::$permissions,
+            ...About::$permissions,
+            ...AboutItem::$permissions,
             ...$rolePermission,
         ];
 

@@ -2,16 +2,17 @@
 
 namespace Database\Seeders;
 
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Database\Seeders\RoleSeeder;
 use Database\Seeders\AdminSeeder;
+use Database\Seeders\CitiesSeeder;
+use Database\Seeders\SliderSeeder;
 use Database\Seeders\SettingSeeder;
 use Database\Seeders\PermissionSeeder;
-use Database\Seeders\CitiesSeeder;
 use Illuminate\Support\Facades\Artisan;
+use Database\Seeders\AboutSeeder;
+use Database\Seeders\AboutItemSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -27,6 +28,9 @@ class DatabaseSeeder extends Seeder
             AdminSeeder::class,
             SettingSeeder::class,
             CitiesSeeder::class,
+            SliderSeeder::class,
+            AboutSeeder::class,
+            AboutItemSeeder::class,
         ]);
         User::factory(10)->create();
     }

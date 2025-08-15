@@ -166,28 +166,6 @@
                                             @if (auth('admin')->user()->hasAnyPermission(['banks.update', 'banks.delete', 'plan_transaction.view']))
                                                 <td class="text-center">
                                                     <div class="action-btns d-flex justify-content-center">
-                                                        <!-- @haspermission('plan_transaction.view', 'admin')
-                                                                                    <a href="{{ route('admin.banks-transactions.showTransactions', $bank->id) }}"
-                                                                                        class="action-btn btn-edit bs-tooltip me-2 mb-2 badge rounded-circle bg-info p-2"
-                                                                                        data-toggle="tooltip" data-placement="top"
-                                                                                        aria-label="View Provider"
-                                                                                        title="{{ __('admin.plan_transactions') }}"
-                                                                                        data-bs-original-title="View Provider"
-                                                                                        style="margin-right: 10px;">
-                                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16"
-                                                                                            height="16" viewBox="0 0 24 24" fill="none"
-                                                                                            stroke="currentColor" stroke-width="2"
-                                                                                            stroke-linecap="round" stroke-linejoin="round"
-                                                                                            class="feather feather-credit-card">
-                                                                                            <rect x="1" y="4" width="22" height="16"
-                                                                                                rx="2" ry="2"></rect>
-                                                                                            <line x1="1" y1="10" x2="23"
-                                                                                                y2="10"></line>
-                                                                                        </svg>
-                                                                                    </a>
-                                                                                @endhaspermission -->
-
-
                                                         @haspermission('banks.update', 'admin')
                                                         <a href="{{ route('admin.banks.edit', $bank->id) }}"
                                                             class="action-btn bs-tooltip me-2 mb-2 badge rounded-circle bg-warning p-2"

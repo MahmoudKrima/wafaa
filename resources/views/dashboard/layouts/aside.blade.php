@@ -123,7 +123,9 @@
             auth('admin')->user()->hasAnyPermission([
             'settings.view',
             'roles.view',
-
+            'sliders.view',
+            'about.view',
+            'about-items.view',
             ])
             )
             <li class="menu {{ isRoute([
@@ -132,13 +134,27 @@
                     'admin.roles.search',
                     'admin.roles.create',
                     'admin.roles.edit',
+                    'admin.sliders.search',
+                    'admin.sliders.create',
+                    'admin.sliders.edit',
+                    'admin.sliders.index',
+                    'admin.about.index',
+                    'admin.about.edit',
+                    'admin.about.update-item',
                 ]) ? 'active' : '' }}">
                 <a href="#settings" data-active="{{ isRoute([
                     'admin.settings.index',
                     'admin.roles.index',
                     'admin.roles.search',
                     'admin.roles.create',
-                    'admin.roles.edit'
+                    'admin.roles.edit',
+                    'admin.sliders.search',
+                    'admin.sliders.create',
+                    'admin.sliders.edit',
+                    'admin.sliders.index',
+                    'admin.about.index',
+                    'admin.about.edit',
+                    'admin.about.update-item',
                 ]) ? 'true' : 'false' }}" class="menu-toggle">
                     <div class="base-menu">
                         <div class="base-icons">
@@ -259,6 +275,7 @@
         auth('admin')->user()->hasAnyPermission([
         'settings.update',
         'roles.view',
+        'sliders.view',
         ])
         )
         <div class="submenu" id="settings">
@@ -290,6 +307,30 @@
                             </path>
                         </svg>
                         {{ __('admin.settings') }} </a>
+                </li>
+                @endhaspermission
+                @haspermission('sliders.view', 'admin')
+                <li
+                    class="{{ isRoute(['admin.sliders.index', 'admin.sliders.search', 'admin.sliders.create', 'admin.sliders.edit']) ? 'active' : '' }}">
+                    <a href="{{ route('admin.sliders.index') }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="feather feather-shield">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                        {{ __('admin.sliders') }} </a>
+                </li>
+                @endhaspermission
+                @haspermission('about.view', 'admin')
+                <li
+                    class="{{ isRoute(['admin.about.index','admin.about.edit','admin.about.update-item']) ? 'active' : '' }}">
+                    <a href="{{ route('admin.about.index') }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                            class="feather feather-shield">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                        </svg>
+                        {{ __('admin.about') }} </a>
                 </li>
                 @endhaspermission
             </ul>
