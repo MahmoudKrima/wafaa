@@ -65,7 +65,7 @@
                                     <td class="text-center">
                                         <div class="action-btns d-flex justify-content-center">
                                             @haspermission('user_shipping_prices.update', 'admin')
-                                            <a href="{{ route('admin.user-shipping-prices.edit',$userShippingPrice->id) }}"
+                                            <a href="{{ route('admin.user-shipping-prices.edit', [$user->id, $userShippingPrice->id]) }}"
                                                 class="action-btn bs-tooltip me-2 mb-2 badge rounded-circle bg-warning p-2"
                                                 data-toggle="tooltip" data-placement="top" aria-label="Edit bank"
                                                 data-bs-original-title="Edit bank" title="{{ __('admin.edit_bank') }}"

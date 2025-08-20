@@ -18,8 +18,13 @@
             <div class="statbox widget box box-shadow">
                 <div class="widget-header">
                     <div class="row">
-                        <div class="col-xl-12 col-md-12 col-sm-12 col-12">
+                        <div class="col-xl-6 col-md-6 col-sm-6 col-6">
                             <h4>{{ __('admin.create_user_shipping_price') }}</h4>
+                        </div>
+                        <div class="col-xl-6 col-md-6 col-sm-6 col-6 text-right mt-2">
+                            <a href="{{ route('admin.user-shipping-prices.index', $user->id) }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> {{ __('admin.back') }}
+                            </a>
                         </div>
                     </div>
                 </div>

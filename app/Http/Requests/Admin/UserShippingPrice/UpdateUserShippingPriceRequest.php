@@ -18,9 +18,8 @@ class UpdateUserShippingPriceRequest extends FormRequest
             'company_id' => ['required', 'string', 'max:255', Rule::unique('user_shipping_prices', 'company_id')->where('user_id', $this->route('user')->id)->ignore($this->route('userShippingPrice'))],
             'company_name_ar' => ['required', 'string', 'max:255'],
             'company_name_en' => ['required', 'string', 'max:255'],
-            'international_price' => ['required', 'numeric', 'min:0'],
+            'international_price' => ['sometimes', 'nullable', 'numeric', 'min:0'],
             'local_price' => ['required', 'numeric', 'min:0'],
         ];
     }
-
 }

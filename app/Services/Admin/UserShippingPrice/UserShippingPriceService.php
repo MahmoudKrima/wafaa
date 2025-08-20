@@ -27,16 +27,11 @@ class UserShippingPriceService
         return UserShippingPrice::create($data);
     }
 
-    public function updateUserShippingPrice($userShippingPrice, $data)
+    public function updateUserShippingPrice($request, $userShippingPrice)
     {
+        $data = $request->validated();
         $data['company_name'] = $this->translate($data['company_name_ar'], $data['company_name_en']);
         $userShippingPrice->update($data);
-        return $userShippingPrice;
-    }
-
-    public function updateUserShippingPriceStatus($userShippingPrice, $status)
-    {
-        $userShippingPrice->update(['is_active' => $status]);
         return $userShippingPrice;
     }
 
@@ -45,8 +40,4 @@ class UserShippingPriceService
         return $userShippingPrice->delete();
     }
 
-    public function findById($id)
-    {
-        return UserShippingPrice::findOrFail($id);
-    }
 }

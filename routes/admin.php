@@ -265,10 +265,10 @@ Route::middleware(['web'])->group(function () {
                 Route::post('/user-shipping-prices/store/{user}', 'store')
                     ->name('user-shipping-prices.store')
                     ->middleware('has.permission:user_shipping_prices.create');
-                Route::get('/user-shipping-prices/edit/{userShippingPrice}', 'edit')
+                Route::get('/user-shipping-prices/edit/{user}/{userShippingPrice}', 'edit')
                     ->name('user-shipping-prices.edit')
                     ->middleware('has.permission:user_shipping_prices.update');
-                Route::post('/user-shipping-prices/update/{userShippingPrice}', 'update')
+                Route::post('/user-shipping-prices/update/{user}/{userShippingPrice}', 'update')
                     ->name('user-shipping-prices.update')
                     ->middleware('has.permission:user_shipping_prices.update');
                 Route::delete('/user-shipping-prices/delete/{userShippingPrice}', 'delete')
