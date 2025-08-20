@@ -263,4 +263,12 @@ return [
     'receiver_population' => 'Receiver Population',
     'no_cities_available' => 'No cities available',
     'error_loading_cities' => 'Error loading cities',
+    'user_shipping_prices' => 'User Shipping Prices',
+    'company_id' => 'Company ID',
+    'international_price' => 'International Price',
+    'local_price' => 'Local Price',
+    'company_name' => 'Company Name',
+    'create_user_shipping_price' => 'Create User Shipping Price',
+    'edit_user_shipping_price' => 'Edit User Shipping Price',
+    'shipping_company' => 'Shipping Company',
 ];

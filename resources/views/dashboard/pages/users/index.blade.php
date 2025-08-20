@@ -130,9 +130,24 @@
                                     <td>{{ Str::limit($user->address, 50) }}</td>
                                     <td>{{ $user->addedByAdmin?->name}}</td>
                                     <td>{{ optional($user->wallet)->balance ?? __('admin.n/a')}}</td>
-                                    @if (auth('admin')->user()->hasAnyPermission(['users.update', 'users.delete']))
+                                    @if (auth('admin')->user()->hasAnyPermission(['users.update', 'users.delete', 'user_shipping_prices.view', 'wallet_logs.view']))
                                     <td class="text-center">
                                         <div class="action-btns d-flex justify-content-center">
+                                            @haspermission('user_shipping_prices.view', 'admin')
+                                            <a href="{{ route('admin.user-shipping-prices.index', $user->id) }}"
+                                                class="action-btn btn-edit bs-tooltip me-2 badge rounded-pill bg-info mx-auto"
+                                                style="padding:7px;" title="{{ __('admin.user_shipping_prices') }}"
+                                                data-toggle="tooltip" data-placement="top" aria-label="Edit"
+                                                data-bs-original-title="Edit">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    class="feather feather-truck">
+                                                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+                                                    <line x1="1" y1="10" x2="23" y2="10"></line>
+                                                </svg>
+                                            </a>
+                                            @endhaspermission
                                             @haspermission('wallet_logs.view', 'admin')
                                             <a href="{{ route('admin.wallet_logs.index', $user->id) }}"
                                                 class="action-btn btn-edit bs-tooltip me-2 badge rounded-pill bg-info mx-auto"

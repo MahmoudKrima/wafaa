@@ -257,6 +257,11 @@ return [
         'bank' => 'Bank',
         'bank_id' => 'Bank',
         'banks_id' => 'Bank',
+        'international_price' => 'International Price',
+        'local_price' => 'Local Price',
+        'company_id' => 'Company ID',
+        'company_name_ar' => 'Company Name Ar',
+        'company_name_en' => 'Company Name En',
     ],
 
 ];

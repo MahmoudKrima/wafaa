@@ -259,4 +259,12 @@ return [
     'test_receiver_population' => 'تحميل المستلمين',
     'no_cities_available' => 'لا توجد مدن متاحة',
     'error_loading_cities' => 'خطأ في تحميل المدن',
+    'user_shipping_prices' => 'أسعار الشحن',
+    'company_id' => 'معرف الشركة',
+    'international_price' => 'السعر الدولي',
+    'local_price' => 'السعر المحلي',
+    'company_name' => 'اسم الشركة',
+    'create_user_shipping_price' => 'إنشاء سعر شحن للمستخدم',
+    'edit_user_shipping_price' => 'تعديل سعر شحن للمستخدم',
+    'shipping_company' => 'شركة الشحن',
 ];
