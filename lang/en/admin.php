@@ -257,5 +257,10 @@ return [
     'enter_phone_number' => 'Enter phone number',
     'enter_additional_phone' => 'Enter additional phone',
     'enter_full_address' => 'Enter full address',
-
+    'postal_code' => 'Postal Code',
+    'enter_postal_code' => 'Enter postal code',
+    'enter_email' => 'Enter email',
+    'receiver_population' => 'Receiver Population',
+    'no_cities_available' => 'No cities available',
+    'error_loading_cities' => 'Error loading cities',
 ];

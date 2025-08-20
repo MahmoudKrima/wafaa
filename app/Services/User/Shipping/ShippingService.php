@@ -3,25 +3,23 @@
 namespace App\Services\User\Shipping;
 
 use App\Models\Banks;
+use App\Models\Reciever;
+use App\Models\Shipping;
 use App\Traits\ImageTrait;
 use App\Filters\CodeFilter;
-use App\Models\Shipping;
 use Illuminate\Pipeline\Pipeline;
-use App\Enum\TransactionStatusEnum;
 use App\Filters\ActivationStatusFilter;
 
 class ShippingService
 {
     use ImageTrait;
 
-    private function banksHasTransactions()
+    public function receivers()
     {
-        return Banks::where('admin_id', auth()->user()->created_by)
-            ->whereHas('shippings', function ($query) {
-                $query->where('user_id', auth()->id());
-            })
-            ->Active()
+        $recievers = Reciever::where('user_id', auth()->user()->id)
+            ->withAllRelations()
             ->get();
+        return $recievers;
     }
 
     public function index($request)
@@ -45,10 +43,7 @@ class ShippingService
         return compact('banks', 'shippings', 'status');
     }
 
-    
 
-    public function store($request)
-    {
-        
-    }
+
+    public function store($request) {}
 }

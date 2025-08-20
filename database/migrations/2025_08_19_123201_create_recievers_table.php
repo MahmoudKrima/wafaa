@@ -13,6 +13,20 @@ return new class extends Migration
     {
         Schema::create('recievers', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->string('email')->unique();
+            $table->string('phone')->unique();
+            $table->string('postal_code')->nullable();
+            $table->string('additional_phone')->nullable();
+            $table->text('address');
+            $table->foreignId('user_id')
+                ->constrained('users')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+            $table->foreignId('city_id')
+                ->constrained('cities')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
             $table->timestamps();
         });
     }

@@ -28,15 +28,15 @@
                                         <span class="ms-2">{{ __('admin.select_method') }}</span>
                                     </div>
                                     <div class="step-line mx-3" style="width: 60px; height: 3px; background: #e9ecef;"></div>
-                                                                    <div class="step">
-                                    <div class="step-number bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; font-weight: bold;">3</div>
-                                    <span class="ms-2">{{ __('admin.user_information') }}</span>
-                                </div>
-                                <div class="step-line mx-3" style="width: 60px; height: 3px; background: #e9ecef;"></div>
-                                <div class="step">
-                                    <div class="step-number bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; font-weight: bold;">4</div>
-                                    <span class="ms-2">{{ __('admin.shipping_details') }}</span>
-                                </div>
+                                    <div class="step">
+                                        <div class="step-number bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; font-weight: bold;">3</div>
+                                        <span class="ms-2">{{ __('admin.user_information') }}</span>
+                                    </div>
+                                    <div class="step-line mx-3" style="width: 60px; height: 3px; background: #e9ecef;"></div>
+                                    <div class="step">
+                                        <div class="step-number bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; font-weight: bold;">4</div>
+                                        <span class="ms-2">{{ __('admin.shipping_details') }}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -52,7 +52,7 @@
                                     <img src="{{ asset('front/assets/img/preload.png') }}" alt="Logo" class="img-fluid" style="max-height: 80px; max-width: 200px;">
                                 </div>
                                 <div class="spinner-border text-primary" role="status" style="width: 2rem; height: 2rem;">
-                                    <span class="visually-hidden">Loading...</span>
+                                    <span class="visually-hidden"></span>
                                 </div>
                                 <p class="mt-2">{{ __('admin.loading_companies') }}</p>
                             </div>
@@ -65,58 +65,66 @@
                         <div id="method-options" class="row">
                         </div>
                     </div>
-                    <div class="step-content" id="step-3" style="display: none;" 
-                         data-user-city-id="{{ auth()->user()->city->city_id ?? '' }}"
-                         data-app-locale="{{ app()->getLocale() }}">
+                    <div class="step-content" id="step-3" style="display: none;"
+                        data-user-city-id="{{ auth()->user()->city->city_id ?? '' }}"
+                        data-app-locale="{{ app()->getLocale() }}">
                         <h5 class="text-center mb-4">{{ __('admin.user_information') }}</h5>
-                        
+
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="user_name" class="text-dark">{{ __('admin.full_name') }}</label>
                                 <input id="user_name" type="text" name="user_name" class="form-control" value="{{ auth()->user()->name ?? '' }}" disabled>
                             </div>
-                            
+
                             <div class="col-md-6 mb-3">
                                 <label for="user_phone" class="text-dark">{{ __('admin.phone_number') }}</label>
                                 <input id="user_phone" type="text" name="phone" class="form-control" value="{{ auth()->user()->phone ?? '' }}" disabled>
                             </div>
                         </div>
-                        
+
                         <div class="row">
                             <div class="col-md-6 mb-3">
-                                <label for="user_phone1" class="text-dark">{{ __('admin.additional_phone') }}</label>
-                                <input id="user_phone1" type="text" name="additional_phone" class="form-control" value="{{ auth()->user()->additional_phone ?? '' }}" disabled>
+                                <label for="user_additional_phone" class="text-dark">{{ __('admin.additional_phone') }}</label>
+                                <input id="user_additional_phone" type="text" name="additional_phone" class="form-control" value="{{ auth()->user()->additional_phone ?? '' }}" disabled>
                             </div>
-                            
+                            <div class="col-md-6 mb-3">
+                                <label for="user_email" class="text-dark">{{ __('admin.email') }}</label>
+                                <input id="user_email" type="text" name="email" class="form-control" value="{{ auth()->user()->email ?? '' }}" disabled>
+                            </div>
+                        </div>
+
+                        <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="user_city" class="text-dark">{{ __('admin.city') }}</label>
                                 <select id="user_city" name="city" class="form-control" disabled>
                                     <option value="">{{ __('admin.select_city') }}</option>
                                 </select>
                             </div>
-                        </div>
-                        
-                        <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="user_country" class="text-dark">{{ __('admin.country') }}</label>
                                 <input id="user_country" type="text" name="country" class="form-control" value="" disabled>
                             </div>
-                            
+                        </div>
+                        <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="user_address" class="text-dark">{{ __('admin.full_address') }}</label>
                                 <textarea id="user_address" name="user_address" class="form-control" rows="3" disabled>{{ auth()->user()->address ?? '' }}</textarea>
                             </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="user_postal_code" class="text-dark">{{ __('admin.postal_code') }}</label>
+                                <input id="user_postal_code" type="text" name="postal_code" class="form-control" value="{{ auth()->user()->postal_code ?? '' }}">
+                            </div>
                         </div>
-                        
+
                         <div class="alert alert-info">
                             <i class="fas fa-info-circle"></i>
                             {{ __('admin.user_info_note') }}
                         </div>
                     </div>
-                    
+
                     <div class="step-content" id="step-4" style="display: none;">
                         <h5 class="text-center mb-4">{{ __('admin.receiver_information') }}</h5>
-                        
+
                         <!-- Receiver Type Selection -->
                         <div class="row mb-4">
                             <div class="col-12">
@@ -135,7 +143,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Existing Receiver Selection -->
                         <div id="existing_receiver_section">
                             <div class="row mb-3">
@@ -146,50 +154,66 @@
                                     </select>
                                 </div>
                             </div>
+                            <div class="row mb-3">
+                                <div class="col-12">
+                                    <button type="button" class="btn btn-sm btn-info" onclick="testReceiverPopulation()">
+                                        {{ __('admin.test_receiver_population') }}
+                                    </button>
+                                </div>
+                            </div>
+
                         </div>
-                        
-                        <!-- New Receiver Form -->
+
                         <div id="new_receiver_section" style="display: none;">
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="receiver_name" class="text-dark">{{ __('admin.full_name') }}</label>
-                                    <input id="receiver_name" type="text" name="receiver_name" class="form-control" placeholder="{{ __('admin.enter_full_name') }}">
+                                    <label for="name" class="text-dark">{{ __('admin.full_name') }}</label>
+                                    <input id="name" type="text" name="name" class="form-control" placeholder="{{ __('admin.enter_full_name') }}">
                                 </div>
-                                
+
                                 <div class="col-md-6 mb-3">
-                                    <label for="receiver_phone" class="text-dark">{{ __('admin.phone_number') }}</label>
-                                    <input id="receiver_phone" type="text" name="receiver_phone" class="form-control" placeholder="{{ __('admin.enter_phone_number') }}">
+                                    <label for="phone" class="text-dark">{{ __('admin.phone_number') }}</label>
+                                    <input id="phone" type="text" name="phone" class="form-control" placeholder="{{ __('admin.enter_phone_number') }}">
                                 </div>
                             </div>
-                            
+
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="receiver_phone1" class="text-dark">{{ __('admin.additional_phone') }}</label>
-                                    <input id="receiver_phone1" type="text" name="receiver_phone1" class="form-control" placeholder="{{ __('admin.enter_additional_phone') }}">
+                                    <label for="additional_phone" class="text-dark">{{ __('admin.additional_phone') }}</label>
+                                    <input id="additional_phone" type="text" name="additional_phone" class="form-control" placeholder="{{ __('admin.enter_additional_phone') }}">
                                 </div>
-                                
                                 <div class="col-md-6 mb-3">
-                                    <label for="receiver_city" class="text-dark">{{ __('admin.city') }}</label>
-                                    <select id="receiver_city" name="receiver_city" class="form-control">
+                                    <label for="email" class="text-dark">{{ __('admin.email') }}</label>
+                                    <input id="email" type="text" name="email" class="form-control" placeholder="{{ __('admin.enter_email') }}">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="city" class="text-dark">{{ __('admin.city') }}</label>
+                                    <select id="city" name="city" class="form-control">
                                         <option value="">{{ __('admin.select_city') }}</option>
                                     </select>
                                 </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="country" class="text-dark">{{ __('admin.country') }}</label>
+                                    <input id="country" type="text" name="country" class="form-control">
+                                </div>
                             </div>
-                            
+
                             <div class="row">
                                 <div class="col-md-6 mb-3">
-                                    <label for="receiver_country" class="text-dark">{{ __('admin.country') }}</label>
-                                    <input id="receiver_country" type="text" name="receiver_country" class="form-control" readonly>
+                                    <label for="address" class="text-dark">{{ __('admin.full_address') }}</label>
+                                    <textarea id="address" name="address" class="form-control" rows="3" placeholder="{{ __('admin.enter_full_address') }}"></textarea>
                                 </div>
-                                
                                 <div class="col-md-6 mb-3">
-                                    <label for="receiver_address" class="text-dark">{{ __('admin.full_address') }}</label>
-                                    <textarea id="receiver_address" name="receiver_address" class="form-control" rows="3" placeholder="{{ __('admin.enter_full_address') }}"></textarea>
+                                    <label for="postal_code" class="text-dark">{{ __('admin.postal_code') }}</label>
+                                    <input id="postal_code" type="text" name="postal_code" class="form-control" placeholder="{{ __('admin.enter_postal_code') }}">
                                 </div>
                             </div>
+
                         </div>
                     </div>
-                    
+
                     <div class="step-content" id="step-5" style="display: none;">
                         <h5 class="text-center mb-4">{{ __('admin.shipping_details') }}</h5>
 
@@ -250,6 +274,26 @@
 @endsection
 
 @push('js')
+<script>
+    const translations = {
+        local: '{{ __("admin.local") }}',
+        international: '{{ __("admin.international") }}',
+        local_delivery: '{{ __("admin.local_delivery") }}',
+        worldwide_shipping: '{{ __("admin.worldwide_shipping") }}',
+        choose_receiver: '{{ __("admin.choose_receiver") }}',
+        no_cities_available: '{{ __("admin.no_cities_available") }}',
+        no_receivers_found: '{{ __("admin.no_receivers_found") }}',
+        error_loading_receivers: '{{ __("admin.error_loading_receivers") }}',
+        error_loading_cities: '{{ __("admin.error_loading_cities") }}',
+        select_city: '{{ __("admin.select_city") }}',
+        select_receiver: '{{ __("admin.select_receiver") }}',
+        choose_receiver: '{{ __("admin.choose_receiver") }}',
+        no_receivers_found: '{{ __("admin.no_receivers_found") }}',
+        error_loading_receivers: '{{ __("admin.error_loading_receivers") }}',
+        error_loading_cities: '{{ __("admin.error_loading_cities") }}',
+        select_city: '{{ __("admin.select_city") }}',
+    };
+</script>
 <script src="{{ asset('user/shipping.js') }}"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {

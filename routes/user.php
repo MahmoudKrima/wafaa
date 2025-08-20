@@ -9,8 +9,9 @@ use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use App\Http\Controllers\User\Transaction\TransactionController;
 
 
+Route::get('/receivers', [ShippingController::class, 'receivers'])
+    ->name('recievers.index');
 Route::middleware(['web'])->group(function () {
-    // User Auth Routes (accessible at /en/user/login, /en/user, etc.)
     Route::controller(AuthController::class)
         ->as('user.')
         ->prefix(LaravelLocalization::setLocale() . '/user')
@@ -39,8 +40,6 @@ Route::middleware(['web'])->group(function () {
                 ->name('auth.resetPasswordSubmit')
                 ->middleware('guest.user');
         });
-
-    // User Protected Routes (with /user prefix)
     Route::group([
         'as' => 'user.',
         'prefix' => LaravelLocalization::setLocale() . '/user',

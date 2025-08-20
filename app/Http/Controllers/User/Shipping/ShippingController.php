@@ -18,6 +18,12 @@ class ShippingController extends Controller
         return view('user.pages.shippings.create');
     }
 
+    public function receivers()
+    {
+        $recievers = $this->shippingService->receivers();
+        return response()->json($recievers);
+    }
+
     public function create()
     {
         return view('user.pages.shippings.create');
