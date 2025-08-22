@@ -55,7 +55,8 @@ class User extends Authenticatable
         'addedByAdmin',
         'wallet',
         'transactions',
-        'walletLogs'
+        'walletLogs',
+        'shippingPrices'
     ];
 
 
@@ -100,5 +101,10 @@ class User extends Authenticatable
     public function walletLogs()
     {
         return $this->hasMany(WalletLog::class);
+    }
+
+    public function shippingPrices()
+    {
+        return $this->hasMany(UserShippingPrice::class);
     }
 }

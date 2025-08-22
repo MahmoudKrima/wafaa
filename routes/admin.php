@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\Transaction\TransactionController;
 use App\Http\Controllers\Admin\WebSiteSettings\SettingsController;
 use App\Http\Controllers\Admin\FrontSettings\Slider\SliderController;
 use App\Http\Controllers\Admin\FrontSetting\About\AboutController;
+use App\Http\Controllers\Admin\UserShippingPrice\UserShippingPriceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -251,6 +252,28 @@ Route::middleware(['web'])->group(function () {
                 Route::post('/about/update-item/{aboutItem}', 'updateAboutItem')
                     ->name('about.update-item')
                     ->middleware('has.permission:about-items.update');
+            });
+
+        Route::controller(UserShippingPriceController::class)
+            ->group(function () {
+                Route::get('/user-shipping-prices/{user}', 'index')
+                    ->name('user-shipping-prices.index')
+                    ->middleware('has.permission:user_shipping_prices.view');
+                Route::get('/user-shipping-prices/create/{user}', 'create')
+                    ->name('user-shipping-prices.create')
+                    ->middleware('has.permission:user_shipping_prices.create');
+                Route::post('/user-shipping-prices/store/{user}', 'store')
+                    ->name('user-shipping-prices.store')
+                    ->middleware('has.permission:user_shipping_prices.create');
+                Route::get('/user-shipping-prices/edit/{user}/{userShippingPrice}', 'edit')
+                    ->name('user-shipping-prices.edit')
+                    ->middleware('has.permission:user_shipping_prices.update');
+                Route::post('/user-shipping-prices/update/{user}/{userShippingPrice}', 'update')
+                    ->name('user-shipping-prices.update')
+                    ->middleware('has.permission:user_shipping_prices.update');
+                Route::delete('/user-shipping-prices/delete/{userShippingPrice}', 'delete')
+                    ->name('user-shipping-prices.delete')
+                    ->middleware('has.permission:user_shipping_prices.delete');
             });
     });
 });

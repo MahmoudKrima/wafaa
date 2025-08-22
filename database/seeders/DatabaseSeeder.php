@@ -13,6 +13,7 @@ use Database\Seeders\PermissionSeeder;
 use Illuminate\Support\Facades\Artisan;
 use Database\Seeders\AboutSeeder;
 use Database\Seeders\AboutItemSeeder;
+use App\Models\Reciever;
 
 class DatabaseSeeder extends Seeder
 {
@@ -33,5 +34,6 @@ class DatabaseSeeder extends Seeder
             AboutItemSeeder::class,
         ]);
         User::factory(10)->create();
+        Reciever::factory(10)->create();
     }
 }

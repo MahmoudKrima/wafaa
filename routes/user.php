@@ -1,15 +1,17 @@
 <?php
 
-use App\Http\Controllers\User\Transaction\TransactionController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\User\Auth\AuthController;
 use App\Http\Controllers\User\Home\HomeController;
 use App\Http\Controllers\User\Profile\ProfileController;
+use App\Http\Controllers\User\Shipping\ShippingController;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
+use App\Http\Controllers\User\Transaction\TransactionController;
 
 
+Route::get('/receivers', [ShippingController::class, 'receivers'])
+    ->name('recievers.index');
 Route::middleware(['web'])->group(function () {
-    // User Auth Routes (accessible at /en/user/login, /en/user, etc.)
     Route::controller(AuthController::class)
         ->as('user.')
         ->prefix(LaravelLocalization::setLocale() . '/user')
@@ -38,8 +40,6 @@ Route::middleware(['web'])->group(function () {
                 ->name('auth.resetPasswordSubmit')
                 ->middleware('guest.user');
         });
-
-    // User Protected Routes (with /user prefix)
     Route::group([
         'as' => 'user.',
         'prefix' => LaravelLocalization::setLocale() . '/user',
@@ -62,6 +62,15 @@ Route::middleware(['web'])->group(function () {
                     ->name('transactions.create');
                 Route::post('/create-transaction', 'store')
                     ->name('transactions.store');
+            });
+        Route::controller(ShippingController::class)
+            ->group(function () {
+                Route::get('/shippings', 'index')
+                    ->name('shippings.index');
+                Route::get('/create-shipping', 'create')
+                    ->name('shippings.create');
+                Route::post('/create-shipping', 'store')
+                    ->name('shippings.store');
             });
     });
 });

@@ -12,6 +12,8 @@ use App\Models\Transaction;
 use App\Models\Slider;
 use App\Models\About;
 use App\Models\AboutItem;
+use App\Models\Reciever;
+use App\Models\UserShippingPrice;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 
@@ -40,6 +42,8 @@ class PermissionSeeder extends Seeder
             ...Slider::$permissions,
             ...About::$permissions,
             ...AboutItem::$permissions,
+            ...Reciever::$permissions,
+            ...UserShippingPrice::$permissions,
             ...$rolePermission,
         ];
 

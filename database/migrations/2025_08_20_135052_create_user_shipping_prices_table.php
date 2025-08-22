@@ -11,16 +11,18 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('settings', function (Blueprint $table) {
+        Schema::create('user_shipping_prices', function (Blueprint $table) {
             $table->id();
-            $table->string('key');
-            $table->longText('value')
-                ->nullable();
-            $table->foreignId('admin_id')
-                ->nullable()
-                ->constrained('admins')
+            $table->foreignId('user_id')
+                ->constrained('users')
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
+            $table->string('company_id');
+            $table->string('company_name');
+            $table->decimal('international_price', 8, 2)
+                ->nullable();
+            $table->decimal('local_price', 8, 2)
+                ->nullable();
             $table->timestamps();
         });
     }
@@ -30,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('settings');
+        Schema::dropIfExists('user_shipping_prices');
     }
 };

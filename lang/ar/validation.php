@@ -255,6 +255,11 @@ return [
         'bank' => 'البنك',
         'bank_id' => 'البنك',
         'banks_id' => 'البنك',
+        'international_price' => 'السعر الدولي',
+        'local_price' => 'السعر المحلي',
+        'company_id' => 'معرف الشركة',
+        'company_name_ar' => 'اسم الشركة بالعربية',
+        'company_name_en' => 'اسم الشركة بالانجليزية',
     ],
 
 ];
