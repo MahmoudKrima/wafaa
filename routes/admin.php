@@ -164,6 +164,9 @@ Route::middleware(['web'])->group(function () {
                 Route::post('/settings-update', 'update')
                     ->name('settings.update')
                     ->middleware('has.permission:settings.update');
+                Route::put('/settings-shipping-prices-update', 'updateShippingPrices')
+                    ->name('settings.shipping-prices.update')
+                    ->middleware('has.permission:settings.update');
             });
 
         Route::controller(BankController::class)

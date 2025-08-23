@@ -271,4 +271,10 @@ return [
     'create_user_shipping_price' => 'Create User Shipping Price',
     'edit_user_shipping_price' => 'Edit User Shipping Price',
     'shipping_company' => 'Shipping Company',
+    'local_price_must_be_numeric' => 'Local price must be numeric',
+    'local_price_must_be_positive' => 'Local price must be positive',
+    'shipping_prices' => 'Shipping Prices',
+    'extra_weight_price' => 'Extra Weight Price',
+    'cash_on_delivery_price' => 'Cash on Delivery Price',
+    'shipping_prices_updated_successfully' => 'Shipping prices updated successfully',
 ];

@@ -4,14 +4,12 @@ namespace App\Http\Controllers\Admin\WebSiteSettings;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\Setting\UpdateSettingRequest;
 use App\Services\Admin\WebSiteSettings\SettingsService;
+use App\Http\Requests\Admin\Setting\UpdateSettingRequest;
 
 class SettingsController extends Controller
 {
-    public function __construct(private SettingsService $settingsService)
-    {
-    }
+    public function __construct(private SettingsService $settingsService) {}
 
     public function index()
     {
@@ -25,4 +23,5 @@ class SettingsController extends Controller
         return back()
             ->with('Success', __('admin.updated_successfully'));
     }
+
 }
