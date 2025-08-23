@@ -14,12 +14,10 @@
                         </div>
                     </div>
                     <div class="widget-content widget-content-area">
-                        <!-- Responsive Step Indicator -->
                         <div class="row mb-4">
                             <div class="col-12">
                                 <div class="d-flex justify-content-center">
                                     <div class="step-indicator d-flex flex-column flex-sm-row align-items-center">
-                                        <!-- Step 1 -->
                                         <div class="step active mb-2 mb-sm-0">
                                             <div class="step-number bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mx-sm-0"
                                                 style="width: 35px; height: 35px; font-size: 14px; font-weight: bold;">1
@@ -139,6 +137,9 @@
                                     <p class="mt-2">{{ __('admin.loading_companies') }}</p>
                                 </div>
                             </div>
+                            
+                            <!-- Company Pricing Display -->
+                            <div id="company-pricing-display" class="mt-4" style="display: none;"></div>
                         </div>
 
                         <!-- Step 2: Select Shipping Method -->
@@ -193,18 +194,26 @@
                                     </select>
                                 </div>
                                 <div class="col-12 col-md-6 mb-3">
+                                    <label for="user_state" class="text-dark">{{ __('admin.state') }}</label>
+                                    <select id="user_state" name="state" class="form-control" style="display: none;" disabled>
+                                        <option value="">{{ __('admin.select_state') }}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12 col-md-6 mb-3">
                                     <label for="user_country" class="text-dark">{{ __('admin.country') }}</label>
                                     <input id="user_country" type="text" name="country" class="form-control" value=""
                                         disabled>
                                 </div>
-                            </div>
-                            <div class="row">
                                 <div class="col-12 col-md-6 mb-3">
                                     <label for="user_address" class="text-dark">{{ __('admin.full_address') }}</label>
                                     <textarea id="user_address" name="user_address" class="form-control" rows="3"
                                         disabled>{{ auth()->user()->address ?? '' }}</textarea>
                                 </div>
-                                <div class="col-12 col-md-6 mb-3">
+                            </div>
+                            <div class="row">
+                                <div class="col-12 mb-3">
                                     <label for="user_postal_code" class="text-dark">{{ __('admin.postal_code') }}</label>
                                     <input id="user_postal_code" type="text" name="postal_code" class="form-control"
                                         value="{{ auth()->user()->postal_code ?? '' }}">
@@ -216,8 +225,6 @@
                                 {{ __('admin.user_info_note') }}
                             </div>
                         </div>
-
-                        <!-- Step 4: Receiver Information -->
                         <div class="step-content" id="step-4" style="display: none;">
                             <h5 class="text-center mb-4">{{ __('admin.receiver_information') }}</h5>
 
@@ -304,18 +311,25 @@
                                         </select>
                                     </div>
                                     <div class="col-12 col-md-6 mb-3">
+                                        <label for="state" class="text-dark">{{ __('admin.state') }}</label>
+                                        <select id="state" name="state" class="form-control" style="display: none;" required>
+                                            <option value="">{{ __('admin.select_state') }}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-12 col-md-6 mb-3">
                                         <label for="country" class="text-dark">{{ __('admin.country') }}</label>
                                         <input id="country" type="text" name="country" class="form-control">
                                     </div>
-                                </div>
-
-                                <div class="row">
                                     <div class="col-12 col-md-6 mb-3">
                                         <label for="address" class="text-dark">{{ __('admin.full_address') }}</label>
                                         <textarea id="address" name="address" class="form-control" rows="3"
                                             placeholder="{{ __('admin.enter_full_address') }}" required></textarea>
                                     </div>
-                                    <div class="col-12 col-md-6 mb-3">
+                                </div>
+                                <div class="row">
+                                    <div class="col-12 mb-3">
                                         <label for="postal_code" class="text-dark">{{ __('admin.postal_code') }}</label>
                                         <input id="postal_code" type="text" name="postal_code" class="form-control"
                                             placeholder="{{ __('admin.enter_postal_code') }}">
@@ -771,6 +785,68 @@
             color: #17a2b8 !important;
         }
 
+        /* Enhanced Company Cards */
+        .company-card {
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .company-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .company-card.selected {
+            border-color: #007bff !important;
+            background-color: #f8f9fa !important;
+        }
+
+        .pricing-section {
+            background: #f8f9fa !important;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .pricing-section h6 {
+            color: #007bff;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .pricing-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+            font-size: 0.95rem;
+        }
+
+        .pricing-item:last-child {
+            border-bottom: none;
+        }
+
+        .pricing-item strong {
+            color: #495057;
+            font-weight: 600;
+        }
+
+        .company-features {
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 10px;
+            border: 1px solid #e9ecef;
+        }
+
+        .company-features div {
+            padding: 2px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .company-features div:last-child {
+            border-bottom: none;
+        }
+
         /* Responsive Breakpoints */
         @media (max-width: 768px) {
             .step-indicator {
@@ -869,7 +945,6 @@
             error_loading_receivers: '{{ __("admin.error_loading_receivers") }}',
             error_loading_cities: '{{ __("admin.error_loading_cities") }}',
             select_city: '{{ __("admin.select_city") }}',
-            // Package type translations
             boxes: '{{ __("admin.boxes") }}',
             documents: '{{ __("admin.documents") }}',
             package_type: '{{ __("admin.package_type") }}',
@@ -892,7 +967,6 @@
             package_terms_content: '{{ __("admin.package_terms_content") }}',
             liability_terms_title: '{{ __("admin.liability_terms_title") }}',
             liability_terms_content: '{{ __("admin.liability_terms_content") }}',
-            // Payment and summary translations
             payment_details: '{{ __("admin.payment_details") }}',
             cash_on_delivery: '{{ __("admin.cash_on_delivery") }}',
             cod_information: '{{ __("admin.cod_information") }}',
@@ -905,6 +979,55 @@
             shipping_company: '{{ __("admin.shipping_company") }}',
             user_information: '{{ __("admin.user_information") }}',
             cost_breakdown: '{{ __("admin.cost_breakdown") }}',
+            pricing_information: '{{ __("admin.pricing_information") }}',
+            local_shipping_price: '{{ __("admin.local_shipping_price") }}',
+            international_shipping_price: '{{ __("admin.international_shipping_price") }}',
+            extra_weight_price: '{{ __("admin.extra_weight_price") }}',
+            cash_on_delivery_available: '{{ __("admin.cash_on_delivery_available") }}',
+            additional_fee_per_receiver: '{{ __("admin.additional_fee_per_receiver") }}',
+            max_weight: '{{ __("admin.max_weight") }}',
+            kg: '{{ __("admin.kg") }}',
+            receiver: '{{ __("admin.receiver") }}',
+            bill_of_lading: '{{ __("admin.bill_of_lading") }}',
+            individual_cost: '{{ __("admin.individual_cost") }}',
+            cost_breakdown: '{{ __("admin.cost_breakdown") }}',
+            shipping: '{{ __("admin.shipping") }}',
+            cod: '{{ __("admin.cod") }}',
+            package_details: '{{ __("admin.package_details") }}',
+            weight: '{{ __("admin.weight") }}',
+            dimensions: '{{ __("admin.dimensions") }}',
+            description: '{{ __("admin.description") }}',
+            cod_fee: '{{ __("admin.cod_fee") }}',
+            cost_breakdown_title: '{{ __("admin.cost_breakdown_title") }}',
+            base_shipping_cost: '{{ __("admin.base_shipping_cost") }}',
+            extra_weight_fee: '{{ __("admin.extra_weight_fee") }}',
+            shipment_fees: '{{ __("admin.shipment_fees") }}',
+            fuel_surcharge: '{{ __("admin.fuel_surcharge") }}',
+            cod_fee_per_receiver: '{{ __("admin.cod_fee_per_receiver") }}',
+            total_cod_fees: '{{ __("admin.total_cod_fees") }}',
+            total_cost: '{{ __("admin.total_cost") }}',
+            terms_conditions: '{{ __("admin.terms_conditions") }}',
+            accept_terms: '{{ __("admin.accept_terms") }}',
+            add_receiver_error: '{{ __("admin.add_receiver_error") }}',
+            select_company_method_error: '{{ __("admin.select_company_method_error") }}',
+            package_details_error: '{{ __("admin.package_details_error") }}',
+            no_companies_available: '{{ __("admin.no_companies_available") }}',
+            error_loading_companies: '{{ __("admin.error_loading_companies") }}',
+            no_companies_found: '{{ __("admin.no_companies_found") }}',
+            company: '{{ __("admin.company") }}',
+            service: '{{ __("admin.service") }}',
+            method: '{{ __("admin.method") }}',
+            city: '{{ __("admin.city") }}',
+            phone: '{{ __("admin.phone") }}',
+            address: '{{ __("admin.address") }}',
+            postal_code: '{{ __("admin.postal_code") }}',
+            email: '{{ __("admin.email") }}',
+            name: '{{ __("admin.name") }}',
+            per_receiver: '{{ __("admin.per_receiver") }}',
+        };
+        
+        const API_ENDPOINTS = {
+            shippingCompanies: '{{ route("user.shippings.companies") }}'
         };
     </script>
     <script src="{{ asset('user/shipping.js') }}"></script>

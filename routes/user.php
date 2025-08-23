@@ -71,6 +71,8 @@ Route::middleware(['web'])->group(function () {
                     ->name('shippings.create');
                 Route::post('/create-shipping', 'store')
                     ->name('shippings.store');
+                Route::get('/shipping-companies', 'shippingCompanies')
+                    ->name('shippings.companies');
             });
     });
 });

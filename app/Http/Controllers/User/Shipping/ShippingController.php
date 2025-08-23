@@ -24,6 +24,12 @@ class ShippingController extends Controller
         return response()->json($recievers);
     }
 
+    public function shippingCompanies()
+    {
+        $companies = $this->shippingService->getUserShippingCompanies();
+        return response()->json($companies);
+    }
+
     public function create()
     {
         return view('user.pages.shippings.create');
