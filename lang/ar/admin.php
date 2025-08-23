@@ -272,4 +272,5 @@ return [
     'extra_weight_price' => 'سعر الوزن الإضافي',
     'cash_on_delivery_price' => 'سعر الدفع عند الاستلام',
     'shipping_prices_updated_successfully' => 'تم تحديث أسعار الشحن بنجاح',
+    'admin_settings' => 'إعدادات المدير',
 ];

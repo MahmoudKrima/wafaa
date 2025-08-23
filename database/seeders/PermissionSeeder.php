@@ -14,6 +14,7 @@ use App\Models\About;
 use App\Models\AboutItem;
 use App\Models\Reciever;
 use App\Models\UserShippingPrice;
+use App\Models\AdminSetting;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 
@@ -44,6 +45,7 @@ class PermissionSeeder extends Seeder
             ...AboutItem::$permissions,
             ...Reciever::$permissions,
             ...UserShippingPrice::$permissions,
+            ...AdminSetting::$permissions,
             ...$rolePermission,
         ];
 

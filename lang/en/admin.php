@@ -277,4 +277,5 @@ return [
     'extra_weight_price' => 'Extra Weight Price',
     'cash_on_delivery_price' => 'Cash on Delivery Price',
     'shipping_prices_updated_successfully' => 'Shipping prices updated successfully',
+    'admin_settings' => 'Admin Settings',
 ];
