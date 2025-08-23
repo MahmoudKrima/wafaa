@@ -1,0 +1,70 @@
+<?php
+
+namespace App\Http\Requests\Admin\Testimonial;
+
+use Illuminate\Validation\Rule;
+use App\Enum\ActivationStatusEnum;
+use Illuminate\Foundation\Http\FormRequest;
+
+class StoreTestimonialRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
+    {
+        return [
+            'name_ar' => [
+                'required',
+                'string',
+                'max:255'
+            ],
+            'name_en' => [
+                'required',
+                'string',
+                'max:255'
+            ],
+            'job_title_ar' => [
+                'required',
+                'string',
+                'max:255'
+            ],
+            'job_title_en' => [
+                'required',
+                'string',
+                'max:255'
+            ],
+            'review_en' => [
+                'required',
+                'string',
+                'max:999'
+            ],
+            'review_ar' => [
+                'required',
+                'string',
+                'max:999'
+            ],
+            'rate' => [
+                'required',
+                'integer',
+                'min:1',
+                'max:5'
+            ],
+            'status' => [
+                'required',
+                'string',
+                Rule::in(ActivationStatusEnum::vals())
+            ],
+        ];
+    }
+}

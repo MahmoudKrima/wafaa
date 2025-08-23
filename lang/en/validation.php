@@ -262,6 +262,11 @@ return [
         'company_id' => 'Company ID',
         'company_name_ar' => 'Company Name Ar',
         'company_name_en' => 'Company Name En',
+        'title_ar' => 'Title Ar',
+        'title_en' => 'Title En',
+        'review_ar' => 'Review Ar',
+        'review_en' => 'Review En',
+        'rate' => 'Rate',
     ],
 
 ];
