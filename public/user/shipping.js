@@ -58,6 +58,7 @@ function showStep(step) {
 
     if (step === 3) {
         loadUserCity();
+        handleCompanyRequirements();
     } else if (step === 4) {
         loadReceivers();
         loadReceiverCities();
@@ -73,25 +74,24 @@ function showStep(step) {
 function clearStepData(step) {
     switch (step) {
         case 1:
-            // Clear company selection
             selectedCompany = null;
             selectedMethod = null;
+            const pricingContainer = document.getElementById('company-pricing-display');
+            if (pricingContainer) {
+                pricingContainer.style.display = 'none';
+            }
             break;
         case 2:
-            // Clear method selection
             selectedMethod = null;
             break;
         case 3:
-            // Clear user information (if any editable fields)
             break;
         case 4:
-            // Clear receiver data
             selectedReceivers = [];
             currentReceiverIndex = 0;
             clearReceiverForm();
             resetReceiverTypeSelection();
 
-            // Hide receiver containers
             const receiversContainer = document.getElementById(
                 "receivers-container"
             );
@@ -99,17 +99,10 @@ function clearStepData(step) {
             const actionButtons = document.getElementById(
                 "receiver-action-buttons"
             );
-
-            if (receiversContainer) receiversContainer.style.display = "none";
-            if (successMsg) successMsg.style.display = "none";
-            if (actionButtons) actionButtons.style.display = "none";
-
-            // Disable next button
-            const btnNext = document.getElementById("btn-next");
-            if (btnNext) btnNext.disabled = true;
-
-            // Refresh receivers list after clearing
-            loadReceivers();
+            
+            if (receiversContainer) receiversContainer.style.display = 'none';
+            if (successMsg) successMsg.style.display = 'none';
+            if (actionButtons) actionButtons.style.display = 'block';
             break;
     }
 }
@@ -117,11 +110,12 @@ function clearStepData(step) {
 async function fetchShippingCompanies() {
     try {
         const response = await fetch(
-            "https://ghaya-express-staging-af597af07557.herokuapp.com/api/shipping-companies?page=0&pageSize=50&orderColumn=createdAt&orderDirection=desc",
+            window.API_ENDPOINTS?.shippingCompanies || "/user/shipping-companies",
             {
                 headers: {
-                    accept: "*/*",
-                    "x-api-key": "xwqn5mb5mpgf5u3vpro09i8pmw9fhkuu",
+                    'Accept': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
                 },
             }
         );
@@ -135,11 +129,11 @@ async function fetchShippingCompanies() {
             displayCompanies(activeCompanies);
         } else {
             document.getElementById("companies-container").innerHTML =
-                '<div class="alert alert-warning">No shipping companies found</div>';
+                '<div class="alert alert-warning">' + (typeof translations !== 'undefined' ? translations.no_companies_available : 'No shipping companies available for your account. Please contact support to set up shipping prices.') + '</div>';
         }
     } catch (error) {
         document.getElementById("companies-container").innerHTML =
-            '<div class="alert alert-danger">Error loading shipping companies. Please try again.</div>';
+            '<div class="alert alert-danger">' + (typeof translations !== 'undefined' ? translations.error_loading_companies : 'Error loading shipping companies. Please try again.') + '</div>';
     }
 }
 
@@ -148,13 +142,13 @@ function displayCompanies(companies) {
 
     if (!companies || companies.length === 0) {
         container.innerHTML =
-            '<div class="alert alert-warning">No active shipping companies found</div>';
+            '<div class="alert alert-warning">' + (typeof translations !== 'undefined' ? translations.no_companies_found : 'No active shipping companies available for your account. Please contact support to set up shipping prices.') + '</div>';
         return;
     }
 
     let companiesHTML = '<div class="row">';
     companies.forEach(function (company) {
-        companiesHTML += '<div class="col-lg-3 col-md-4 col-sm-6 mb-3">';
+        companiesHTML += '<div class="col-lg-4 col-md-6 col-sm-12 mb-3">';
         companiesHTML +=
             '<div class="card company-card h-100" data-company-id="' +
             company.id +
@@ -169,7 +163,12 @@ function displayCompanies(companies) {
             (company.name || "") +
             '" class="img-fluid mb-3" style="max-height: 80px; max-width: 120px;" onerror="this.src=\'https://via.placeholder.com/120x80?text=Logo\'">';
         companiesHTML +=
-            '<h6 class="card-title mb-0">' + (company.name || "") + "</h6>";
+            '<h6 class="card-title mb-2">' + (company.name || "") + "</h6>";
+        
+        companiesHTML += '<div class="company-features small text-muted">';
+        companiesHTML += '<div class="mb-1"><strong>' + (typeof translations !== 'undefined' ? translations.max_weight : 'Max Weight') + ':</strong> ' + (company.maxWeight || 'N/A') + ' ' + (typeof translations !== 'undefined' ? translations.kg : 'kg') + '</div>';
+        companiesHTML += '</div>';
+        
         companiesHTML += "</div>";
         companiesHTML += "</div>";
         companiesHTML += "</div>";
@@ -181,12 +180,10 @@ function displayCompanies(companies) {
 
 function selectCompany(card, companyId) {
     document.querySelectorAll(".company-card").forEach((c) => {
-        c.style.borderColor = "transparent";
-        c.style.backgroundColor = "";
+        c.classList.remove("selected");
     });
 
-    card.style.borderColor = "#007bff";
-    card.style.backgroundColor = "#f8f9fa";
+    card.classList.add("selected");
 
     const companyData = shippingCompaniesData.find(
         (company) => company.id === companyId
@@ -197,10 +194,11 @@ function selectCompany(card, companyId) {
             id: companyData.id,
             name: companyData.name,
             serviceName: companyData.serviceName,
-            localPrice: companyData.localPrice,
-            codPrice: companyData.codPrice,
+            localPrice: companyData.effectiveLocalPrice || companyData.localPrice,
+            internationalPrice: companyData.effectiveInternationalPrice,
+            codPrice: companyData.adminCodFee || companyData.codPrice,
             maxWeight: companyData.maxWeight,
-            extraWeightPrice: companyData.extraWeightPrice,
+            extraWeightPrice: companyData.adminExtraWeightPrice || companyData.extraWeightPrice,
             hasState: companyData.hasState,
             isEnglish: companyData.isEnglish,
             color: companyData.color,
@@ -211,25 +209,167 @@ function selectCompany(card, companyId) {
                     method !== "cashOnDelivery" &&
                     (method === "local" || method === "international")
             ),
+            hasCod: companyData.hasCod,
             returnFees: companyData.returnFees,
             fuelPercentage: companyData.fuelPercentage,
-            shipmentFees: companyData.shipmentFees,
-            shipmentCodFees: companyData.shipmentCodFees,
-            shipmentExtraWeightFees: companyData.shipmentExtraWeightFees,
-            shipmentReturnFees: companyData.shipmentReturnFees,
-            isAuthorizationRequired: companyData.isAuthorizationRequired,
+            adminExtraWeightPrice: companyData.adminExtraWeightPrice,
+            adminCodFee: companyData.adminCodFee,
+            userLocalPrice: companyData.userLocalPrice,
+            userInternationalPrice: companyData.userInternationalPrice,
+            requiresStateSelection: companyData.hasState,
+            requiresEnglishLanguage: companyData.isEnglish
         };
 
-        console.log("Selected company data:", selectedCompany);
+        window.selectedCompanyData = companyData;
+        
 
-        // Display company pricing information
+        
         displayCompanyPricing();
+        
+        const btnNext = document.getElementById("btn-next");
+        if (btnNext) {
+            btnNext.disabled = false;
+        }
+        
+        updateStepIndicator(1, true);
+    } else {
+        selectedCompany = null;
+        const pricingContainer = document.getElementById('company-pricing-display');
+        if (pricingContainer) {
+            pricingContainer.style.display = 'none';
+        }
+        
+        const btnNext = document.getElementById("btn-next");
+        if (btnNext) {
+            btnNext.disabled = true;
+        }
     }
+}
 
-    const btnNext = document.getElementById("btn-next");
-    if (btnNext) btnNext.disabled = false;
+function displayCompanyPricing() {
+    if (!selectedCompany) return;
+    
+    const pricingContainer = document.getElementById('company-pricing-display');
+    if (!pricingContainer) return;
+    
+    let pricingHTML = '<div class="pricing-section p-3 bg-light rounded">';
+    pricingHTML += '<h6 class="text-primary mb-3">' + (typeof translations !== 'undefined' && translations.pricing_information ? translations.pricing_information : 'Pricing Information') + '</h6>';
+    
+    if (selectedCompany.localPrice) {
+        pricingHTML += '<div class="pricing-item mb-2"><strong>' + (typeof translations !== 'undefined' && translations.local_shipping_price ? translations.local_shipping_price : 'Local Shipping Price') + ':</strong> $' + selectedCompany.localPrice + '</div>';
+    }
+    
+    if (selectedCompany.internationalPrice) {
+        pricingHTML += '<div class="pricing-item mb-2"><strong>' + (typeof translations !== 'undefined' && translations.international_shipping_price ? translations.international_shipping_price : 'International Shipping Price') + ':</strong> $' + selectedCompany.internationalPrice + '</div>';
+    }
+    
+    if (selectedCompany.extraWeightPrice) {
+        pricingHTML += '<div class="pricing-item mb-2"><strong>' + (typeof translations !== 'undefined' && translations.extra_weight_price ? translations.extra_weight_price : 'Extra Weight Price') + ':</strong> $' + selectedCompany.extraWeightPrice + '/' + (typeof translations !== 'undefined' && translations.kg ? translations.kg : 'kg') + '</div>';
+    }
+    
+    if (selectedCompany.codPrice) {
+        pricingHTML += '<div class="pricing-item mb-2"><strong>' + (typeof translations !== 'undefined' && translations.cod_fee ? translations.cod_fee : 'Cash on Delivery Fee') + ':</strong> $' + selectedCompany.codPrice +  ' ' + (typeof translations !== 'undefined' && translations.per_receiver ? translations.per_receiver : 'per receiver') + '</div>';
+    }
+    
+    pricingHTML += '<div class="pricing-item mb-2"><strong>' + (typeof translations !== 'undefined' && translations.max_weight ? translations.max_weight : 'Max Weight') + ':</strong> ' + selectedCompany.maxWeight + ' ' + (typeof translations !== 'undefined' && translations.kg ? translations.kg : 'kg') + '</div>';
+    
 
-    updateStepIndicator(1, true);
+    
+    pricingHTML += '</div>';
+    
+    pricingContainer.innerHTML = pricingHTML;
+    pricingContainer.style.display = 'block';
+    
+
+}
+
+function handleCompanyRequirements() {
+    if (!selectedCompany) return;
+    
+    if (selectedCompany.requiresStateSelection) {
+        loadUserStates();
+    }
+    
+    if (selectedCompany.requiresEnglishLanguage) {
+        setLanguageToEnglish();
+    }
+}
+
+function loadUserStates() {
+    const userStateSelect = document.getElementById('user_state');
+    if (userStateSelect) {
+        userStateSelect.disabled = false;
+        userStateSelect.style.display = 'block';
+        
+        fetch('/user/states')
+            .then(response => response.json())
+            .then(states => {
+                userStateSelect.innerHTML = '<option value="">Select State</option>';
+                states.forEach(state => {
+                    const option = document.createElement('option');
+                    option.value = state.id;
+                    option.textContent = state.name;
+                    userStateSelect.appendChild(option);
+                });
+            })
+            .catch(error => {
+                
+            });
+    }
+}
+
+function setLanguageToEnglish() {
+    const currentLocale = document.documentElement.lang;
+    if (currentLocale !== 'en') {
+        window.location.href = window.location.href.replace('/' + currentLocale + '/', '/en/');
+    }
+}
+
+function calculateShippingCost(packageWeight, packageType, receiverCount = 1, useCod = false) {
+    if (!selectedCompany) {
+        return null;
+    }
+    
+    let baseCost = 0;
+    let extraWeightCost = 0;
+    let codCost = 0;
+    
+    // Determine base price based on package type and company capabilities
+    if (packageType === 'local' && selectedCompany.localPrice) {
+        baseCost = packageWeight * selectedCompany.localPrice;
+    } else if (packageType === 'international' && selectedCompany.internationalPrice) {
+        baseCost = packageWeight * selectedCompany.internationalPrice;
+    } else {
+        return null;
+    }
+    
+    // Calculate extra weight cost if package exceeds max weight
+    if (selectedCompany.maxWeight && packageWeight > selectedCompany.maxWeight) {
+        const extraWeight = packageWeight - selectedCompany.maxWeight;
+        extraWeightCost = extraWeight * selectedCompany.extraWeightPrice;
+    }
+    
+    // Calculate COD cost if applicable
+    if (useCod && selectedCompany.hasCod && selectedCompany.codPrice) {
+        codCost = receiverCount * selectedCompany.codPrice;
+    }
+    
+    const totalCost = baseCost + extraWeightCost + codCost;
+    
+    const costBreakdown = {
+        baseCost: baseCost,
+        extraWeightCost: extraWeightCost,
+        codCost: codCost,
+        totalCost: totalCost,
+        packageWeight: packageWeight,
+        maxWeight: selectedCompany.maxWeight,
+        extraWeightPrice: selectedCompany.extraWeightPrice,
+        codPrice: selectedCompany.codPrice,
+        hasCod: selectedCompany.hasCod
+    };
+    
+
+    return costBreakdown;
 }
 
 function showMethodSelection() {
@@ -291,88 +431,44 @@ function selectMethod(card, method) {
     updateStepIndicator(2, true);
 }
 
-async function loadUserCity() {
-    const citySelect = document.getElementById("user_city");
-    try {
-        const countryInput = document.getElementById("user_country");
-        const step3Element = document.getElementById("step-3");
-        const userCityId = step3Element ? step3Element.dataset.userCityId : "";
-        const currentLocale =
-            (step3Element && step3Element.dataset.appLocale) || "en";
-
-        const cityResponse = await fetch(
-            "https://ghaya-express-staging-af597af07557.herokuapp.com/api/cities",
-            {
-                headers: {
-                    accept: "*/*",
-                    "x-api-key": "xwqn5mb5mpgf5u3vpro09i8pmw9fhkuu",
-                },
-            }
-        );
-
-        const cityData = await cityResponse.json();
-        let cities = [];
-        if (cityData && cityData.results && cityData.results.length > 0) {
-            cities = cityData.results;
-        } else if (cityData && Array.isArray(cityData)) {
-            cities = cityData;
-        }
-
-        if (citySelect) {
-            if (cities.length > 0) {
-                citySelect.innerHTML =
-                    '<option value="">' +
-                    translations.select_city +
-                    "</option>";
-                let userCityFound = false;
-
-                cities.forEach((city) => {
-                    const option = document.createElement("option");
-                    option.value = city._id || city.id;
-                    let cityName = "";
-                    if (city.name && city.name.en && city.name.ar) {
-                        cityName =
-                            currentLocale === "ar"
-                                ? city.name.ar
-                                : city.name.en;
-                    } else {
-                        cityName = city.name || "Unknown City";
-                    }
-                    option.textContent = cityName;
-
-                    if (
-                        userCityId &&
-                        (city._id === userCityId || city.id === userCityId)
-                    ) {
-                        option.selected = true;
-                        userCityFound = true;
-                        if (city.country) {
-                            displayCountryInfo(city.country);
-                        }
-                    }
-                    citySelect.appendChild(option);
-                });
-
-                if (!userCityFound && userCityId) {
-                    const noteOption = document.createElement("option");
-                    noteOption.value = userCityId;
-                    noteOption.textContent = "User City (Not in API)";
-                    noteOption.selected = true;
-                    citySelect.appendChild(noteOption);
+function loadUserCity() {
+    const userCitySelect = document.getElementById('user_city');
+    const userStateSelect = document.getElementById('user_state');
+    
+    if (userCitySelect) {
+        userCitySelect.disabled = false;
+        userCitySelect.innerHTML = '<option value="">Select City</option>';
+        
+        if (selectedCompany && selectedCompany.requiresStateSelection && userStateSelect) {
+            userStateSelect.style.display = 'block';
+            userStateSelect.disabled = false;
+            
+            userStateSelect.addEventListener('change', function() {
+                const stateId = this.value;
+                userCitySelect.innerHTML = '<option value="">Select City</option>';
+                userCitySelect.disabled = true;
+                
+                if (stateId) {
+                    fetch(`/admin/users/cities-by-state?state_id=${stateId}`)
+                        .then(response => response.json())
+                        .then(cities => {
+                            userCitySelect.innerHTML = '<option value="">Select City</option>';
+                            userCitySelect.disabled = false;
+                            
+                            cities.forEach(city => {
+                                const option = document.createElement('option');
+                                option.value = city.id;
+                                option.textContent = city.name.ar || city.name.en;
+                                userCitySelect.appendChild(option);
+                            });
+                        })
+                        .catch(error => {
+                            userCitySelect.innerHTML = '<option value="">Error loading cities</option>';
+                            userCitySelect.disabled = true;
+                        });
                 }
-            } else {
-                citySelect.innerHTML =
-                    '<option value="">' +
-                    translations.no_cities_available +
-                    "</option>";
-            }
+            });
         }
-    } catch (error) {
-        if (citySelect)
-            citySelect.innerHTML =
-                '<option value="">' +
-                translations.error_loading_cities +
-                "</option>";
     }
 }
 
@@ -448,7 +544,6 @@ async function loadReceivers() {
 
         displaySelectedReceivers();
     } catch (error) {
-        console.error("Error loading receivers:", error);
         const el = document.getElementById("receiver_select");
         if (el)
             el.innerHTML =
@@ -910,69 +1005,35 @@ function addExistingReceiver() {
 }
 
 async function loadReceiverCities() {
-    const citySelect = document.getElementById("city");
-    try {
-        const step3Element = document.getElementById("step-3");
-        const currentLocale =
-            (step3Element && step3Element.dataset.appLocale) || "en";
-
-        const cityResponse = await fetch(
-            "https://ghaya-express-staging-af597af07557.herokuapp.com/api/cities",
-            {
-                headers: {
-                    accept: "*/*",
-                    "x-api-key": "xwqn5mb5mpgf5u3vpro09i8pmw9fhkuu",
-                },
+    const stateSelect = document.getElementById('state');
+    const citySelect = document.getElementById('city');
+    
+    if (stateSelect && citySelect) {
+        stateSelect.addEventListener('change', function() {
+            const stateId = this.value;
+            citySelect.innerHTML = '<option value="">Select City</option>';
+            citySelect.disabled = true;
+            
+            if (stateId) {
+                fetch(`/admin/users/cities-by-state?state_id=${stateId}`)
+                    .then(response => response.json())
+                    .then(cities => {
+                        citySelect.innerHTML = '<option value="">Select City</option>';
+                        citySelect.disabled = false;
+                        
+                        cities.forEach(city => {
+                            const option = document.createElement('option');
+                            option.value = city.id;
+                            option.textContent = city.name.ar || city.name.en;
+                            citySelect.appendChild(option);
+                        });
+                    })
+                    .catch(error => {
+                        citySelect.innerHTML = '<option value="">Error loading cities</option>';
+                        citySelect.disabled = true;
+                    });
             }
-        );
-
-        const cityData = await cityResponse.json();
-
-        let cities = [];
-        if (cityData && cityData.results && cityData.results.length > 0) {
-            cities = cityData.results;
-        } else if (cityData && Array.isArray(cityData)) {
-            cities = cityData;
-        }
-
-        if (citySelect) {
-            if (cities.length > 0) {
-                citySelect.innerHTML =
-                    '<option value="">' +
-                    translations.select_city +
-                    "</option>";
-
-                cities.forEach((city) => {
-                    const option = document.createElement("option");
-                    option.value = city._id || city.id;
-
-                    let cityName = "";
-                    if (city.name && city.name.en && city.name.ar) {
-                        cityName =
-                            currentLocale === "ar"
-                                ? city.name.ar
-                                : city.name.en;
-                    } else {
-                        cityName = city.name || "Unknown City";
-                    }
-
-                    option.textContent = cityName;
-                    citySelect.appendChild(option);
-                });
-            } else {
-                citySelect.innerHTML =
-                    '<option value="">' +
-                    translations.no_cities_available +
-                    "</option>";
-            }
-        }
-    } catch (error) {
-        console.error("Error loading receiver cities:", error);
-        if (citySelect)
-            citySelect.innerHTML =
-                '<option value="">' +
-                translations.error_loading_cities +
-                "</option>";
+        });
     }
 }
 
@@ -1616,7 +1677,7 @@ function getPackageDetails() {
                 height: parseFloat(height.value) || 0,
             };
         } else {
-            console.error("Dimension elements not found for boxes");
+            
         }
     }
 
@@ -1724,31 +1785,31 @@ function generateFinalSummaryHTML() {
     let summaryHTML = `
         <div class="final-shipment-summary">
             <div class="summary-section">
-                <h6><i class="fas fa-building"></i> {{ __('admin.shipping_company') }}</h6>
+                <h6><i class="fas fa-building"></i> ${typeof translations !== 'undefined' ? translations.shipping_company : 'Shipping Company'}</h6>
                 <div class="summary-item">
-                    <span class="label">Company:</span>
+                    <span class="label">${typeof translations !== 'undefined' ? translations.company : 'Company'}:</span>
                     <span class="value">${selectedCompany.name}</span>
                 </div>
                 <div class="summary-item">
-                    <span class="label">Service:</span>
+                    <span class="label">${typeof translations !== 'undefined' ? translations.service : 'Service'}:</span>
                     <span class="value">${selectedCompany.serviceName}</span>
                 </div>
                 <div class="summary-item">
-                    <span class="label">Method:</span>
+                    <span class="label">${typeof translations !== 'undefined' ? translations.method : 'Method'}:</span>
                     <span class="value">${selectedMethod}</span>
                 </div>
             </div>
             
             <div class="summary-section">
-                <h6><i class="fas fa-user"></i> {{ __('admin.user_information') }}</h6>
+                <h6><i class="fas fa-user"></i> ${typeof translations !== 'undefined' ? translations.user_information : 'User Information'}</h6>
                 <div class="summary-item">
-                    <span class="label">Name:</span>
+                    <span class="label">${typeof translations !== 'undefined' ? translations.name : 'Name'}:</span>
                     <span class="value">${
                         document.getElementById("user_name")?.value || "N/A"
                     }</span>
                 </div>
                 <div class="summary-item">
-                    <span class="label">Phone:</span>
+                    <span class="label">${typeof translations !== 'undefined' ? translations.phone : 'Phone'}:</span>
                     <span class="value">${
                         document.getElementById("user_phone")?.value || "N/A"
                     }</span>
@@ -1756,7 +1817,7 @@ function generateFinalSummaryHTML() {
             </div>
             
             <div class="summary-section">
-                <h6><i class="fas fa-users"></i> {{ __('admin.receivers') }} (${
+                <h6><i class="fas fa-users"></i> ${typeof translations !== 'undefined' ? translations.receivers : 'Receivers'} (${
                     selectedReceivers.length
                 })</h6>
     `;
@@ -1960,85 +2021,6 @@ function generateFinalSummaryHTML() {
     return summaryHTML;
 }
 
-// Function to display company pricing information
-function displayCompanyPricing() {
-    if (!selectedCompany) return;
-
-    const companiesContainer = document.getElementById("companies-container");
-    if (!companiesContainer) return;
-
-    // Add pricing information below the company selection
-    const pricingHTML = `
-        <div class="company-pricing-info mt-4 p-3 bg-light rounded">
-            <h6 class="text-primary mb-3">
-                <i class="fas fa-dollar-sign"></i> Pricing Information
-            </h6>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="pricing-item">
-                        <strong>Base Price per kg:</strong> 
-                        <span class="text-success">$${
-                            selectedCompany.localPrice || 0
-                        }</span>
-                    </div>
-                    ${
-                        selectedCompany.extraWeightPrice
-                            ? `
-                    <div class="pricing-item">
-                        <strong>Extra Weight Price:</strong> 
-                        <span class="text-success">$${selectedCompany.extraWeightPrice}/kg</span>
-                    </div>
-                    `
-                            : ""
-                    }
-                </div>
-                <div class="col-md-6">
-                    ${
-                        selectedCompany.shipmentFees
-                            ? `
-                    <div class="pricing-item">
-                        <strong>Shipment Fees:</strong> 
-                        <span class="text-success">$${selectedCompany.shipmentFees}</span>
-                    </div>
-                    `
-                            : ""
-                    }
-                    ${
-                        selectedCompany.fuelPercentage
-                            ? `
-                    <div class="pricing-item">
-                        <strong>Fuel Surcharge:</strong> 
-                        <span class="text-warning">${selectedCompany.fuelPercentage}%</span>
-                    </div>
-                    `
-                            : ""
-                    }
-                </div>
-            </div>
-            ${
-                selectedCompany.codPrice
-                    ? `
-            <div class="mt-3 p-2 bg-info text-white rounded">
-                <i class="fas fa-info-circle"></i> 
-                <strong>Cash on Delivery Available:</strong> Additional fee of $${selectedCompany.codPrice} per receiver
-            </div>
-            `
-                    : ""
-            }
-        </div>
-    `;
-
-    // Insert pricing info after the company cards
-    const existingPricing = companiesContainer.querySelector(
-        ".company-pricing-info"
-    );
-    if (existingPricing) {
-        existingPricing.remove();
-    }
-
-    companiesContainer.insertAdjacentHTML("beforeend", pricingHTML);
-}
-
 // Function to generate unique Bill of Lading number
 function generateBillOfLading(receiver, receiverIndex) {
     const timestamp = Date.now();
@@ -2141,19 +2123,19 @@ function validateForm() {
     // Validate terms and conditions
     const acceptTerms = document.getElementById("accept_terms");
     if (!acceptTerms || !acceptTerms.checked) {
-        showError("Please accept the terms and conditions to continue");
+        showError(typeof translations !== 'undefined' ? translations.accept_terms : "Please accept the terms and conditions to continue");
         return false;
     }
 
     // Validate that at least one receiver is selected
     if (selectedReceivers.length === 0) {
-        showError("Please add at least one receiver to the shipment");
+        showError(typeof translations !== 'undefined' ? translations.add_receiver_error : "Please add at least one receiver to the shipment");
         return false;
     }
 
     // Validate shipping company and method
     if (!selectedCompany || !selectedMethod) {
-        showError("Please select a shipping company and method");
+        showError(typeof translations !== 'undefined' ? translations.select_company_method_error : "Please select a shipping company and method");
         return false;
     }
 
@@ -2168,7 +2150,7 @@ function populateFinalFormData() {
     const packageData = getPackageDetails();
     if (!packageData) {
         showError(
-            "Failed to get package details. Please check all required fields."
+            typeof translations !== 'undefined' ? translations.package_details_error : "Failed to get package details. Please check all required fields."
         );
         return;
     }
@@ -2229,7 +2211,6 @@ function populateShippingFormFields() {
         !shippingMethodField ||
         !selectedReceiversHiddenField
     ) {
-        console.error("Required form fields not found");
         return;
     }
 
@@ -2263,7 +2244,7 @@ function getFinalShippingData() {
 function showFinalShipmentSummary(shippingData) {
     // This function is now replaced by showFinalSummary
     // Keep for compatibility with existing code
-    console.log("Final shipment data:", shippingData);
+
 }
 
 // Function to handle location fields based on selected company
