@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\Admin\Service\ServiceController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\Auth\AuthController;
 use App\Http\Controllers\Admin\Bank\BankController;
 use App\Http\Controllers\Admin\Home\HomeController;
+use App\Http\Controllers\Admin\Partner\PartnerController;
 use App\Http\Controllers\Admin\Profile\ProfileController;
 use App\Http\Controllers\Admin\UserSettings\UserController;
 use App\Http\Controllers\Admin\UserSettings\AdminController;
@@ -15,7 +17,7 @@ use App\Http\Controllers\Admin\WebSiteSettings\SettingsController;
 use App\Http\Controllers\Admin\FrontSettings\Slider\SliderController;
 use App\Http\Controllers\Admin\WebSiteSettings\AdminSettingsController;
 use App\Http\Controllers\Admin\UserShippingPrice\UserShippingPriceController;
-
+use App\Http\Controllers\Admin\Testimonial\TestimonialController;
 /*
 |--------------------------------------------------------------------------
 | Admin Routes
@@ -287,6 +289,81 @@ Route::middleware(['web'])->group(function () {
                 Route::post('/admin-settings/update/{adminSetting}', 'update')
                     ->name('admin-settings.update')
                     ->middleware('has.permission:admin_settings.update');
+            });
+
+        Route::controller(PartnerController::class)
+            ->group(function () {
+                Route::get('/partners', 'index')
+                    ->name('partners.index')
+                    ->middleware('has.permission:partners.view');
+                Route::get('/partners/create', 'create')
+                    ->name('partners.create')
+                    ->middleware('has.permission:partners.create');
+                Route::post('/partners/store', 'store')
+                    ->name('partners.store')
+                    ->middleware('has.permission:partners.create');
+                Route::get('/partners/edit/{partner}', 'edit')
+                    ->name('partners.edit')
+                    ->middleware('has.permission:partners.update');
+                Route::post('/partners/update/{partner}', 'update')
+                    ->name('partners.update')
+                    ->middleware('has.permission:partners.update');
+                Route::post('/partners/update-status/{partner}', 'updateStatus')
+                    ->name('partners.updateStatus')
+                    ->middleware('has.permission:partners.update');
+                Route::delete('/partners/delete/{partner}', 'delete')
+                    ->name('partners.delete')
+                    ->middleware('has.permission:partners.delete');
+            });
+
+        Route::controller(ServiceController::class)
+            ->group(function () {
+                Route::get('/services', 'index')
+                    ->name('services.index')
+                    ->middleware('has.permission:services.view');
+                Route::get('/services/create', 'create')
+                    ->name('services.create')
+                    ->middleware('has.permission:services.create');
+                Route::post('/services/store', 'store')
+                    ->name('services.store')
+                    ->middleware('has.permission:services.create');
+                Route::get('/services/edit/{service}', 'edit')
+                    ->name('services.edit')
+                    ->middleware('has.permission:services.update');
+                Route::post('/services/update/{service}', 'update')
+                    ->name('services.update')
+                    ->middleware('has.permission:services.update');
+                Route::post('/services/update-status/{service}', 'updateStatus')
+                    ->name('services.updateStatus')
+                    ->middleware('has.permission:services.update');
+                Route::delete('/services/delete/{service}', 'delete')
+                    ->name('services.delete')
+                    ->middleware('has.permission:services.delete');
+            });
+
+        Route::controller(TestimonialController::class)
+            ->group(function () {
+                Route::get('/testimonials', 'index')
+                    ->name('testimonials.index')
+                    ->middleware('has.permission:testimonials.view');
+                Route::get('/testimonials/create', 'create')
+                    ->name('testimonials.create')
+                    ->middleware('has.permission:testimonials.create');
+                Route::post('/testimonials/store', 'store')
+                    ->name('testimonials.store')
+                    ->middleware('has.permission:testimonials.create');
+                Route::get('/testimonials/edit/{testimonial}', 'edit')
+                    ->name('testimonials.edit')
+                    ->middleware('has.permission:testimonials.update');
+                Route::post('/testimonials/update/{testimonial}', 'update')
+                    ->name('testimonials.update')
+                    ->middleware('has.permission:testimonials.update');
+                Route::post('/testimonials/update-status/{testimonial}', 'updateStatus')
+                    ->name('testimonials.updateStatus')
+                    ->middleware('has.permission:testimonials.update');
+                Route::delete('/testimonials/delete/{testimonial}', 'delete')
+                    ->name('testimonials.delete')
+                    ->middleware('has.permission:testimonials.delete');
             });
     });
 });

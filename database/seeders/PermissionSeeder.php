@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Partner;
 use App\Models\User;
 use App\Models\Admin;
 use App\Models\Banks;
@@ -15,6 +16,8 @@ use App\Models\AboutItem;
 use App\Models\Reciever;
 use App\Models\UserShippingPrice;
 use App\Models\AdminSetting;
+use App\Models\Service;
+use App\Models\Testimonial;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 
@@ -45,7 +48,10 @@ class PermissionSeeder extends Seeder
             ...AboutItem::$permissions,
             ...Reciever::$permissions,
             ...UserShippingPrice::$permissions,
+            ...Partner::$permissions,
             ...AdminSetting::$permissions,
+            ...Service::$permissions,
+            ...Testimonial::$permissions,
             ...$rolePermission,
         ];
 

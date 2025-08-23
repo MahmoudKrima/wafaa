@@ -14,5 +14,5 @@ class About extends Model
         'about.view',
         'about.update',
     ];
-   
+
 }
