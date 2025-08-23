@@ -10,7 +10,6 @@ use Illuminate\Database\Seeder;
 use Database\Seeders\RoleSeeder;
 use Database\Seeders\AboutSeeder;
 use Database\Seeders\AdminSeeder;
-use Database\Seeders\CitiesSeeder;
 use Database\Seeders\SliderSeeder;
 use Database\Seeders\SettingSeeder;
 use Database\Seeders\AboutItemSeeder;
@@ -32,7 +31,6 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             AdminSeeder::class,
             SettingSeeder::class,
-            CitiesSeeder::class,
             SliderSeeder::class,
             AboutSeeder::class,
             AboutItemSeeder::class,
