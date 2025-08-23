@@ -267,4 +267,10 @@ return [
     'create_user_shipping_price' => 'إنشاء سعر شحن للمستخدم',
     'edit_user_shipping_price' => 'تعديل سعر شحن للمستخدم',
     'shipping_company' => 'شركة الشحن',
+    'local_price_must_be_positive' => 'السعر المحلي يجب أن يكون موجباً',
+    'shipping_prices' => 'أسعار الشحن',
+    'extra_weight_price' => 'سعر الوزن الإضافي',
+    'cash_on_delivery_price' => 'سعر الدفع عند الاستلام',
+    'shipping_prices_updated_successfully' => 'تم تحديث أسعار الشحن بنجاح',
+    'admin_settings' => 'إعدادات المدير',
 ];

@@ -16,11 +16,6 @@ return new class extends Migration
             $table->string('key');
             $table->longText('value')
                 ->nullable();
-            $table->foreignId('admin_id')
-                ->nullable()
-                ->constrained('admins')
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
             $table->timestamps();
         });
     }

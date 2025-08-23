@@ -32,6 +32,7 @@ class DatabaseSeeder extends Seeder
             SliderSeeder::class,
             AboutSeeder::class,
             AboutItemSeeder::class,
+            AdminSettingSeeder::class,
         ]);
         User::factory(10)->create();
         Reciever::factory(10)->create();

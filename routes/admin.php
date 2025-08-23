@@ -10,9 +10,10 @@ use App\Http\Controllers\Admin\UserSettings\AdminController;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use App\Http\Controllers\Admin\WebSiteSettings\RoleController;
 use App\Http\Controllers\Admin\Transaction\TransactionController;
+use App\Http\Controllers\Admin\FrontSetting\About\AboutController;
 use App\Http\Controllers\Admin\WebSiteSettings\SettingsController;
 use App\Http\Controllers\Admin\FrontSettings\Slider\SliderController;
-use App\Http\Controllers\Admin\FrontSetting\About\AboutController;
+use App\Http\Controllers\Admin\WebSiteSettings\AdminSettingsController;
 use App\Http\Controllers\Admin\UserShippingPrice\UserShippingPriceController;
 
 /*
@@ -274,6 +275,16 @@ Route::middleware(['web'])->group(function () {
                 Route::delete('/user-shipping-prices/delete/{userShippingPrice}', 'delete')
                     ->name('user-shipping-prices.delete')
                     ->middleware('has.permission:user_shipping_prices.delete');
+            });
+
+        Route::controller(AdminSettingsController::class)
+            ->group(function () {
+                Route::get('/admin-settings', 'index')
+                    ->name('admin-settings.index')
+                    ->middleware('has.permission:admin_settings.update');
+                Route::post('/admin-settings/update/{adminSetting}', 'update')
+                    ->name('admin-settings.update')
+                    ->middleware('has.permission:admin_settings.update');
             });
     });
 });
