@@ -48,6 +48,9 @@ class UserService
         $data = $request->validated();
         $data['created_by'] = getAdminIdOrCreatedBy();
         $data['name'] = $this->translate($data['name_ar'], $data['name_en']);
+        $data['city_name'] = $this->translate($data['city_name_ar'], $data['city_name_en']);
+        $data['state_name'] = $this->translate($data['state_name_ar'], $data['state_name_en']);
+        $data['country_name'] = $this->translate($data['country_name_ar'], $data['country_name_en']);
         $data['added_by'] = auth('admin')->id();
         $user = User::create($data);
         return $user;
@@ -59,6 +62,10 @@ class UserService
         if (!isset($data['password'])) {
             unset($data['password']);
         }
+        $data['name'] = $this->translate($data['name_ar'], $data['name_en']);
+        $data['city_name'] = $this->translate($data['city_name_ar'], $data['city_name_en']);
+        $data['state_name'] = $this->translate($data['state_name_ar'], $data['state_name_en']);
+        $data['country_name'] = $this->translate($data['country_name_ar'], $data['country_name_en']);
         $user->update($data);
         return $user;
     }

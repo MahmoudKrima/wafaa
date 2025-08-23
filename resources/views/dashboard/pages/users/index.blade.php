@@ -61,18 +61,7 @@
                                                             name="email" id="email" class="form-control"
                                                             placeholder="{{ __('admin.email') }}">
                                                     </div>
-                                                    <div class="col-md-4 mb-3">
-                                                        <label for="city">{{ __('admin.city') }}</label>
-                                                        <select name="city" class="form-control" id="city">
-                                                            <option value="">{{ __('admin.choose_city') }}</option>
-                                                            @foreach ($cities as $city)
-                                                            <option @selected($city->id == request()->get('city'))
-                                                                value="{{ $city->id }}">
-                                                                {{ $city->name}}
-                                                            </option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
+
                                                 </div>
                                                 <div class="row mt-2">
                                                     <div class="col-md-3 mb-3">
@@ -126,7 +115,7 @@
                                     <td>{{ $user->phone }}</td>
                                     <td>{{ $user->additional_phone ?? __('admin.n/a') }}</td>
                                     <td>{{ $user->email }}</td>
-                                    <td>{{ $user->city?->name}}</td>
+                                    <td>{{ $user->city_name}}</td>
                                     <td>{{ Str::limit($user->address, 50) }}</td>
                                     <td>{{ $user->addedByAdmin?->name}}</td>
                                     <td>{{ optional($user->wallet)->balance ?? __('admin.n/a')}}</td>

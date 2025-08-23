@@ -33,7 +33,7 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
-    protected $translatable = ['name'];
+    protected $translatable = ['name', 'city_name', 'state_name', 'country_name'];
 
     /**
      * Get the attributes that should be cast.
@@ -50,7 +50,6 @@ class User extends Authenticatable
     }
 
     public static $relatio = [
-        'city',
         'createdByAdmin',
         'addedByAdmin',
         'wallet',
@@ -70,11 +69,6 @@ class User extends Authenticatable
     public function scopeWithAllRelations($query)
     {
         return $query->with(self::$relatio);
-    }
-
-    public function city()
-    {
-        return $this->belongsTo(City::class);
     }
 
 

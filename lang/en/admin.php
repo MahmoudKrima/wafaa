@@ -278,4 +278,8 @@ return [
     'cash_on_delivery_price' => 'Cash on Delivery Price',
     'shipping_prices_updated_successfully' => 'Shipping prices updated successfully',
     'admin_settings' => 'Admin Settings',
+    'state' => 'State',
+    'choose_state' => 'Choose State',
+    'loading_cities' => 'Loading cities...',
+    'no_cities_found' => 'No cities found',
 ];
