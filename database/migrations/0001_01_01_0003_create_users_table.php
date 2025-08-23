@@ -17,9 +17,14 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('phone')->unique();
             $table->string('postal_code')->nullable();
+            $table->string('city_id')->nullable();
+            $table->string('city_name')->nullable();
+            $table->string('state_id')->nullable();
+            $table->string('state_name')->nullable();
+            $table->string('country_id')->nullable();
+            $table->string('country_name')->nullable();
             $table->string('additional_phone')->nullable();
             $table->text('address');
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->foreignId('created_by')
                 ->constrained('admins')
@@ -30,10 +35,7 @@ return new class extends Migration
                 ->constrained('admins')
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
-            $table->foreignId('city_id')
-                ->constrained('cities')
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
+
             $table->rememberToken();
             $table->timestamps();
         });

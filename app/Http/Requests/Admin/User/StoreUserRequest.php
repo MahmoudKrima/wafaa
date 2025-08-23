@@ -29,7 +29,7 @@ class StoreUserRequest extends FormRequest
             'address' => ['required', 'string', 'max:999'],
             'email' => [
                 'required',
-                'email',
+                'email',    
                 Rule::unique('users', 'email'),
                 Rule::unique('admins', 'email'),
                 function ($attribute, $value, $fail) {
@@ -54,7 +54,15 @@ class StoreUserRequest extends FormRequest
                 Rule::unique('admins', 'phone'),
                 Rule::unique('users', 'phone'),
             ],
-            'city_id' => ['required', 'integer', Rule::exists('cities', 'id')],
+            'city_id' => ['required', 'string','max:255'],
+            'state_id' => ['required', 'string','max:255'],
+            'state_name_ar' => ['required', 'string', 'max:255'],
+            'state_name_en' => ['required', 'string', 'max:255'],
+            'country_id' => ['required', 'string','max:255'],
+            'country_name_ar' => ['required', 'string', 'max:255'],
+            'country_name_en' => ['required', 'string', 'max:255'],
+            'city_name_ar' => ['required', 'string', 'max:255'],
+            'city_name_en' => ['required', 'string', 'max:255'],
             'password' => [
                 'required',
                 'string',

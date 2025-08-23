@@ -22,7 +22,6 @@ class RecieverFactory extends Factory
             'additional_phone' => $this->faker->phoneNumber,
             'address' => $this->faker->address,
             'user_id' => rand(1, 10),
-            'city_id' => rand(1, 3),
         ];
     }
 }
