@@ -9,8 +9,18 @@ use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use App\Http\Controllers\User\Transaction\TransactionController;
 
 
-Route::get('/receivers', [ShippingController::class, 'receivers'])
-    ->name('recievers.index');
+Route::controller(ShippingController::class)
+    ->group(function () {
+        Route::get('/states', 'getStates')
+            ->name('shippings.states');
+        Route::get('/receivers', 'receivers')
+            ->name('recievers.index');
+        Route::get('/cities', 'getCities')
+            ->name('shippings.cities');
+        Route::get('/cities-by-state', 'getCitiesByState')
+            ->name('shippings.citiesByState');
+    });
+
 Route::middleware(['web'])->group(function () {
     Route::controller(AuthController::class)
         ->as('user.')
@@ -71,6 +81,8 @@ Route::middleware(['web'])->group(function () {
                     ->name('shippings.create');
                 Route::post('/create-shipping', 'store')
                     ->name('shippings.store');
+                Route::get('/shipping-companies', 'shippingCompanies')
+                    ->name('shippings.companies');
             });
     });
 });

@@ -24,6 +24,12 @@ class ShippingController extends Controller
         return response()->json($recievers);
     }
 
+    public function shippingCompanies()
+    {
+        $companies = $this->shippingService->getUserShippingCompanies();
+        return response()->json($companies);
+    }
+
     public function create()
     {
         return view('user.pages.shippings.create');
@@ -34,5 +40,24 @@ class ShippingController extends Controller
         $this->shippingService->store($request);
         return back()
             ->with('Success', __('admin.created_successfully'));
+    }
+
+    public function getStates()
+    {
+        $states = $this->shippingService->getStates();
+        return response()->json($states);
+    }
+
+    public function getCities()
+    {
+        $cities = $this->shippingService->getCities();
+        return response()->json($cities);
+    }
+
+    public function getCitiesByState(Request $request)
+    {
+        $stateId = $request->get('state_id');
+        $cities = $this->shippingService->getCitiesByState($stateId);
+        return response()->json($cities);
     }
 }

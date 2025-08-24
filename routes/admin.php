@@ -135,6 +135,8 @@ Route::middleware(['web'])->group(function () {
                     ->middleware('has.permission:wallet_logs.view');
             });
 
+        Route::get('/users/cities-by-state', [UserController::class, 'getCitiesByState'])
+            ->name('users.citiesByState');
         Route::controller(RoleController::class)
             ->group(function () {
                 Route::get('/roles', 'index')
