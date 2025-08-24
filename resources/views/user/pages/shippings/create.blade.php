@@ -1,10 +1,10 @@
 @extends('user.layouts.app')
 @section('title', __('admin.create_shipping'))
-
-@section('content')
-@push('styles')
+@push('css')
 <link rel="stylesheet" href="{{ asset('user/shipping-styles.css') }}">
 @endpush
+@section('content')
+
 <div class="layout-px-spacing">
     <div class="row layout-top-spacing">
         <div id="basic" class="col-12 layout-spacing">
@@ -140,6 +140,9 @@
                                 <p class="mt-2">{{ __('admin.loading_companies') }}</p>
                             </div>
                         </div>
+
+                        <!-- Company Selected Summary -->
+                        <div id="company-selected-summary" class="mt-4" style="display: none;"></div>
 
                         <!-- Company Pricing Display -->
                         <div id="company-pricing-display" class="mt-4" style="display: none;"></div>
@@ -716,17 +719,42 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Initialize the shipping application
-        if (typeof initShippingForm === 'function') {
-            initShippingForm();
-        } else {
-            console.error('initShippingForm function not found');
-        }
+        console.log('Main initialization script started');
         
-        // Initialize step navigation
-        if (typeof showStep === 'function') {
-            showStep(1); // Start with step 1
-        }
+        // Wait for all scripts to load and then initialize
+        const waitForScripts = () => {
+            console.log('Checking if all required functions are available...');
+            
+            const requiredFunctions = [
+                'initShippingForm',
+                'showStep',
+                'showMethodSelection'
+            ];
+            
+            const missingFunctions = requiredFunctions.filter(func => typeof window[func] !== 'function');
+            
+            if (missingFunctions.length === 0) {
+                console.log('All required functions are available, initializing...');
+                
+                // Initialize the shipping application
+                if (typeof window.initShippingForm === 'function') {
+                    window.initShippingForm();
+                } else {
+                    console.error('initShippingForm function not found');
+                }
+                
+                // Initialize step navigation
+                if (typeof window.showStep === 'function') {
+                    window.showStep(1); // Start with step 1
+                }
+            } else {
+                console.log('Waiting for functions to load:', missingFunctions);
+                setTimeout(waitForScripts, 100);
+            }
+        };
+        
+        // Start checking for scripts
+        waitForScripts();
     });
 </script>
 @endpush

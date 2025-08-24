@@ -1,12 +1,27 @@
 let currentStep = 1;
 let shipmentId = `shipment_${Date.now()}`;
+let selectedMethod = null; // Add missing variable declaration
+let selectedReceivers = []; // Add missing variable declaration
+
+// Add missing updateStepIndicator function
+function updateStepIndicator(step) {
+    const steps = document.querySelectorAll(".step");
+    steps.forEach((s, i) => {
+        const bubble = s.querySelector(".step-number");
+        if (!bubble) return;
+        bubble.classList.remove("is-current", "is-done");
+        if (i + 1 < step) bubble.classList.add("is-done");
+        else if (i + 1 === step) bubble.classList.add("is-current");
+    });
+}
 
 // Initialize the form
 function initShippingForm() {
     updateStepIndicator(currentStep);
     setupEventListeners();
     setupReceiverTypeHandling();
-    fetchShippingCompanies();
+    // Don't call fetchShippingCompanies here - let step1.js handle it
+    console.log('Shipping form initialized, companies will be loaded by step1.js');
 }
 
 // Setup event listeners
@@ -15,7 +30,13 @@ function setupEventListeners() {
     const btnPrev = document.getElementById("btn-prev");
 
     if (btnNext) {
-        btnNext.addEventListener("click", handleNextStep);
+        // Only add listener if it doesn't already have one from step1.js
+        if (!btnNext.hasAttribute('data-step1-listener')) {
+            btnNext.addEventListener("click", handleNextStep);
+            console.log('Next button event listener added in utilities.js');
+        } else {
+            console.log('Next button already has listener from step1.js');
+        }
     }
 
     if (btnPrev) {
@@ -29,40 +50,109 @@ function setupEventListeners() {
     }
 }
 
+// Validate step before proceeding
+function validateStep(step) {
+    console.log('Validating step:', step);
+    switch (step) {
+        case 1:
+            if (!window.selectedCompany) {
+                alert('Please select a shipping company before proceeding.');
+                return false;
+            }
+            console.log('Step 1 validation passed');
+            return true;
+        case 2:
+            if (!window.selectedMethod) {
+                alert('Please select a shipping method before proceeding.');
+                return false;
+            }
+            return true;
+        case 3:
+            return true;
+        case 4:
+            if (typeof window.canProceedToNextStep === 'function') {
+                return window.canProceedToNextStep();
+            }
+            return true;
+        case 5:
+            if (typeof window.validatePackageDetails === 'function') {
+                return window.validatePackageDetails();
+            }
+            return true;
+        case 6:
+            return true;
+        default:
+            return true;
+    }
+}
+
 // Handle next step button click
 function handleNextStep() {
-    if (currentStep === 1 && selectedCompany) {
+    console.log('Next button clicked, current step:', currentStep);
+    if (!validateStep(currentStep)) {
+        console.log('Step validation failed');
+        return;
+    }
+    
+    if (currentStep === 1 && window.selectedCompany) {
+        console.log('Moving from step 1 to step 2');
         currentStep = 2;
         showStep(currentStep);
-        showMethodSelection();
-    } else if (currentStep === 2 && selectedMethod) {
+        if (typeof window.showMethodSelection === 'function') {
+            window.showMethodSelection();
+        } else {
+            console.log('showMethodSelection function not found, waiting for step2.js to load...');
+            setTimeout(() => {
+                if (typeof window.showMethodSelection === 'function') {
+                    window.showMethodSelection();
+                } else {
+                    console.error('showMethodSelection function still not available');
+                }
+            }, 100);
+        }
+    } else if (currentStep === 2 && window.selectedMethod) {
         currentStep = 3;
         showStep(currentStep);
-        setupLocationFields();
+        if (typeof window.setupLocationFields === 'function') {
+            window.setupLocationFields();
+        } else {
+            console.log('setupLocationFields function not found');
+        }
     } else if (currentStep === 3) {
         currentStep = 4;
         showStep(currentStep);
         displayCompanySummary();
     } else if (currentStep === 4) {
-        if (canProceedToNextStep()) {
+        if (typeof window.canProceedToNextStep === 'function' && window.canProceedToNextStep()) {
             currentStep = 5;
             showStep(currentStep);
-            populateShippingFormFields();
+            if (typeof window.populateShippingFormFields === 'function') {
+                window.populateShippingFormFields();
+            } else {
+                console.log('populateShippingFormFields function not found');
+            }
         }
     } else if (currentStep === 5) {
-        if (validatePackageDetails()) {
+        if (typeof window.validatePackageDetails === 'function' && window.validatePackageDetails()) {
             currentStep = 6;
             showStep(currentStep);
-            setupPaymentDetails();
+            if (typeof window.setupPaymentDetails === 'function') {
+                window.setupPaymentDetails();
+            } else {
+                console.log('setupPaymentDetails function not found');
+            }
         }
     } else if (currentStep === 6) {
         currentStep = 7;
         showStep(currentStep);
-        showFinalSummary();
+        if (typeof window.showFinalSummary === 'function') {
+            window.showFinalSummary();
+        } else {
+            console.log('showFinalSummary function not found');
+        }
     }
 }
 
-// Handle previous step button click
 function handlePrevStep() {
     if (currentStep > 1) {
         currentStep--;
@@ -79,27 +169,28 @@ function handleCashOnDeliveryChange() {
         codDetails.style.display = isCod ? "block" : "none";
     }
     
-    if (isCod && selectedCompany && selectedReceivers.length > 0) {
-        updateCodDisplay();
+    if (isCod && window.selectedCompany && selectedReceivers.length > 0) {
+        if (typeof updateCodDisplay === 'function') {
+            updateCodDisplay();
+        }
     }
 }
 
-// Display company summary
 function displayCompanySummary() {
     const summaryContainer = document.getElementById("company-summary");
-    if (!summaryContainer || !selectedCompany) return;
+    if (!summaryContainer || !window.selectedCompany) return;
 
     let summaryHTML = `
         <div class="company-summary">
-            <h6>${translations?.shipping_company || 'Shipping Company'}</h6>
-            <div class="summary-item">
-                <span class="label">${translations?.company || 'Company'}:</span>
-                <span class="value">${selectedCompany.name}</span>
+                    <h6>${window.translations?.shipping_company || 'Shipping Company'}</h6>
+        <div class="summary-item">
+            <span class="label">${window.translations?.company || 'Company'}:</span>
+                <span class="value">${window.selectedCompany.name}</span>
             </div>
-            <div class="summary-item">
-                <span class="label">${translations?.method || 'Method'}:</span>
-                <span class="value">${selectedMethod === "local" ? (translations?.local || 'Local') : (translations?.international || 'International')}</span>
-            </div>
+                    <div class="summary-item">
+            <span class="label">${window.translations?.method || 'Method'}:</span>
+            <span class="value">${window.selectedMethod === "local" ? (window.translations?.local || 'Local') : (window.translations?.international || 'International')}</span>
+        </div>
         </div>
     `;
     summaryContainer.innerHTML = summaryHTML;
@@ -119,29 +210,39 @@ function showStep(step) {
 
     if (step === 5) {
         if (btnNext) btnNext.style.display = "inline-block";
-        populateShippingFormFields();
+        if (typeof populateShippingFormFields === 'function') {
+            populateShippingFormFields();
+        }
     } else if (step === 6) {
         if (btnNext) btnNext.style.display = "inline-block";
-        setupPaymentDetails();
+        if (typeof setupPaymentDetails === 'function') {
+            setupPaymentDetails();
+        }
     } else if (step === 7) {
         if (btnNext) btnNext.style.display = "none";
-        showFinalSummary();
+        if (typeof showFinalSummary === 'function') {
+            showFinalSummary();
+        }
     } else {
         if (btnNext) btnNext.style.display = "inline-block";
     }
 
     if (step === 3) {
-        handleCompanyRequirements();
+        if (typeof handleCompanyRequirements === 'function') {
+            handleCompanyRequirements();
+        }
     } else if (step === 4) {
-        loadReceivers();
-        loadReceiverStates();
-        loadReceiverCities();
-        ensureReceiverStateFieldVisible();
-        setupReceiverFormByShippingType();
+        if (typeof loadReceivers === 'function') loadReceivers();
+        if (typeof loadReceiverStates === 'function') loadReceiverStates();
+        if (typeof loadReceiverCities === 'function') loadReceiverCities();
+        if (typeof ensureReceiverStateFieldVisible === 'function') ensureReceiverStateFieldVisible();
+        if (typeof setupReceiverFormByShippingType === 'function') setupReceiverFormByShippingType();
         
         if (selectedMethod === "local") {
             setTimeout(() => {
-                loadSaudiArabiaStates();
+                if (typeof loadSaudiArabiaStates === 'function') {
+                    loadSaudiArabiaStates();
+                }
             }, 100);
         }
     }
@@ -154,17 +255,19 @@ function showStep(step) {
 function clearStepData(step) {
     switch (step) {
         case 1:
-            selectedCompany = null;
-            selectedMethod = null;
+            window.selectedCompany = null;
+            window.selectedMethod = null;
             const pricingContainer = document.getElementById("company-pricing-display");
             if (pricingContainer) {
                 pricingContainer.style.display = "none";
             }
             break;
         case 2:
-            selectedMethod = null;
+            window.selectedMethod = null;
             if (currentStep >= 4) {
-                setupReceiverFormByShippingType();
+                if (typeof window.setupReceiverFormByShippingType === 'function') {
+                    window.setupReceiverFormByShippingType();
+                }
             }
             break;
         case 3:
@@ -189,9 +292,9 @@ function setupReceiverTypeHandling() {
             if (this.checked) {
                 if (existingSection) existingSection.style.display = "block";
                 if (newSection) newSection.style.display = "none";
-                clearReceiverForm();
-                showMultipleReceiverControls();
-                ensureReceiverStateFieldVisible();
+                if (typeof clearReceiverForm === 'function') clearReceiverForm();
+                if (typeof showMultipleReceiverControls === 'function') showMultipleReceiverControls();
+                if (typeof ensureReceiverStateFieldVisible === 'function') ensureReceiverStateFieldVisible();
                 // resetReceiverFormForExisting(); // This function is implemented in step4.js
             }
         });
@@ -202,10 +305,10 @@ function setupReceiverTypeHandling() {
             if (this.checked) {
                 if (existingSection) existingSection.style.display = "none";
                 if (newSection) newSection.style.display = "block";
-                clearReceiverForm();
-                showMultipleReceiverControls();
-                ensureReceiverStateFieldVisible();
-                setupReceiverFormByShippingType();
+                if (typeof clearReceiverForm === 'function') clearReceiverForm();
+                if (typeof showMultipleReceiverControls === 'function') showMultipleReceiverControls();
+                if (typeof ensureReceiverStateFieldVisible === 'function') ensureReceiverStateFieldVisible();
+                if (typeof setupReceiverFormByShippingType === 'function') setupReceiverFormByShippingType();
             }
         });
     }
@@ -215,11 +318,11 @@ function setupReceiverTypeHandling() {
         receiverSelect.addEventListener("change", function () {
             const selectedReceiverId = this.value;
             if (selectedReceiverId) {
-                populateReceiverForm(selectedReceiverId);
+                if (typeof populateReceiverForm === 'function') populateReceiverForm(selectedReceiverId);
                 const newSection = document.getElementById("new_receiver_section");
                 if (newSection) newSection.style.display = "block";
             } else {
-                clearReceiverForm();
+                if (typeof clearReceiverForm === 'function') clearReceiverForm();
             }
         });
     }
@@ -276,3 +379,13 @@ function clearImagePreview() {
         previewContainer.style.display = 'none';
     }
 }
+
+// Make functions globally accessible
+window.initShippingForm = initShippingForm;
+window.showStep = showStep;
+window.updateStepIndicator = updateStepIndicator;
+window.clearStepData = clearStepData;
+window.handleNextStep = handleNextStep;
+window.handlePrevStep = handlePrevStep;
+window.setupReceiverTypeHandling = setupReceiverTypeHandling;
+window.setupEventListeners = setupEventListeners;
