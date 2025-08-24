@@ -29,7 +29,7 @@ class UpdateUserRequest extends FormRequest
             'address' => ['required', 'string', 'max:999'],
             'email' => [
                 'required',
-                'email',
+                'email:dns,filter',
                 Rule::unique('users', 'email')->ignore($this->route('user')->id),
                 Rule::unique('admins', 'email'),
                 function ($attribute, $value, $fail) {

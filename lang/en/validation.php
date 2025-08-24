@@ -267,6 +267,8 @@ return [
         'review_ar' => 'Review Ar',
         'review_en' => 'Review En',
         'rate' => 'Rate',
+        'first_name' => 'First Name',
+        'last_name' => 'Last Name',
     ],
 
 ];

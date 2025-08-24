@@ -1,23 +1,24 @@
 <?php
 
-use App\Http\Controllers\Admin\Service\ServiceController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\Auth\AuthController;
 use App\Http\Controllers\Admin\Bank\BankController;
 use App\Http\Controllers\Admin\Home\HomeController;
+use App\Http\Controllers\Admin\Contact\ContactController;
 use App\Http\Controllers\Admin\Partner\PartnerController;
 use App\Http\Controllers\Admin\Profile\ProfileController;
+use App\Http\Controllers\Admin\Service\ServiceController;
 use App\Http\Controllers\Admin\UserSettings\UserController;
 use App\Http\Controllers\Admin\UserSettings\AdminController;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use App\Http\Controllers\Admin\WebSiteSettings\RoleController;
+use App\Http\Controllers\Admin\Testimonial\TestimonialController;
 use App\Http\Controllers\Admin\Transaction\TransactionController;
 use App\Http\Controllers\Admin\FrontSetting\About\AboutController;
 use App\Http\Controllers\Admin\WebSiteSettings\SettingsController;
 use App\Http\Controllers\Admin\FrontSettings\Slider\SliderController;
 use App\Http\Controllers\Admin\WebSiteSettings\AdminSettingsController;
 use App\Http\Controllers\Admin\UserShippingPrice\UserShippingPriceController;
-use App\Http\Controllers\Admin\Testimonial\TestimonialController;
 /*
 |--------------------------------------------------------------------------
 | Admin Routes
@@ -363,5 +364,19 @@ Route::middleware(['web'])->group(function () {
                     ->name('testimonials.delete')
                     ->middleware('has.permission:testimonials.delete');
             });
+
+            Route::controller(ContactController::class)
+            ->group(function () {
+                Route::get('/contacts', 'index')
+                    ->name('contacts.index')
+                    ->middleware('has.permission:contacts.view');
+                Route::post('/contacts-reply', 'reply')
+                    ->name('contacts.reply')
+                    ->middleware('has.permission:contacts.reply');
+                Route::delete('/contacts-delete/{contact}', 'delete')
+                    ->name('contacts.delete')
+                    ->middleware('has.permission:contacts.delete');
+            });
+    
     });
 });

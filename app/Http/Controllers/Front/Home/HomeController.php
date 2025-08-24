@@ -6,14 +6,16 @@ use App\Models\User;
 use App\Models\About;
 use App\Models\Admin;
 use App\Models\Slider;
+use App\Models\Contact;
 use App\Models\Partner;
 use App\Models\Service;
 use App\Models\AboutItem;
 use App\Models\Testimonial;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Cache;
+use App\Http\Requests\Front\Contact\StoreContactRequest;
 
 class HomeController extends Controller
 {
@@ -101,5 +103,12 @@ class HomeController extends Controller
                 ->orderBy('id')
                 ->get();
         });
+    }
+
+    public function contact(StoreContactRequest $request)
+    {
+        Contact::create($request->validated());
+        return back()
+            ->with('Success', __('admin.message_sent_successfully'));
     }
 }

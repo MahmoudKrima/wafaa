@@ -228,10 +228,10 @@
                 <div class="row">
                     <div class="col-xl-5 col-lg-5">
                         <div class="section-title">
-                            <h2 class="text-white wow fadeInDown animated" data-wow-delay="400ms">تواصل معنا الان</h2>
+                            <h2 class="text-white wow fadeInDown animated" data-wow-delay="400ms">{{ __('admin.contact_us_now') }}</h2>
                         </div>
                         <p class="text-white wow fadeInUp animated" data-wow-delay="200ms">
-                            نحن هنا لمساعدتك وخدمتك عملينا العزيز على مدار الساعة. </p>
+                            {{ __('admin.contact_us_description') }} </p>
                         <div class="contact-wrap">
                             <div class="icon">
                                 <i class="fa-solid fa-phone"></i>
@@ -256,26 +256,27 @@
                     <div class="col-xl-7 col-lg-7 wow fadeInDown animated" data-wow-delay="400ms">
                         <div class="apppointment-form-wrap white-bg">
                             <h2>طلب المساعدة</h2>
-                            <form>
+                            <form method="post" action="{{ route('front.contact.store') }}">
+                                @csrf
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <input type="text" placeholder="الاسم الاول">
+                                        <input type="text" name="first_name" placeholder="{{__('admin.first_name')}}">
                                     </div>
                                     <div class="col-md-6">
-                                        <input type="text" placeholder="الاسم الاخير">
+                                        <input type="text" name="last_name" placeholder="{{__('admin.last_name')}}">
                                     </div>
                                     <div class="col-md-6">
-                                        <input type="email" placeholder="البريد الالكتروني">
+                                        <input type="email" name="email" placeholder="{{__('admin.email')}}">
                                     </div>
                                     <div class="col-md-6">
-                                        <input type="tel" placeholder="رقم الجوال">
+                                        <input type="tel" name="phone" placeholder="{{__('admin.phone')}}">
                                     </div>
                                     <div class="col-md-12">
-                                        <textarea name="message" cols="30" rows="10"
-                                            placeholder="اكتب رسالتك هنا"></textarea>
+                                        <textarea name="message" cols="30" rows="10" name="message"
+                                            placeholder="{{ __('admin.write_your_message') }}"></textarea>
                                     </div>
                                     <div class="col-md-12">
-                                        <input type="submit" value="إرســال">
+                                        <input type="submit" value="{{ __('admin.send') }}">
                                     </div>
                                 </div>
                             </form>
