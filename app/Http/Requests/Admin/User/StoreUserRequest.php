@@ -29,7 +29,7 @@ class StoreUserRequest extends FormRequest
             'address' => ['required', 'string', 'max:999'],
             'email' => [
                 'required',
-                'email',    
+                'email:dns,filter',
                 Rule::unique('users', 'email'),
                 Rule::unique('admins', 'email'),
                 function ($attribute, $value, $fail) {
