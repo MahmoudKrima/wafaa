@@ -1,0 +1,154 @@
+/* ========== Shipping Form – Minimal & Handsome ========== */
+:root{
+    --bg: #ffffff;
+    --muted-bg: #f7f8fa;
+    --border: #e4e7ec;
+    --border-strong: #cfd4dc;
+    --text: #101828;
+    --muted: #667085;
+    --primary: #3b82f6;          /* calm blue, sparingly used */
+    --ring: rgba(59,130,246,.16);
+  }
+  
+  /* Grid */
+  .companies-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap:16px;
+  }
+  
+  /* Card */
+  .company-card{
+    background:var(--bg);
+    border:1px solid var(--border) !important;
+    border-radius:12px;
+    box-shadow:0 2px 8px rgba(0,0,0,.06);
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    cursor:pointer;
+    height:100%;
+  }
+  .company-card:hover{
+    transform: translateY(-4px);
+    border-color:var(--border-strong) !important;
+    box-shadow:0 8px 24px rgba(0,0,0,.10);
+  }
+  .company-card.selected{
+    border-color:var(--primary) !important;
+    box-shadow:0 0 0 3px var(--ring), 0 8px 24px rgba(0,0,0,.10);
+    background:#f8fafc;
+  }
+  
+  /* Card body */
+  .company-card .card-body{
+    padding:16px !important;
+    display:flex; flex-direction:column; gap:12px;
+  }
+  
+  /* Logo */
+  .company-logo{
+    display:flex; align-items:center; justify-content:center;
+    min-height:80px; padding:16px;
+    background:#f8fafc; border-radius:8px; border:1px solid #e2e8f0;
+  }
+  .company-logo img{
+    max-height:60px; max-width:120px; object-fit:contain;
+    filter:grayscale(20%); transition:transform .2s ease, filter .2s ease;
+  }
+  .company-card:hover .company-logo img{ transform:scale(1.04); filter:grayscale(0%) }
+  
+  /* Title */
+  .company-card .card-title{
+    margin:2px 0 6px;
+    color:#1e293b !important;
+    font-weight:600 !important;
+    font-size:1.05rem;
+    line-height:1.35;
+    text-align:center;
+  }
+  
+  /* Method chips (very subtle) */
+  .meta-row{ display:flex; gap:8px; justify-content:center; flex-wrap:wrap }
+  .badge{
+    font-size:.75rem; padding:.35rem .6rem; border-radius:6px;
+    font-weight:500; letter-spacing:.02em;
+    border:1px solid #e5e7eb; background:#f9fafb; color:#374151;
+  }
+  .badge.outline-success{ border-color:#d1fae5; background:#f0fdf4; color:#065f46 }
+  .badge.outline-info{ border-color:#bfdbfe; background:#eff6ff; color:#1e40af }
+  
+  /* Small stat preview */
+  .preview{ display:grid; grid-template-columns:repeat(2,1fr); gap:8px }
+  .preview-box{
+    border:1px solid #eef0f4; background:#fbfcfd; border-radius:8px; padding:10px;
+  }
+  .preview-box small{ display:block; color:var(--muted); font-weight:600; margin-bottom:2px }
+  .preview-box strong{ color:#111827; font-size:.95rem }
+  
+  /* Click hint */
+  .card-hint{ text-align:center; color:#64748b; font-size:.8rem }
+  .company-card:hover .card-hint{ color:var(--primary) }
+  
+  /* Details (accordion) */
+  .company-details-card{ display:none; margin-top:10px; opacity:0; transform:translateY(-8px); }
+  .company-details-card.active{ display:block; opacity:1; transform:translateY(0); transition:all .2s ease; }
+  
+  .company-details-card .card{
+    border:1px solid var(--border); border-radius:12px; background:#fff;
+    box-shadow:0 4px 20px rgba(0,0,0,.08); overflow:hidden;
+  }
+  .company-details-card .card-body{ padding:16px !important }
+  .company-details-card h6{
+    color:#1e293b; font-weight:600; font-size:1rem; margin-bottom:12px;
+    border-bottom:1px solid #e2e8f0; padding-bottom:10px;
+    display:flex; align-items:center; gap:.5rem;
+  }
+  .company-details-card h6 i{ font-size:1.05rem; color:var(--primary) }
+  
+  /* Details grid (neutral tiles) */
+  .details-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px }
+  .details-tile{
+    border:1px solid #eef0f4; border-radius:10px; background:#fff; padding:12px;
+  }
+  .details-tile small{ display:block; color:var(--muted); font-weight:600; margin-bottom:4px }
+  .details-tile strong{ color:#111827; font-size:1rem }
+  
+  /* Summary (shown above Next button) */
+  .selected-summary{
+    display:none; /* becomes block when a company is selected */
+    border:1px solid var(--border);
+    background:var(--bg);
+    border-radius:12px;
+    padding:14px;
+    margin:16px 0 6px;
+    box-shadow:0 1px 2px rgba(0,0,0,.04);
+  }
+  .selected-summary__title{
+    font-weight:600; color:var(--text); margin-bottom:8px; font-size:1rem;
+  }
+  .selected-summary__grid{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:8px;
+  }
+  .selected-summary__item{
+    border:1px dashed #e9edf2; border-radius:8px; padding:10px; background:#fafbfc;
+  }
+  .selected-summary__item small{ color:var(--muted); display:block; margin-bottom:2px; font-weight:600 }
+  .selected-summary__item strong{ color:#111827 }
+  
+  /* Step indicator (calm) */
+  .step-number{
+    width:40px !important; height:40px !important; font-weight:600; font-size:14px;
+    display:flex; align-items:center; justify-content:center; border-radius:50%;
+    background:#eef1f6; color:#344054; transition:all .2s ease;
+  }
+  .step .is-current{ background:#e6efff; color:#1e40af }
+  .step .is-done{ background:#e9fbef; color:#065f46 }
+  
+  /* Accessibility */
+  .company-card:focus{ outline:2px solid var(--primary); outline-offset:2px }
+  
+  /* Responsive */
+  @media (max-width:768px){
+    .company-card .card-body{ padding:12px !important }
+    .company-details-card .card-body{ padding:12px !important }
+  }
+  
