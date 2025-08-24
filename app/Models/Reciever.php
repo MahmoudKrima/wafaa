@@ -16,7 +16,6 @@ class Reciever extends Model
     ];
 
     public static $relatio = [
-        'city',
         'user',
     ];
 
@@ -31,8 +30,5 @@ class Reciever extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function city()
-    {
-        return $this->belongsTo(City::class);
-    }
+
 }
