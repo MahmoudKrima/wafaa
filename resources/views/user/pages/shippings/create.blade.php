@@ -193,7 +193,7 @@
                         </div>
 
                         <div class="row">
-                        <div class="col-12 col-md-6 mb-3">
+                            <div class="col-12 col-md-6 mb-3">
                                 <label for="user_state" class="text-dark">{{ __('admin.state') }}</label>
                                 <input id="user_state" type="text" name="state" class="form-control"
                                     value="{{ auth()->user()->state_name ?? '' }}" disabled>
@@ -203,7 +203,7 @@
                                 <input id="user_city" type="text" name="city" class="form-control"
                                     value="{{ auth()->user()->city_name ?? '' }}" disabled>
                             </div>
-                            
+
                         </div>
                         <div class="row">
                             <div class="col-12 col-md-6 mb-3">
@@ -363,9 +363,6 @@
                                     <button type="button" id="add-receiver-btn" class="btn btn-success">
                                         <i class="fas fa-plus"></i> {{ __('admin.add_receiver') }}
                                     </button>
-                                    <button type="button" id="add-existing-receiver-btn" class="btn btn-primary">
-                                        <i class="fas fa-list"></i> {{ __('admin.add_from_existing') }}
-                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -375,7 +372,6 @@
                         <div id="receiver-error-msg" class="mt-3" style="display: none;"></div>
                     </div>
 
-                    <!-- Step 5: Shipping Details -->
                     <div class="step-content" id="step-5" style="display: none;">
                         <h5 class="text-center mb-4">{{ __('admin.shipping_details') }}</h5>
 
@@ -463,13 +459,13 @@
                             <div class="row">
                                 <div class="col-12 mb-3">
                                     <label for="shipmentImage" class="form-label">{{ __('admin.shipment_image') }}</label>
-                                    <input type="file" 
-                                           class="form-control" 
-                                           id="shipmentImage" 
-                                           name="shipment_image" 
-                                           accept="image/*"
-                                           data-max-file-size="2M"
-                                           data-max-files="1">
+                                    <input type="file"
+                                        class="form-control"
+                                        id="shipmentImage"
+                                        name="shipment_image"
+                                        accept="image/*"
+                                        data-max-file-size="2M"
+                                        data-max-files="1">
                                     <div class="mt-2">
                                         <small class="text-muted">{{ __('admin.upload_shipment_image_help') }}</small>
                                     </div>
@@ -588,7 +584,7 @@
 
 @push('css')
 <style>
-  
+
 </style>
 @endpush
 
@@ -705,8 +701,10 @@
     const API_ENDPOINTS = {
         shippingCompanies: '{{ route("user.shippings.companies") }}'
     };
+
+    window.translations = translations;
+    window.API_ENDPOINTS = API_ENDPOINTS;
 </script>
-<script src="{{ asset('user/utilities.js') }}"></script>
 <script src="{{ asset('user/step1.js') }}"></script>
 <script src="{{ asset('user/step2.js') }}"></script>
 <script src="{{ asset('user/step3.js') }}"></script>
@@ -715,46 +713,11 @@
 <script src="{{ asset('user/step6.js') }}"></script>
 <script src="{{ asset('user/step7.js') }}"></script>
 <script src="{{ asset('user/locations.js') }}"></script>
+<script src="{{ asset('user/utilities.js') }}"></script>
 <script src="{{ asset('user/shipping-main.js') }}"></script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('Main initialization script started');
-        
-        // Wait for all scripts to load and then initialize
-        const waitForScripts = () => {
-            console.log('Checking if all required functions are available...');
-            
-            const requiredFunctions = [
-                'initShippingForm',
-                'showStep',
-                'showMethodSelection'
-            ];
-            
-            const missingFunctions = requiredFunctions.filter(func => typeof window[func] !== 'function');
-            
-            if (missingFunctions.length === 0) {
-                console.log('All required functions are available, initializing...');
-                
-                // Initialize the shipping application
-                if (typeof window.initShippingForm === 'function') {
-                    window.initShippingForm();
-                } else {
-                    console.error('initShippingForm function not found');
-                }
-                
-                // Initialize step navigation
-                if (typeof window.showStep === 'function') {
-                    window.showStep(1); // Start with step 1
-                }
-            } else {
-                console.log('Waiting for functions to load:', missingFunctions);
-                setTimeout(waitForScripts, 100);
-            }
-        };
-        
-        // Start checking for scripts
-        waitForScripts();
-    });
+    window.APP_LOCALE = "{{ app()->getLocale() }}";
 </script>
+
 @endpush
