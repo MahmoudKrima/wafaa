@@ -193,7 +193,7 @@
                         </div>
 
                         <div class="row">
-                        <div class="col-12 col-md-6 mb-3">
+                            <div class="col-12 col-md-6 mb-3">
                                 <label for="user_state" class="text-dark">{{ __('admin.state') }}</label>
                                 <input id="user_state" type="text" name="state" class="form-control"
                                     value="{{ auth()->user()->state_name ?? '' }}" disabled>
@@ -203,7 +203,7 @@
                                 <input id="user_city" type="text" name="city" class="form-control"
                                     value="{{ auth()->user()->city_name ?? '' }}" disabled>
                             </div>
-                            
+
                         </div>
                         <div class="row">
                             <div class="col-12 col-md-6 mb-3">
@@ -265,26 +265,6 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="row mb-3">
-                                <div class="col-12">
-                                    <button type="button" class="btn btn-sm btn-info"
-                                        onclick="testReceiverPopulation()">
-                                        {{ __('admin.test_receiver_population') }}
-                                    </button>
-                                    <button type="button" class="btn btn-sm btn-warning"
-                                        onclick="testLoadCountries()">
-                                        Test Load Countries
-                                    </button>
-                                    <button type="button" class="btn btn-sm btn-success"
-                                        onclick="forceTestCountries()">
-                                        Force Test Countries
-                                    </button>
-                                    <button type="button" class="btn btn-sm btn-primary"
-                                        onclick="testSaudiArabiaStates()">
-                                        Test Saudi States
-                                    </button>
-                                </div>
-                            </div>
                         </div>
 
                         <!-- New Receiver Section -->
@@ -298,7 +278,7 @@
 
                                 <div class="col-12 col-md-6 mb-3">
                                     <label for="phone" class="text-dark">{{ __('admin.phone_number') }}</label>
-                                    <input id="phone" type="tel" name="phone" class="form-control"
+                                    <input id="phone" type="input" name="phone" class="form-control"
                                         placeholder="{{ __('admin.enter_phone_number') }}" pattern="05[0-9]{8}"
                                         title="Phone must start with 05 followed by 8 digits (e.g., 0512345678)"
                                         required>
@@ -309,7 +289,7 @@
                                 <div class="col-12 col-md-6 mb-3">
                                     <label for="additional_phone"
                                         class="text-dark">{{ __('admin.additional_phone') }}</label>
-                                    <input id="additional_phone" type="tel" name="additional_phone" class="form-control"
+                                    <input id="additional_phone" type="input" name="additional_phone" class="form-control"
                                         placeholder="{{ __('admin.enter_additional_phone') }}" pattern="05[0-9]{8}"
                                         title="Phone must start with 05 followed by 8 digits (e.g., 0512345678)">
                                 </div>
@@ -363,9 +343,6 @@
                                     <button type="button" id="add-receiver-btn" class="btn btn-success">
                                         <i class="fas fa-plus"></i> {{ __('admin.add_receiver') }}
                                     </button>
-                                    <button type="button" id="add-existing-receiver-btn" class="btn btn-primary">
-                                        <i class="fas fa-list"></i> {{ __('admin.add_from_existing') }}
-                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -375,7 +352,6 @@
                         <div id="receiver-error-msg" class="mt-3" style="display: none;"></div>
                     </div>
 
-                    <!-- Step 5: Shipping Details -->
                     <div class="step-content" id="step-5" style="display: none;">
                         <h5 class="text-center mb-4">{{ __('admin.shipping_details') }}</h5>
 
@@ -463,13 +439,13 @@
                             <div class="row">
                                 <div class="col-12 mb-3">
                                     <label for="shipmentImage" class="form-label">{{ __('admin.shipment_image') }}</label>
-                                    <input type="file" 
-                                           class="form-control" 
-                                           id="shipmentImage" 
-                                           name="shipment_image" 
-                                           accept="image/*"
-                                           data-max-file-size="2M"
-                                           data-max-files="1">
+                                    <input type="file"
+                                        class="form-control"
+                                        id="shipmentImage"
+                                        name="shipment_image"
+                                        accept="image/*"
+                                        data-max-file-size="2M"
+                                        data-max-files="1">
                                     <div class="mt-2">
                                         <small class="text-muted">{{ __('admin.upload_shipment_image_help') }}</small>
                                     </div>
@@ -545,10 +521,10 @@
                     <div class="row mt-4">
                         <div class="col-12 d-flex flex-column flex-sm-row justify-content-between gap-2">
                             <button type="button" class="btn btn-secondary" id="btn-prev" style="display: none;">
-                                ← {{ __('admin.previous') }}
+                                {{ app()->getLocale() === 'ar' ? '→' : '←' }} {{ __('admin.previous') }}
                             </button>
                             <button type="button" class="btn btn-primary" id="btn-next" disabled>
-                                {{ __('admin.next') }} →
+                                {{ __('admin.next') }} {{ app()->getLocale() === 'ar' ? '←' : '→' }}
                             </button>
                         </div>
                     </div>
@@ -588,7 +564,7 @@
 
 @push('css')
 <style>
-  
+
 </style>
 @endpush
 
@@ -680,6 +656,7 @@
         package_details_error: '{{ __("admin.package_details_error") }}',
         no_companies_available: '{{ __("admin.no_companies_available") }}',
         error_loading_companies: '{{ __("admin.error_loading_companies") }}',
+        loading_companies: '{{ __("admin.loading_companies") }}',
         no_companies_found: '{{ __("admin.no_companies_found") }}',
         select_country: '{{ __("admin.select_country") }}',
         no_countries_found: '{{ __("admin.no_countries_found") }}',
@@ -700,13 +677,19 @@
         select_city: '{{ __("admin.select_city") }}',
         no_cities_available: '{{ __("admin.no_cities_available") }}',
         error_loading_cities: '{{ __("admin.error_loading_cities") }}',
+        add_receiver: '{{ __("admin.add_receiver") }}',
+        receiver_added: '{{ __("admin.receiver_added") }}',
+        payment_wallet: '{{ __("admin.wallet") }}',
+        payment_wallet_desc: '{{ __("admin.wallet_description") }}',
     };
 
     const API_ENDPOINTS = {
         shippingCompanies: '{{ route("user.shippings.companies") }}'
     };
+
+    window.translations = translations;
+    window.API_ENDPOINTS = API_ENDPOINTS;
 </script>
-<script src="{{ asset('user/utilities.js') }}"></script>
 <script src="{{ asset('user/step1.js') }}"></script>
 <script src="{{ asset('user/step2.js') }}"></script>
 <script src="{{ asset('user/step3.js') }}"></script>
@@ -714,47 +697,11 @@
 <script src="{{ asset('user/step5.js') }}"></script>
 <script src="{{ asset('user/step6.js') }}"></script>
 <script src="{{ asset('user/step7.js') }}"></script>
-<script src="{{ asset('user/locations.js') }}"></script>
+<script src="{{ asset('user/utilities.js') }}"></script>
 <script src="{{ asset('user/shipping-main.js') }}"></script>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log('Main initialization script started');
-        
-        // Wait for all scripts to load and then initialize
-        const waitForScripts = () => {
-            console.log('Checking if all required functions are available...');
-            
-            const requiredFunctions = [
-                'initShippingForm',
-                'showStep',
-                'showMethodSelection'
-            ];
-            
-            const missingFunctions = requiredFunctions.filter(func => typeof window[func] !== 'function');
-            
-            if (missingFunctions.length === 0) {
-                console.log('All required functions are available, initializing...');
-                
-                // Initialize the shipping application
-                if (typeof window.initShippingForm === 'function') {
-                    window.initShippingForm();
-                } else {
-                    console.error('initShippingForm function not found');
-                }
-                
-                // Initialize step navigation
-                if (typeof window.showStep === 'function') {
-                    window.showStep(1); // Start with step 1
-                }
-            } else {
-                console.log('Waiting for functions to load:', missingFunctions);
-                setTimeout(waitForScripts, 100);
-            }
-        };
-        
-        // Start checking for scripts
-        waitForScripts();
-    });
+    window.APP_LOCALE = "{{ app()->getLocale() }}";
 </script>
+
 @endpush

@@ -1,104 +1,216 @@
-// Step 2: Method Selection
-let selectedMethod = null;
+(() => {
+    let selectedMethod = null;
 
-function showMethodSelection() {
-    if (!window.selectedCompany) return;
-
-    const companyName = document.getElementById("selected-company-name");
-    if (companyName) companyName.textContent = window.selectedCompany.name;
-
-    const methodOptions = document.getElementById("method-options");
-
-    let methodsHTML = "";
-
-    if (window.selectedCompany.shippingMethods && window.selectedCompany.shippingMethods.includes("local")) {
-        methodsHTML += '<div class="col-lg-6 col-md-6 mb-3">';
-        methodsHTML += '<div class="card method-option h-100" onclick="selectMethod(this, \'local\')" style="cursor: pointer; border: 2px solid transparent; transition: all 0.3s ease;">';
-        methodsHTML += '<div class="card-body text-center">';
-        methodsHTML += '<div class="mb-2" style="font-size: 2rem;">🏠</div>';
-        methodsHTML += '<h6 class="card-title">' + (window.translations?.local || "Local") + "</h6>";
-        methodsHTML += '<p class="card-text text-muted">' + (window.translations?.local_delivery || "Local Delivery") + "</p>";
-        methodsHTML += "</div></div></div>";
+    function ensureGoToStep() {
+        if (typeof window.goToStep === "function") return;
+        window.currentStep = 1;
+        window.goToStep = function (step) {
+            document
+                .querySelectorAll(".step-content")
+                .forEach((c) => (c.style.display = "none"));
+            const target = document.getElementById("step-" + step);
+            if (target) target.style.display = "block";
+            if (typeof window.updateShippingStepIndicator === "function")
+                window.updateShippingStepIndicator(step);
+            if (step === 2 && typeof showMethodSelection === "function")
+                showMethodSelection();
+            if (step === 3) {
+                const hiddenMethod = document.getElementById("shipping_method");
+                if (hiddenMethod && window.selectedMethod)
+                    hiddenMethod.value = window.selectedMethod;
+            }
+            const btnPrev = document.getElementById("btn-prev");
+            if (btnPrev)
+                btnPrev.style.display = step > 1 ? "inline-block" : "none";
+            window.currentStep = step;
+        };
     }
 
-    if (window.selectedCompany.shippingMethods && window.selectedCompany.shippingMethods.includes("international")) {
-        methodsHTML += '<div class="col-lg-6 col-md-6 mb-3">';
-        methodsHTML += '<div class="card method-option h-100" onclick="selectMethod(this, \'international\')" style="cursor: pointer; border: 2px solid transparent; transition: all 0.3s ease;">';
-        methodsHTML += '<div class="card-body text-center">';
-        methodsHTML += '<div class="mb-2" style="font-size: 2rem;">🌍</div>';
-        methodsHTML += '<h6 class="card-title">' + (window.translations?.international || "International") + "</h6>";
-        methodsHTML += '<p class="card-text text-muted">' + (window.translations?.worldwide_shipping || "Worldwide Shipping") + "</p>";
-        methodsHTML += "</div></div></div>";
-    }
+    function showMethodSelection() {
+        if (!window.selectedCompany) {
+            const mo = document.getElementById("method-options");
+            if (mo) mo.innerHTML = "";
+            const btnNext = document.getElementById("btn-next");
+            if (btnNext) {
+                btnNext.disabled = true;
+                btnNext.classList.add("btn-secondary");
+                btnNext.classList.remove("btn-primary");
+            }
+            return;
+        }
 
-    if (methodOptions) methodOptions.innerHTML = methodsHTML;
-}
+        const companyName = document.getElementById("selected-company-name");
+        if (companyName)
+            companyName.textContent =
+                window.selectedCompany.displayNameEn ||
+                window.selectedCompany.name ||
+                "";
 
-function selectMethod(card, method) {
-    document.querySelectorAll(".method-option").forEach((c) => {
-        c.style.borderColor = "transparent";
-        c.style.backgroundColor = "";
-    });
+        const methodOptions = document.getElementById("method-options");
+        if (!methodOptions) return;
 
-    card.style.borderColor = "#007bff";
-    card.style.backgroundColor = "#f8f9fa";
+        const shippingMethods = (
+            window.selectedCompany.shippingMethods || []
+        ).map((m) => (typeof m === "string" ? m.toLowerCase() : m));
+        let methodsHTML = "";
 
-    selectedMethod = method;
-    window.selectedMethod = method; // Make it globally accessible
+        if (shippingMethods.includes("local")) {
+            methodsHTML += '<div class="col-lg-6 col-md-6 mb-3">';
+            methodsHTML +=
+                '<div class="card method-option h-100" onclick="window.selectMethod(this, \'local\')" style="cursor:pointer;border:2px solid transparent;transition:all .3s ease">';
+            methodsHTML +=
+                '<div class="card-body text-center"><div class="mb-2" style="font-size:2rem">🏠</div>';
+            methodsHTML +=
+                '<h6 class="card-title">' +
+                (window.translations?.local || "Local") +
+                "</h6>";
+            methodsHTML +=
+                '<p class="card-text text-muted">' +
+                (window.translations?.local_delivery || "Local Delivery") +
+                "</p>";
+            methodsHTML += "</div></div></div>";
+        }
+        if (shippingMethods.includes("international")) {
+            methodsHTML += '<div class="col-lg-6 col-md-6 mb-3">';
+            methodsHTML +=
+                '<div class="card method-option h-100" onclick="window.selectMethod(this, \'international\')" style="cursor:pointer;border:2px solid transparent;transition:all .3s ease">';
+            methodsHTML +=
+                '<div class="card-body text-center"><div class="mb-2" style="font-size:2rem">🌍</div>';
+            methodsHTML +=
+                '<h6 class="card-title">' +
+                (window.translations?.international || "International") +
+                "</h6>";
+            methodsHTML +=
+                '<p class="card-text text-muted">' +
+                (window.translations?.worldwide_shipping ||
+                    "Worldwide Shipping") +
+                "</p>";
+            methodsHTML += "</div></div></div>";
+        }
 
-    const btnNext = document.getElementById("btn-next");
-    if (btnNext) btnNext.disabled = false;
+        if (!methodsHTML) {
+            methodsHTML += '<div class="col-lg-6 col-md-6 mb-3">';
+            methodsHTML +=
+                '<div class="card method-option h-100" onclick="window.selectMethod(this, \'local\')" style="cursor:pointer;border:2px solid transparent;transition:all .3s ease">';
+            methodsHTML +=
+                '<div class="card-body text-center"><div class="mb-2" style="font-size:2rem">🏠</div>';
+            methodsHTML +=
+                '<h6 class="card-title">' +
+                (window.translations?.local || "Local") +
+                "</h6>";
+            methodsHTML +=
+                '<p class="card-text text-muted">' +
+                (window.translations?.local_delivery || "Local Delivery") +
+                "</p>";
+            methodsHTML += "</div></div></div>";
+            methodsHTML += '<div class="col-lg-6 col-md-6 mb-3">';
+            methodsHTML +=
+                '<div class="card method-option h-100" onclick="window.selectMethod(this, \'international\')" style="cursor:pointer;border:2px solid transparent;transition:all .3s ease">';
+            methodsHTML +=
+                '<div class="card-body text-center"><div class="mb-2" style="font-size:2rem">🌍</div>';
+            methodsHTML +=
+                '<h6 class="card-title">' +
+                (window.translations?.international || "International") +
+                "</h6>";
+            methodsHTML +=
+                '<p class="card-text text-muted">' +
+                (window.translations?.worldwide_shipping ||
+                    "Worldwide Shipping") +
+                "</p>";
+            methodsHTML += "</div></div></div>";
+        }
 
-    if (typeof window.updateStepIndicator === 'function') {
-        window.updateStepIndicator(2, true);
-    }
-    
-    if (typeof window.currentStep !== 'undefined' && window.currentStep >= 4) {
-        if (typeof window.setupReceiverFormByShippingType === 'function') {
-            window.setupReceiverFormByShippingType();
+        methodOptions.innerHTML = methodsHTML;
+
+        const btnNext = document.getElementById("btn-next");
+        if (btnNext) {
+            const enable = !!window.selectedMethod;
+            btnNext.disabled = !enable;
+            btnNext.classList.toggle("btn-secondary", !enable);
+            btnNext.classList.toggle("btn-primary", enable);
+        }
+
+        if (window.selectedMethod) {
+            const card = methodOptions.querySelector(
+                `[onclick*="'${window.selectedMethod}'"]`
+            );
+            if (card) {
+                card.style.borderColor = "#007bff";
+                card.style.backgroundColor = "#f8f9fa";
+            }
+        }
+
+        if (
+            shippingMethods.length === 1 &&
+            (shippingMethods[0] === "local" ||
+                shippingMethods[0] === "international")
+        ) {
+            const card = methodOptions.querySelector(".method-option");
+            if (card) window.selectMethod(card, shippingMethods[0]);
         }
     }
-}
 
-function clearStepData(step) {
-    switch (step) {
-        case 2:
+    function selectMethod(card, method) {
+        document.querySelectorAll(".method-option").forEach((c) => {
+            c.style.borderColor = "transparent";
+            c.style.backgroundColor = "";
+        });
+        card.style.borderColor = "#007bff";
+        card.style.backgroundColor = "#f8f9fa";
+
+        selectedMethod = method;
+        window.selectedMethod = method;
+
+        const methodInput = document.getElementById("shipping_method");
+        if (methodInput) methodInput.value = method;
+
+        const btnNext = document.getElementById("btn-next");
+        if (btnNext) {
+            btnNext.disabled = false;
+            btnNext.classList.remove("btn-secondary");
+            btnNext.classList.add("btn-primary");
+        }
+
+        document.dispatchEvent(new CustomEvent("shippingMethodSelected", { detail: { method } }));
+
+        if (typeof window.updateShippingStepIndicator === "function")
+            window.updateShippingStepIndicator(2);
+        if (
+            typeof window.currentStep !== "undefined" &&
+            window.currentStep >= 4
+        ) {
+            if (typeof window.setupReceiverFormByShippingType === "function")
+                window.setupReceiverFormByShippingType();
+        }
+    }
+
+    function clearStepData(step) {
+        if (step === 2) {
             selectedMethod = null;
             window.selectedMethod = null;
-            if (typeof window.currentStep !== 'undefined' && window.currentStep >= 4) {
-                if (typeof window.setupReceiverFormByShippingType === 'function') {
-                    window.setupReceiverFormByShippingType();
-                }
+            const methodInput = document.getElementById("shipping_method");
+            if (methodInput) methodInput.value = "";
+            const btnNext = document.getElementById("btn-next");
+            if (btnNext) {
+                btnNext.disabled = true;
+                btnNext.classList.add("btn-secondary");
+                btnNext.classList.remove("btn-primary");
             }
-            break;
+        }
     }
-}
 
-// Make functions globally accessible immediately
-window.showMethodSelection = showMethodSelection;
-window.selectMethod = selectMethod;
-window.clearStepData = clearStepData;
-
-// Debug logging
-console.log('Step2.js loaded successfully');
-console.log('Global functions exported:', {
-    showMethodSelection: typeof window.showMethodSelection,
-    selectMethod: typeof window.selectMethod,
-    clearStepData: typeof window.clearStepData
-});
-
-// Also add a DOM ready check to ensure the script is fully loaded
-document.addEventListener('DOMContentLoaded', () => {
-    console.log('Step2.js DOM ready check - functions available:', {
-        showMethodSelection: typeof window.showMethodSelection,
-        selectMethod: typeof window.selectMethod,
-        clearStepData: typeof window.clearStepData
+    document.addEventListener("shippingCompanySelected", () => {
+        clearStepData(2);
+        if (window.currentStep === 2) showMethodSelection();
     });
-});
 
-// Additional immediate availability check
-console.log('Step2.js functions immediately available:', {
-    showMethodSelection: typeof showMethodSelection,
-    selectMethod: typeof selectMethod,
-    clearStepData: typeof clearStepData
-});
+    if (!window.goToStep) ensureGoToStep();
+
+    document.addEventListener("DOMContentLoaded", () => {
+        if (window.currentStep === 2) showMethodSelection();
+    });
+
+    window.showMethodSelection = showMethodSelection;
+    window.selectMethod = selectMethod;
+    window.clearStepData = clearStepData;
+})();
