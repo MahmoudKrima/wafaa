@@ -265,26 +265,6 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="row mb-3">
-                                <div class="col-12">
-                                    <button type="button" class="btn btn-sm btn-info"
-                                        onclick="testReceiverPopulation()">
-                                        {{ __('admin.test_receiver_population') }}
-                                    </button>
-                                    <button type="button" class="btn btn-sm btn-warning"
-                                        onclick="testLoadCountries()">
-                                        Test Load Countries
-                                    </button>
-                                    <button type="button" class="btn btn-sm btn-success"
-                                        onclick="forceTestCountries()">
-                                        Force Test Countries
-                                    </button>
-                                    <button type="button" class="btn btn-sm btn-primary"
-                                        onclick="testSaudiArabiaStates()">
-                                        Test Saudi States
-                                    </button>
-                                </div>
-                            </div>
                         </div>
 
                         <!-- New Receiver Section -->
@@ -298,7 +278,7 @@
 
                                 <div class="col-12 col-md-6 mb-3">
                                     <label for="phone" class="text-dark">{{ __('admin.phone_number') }}</label>
-                                    <input id="phone" type="tel" name="phone" class="form-control"
+                                    <input id="phone" type="input" name="phone" class="form-control"
                                         placeholder="{{ __('admin.enter_phone_number') }}" pattern="05[0-9]{8}"
                                         title="Phone must start with 05 followed by 8 digits (e.g., 0512345678)"
                                         required>
@@ -309,7 +289,7 @@
                                 <div class="col-12 col-md-6 mb-3">
                                     <label for="additional_phone"
                                         class="text-dark">{{ __('admin.additional_phone') }}</label>
-                                    <input id="additional_phone" type="tel" name="additional_phone" class="form-control"
+                                    <input id="additional_phone" type="input" name="additional_phone" class="form-control"
                                         placeholder="{{ __('admin.enter_additional_phone') }}" pattern="05[0-9]{8}"
                                         title="Phone must start with 05 followed by 8 digits (e.g., 0512345678)">
                                 </div>
@@ -541,10 +521,10 @@
                     <div class="row mt-4">
                         <div class="col-12 d-flex flex-column flex-sm-row justify-content-between gap-2">
                             <button type="button" class="btn btn-secondary" id="btn-prev" style="display: none;">
-                                ← {{ __('admin.previous') }}
+                                {{ app()->getLocale() === 'ar' ? '→' : '←' }} {{ __('admin.previous') }}
                             </button>
                             <button type="button" class="btn btn-primary" id="btn-next" disabled>
-                                {{ __('admin.next') }} →
+                                {{ __('admin.next') }} {{ app()->getLocale() === 'ar' ? '←' : '→' }}
                             </button>
                         </div>
                     </div>
@@ -676,6 +656,7 @@
         package_details_error: '{{ __("admin.package_details_error") }}',
         no_companies_available: '{{ __("admin.no_companies_available") }}',
         error_loading_companies: '{{ __("admin.error_loading_companies") }}',
+        loading_companies: '{{ __("admin.loading_companies") }}',
         no_companies_found: '{{ __("admin.no_companies_found") }}',
         select_country: '{{ __("admin.select_country") }}',
         no_countries_found: '{{ __("admin.no_countries_found") }}',
@@ -696,6 +677,10 @@
         select_city: '{{ __("admin.select_city") }}',
         no_cities_available: '{{ __("admin.no_cities_available") }}',
         error_loading_cities: '{{ __("admin.error_loading_cities") }}',
+        add_receiver: '{{ __("admin.add_receiver") }}',
+        receiver_added: '{{ __("admin.receiver_added") }}',
+        payment_wallet: '{{ __("admin.wallet") }}',
+        payment_wallet_desc: '{{ __("admin.wallet_description") }}',
     };
 
     const API_ENDPOINTS = {
@@ -712,7 +697,6 @@
 <script src="{{ asset('user/step5.js') }}"></script>
 <script src="{{ asset('user/step6.js') }}"></script>
 <script src="{{ asset('user/step7.js') }}"></script>
-<script src="{{ asset('user/locations.js') }}"></script>
 <script src="{{ asset('user/utilities.js') }}"></script>
 <script src="{{ asset('user/shipping-main.js') }}"></script>
 

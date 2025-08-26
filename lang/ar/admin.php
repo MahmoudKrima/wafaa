@@ -369,4 +369,11 @@ return [
     'local_shipping_price' => 'سعر الشحن المحلي',
     'international_shipping_price' => 'سعر الشحن الدولي',
     'cash_on_delivery_fee' => 'رسوم الدفع عند الاستلام',
+    'select_state' => 'اختر المحافظة',
+    'no_states_found' => 'لا توجد محافظات',
+    'error_loading_states' => 'خطأ في تحميل المحافظات',
+    'add_receiver' => 'اضافة مستلم',
+    'receiver_added' => 'تم اضافة المستلم بنجاح',
+    'wallet' => 'المحفظة',
+    'wallet_description' => 'يمكنك الدفع بالمحفظة',
 ];

@@ -369,4 +369,11 @@ return [
     'per_receiver' => 'per receiver',
     'shipping_methods' => 'Shipping Methods',
     'cash_on_delivery_fee' => 'Cash on Delivery Fee',
+    'select_state' => 'Select State',
+    'no_states_found' => 'No states found',
+    'error_loading_states' => 'Error loading states',
+    'add_receiver' => 'Add Receiver',
+    'receiver_added' => 'Receiver added successfully',
+    'wallet' => 'Wallet',
+    'wallet_description' => 'You can pay with your wallet',
 ];
