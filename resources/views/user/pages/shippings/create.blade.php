@@ -267,6 +267,7 @@
                             </div>
                         </div>
 
+
                         <!-- New Receiver Section -->
                         <div id="new_receiver_section" style="display: none;">
                             <div class="row">
