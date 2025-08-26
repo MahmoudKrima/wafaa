@@ -461,15 +461,6 @@
                         <div class="row">
                             <div class="col-12">
                                 <div class="payment-options-container">
-                                    <div class="form-check mb-3">
-                                        <input class="form-check-input" type="checkbox" id="cash_on_delivery"
-                                            name="cash_on_delivery">
-                                        <label class="form-check-label" for="cash_on_delivery">
-                                            <i class="fas fa-money-bill-wave text-success"></i>
-                                            {{ __('admin.cash_on_delivery') }}
-                                        </label>
-                                    </div>
-
                                     <div id="cod_details" class="cod-details" style="display: none;">
                                         <div class="alert alert-info">
                                             <h6><i class="fas fa-info-circle"></i> {{ __('admin.cod_information') }}
