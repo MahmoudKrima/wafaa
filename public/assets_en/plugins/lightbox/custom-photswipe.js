@@ -65,7 +65,6 @@ var initPhotoSwipeFromDOM = function(gallerySelector) {
         return items;
     };
 
-    // find nearest parent element
     var closest = function closest(el, fn) {
         return el && ( fn(el) ? el : closest(el.parentNode, fn) );
     };
@@ -75,7 +74,6 @@ var initPhotoSwipeFromDOM = function(gallerySelector) {
         e.preventDefault ? e.preventDefault() : e.returnValue = false;
 
         var eTarget = e.target || e.srcElement;
-        console.log(e.srcElement);
         var clickedListItem = closest(eTarget, function(el) {
             return el.tagName === 'A';
         });

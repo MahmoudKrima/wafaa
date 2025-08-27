@@ -1,24 +1,16 @@
 $(function() {
 
-    /*
-    =========================================
-    |                                       |
-    |          Variables Definations        |
-    |                                       |
-    =========================================
-    */
+
 
     var Container = {
         scrumboard: $('.scrumboard'),
         card: $('.scrumboard .card')
     }
 
-    // Containers
     var scrumboard = Container.scrumboard;
     var card = Container.card;
 
 
-    // Make Task Sortable
 
     function $_taskSortable() {
         $('[data-sortable="true"]').sortable({
@@ -32,13 +24,10 @@ $(function() {
 
             },
             update: function( event, ui ) {
-                console.log(ui);
-                console.log(ui.item);
             }
         });
     }
 
-    // Click on Add Task button to open the modal and more..
 
     function addTask() {
         $('.addTask').on('click', function(event) {

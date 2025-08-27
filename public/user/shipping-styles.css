@@ -395,4 +395,136 @@
     padding: 18px;
   }
 }
+
+/* Print Styles for Step 7 */
+@media print {
+    /* Hide navigation and action buttons when printing */
+    #btn-prev,
+    #btn-next,
+    #btn-prev-step7,
+    #btn-print-summary,
+    #btn-download-pdf,
+    #btn-confirm-shipping,
+    .step-indicator,
+    .navigation-buttons {
+        display: none !important;
+    }
+    
+    /* Ensure all content is visible */
+    .step-content {
+        display: block !important;
+    }
+    
+    /* Step 7 specific print styles */
+    #step-7 {
+        display: block !important;
+        page-break-inside: avoid;
+    }
+    
+    /* Card styling for print */
+    .card {
+        border: 1px solid #000 !important;
+        box-shadow: none !important;
+        page-break-inside: avoid;
+        margin-bottom: 20px !important;
+    }
+    
+    .card-header {
+        background: #f8f9fa !important;
+        color: #000 !important;
+        border-bottom: 2px solid #000 !important;
+        font-weight: bold !important;
+    }
+    
+    .card-body {
+        padding: 15px !important;
+    }
+    
+    /* Ensure text is readable */
+    body {
+        font-size: 12pt !important;
+        line-height: 1.4 !important;
+        color: #000 !important;
+        background: #fff !important;
+    }
+    
+    /* Badge styling for print */
+    .badge {
+        border: 1px solid #000 !important;
+        background: #fff !important;
+        color: #000 !important;
+        padding: 4px 8px !important;
+        font-size: 10pt !important;
+    }
+    
+    /* Table-like layout for receiver summary */
+    .receiver-summary-item {
+        border-bottom: 1px solid #ccc !important;
+        padding: 10px 0 !important;
+        page-break-inside: avoid;
+    }
+    
+    /* Hide form elements that shouldn't print */
+    input[type="checkbox"],
+    input[type="radio"] {
+        display: none !important;
+    }
+    
+    /* Show checkbox state as text */
+    input[type="checkbox"]:checked + label::before {
+        content: "✓ " !important;
+        font-weight: bold !important;
+    }
+    
+    input[type="checkbox"]:not(:checked) + label::before {
+        content: "☐ " !important;
+    }
+    
+    /* Page breaks */
+    .card {
+        page-break-inside: avoid;
+    }
+    
+    /* Header styling */
+    h4, h5, h6 {
+        color: #000 !important;
+        font-weight: bold !important;
+        page-break-after: avoid;
+    }
+    
+    /* Links */
+    a {
+        color: #000 !important;
+        text-decoration: underline !important;
+    }
+    
+    /* Ensure proper spacing */
+    .mb-4 {
+        margin-bottom: 20px !important;
+    }
+    
+    .pb-3 {
+        padding-bottom: 15px !important;
+    }
+    
+    /* Company logo sizing for print */
+    #company-logo-preview {
+        width: 40px !important;
+        height: 40px !important;
+    }
+    
+    /* Summary container */
+    #receivers-summary-container {
+        page-break-inside: auto;
+    }
+    
+    /* Terms section */
+    .form-check {
+        margin-bottom: 10px !important;
+    }
+    
+    .form-check-label {
+        font-weight: normal !important;
+    }
+}
   

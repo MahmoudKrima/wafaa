@@ -11,6 +11,7 @@ use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use App\Filters\ActivationStatusFilter;
+use Illuminate\Validation\ValidationException;
 
 class ShippingService
 {
@@ -28,16 +29,16 @@ class ShippingService
     {
         try {
             $user = auth()->user();
-            
+
             if (!$user) {
                 \Log::info('No authenticated user found');
                 return ['results' => []];
             }
-            
+
             \Log::info('Getting shipping companies for user: ' . $user->id);
-            
+
             $adminId = $user->added_by;
-            
+
             if (!$adminId) {
                 $extraWeightPricePerKg = 2;
                 $codFeePerReceiver = 15;
@@ -62,7 +63,7 @@ class ShippingService
                 return ['results' => []];
             }
 
-            $data = $response->json();            
+            $data = $response->json();
             if (!isset($data['results']) || !is_array($data['results'])) {
                 return ['results' => []];
             }
@@ -74,7 +75,7 @@ class ShippingService
 
             $userCompanyIds = $userShippingPrices->pluck('company_id')->toArray();
             $userShippingPricesMap = $userShippingPrices->keyBy('company_id');
-            
+
             \Log::info('User shipping prices found', [
                 'user_id' => $user->id,
                 'shipping_prices_count' => $userShippingPrices->count(),
@@ -92,17 +93,17 @@ class ShippingService
                         $company['userInternationalPrice'] = $company['internationalPrice'] ?? null;
                         $company['adminExtraWeightPrice'] = $extraWeightPricePerKg;
                         $company['adminCodFee'] = $codFeePerReceiver;
-                        
+
                         if ($company['shippingMethods'] && in_array('local', $company['shippingMethods'])) {
                             $company['effectiveLocalPrice'] = $company['localPrice'];
                         }
-                        
+
                         if ($company['shippingMethods'] && in_array('international', $company['shippingMethods'])) {
                             $company['effectiveInternationalPrice'] = $company['internationalPrice'];
                         }
-                        
+
                         $company['hasCod'] = in_array('cashOnDelivery', $company['shippingMethods']);
-                        
+
                         return $company;
                     })
                     ->values()
@@ -124,22 +125,22 @@ class ShippingService
                 })
                 ->map(function ($company) use ($userShippingPricesMap, $extraWeightPricePerKg, $codFeePerReceiver) {
                     $userPrice = $userShippingPricesMap->get($company['id']);
-                    
+
                     $company['userLocalPrice'] = $userPrice->local_price ?? null;
                     $company['userInternationalPrice'] = $userPrice->international_price ?? null;
                     $company['adminExtraWeightPrice'] = $extraWeightPricePerKg;
                     $company['adminCodFee'] = $codFeePerReceiver;
-                    
+
                     if ($company['shippingMethods'] && in_array('local', $company['shippingMethods'])) {
                         $company['effectiveLocalPrice'] = $userPrice->local_price ?? $company['localPrice'];
                     }
-                    
+
                     if ($company['shippingMethods'] && in_array('international', $company['shippingMethods'])) {
                         $company['effectiveInternationalPrice'] = $userPrice->international_price ?? null;
                     }
-                    
+
                     $company['hasCod'] = in_array('cashOnDelivery', $company['shippingMethods']);
-                    
+
                     return $company;
                 })
                 ->values()
@@ -149,7 +150,7 @@ class ShippingService
                 'user_id' => $user->id,
                 'companies_count' => count($filteredCompanies)
             ]);
-            
+
             return [
                 'results' => $filteredCompanies,
                 'admin_settings' => [
@@ -186,7 +187,28 @@ class ShippingService
 
 
 
-    public function store($request) {}
+    public function store($request)
+    {
+        try {
+            $data = $request->validated();
+        } catch (ValidationException $e) {
+            return back()
+                ->withErrors($validator)
+                ->withInput()
+                ->with('force_step', 7)
+                // send the company + pricing + method back so we can rehydrate JS
+                ->with('selectedCompany', $selectedCompanyArray)   // name, logoUrl, serviceName, maxWeight, currency_symbol, etc.
+                ->with('companyPricing', $companyPricingArray)     // if you show any per-company pricing
+                ->with('selectedMethod', $request->input('shipping_method')); // "local" 
+        }
+        dd($data);
+
+        $data['selected_receivers'] = json_decode($data['selected_receivers'], true);
+
+        if ($request->hasFile('shipment_image')) {
+            $data['shipment_image_path'] = $request->file('shipment_image')->store('shipments', 'public');
+        }
+    }
 
     public function getStates()
     {
@@ -199,7 +221,7 @@ class ShippingService
             if ($response->successful()) {
                 return $response->json();
             }
-            
+
             return [];
         } catch (\Exception $e) {
             return [];
@@ -217,7 +239,7 @@ class ShippingService
             if ($response->successful()) {
                 return $response->json();
             }
-            
+
             return [];
         } catch (\Exception $e) {
             return [];
@@ -237,7 +259,7 @@ class ShippingService
             if ($response->successful()) {
                 return $response->json();
             }
-            
+
             return [];
         } catch (\Exception $e) {
             return [];

@@ -95,7 +95,8 @@
             c.currencySymbol ||
             p.currency_symbol ||
             p.currencySymbol ||
-            "﷼"
+            window.translations?.currency_symbol ||
+            "SAR"
         );
     }
 
@@ -221,13 +222,11 @@
     }
 
     function toggleCodDetails(show) {
-        const wrap = $$("cod_details");
-        if (!wrap) return;
-        wrap.style.display = show ? "block" : "none";
-        if (show) updateCodDisplay();
+        // COD details are now shown in step 7 payment details card
+        // No need to toggle visibility in step 6
+        return;
     }
 
-    // --- NEW: dynamic “receivers × admin fee = total” line under COD card
     function updateCodNote() {
         const noteEl = $$("cod-note-line");
         if (!noteEl) return;
@@ -254,30 +253,16 @@
     }
 
     function updateCodDisplay() {
-        const codPriceEl = $$("cod_price_display");
-        const totalWithCodEl = $$("total_with_cod_display");
-        if (!codPriceEl || !totalWithCodEl) return;
-
-        const cur = getCurrencySymbol();
-        const fee = getAdminCodFee(); // <-- use ADMIN fee here too
-        const count = Math.max(1, selectedReceiversCount());
-        const perReceiver = true;
-        const baseTotal = getBaseTotal();
-        const codTotalFee = perReceiver ? fee * count : fee;
-
-        codPriceEl.textContent = perReceiver
-            ? `${fee} ${cur} × ${count}`
-            : `${fee} ${cur}`;
-        totalWithCodEl.textContent = `${(baseTotal + codTotalFee).toFixed(
-            2
-        )} ${cur}`;
+        // COD display is now handled in step 7 payment details card
+        // No need to update elements in step 6
+        return;
     }
 
     // expose
     window.setupPaymentDetails = function setupPaymentDetails() {
         renderPaymentOptions();
         const codCheckbox = $$("cash_on_delivery");
-        toggleCodDetails(!!(codCheckbox && codCheckbox.checked));
+        // toggleCodDetails(!!(codCheckbox && codCheckbox.checked)); // No longer needed
 
         document.addEventListener("receiversChanged", () => {
             // keep COD totals + note in sync with # of receivers
@@ -285,7 +270,7 @@
                 $$("cash_on_delivery")?.checked ||
                 document.querySelector('.pay-card[data-value="cod"].active');
             updateCodNote();
-            if (codOn) updateCodDisplay();
+            // if (codOn) updateCodDisplay(); // No longer needed
         });
     };
 })();

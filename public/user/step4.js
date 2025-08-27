@@ -751,9 +751,6 @@
     }
 
     function clearReceiverForm() {
-        console.log("Clearing receiver form...");
-
-        // Clear all text inputs more aggressively
         const fieldIds = [
             "name",
             "phone",
@@ -766,24 +763,18 @@
         fieldIds.forEach((id) => {
             const el = document.getElementById(id);
             if (el) {
-                console.log(`Clearing field: ${id}`);
                 el.value = "";
                 el.textContent = "";
                 el.innerHTML = "";
-                // Also clear any validation states or classes
                 el.classList.remove("is-invalid", "is-valid");
-                // Force the field to be empty
                 el.setAttribute("value", "");
             }
         });
-
-        // Clear country, state, and city dropdowns
         const countryField = document.getElementById("country");
         const stateField = document.getElementById("state");
         const cityField = document.getElementById("city");
 
         if (countryField) {
-            console.log("Clearing country field");
             countryField.innerHTML = `<option value="">${t(
                 "select_country",
                 "Select Country"
@@ -792,7 +783,6 @@
             countryField.selectedIndex = 0;
         }
         if (stateField) {
-            console.log("Clearing state field");
             stateField.innerHTML = `<option value="">${t(
                 "select_state",
                 "Select State"
@@ -801,7 +791,6 @@
             stateField.selectedIndex = 0;
         }
         if (cityField) {
-            console.log("Clearing city field");
             cityField.innerHTML = `<option value="">${t(
                 "select_city",
                 "Select City"
@@ -809,26 +798,16 @@
             cityField.value = "";
             cityField.selectedIndex = 0;
         }
-
-        // Don't call setupReceiverFormByShippingType here as it might re-populate the form
-        console.log("Form cleared successfully");
     }
 
     function resetFormCompletely() {
-        // Clear all text inputs
         clearReceiverForm();
-
-        // Reset radio buttons
         const existingRadio = document.getElementById("existing_receiver");
         const newRadio = document.getElementById("new_receiver");
         if (existingRadio) existingRadio.checked = false;
         if (newRadio) newRadio.checked = false;
-
-        // Reset receiver select
         const receiverSelect = document.getElementById("receiver_select");
         if (receiverSelect) receiverSelect.value = "";
-
-        // Hide both sections initially
         const existingSection = document.getElementById(
             "existing_receiver_section"
         );
@@ -847,7 +826,6 @@
             el.value = val;
     }
 
-    // ----------------- UI wiring -----------------
     function wireUI() {
         const addBtn = document.getElementById("add-receiver-btn");
         const receiverSelect = document.getElementById("receiver_select");
@@ -858,7 +836,6 @@
             "existing_receiver_section"
         );
 
-        // hard clear: empties all inputs/selects in the NEW form and disables city until state
         function forceClearNewForm() {
             const ids = [
                 "name",
@@ -895,21 +872,19 @@
             }
         }
 
-        // ensure select is visually reset too
         function resetExistingSelect() {
             if (receiverSelect) receiverSelect.value = "";
         }
 
-        // Existing ↔ New toggles
         if (existingRadio && !existingRadio.dataset.bound) {
             existingRadio.addEventListener("change", function () {
                 if (!this.checked) return;
                 if (existingSection) existingSection.style.display = "block";
                 if (newSection) {
                     newSection.style.display = "none";
-                    forceClearNewForm(); // clear new form when switching to Existing
+                    forceClearNewForm(); 
                 }
-                resetExistingSelect(); // also reset the dropdown
+                resetExistingSelect(); 
             });
             existingRadio.dataset.bound = "1";
         }
@@ -920,11 +895,9 @@
                 if (existingSection) existingSection.style.display = "none";
                 if (newSection) newSection.style.display = "block";
 
-                // CRITICAL: wipe anything that might have been previewed before
                 forceClearNewForm();
                 resetExistingSelect();
 
-                // rebuild dependent lists per method
                 if (typeof setupReceiverFormByShippingType === "function")
                     setupReceiverFormByShippingType();
 
@@ -934,7 +907,6 @@
             newRadio.dataset.bound = "1";
         }
 
-        // Dropdown: only copy data into the form IF "New" is selected (template behavior)
         if (receiverSelect && !receiverSelect.dataset.bound) {
             receiverSelect.addEventListener("change", function () {
                 const id = this.value;
@@ -947,12 +919,10 @@
                         forceClearNewForm();
                     }
                 }
-                // If "Existing" is active, do NOT prefill the new form.
             });
             receiverSelect.dataset.bound = "1";
         }
 
-        // Add button behavior unchanged
         const onAdd = () => {
             if (existingRadio && existingRadio.checked) return addExisting();
             if (newRadio && newRadio.checked) return addNew();
@@ -964,7 +934,6 @@
         }
     }
 
-    // ----------------- expose & init -----------------
     function canProceedToNextStep() {
         return (
             Array.isArray(window.selectedReceivers) &&
