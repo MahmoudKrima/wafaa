@@ -340,7 +340,7 @@ return [
     'extra_weight_fee' => 'رسوم الوزن الإضافي',
     'shipment_fees' => 'رسوم الشحنة',
     'fuel_surcharge' => 'رسوم الوقود',
-    'cod_fee_per_receiver' => 'رسوم الدفع عند الاستلام لكل مستلم',
+    'cod_fee_per_receiver' => 'رسوم الدفع عند الاستلام',
     'total_cod_fees' => 'إجمالي رسوم الدفع عند الاستلام',
     'total_cost' => 'التكلفة الإجمالية',
     'terms_conditions' => 'الشروط والأحكام',
