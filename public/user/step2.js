@@ -55,9 +55,9 @@
         let methodsHTML = "";
 
         if (shippingMethods.includes("local")) {
-            methodsHTML += '<div class="col-lg-6 col-md-6 mb-3">';
+            methodsHTML += '<div class="col-lg-3 col-md-3 mb-3 mx-auto">';
             methodsHTML +=
-                '<div class="card method-option h-100" onclick="window.selectMethod(this, \'local\')" style="cursor:pointer;border:2px solid transparent;transition:all .3s ease">';
+                '<div class="card method-option h-100 card_step2" onclick="window.selectMethod(this, \'local\')" style="cursor:pointer;border:2px solid transparent;transition:all .3s ease">';
             methodsHTML +=
                 '<div class="card-body text-center"><div class="mb-2" style="font-size:2rem">🏠</div>';
             methodsHTML +=
@@ -71,9 +71,9 @@
             methodsHTML += "</div></div></div>";
         }
         if (shippingMethods.includes("international")) {
-            methodsHTML += '<div class="col-lg-6 col-md-6 mb-3">';
+            methodsHTML += '<div class="col-lg-3 col-md-3 mb-3 mx-auto">';
             methodsHTML +=
-                '<div class="card method-option h-100" onclick="window.selectMethod(this, \'international\')" style="cursor:pointer;border:2px solid transparent;transition:all .3s ease">';
+                '<div class="card method-option h-100 card_step2" onclick="window.selectMethod(this, \'international\')" style="cursor:pointer;border:2px solid transparent;transition:all .3s ease">';
             methodsHTML +=
                 '<div class="card-body text-center"><div class="mb-2" style="font-size:2rem">🌍</div>';
             methodsHTML +=
@@ -155,7 +155,7 @@
             c.style.borderColor = "transparent";
             c.style.backgroundColor = "";
         });
-        card.style.borderColor = "#007bff";
+        card.style.borderColor = "#F6950D";
         card.style.backgroundColor = "#f8f9fa";
 
         selectedMethod = method;

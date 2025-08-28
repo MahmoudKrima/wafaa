@@ -9,6 +9,7 @@
         </div>
 
         <ul class="menu-categories">
+
             <li class=" {{ isRoute(['user.dashboard.index']) ? 'active' : '' }}">
                 <a href="{{ route('user.dashboard.index') }}"
                     data-active="{{ isRoute(['user.dashboard.index']) ? 'true' : 'false' }}" class="menu-toggle">
@@ -20,11 +21,36 @@
                                 <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
                                 <polyline points="9 22 9 12 15 12 15 22"></polyline>
                             </svg>
+                            <p class="side_links_theme">{{__('admin.dashboard')}}</p>
                         </div>
                     </div>
                 </a>
                 <div class="tooltip"><span>{{ __('admin.dashboard') }}</span></div>
             </li>
+
+
+            <li class="menu {{ isRoute(['user.shippings.index']) ? 'active' : '' }}">
+                <a href="{{ route('user.shippings.index') }}"
+                   data-active="{{ isRoute(['user.shippings.index']) ? 'true' : 'false' }}" class="menu-toggle">
+                    <div class="">
+                        <div class="base-icons">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round" class="feather feather-home">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                            </svg>
+                            <p class="side_links_theme">{{__('admin.new_shipment')}}</p>
+                        </div>
+                    </div>
+                </a>
+                <div class="tooltip"><span>{{ __('admin.new_shipment') }}</span></div>
+            </li>
+
+
+
+
+
 
             <li class="menu {{ isRoute([
     'user.transactions.index',
@@ -48,10 +74,10 @@
                                 <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
                                 <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                             </svg>
+                            <p class="side_links_theme">{{__('admin.transactions')}}</p>
                         </div>
                     </div>
                 </a>
-                <div class="tooltip"><span>{{ __('admin.transactions') }}</span></div>
             </li>
 
             <li class="menu {{ isRoute([
@@ -68,18 +94,19 @@
     : 'false' }}" class="menu-toggle">
                     <div class="base-menu">
                         <div class="base-icons">
+                            <i class="fa fa-shipping-fast" style="color:#fff;font-size:18px;"></i>
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                stroke-linejoin="round" class="feather feather-users">
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round" class="feather feather-truck">
                                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
                                 <circle cx="9" cy="7" r="4"></circle>
                                 <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
                                 <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
                             </svg>
+                            <p class="side_links_theme">{{__('admin.shippings')}}</p>
                         </div>
                     </div>
                 </a>
-                <div class="tooltip"><span>{{ __('admin.shippings') }}</span></div>
             </li>
         </ul>
 

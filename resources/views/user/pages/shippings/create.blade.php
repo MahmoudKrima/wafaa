@@ -9,116 +9,138 @@
     <div class="row layout-top-spacing">
         <div id="basic" class="col-12 layout-spacing">
             <div class="statbox widget box box-shadow">
-                <div class="widget-header">
-                    <div class="row">
-                        <div class="col-12">
-                            <h4 class="text-center text-md-start">{{ __('admin.create_shipping') }}</h4>
-                        </div>
-                    </div>
-                </div>
-                <div class="widget-content widget-content-area">
+
+                <div class="widget-content widget-content-area ">
                     <div class="row mb-4">
                         <div class="col-12">
-                            <div class="d-flex justify-content-center">
-                                <div class="step-indicator d-flex flex-column flex-sm-row align-items-center">
+                            <div class="d-flex justify-content-center my_indicators">
+
+
+                                <div class="step-indicator d-flex flex-column flex-sm-row align-items-center step_theme">
+
+
+                                    <!-- Navigation Buttons -->
+                                    <div class="prev_next_btn mb-2 mb-sm-0">
+                                        <div class="col-12 d-flex flex-column flex-sm-row justify-content-between gap-2">
+                                            <button type="button" class="btn btn-secondary" id="btn-prev" style="display: none;">
+                                                {{ app()->getLocale() === 'ar' ? '→' : '←' }} {{ __('admin.previous') }}
+                                            </button>
+                                        </div>
+                                    </div>
+
+
+
                                     <div class="step active mb-2 mb-sm-0">
-                                        <div class="step-number bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mx-sm-0"
-                                            style="width: 35px; height: 35px; font-size: 14px; font-weight: bold;">1
+                                        <div class="step-number bg-primary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mx-sm-0">
+                                            1
                                         </div>
                                         <span
-                                            class="d-block d-sm-inline ms-0 ms-sm-2 text-center text-sm-start mt-1 mt-sm-0 small">{{ __('admin.select_company') }}</span>
+                                            class="d-block d-sm-inline ms-0 ms-sm-2 text-center text-sm-start mt-1 mt-sm-0 small step_text">{{ __('admin.select_company') }}</span>
                                     </div>
 
                                     <!-- Step Line 1 -->
                                     <div class="step-line d-none d-sm-block mx-3"
-                                        style="width: 40px; height: 2px; background: #e9ecef;"></div>
+                                         style="width: 40px; height: 2px; background: #e9ecef;"></div>
                                     <div class="step-line d-block d-sm-none my-2"
-                                        style="width: 2px; height: 20px; background: #e9ecef;"></div>
+                                         style="width: 2px; height: 20px; background: #e9ecef;"></div>
 
                                     <!-- Step 2 -->
                                     <div class="step mb-2 mb-sm-0">
-                                        <div class="step-number bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mx-sm-0"
-                                            style="width: 35px; height: 35px; font-size: 14px; font-weight: bold;">2
+                                        <div class="step-number bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mx-sm-0">
+                                            2
                                         </div>
                                         <span
-                                            class="d-block d-sm-inline ms-0 ms-sm-2 text-center text-sm-start mt-1 mt-sm-0 small">{{ __('admin.select_method') }}</span>
+                                            class="d-block d-sm-inline ms-0 ms-sm-2 text-center text-sm-start mt-1 mt-sm-0 small step_text">{{ __('admin.select_method') }}</span>
                                     </div>
 
                                     <!-- Step Line 2 -->
                                     <div class="step-line d-none d-sm-block mx-3"
-                                        style="width: 40px; height: 2px; background: #e9ecef;"></div>
+                                         style="width: 40px; height: 2px; background: #e9ecef;"></div>
                                     <div class="step-line d-block d-sm-none my-2"
-                                        style="width: 2px; height: 20px; background: #e9ecef;"></div>
+                                         style="width: 2px; height: 20px; background: #e9ecef;"></div>
 
                                     <!-- Step 3 -->
                                     <div class="step mb-2 mb-sm-0">
-                                        <div class="step-number bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mx-sm-0"
-                                            style="width: 35px; height: 35px; font-size: 14px; font-weight: bold;">3
+                                        <div class="step-number bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mx-sm-0">
+                                            3
                                         </div>
                                         <span
-                                            class="d-block d-sm-inline ms-0 ms-sm-2 text-center text-sm-start mt-1 mt-sm-0 small">{{ __('admin.user_information') }}</span>
+                                            class="d-block d-sm-inline ms-0 ms-sm-2 text-center text-sm-start mt-1 mt-sm-0 small step_text">{{ __('admin.user_information') }}</span>
                                     </div>
 
                                     <!-- Step Line 3 -->
                                     <div class="step-line d-none d-sm-block mx-3"
-                                        style="width: 40px; height: 2px; background: #e9ecef;"></div>
+                                         style="width: 40px; height: 2px; background: #e9ecef;"></div>
                                     <div class="step-line d-block d-sm-none my-2"
-                                        style="width: 2px; height: 20px; background: #e9ecef;"></div>
+                                         style="width: 2px; height: 20px; background: #e9ecef;"></div>
 
                                     <!-- Step 4 -->
                                     <div class="step mb-2 mb-sm-0">
-                                        <div class="step-number bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mx-sm-0"
-                                            style="width: 35px; height: 35px; font-size: 14px; font-weight: bold;">4
+                                        <div class="step-number bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mx-sm-0">
+                                            4
                                         </div>
                                         <span
-                                            class="d-block d-sm-inline ms-0 ms-sm-2 text-center text-sm-start mt-1 mt-sm-0 small">{{ __('admin.receivers') }}</span>
+                                            class="d-block d-sm-inline ms-0 ms-sm-2 text-center text-sm-start mt-1 mt-sm-0 small step_text">{{ __('admin.receivers') }}</span>
                                     </div>
 
                                     <!-- Step Line 4 -->
                                     <div class="step-line d-none d-sm-block mx-3"
-                                        style="width: 40px; height: 2px; background: #e9ecef;"></div>
+                                         style="width: 40px; height: 2px; background: #e9ecef;"></div>
                                     <div class="step-line d-block d-sm-none my-2"
-                                        style="width: 2px; height: 20px; background: #e9ecef;"></div>
+                                         style="width: 2px; height: 20px; background: #e9ecef;"></div>
 
                                     <!-- Step 5 -->
                                     <div class="step mb-2 mb-sm-0">
-                                        <div class="step-number bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mx-sm-0"
-                                            style="width: 35px; height: 35px; font-size: 14px; font-weight: bold;">5
+                                        <div class="step-number bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mx-sm-0">
+                                            5
                                         </div>
                                         <span
-                                            class="d-block d-sm-inline ms-0 ms-sm-2 text-center text-sm-start mt-1 mt-sm-0 small">{{ __('admin.shipping_details') }}</span>
+                                            class="d-block d-sm-inline ms-0 ms-sm-2 text-center text-sm-start mt-1 mt-sm-0 small step_text">{{ __('admin.shipping_details') }}</span>
                                     </div>
 
                                     <!-- Step Line 5 -->
                                     <div class="step-line d-none d-sm-block mx-3"
-                                        style="width: 40px; height: 2px; background: #e9ecef;"></div>
+                                         style="width: 40px; height: 2px; background: #e9ecef;"></div>
                                     <div class="step-line d-block d-sm-none my-2"
-                                        style="width: 2px; height: 20px; background: #e9ecef;"></div>
+                                         style="width: 2px; height: 20px; background: #e9ecef;"></div>
 
                                     <!-- Step 6 -->
                                     <div class="step mb-2 mb-sm-0">
-                                        <div class="step-number bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mx-sm-0"
-                                            style="width: 35px; height: 35px; font-size: 14px; font-weight: bold;">6
+                                        <div class="step-number bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mx-sm-0">
+                                            6
                                         </div>
                                         <span
-                                            class="d-block d-sm-inline ms-0 ms-sm-2 text-center text-sm-start mt-1 mt-sm-0 small">{{ __('admin.payment_details') }}</span>
+                                            class="d-block d-sm-inline ms-0 ms-sm-2 text-center text-sm-start mt-1 mt-sm-0 small step_text">{{ __('admin.payment_details') }}</span>
                                     </div>
 
                                     <!-- Step Line 6 -->
                                     <div class="step-line d-none d-sm-block mx-3"
-                                        style="width: 40px; height: 2px; background: #e9ecef;"></div>
+                                         style="width: 40px; height: 2px; background: #e9ecef;"></div>
                                     <div class="step-line d-block d-sm-none my-2"
-                                        style="width: 2px; height: 20px; background: #e9ecef;"></div>
+                                         style="width: 2px; height: 20px; background: #e9ecef;"></div>
 
                                     <!-- Step 7 -->
                                     <div class="step mb-2 mb-sm-0">
-                                        <div class="step-number bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mx-sm-0"
-                                            style="width: 35px; height: 35px; font-size: 14px; font-weight: bold;">7
+                                        <div class="step-number bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mx-sm-0">
+                                            7
                                         </div>
                                         <span
-                                            class="d-block d-sm-inline ms-0 ms-sm-2 text-center text-sm-start mt-1 mt-sm-0 small">{{ __('admin.summary') }}</span>
+                                            class="d-block d-sm-inline ms-0 ms-sm-2 text-center text-sm-start mt-1 mt-sm-0 small step_text">{{ __('admin.summary') }}</span>
                                     </div>
+
+
+                                    <!-- Navigation Buttons -->
+                                    <div class="prev_next_btn mb-2 mb-sm-0">
+                                        <div class="col-12 d-flex flex-column flex-sm-row justify-content-between gap-2">
+                                            <button type="button" class="btn btn-primary" id="btn-next" disabled>
+                                                {{ __('admin.next') }} {{ app()->getLocale() === 'ar' ? '←' : '→' }}
+                                            </button>
+                                        </div>
+                                    </div>
+
+
                                 </div>
+
                             </div>
                         </div>
                     </div>
@@ -131,10 +153,10 @@
                             <div class="text-center">
                                 <div class="mb-3">
                                     <img src="{{ asset('front/assets/img/preload.png') }}" alt="Logo" class="img-fluid"
-                                        style="max-height: 60px; max-width: 150px;">
+                                         style="max-height: 60px; max-width: 150px;">
                                 </div>
                                 <div class="spinner-border text-primary" role="status"
-                                    style="width: 2rem; height: 2rem;">
+                                     style="width: 2rem; height: 2rem;">
                                     <span class="visually-hidden"></span>
                                 </div>
                                 <p class="mt-2">{{ __('admin.loading_companies') }}</p>
@@ -160,7 +182,7 @@
 
                     <!-- Step 3: User Information -->
                     <div class="step-content" id="step-3" style="display: none;"
-                        data-app-locale="{{ app()->getLocale() }}">
+                         data-app-locale="{{ app()->getLocale() }}">
 
                         <h5 class="text-center mb-4">{{ __('admin.user_information') }}</h5>
 
@@ -168,27 +190,27 @@
                             <div class="col-12 col-md-6 mb-3">
                                 <label for="user_name" class="text-dark">{{ __('admin.full_name') }}</label>
                                 <input id="user_name" type="text" name="user_name" class="form-control"
-                                    value="{{ auth()->user()->name ?? '' }}" disabled>
+                                       value="{{ auth()->user()->name ?? '' }}" disabled>
                             </div>
 
                             <div class="col-12 col-md-6 mb-3">
                                 <label for="user_phone" class="text-dark">{{ __('admin.phone_number') }}</label>
                                 <input id="user_phone" type="text" name="phone" class="form-control"
-                                    value="{{ auth()->user()->phone ?? '' }}" disabled>
+                                       value="{{ auth()->user()->phone ?? '' }}" disabled>
                             </div>
                         </div>
 
                         <div class="row">
                             <div class="col-12 col-md-6 mb-3">
                                 <label for="user_additional_phone"
-                                    class="text-dark">{{ __('admin.additional_phone') }}</label>
+                                       class="text-dark">{{ __('admin.additional_phone') }}</label>
                                 <input id="user_additional_phone" type="text" name="additional_phone"
-                                    class="form-control" value="{{ auth()->user()->additional_phone ?? '' }}" disabled>
+                                       class="form-control" value="{{ auth()->user()->additional_phone ?? '' }}" disabled>
                             </div>
                             <div class="col-12 col-md-6 mb-3">
                                 <label for="user_email" class="text-dark">{{ __('admin.email') }}</label>
                                 <input id="user_email" type="text" name="email" class="form-control"
-                                    value="{{ auth()->user()->email ?? '' }}" disabled>
+                                       value="{{ auth()->user()->email ?? '' }}" disabled>
                             </div>
                         </div>
 
@@ -196,12 +218,12 @@
                             <div class="col-12 col-md-6 mb-3">
                                 <label for="user_state" class="text-dark">{{ __('admin.state') }}</label>
                                 <input id="user_state" type="text" name="state" class="form-control"
-                                    value="{{ auth()->user()->state_name ?? '' }}" disabled>
+                                       value="{{ auth()->user()->state_name ?? '' }}" disabled>
                             </div>
                             <div class="col-12 col-md-6 mb-3">
                                 <label for="user_city" class="text-dark">{{ __('admin.city') }}</label>
                                 <input id="user_city" type="text" name="city" class="form-control"
-                                    value="{{ auth()->user()->city_name ?? '' }}" disabled>
+                                       value="{{ auth()->user()->city_name ?? '' }}" disabled>
                             </div>
 
                         </div>
@@ -209,19 +231,20 @@
                             <div class="col-12 col-md-6 mb-3">
                                 <label for="user_country" class="text-dark">{{ __('admin.country') }}</label>
                                 <input id="user_country" type="text" name="country" class="form-control"
-                                    value="{{ auth()->user()->country_name ?? '' }}" disabled>
+                                       value="{{ auth()->user()->country_name ?? '' }}" disabled>
                             </div>
+
                             <div class="col-12 col-md-6 mb-3">
-                                <label for="user_address" class="text-dark">{{ __('admin.full_address') }}</label>
-                                <textarea id="user_address" name="user_address" class="form-control" rows="3"
-                                    disabled>{{ auth()->user()->address ?? '' }}</textarea>
+                                <label for="user_postal_code" class="text-dark">{{ __('admin.postal_code') }}</label>
+                                <input id="user_postal_code" type="text" name="postal_code" class="form-control"
+                                       value="{{ auth()->user()->postal_code ?? '' }}">
                             </div>
                         </div>
                         <div class="row">
                             <div class="col-12 mb-3">
-                                <label for="user_postal_code" class="text-dark">{{ __('admin.postal_code') }}</label>
-                                <input id="user_postal_code" type="text" name="postal_code" class="form-control"
-                                    value="{{ auth()->user()->postal_code ?? '' }}">
+                                <label for="user_address" class="text-dark">{{ __('admin.full_address') }}</label>
+                                <textarea id="user_address" name="user_address" class="form-control" rows="3"
+                                          disabled>{{ auth()->user()->address ?? '' }}</textarea>
                             </div>
                         </div>
 
@@ -239,14 +262,14 @@
                                 <label class="text-dark">{{ __('admin.receiver_type') }}</label>
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="receiver_type"
-                                        id="existing_receiver" value="existing">
+                                           id="existing_receiver" value="existing">
                                     <label class="form-check-label" for="existing_receiver">
                                         {{ __('admin.existing_receiver') }}
                                     </label>
                                 </div>
                                 <div class="form-check">
                                     <input class="form-check-input" type="radio" name="receiver_type" id="new_receiver"
-                                        value="new">
+                                           value="new">
                                     <label class="form-check-label" for="new_receiver">
                                         {{ __('admin.new_receiver') }}
                                     </label>
@@ -259,7 +282,7 @@
                             <div class="row mb-3">
                                 <div class="col-12">
                                     <label for="receiver_select"
-                                        class="text-dark">{{ __('admin.select_receiver') }}</label>
+                                           class="text-dark">{{ __('admin.select_receiver') }}</label>
                                     <select id="receiver_select" name="receiver_id" class="form-control">
                                         <option value="">{{ __('admin.choose_receiver') }}</option>
                                     </select>
@@ -273,31 +296,31 @@
                                 <div class="col-12 col-md-6 mb-3">
                                     <label for="name" class="text-dark">{{ __('admin.full_name') }}</label>
                                     <input id="name" type="text" name="name" class="form-control"
-                                        placeholder="{{ __('admin.enter_full_name') }}" required>
+                                           placeholder="{{ __('admin.enter_full_name') }}" required>
                                 </div>
 
                                 <div class="col-12 col-md-6 mb-3">
                                     <label for="phone" class="text-dark">{{ __('admin.phone_number') }}</label>
                                     <input id="phone" type="input" name="phone" class="form-control"
-                                        placeholder="{{ __('admin.enter_phone_number') }}" pattern="05[0-9]{8}"
-                                        title="Phone must start with 05 followed by 8 digits (e.g., 0512345678)"
-                                        required>
+                                           placeholder="{{ __('admin.enter_phone_number') }}" pattern="05[0-9]{8}"
+                                           title="Phone must start with 05 followed by 8 digits (e.g., 0512345678)"
+                                           required>
                                 </div>
                             </div>
 
                             <div class="row">
                                 <div class="col-12 col-md-6 mb-3">
                                     <label for="additional_phone"
-                                        class="text-dark">{{ __('admin.additional_phone') }}</label>
+                                           class="text-dark">{{ __('admin.additional_phone') }}</label>
                                     <input id="additional_phone" type="input" name="additional_phone" class="form-control"
-                                        placeholder="{{ __('admin.enter_additional_phone') }}" pattern="05[0-9]{8}"
-                                        title="Phone must start with 05 followed by 8 digits (e.g., 0512345678)">
+                                           placeholder="{{ __('admin.enter_additional_phone') }}" pattern="05[0-9]{8}"
+                                           title="Phone must start with 05 followed by 8 digits (e.g., 0512345678)">
                                 </div>
                                 <div class="col-12 col-md-6 mb-3">
                                     <label for="email" class="text-dark">{{ __('admin.email') }}</label>
                                     <input id="email" type="email" name="email" class="form-control"
-                                        placeholder="{{ __('admin.enter_email') }}"
-                                        title="Please enter a valid email address">
+                                           placeholder="{{ __('admin.enter_email') }}"
+                                           title="Please enter a valid email address">
                                 </div>
                             </div>
                             <div class="row">
@@ -321,17 +344,18 @@
                                         <option value="">{{ __('admin.select_city') }}</option>
                                     </select>
                                 </div>
+
                                 <div class="col-12 col-md-6 mb-3">
-                                    <label for="address" class="text-dark">{{ __('admin.full_address') }}</label>
-                                    <textarea id="address" name="address" class="form-control" rows="3"
-                                        placeholder="{{ __('admin.enter_full_address') }}" required></textarea>
+                                    <label for="postal_code" class="text-dark">{{ __('admin.postal_code') }}</label>
+                                    <input id="postal_code" type="text" name="postal_code" class="form-control"
+                                           placeholder="{{ __('admin.enter_postal_code') }}">
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-12 mb-3">
-                                    <label for="postal_code" class="text-dark">{{ __('admin.postal_code') }}</label>
-                                    <input id="postal_code" type="text" name="postal_code" class="form-control"
-                                        placeholder="{{ __('admin.enter_postal_code') }}">
+                                    <label for="address" class="text-dark">{{ __('admin.full_address') }}</label>
+                                    <textarea id="address" name="address" class="form-control" rows="3"
+                                              placeholder="{{ __('admin.enter_full_address') }}" required></textarea>
                                 </div>
                             </div>
                         </div>
@@ -356,7 +380,7 @@
                         <h5 class="text-center mb-4">{{ __('admin.shipping_details') }}</h5>
 
                         <form action="{{ route('user.shippings.store') }}" method="POST" enctype="multipart/form-data"
-                            onsubmit="return validateForm()">
+                              onsubmit="return validateForm()">
                             @csrf
                             <input type="hidden" name="shipping_company_id" id="shipping_company_id">
                             <input type="hidden" name="shipping_method" id="shipping_method">
@@ -364,20 +388,28 @@
 
                             <!-- Package Type Selection -->
                             <div class="row mb-4">
-                                <div class="col-12 col-md-6 mb-3 mb-md-0">
+                                <div class="col-12 col-md-4 mb-3 mb-md-0">
                                     <label for="package_type"
-                                        class="text-dark mb-2">{{ __('admin.package_type') }}</label>
+                                           class="text-dark mb-2">{{ __('admin.package_type') }}</label>
                                     <select id="package_type" name="package_type" class="form-control" required>
                                         <option value="">{{ __('admin.select_package_type') }}</option>
                                         <option value="boxes">{{ __('admin.boxes') }}</option>
                                         <option value="documents">{{ __('admin.documents') }}</option>
                                     </select>
                                 </div>
-                                <div class="col-12 col-md-6">
+                                <div class="col-12 col-md-4">
                                     <label for="package_number" class="text-dark mb-2">{{ __('admin.number') }}</label>
                                     <input id="package_number" type="number" name="package_number" class="form-control"
-                                        placeholder="1" min="1" value="1" required>
+                                           placeholder="1" min="1" value="1" required>
                                 </div>
+
+                                <div class="col-12 col-md-4">
+                                    <label for="weight" class="text-dark">{{ __('admin.weight_kg') }}</label>
+                                    <input id="weight" type="number" name="weight"
+                                           placeholder="{{ __('admin.weight_kg') }}" class="form-control"
+                                           value="{{ old('weight') }}" step="0.1" min="0.1" required>
+                                </div>
+
                             </div>
 
                             <!-- Package Details -->
@@ -385,36 +417,28 @@
                                 <div class="col-12 col-md-4 mb-3">
                                     <label for="length" class="text-dark">{{ __('admin.length_cm') }}</label>
                                     <input id="length" type="number" name="length" class="form-control" placeholder="0"
-                                        min="0" step="0.1" required>
+                                           min="0" step="0.1" required>
                                 </div>
                                 <div class="col-12 col-md-4 mb-3">
                                     <label for="width" class="text-dark">{{ __('admin.width_cm') }}</label>
                                     <input id="width" type="number" name="width" class="form-control" placeholder="0"
-                                        min="0" step="0.1" required>
+                                           min="0" step="0.1" required>
                                 </div>
                                 <div class="col-12 col-md-4 mb-3">
                                     <label for="height" class="text-dark">{{ __('admin.height_cm') }}</label>
                                     <input id="height" type="number" name="height" class="form-control" placeholder="0"
-                                        min="0" step="0.1" required>
+                                           min="0" step="0.1" required>
                                 </div>
                             </div>
 
-                            <div class="row">
-                                <div class="col-12 col-md-6 mb-3">
-                                    <label for="weight" class="text-dark">{{ __('admin.weight_kg') }}</label>
-                                    <input id="weight" type="number" name="weight"
-                                        placeholder="{{ __('admin.weight_kg') }}" class="form-control"
-                                        value="{{ old('weight') }}" step="0.1" min="0.1" required>
-                                </div>
-                            </div>
 
                             <!-- Package Description -->
                             <div class="row">
                                 <div class="col-12 mb-3">
                                     <label for="package_description"
-                                        class="text-dark">{{ __('admin.package_description') }}</label>
+                                           class="text-dark">{{ __('admin.package_description') }}</label>
                                     <textarea id="package_description" name="package_description" class="form-control"
-                                        rows="3" placeholder="{{ __('admin.enter_package_description') }}"></textarea>
+                                              rows="3" placeholder="{{ __('admin.enter_package_description') }}"></textarea>
                                 </div>
                             </div>
 
@@ -423,11 +447,11 @@
                                 <div class="col-12 mb-3">
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" id="accept_terms"
-                                            name="accept_terms" required>
+                                               name="accept_terms" required>
                                         <label class="form-check-label" for="accept_terms">
                                             {{ __('admin.i_accept_terms') }}
                                             <a href="#" class="text-primary" data-bs-toggle="modal"
-                                                data-bs-target="#termsModal">
+                                               data-bs-target="#termsModal">
                                                 {{ __('admin.terms_and_conditions') }}
                                             </a>
                                         </label>
@@ -440,12 +464,12 @@
                                 <div class="col-12 mb-3">
                                     <label for="shipmentImage" class="form-label">{{ __('admin.shipment_image') }}</label>
                                     <input type="file"
-                                        class="form-control"
-                                        id="shipmentImage"
-                                        name="shipment_image"
-                                        accept="image/*"
-                                        data-max-file-size="2M"
-                                        data-max-files="1">
+                                           class="form-control"
+                                           id="shipmentImage"
+                                           name="shipment_image"
+                                           accept="image/*"
+                                           data-max-file-size="2M"
+                                           data-max-files="1">
                                     <div class="mt-2">
                                         <small class="text-muted">{{ __('admin.upload_shipment_image_help') }}</small>
                                     </div>
@@ -459,11 +483,11 @@
                         <h5 class="text-center mb-4">{{ __('admin.payment_details') }}</h5>
 
                         <div class="row">
-                            <div class="col-12">
+                            <div class="col-12 col-md-6 mx-auto">
                                 <div class="payment-options-container">
                                     <div class="form-check mb-3">
                                         <input class="form-check-input" type="checkbox" id="cash_on_delivery"
-                                            name="cash_on_delivery">
+                                               name="cash_on_delivery">
                                         <label class="form-check-label" for="cash_on_delivery">
                                             <i class="fas fa-money-bill-wave text-success"></i>
                                             {{ __('admin.cash_on_delivery') }}
@@ -502,7 +526,7 @@
 
                         <!-- Submit Button -->
                         <form action="{{ route('user.shippings.store') }}" method="POST" enctype="multipart/form-data"
-                            onsubmit="return validateForm()">
+                              onsubmit="return validateForm()">
                             @csrf
                             <input type="hidden" name="shipping_company_id" id="shipping_company_id">
                             <input type="hidden" name="shipping_method" id="shipping_method">
@@ -511,24 +535,16 @@
                             <div class="row mt-4">
                                 <div class="col-12 text-center">
                                     <input type="submit" value="{{ __('admin.create_shipping') }}"
-                                        class="btn btn-success btn-lg">
+                                           class="btn btn-success btn-lg">
                                 </div>
                             </div>
                         </form>
                     </div>
 
-                    <!-- Navigation Buttons -->
-                    <div class="row mt-4">
-                        <div class="col-12 d-flex flex-column flex-sm-row justify-content-between gap-2">
-                            <button type="button" class="btn btn-secondary" id="btn-prev" style="display: none;">
-                                {{ app()->getLocale() === 'ar' ? '→' : '←' }} {{ __('admin.previous') }}
-                            </button>
-                            <button type="button" class="btn btn-primary" id="btn-next" disabled>
-                                {{ __('admin.next') }} {{ app()->getLocale() === 'ar' ? '←' : '→' }}
-                            </button>
-                        </div>
-                    </div>
+
                 </div>
+
+
             </div>
         </div>
     </div>

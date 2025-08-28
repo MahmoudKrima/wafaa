@@ -319,6 +319,7 @@ return [
     'additional_fee_per_receiver' => 'رسوم إضافية بقيمة $:price لكل مستلم',
     'max_weight' => 'الوزن الأقصى',
     'kg' => 'كجم',
+    'new_shipment' => 'شحنة جديدة',
     'receiver' => 'المستلم',
     'receivers' => 'المستلمين',
     'bill_of_lading' => 'فاتورة الشحن',

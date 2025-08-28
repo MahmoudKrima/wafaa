@@ -87,9 +87,9 @@
         css.id = "pay-cards-style";
         css.textContent = `
         .payment-grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
-        .pay-card{border:1px solid #e9ecef;border-radius:14px;padding:14px;transition:.2s;cursor:pointer;background:#fff}
+        .pay-card{border:2px solid #F6950D;border-radius:14px;padding:14px;transition:.2s;cursor:pointer;background:#fff}
         .pay-card:hover{box-shadow:0 6px 18px rgba(0,0,0,.06);transform:translateY(-1px)}
-        .pay-card.active{border-color:#0d6efd;box-shadow:0 0 0 3px rgba(13,110,253,.15)}
+        .pay-card.active{border-color:#F6950D;box-shadow:0 0 0 3px rgba(13,110,253,.15)}
         .pay-card .title{display:flex;align-items:center;gap:10px;font-weight:700;margin-bottom:6px}
         .pay-card .muted{color:#6c757d;font-size:.9rem}
         .pay-card input[type="radio"]{display:none}

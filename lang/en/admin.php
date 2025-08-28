@@ -12,6 +12,7 @@ return [
     'login' => 'Login',
     'logout' => 'Logout',
     'phone' => 'Phone',
+    'new_shipment' => 'New Shipment',
     'password' => 'Password',
     'password_confirmation' => 'Password Confirmation',
     'forget_password' => 'Forget Password ?',
