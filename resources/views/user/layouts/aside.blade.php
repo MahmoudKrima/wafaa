@@ -25,7 +25,6 @@
                         </div>
                     </div>
                 </a>
-                <div class="tooltip"><span>{{ __('admin.dashboard') }}</span></div>
             </li>
 
 
@@ -44,7 +43,6 @@
                         </div>
                     </div>
                 </a>
-                <div class="tooltip"><span>{{ __('admin.new_shipment') }}</span></div>
             </li>
 
 
