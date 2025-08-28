@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\User\Shipping;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\User\Shipping\StoreShippingRequest;
 use App\Http\Requests\User\Transaction\SearchTransactionRequest;
-use App\Http\Requests\User\Transaction\StoreTransactionRequest;
 use App\Services\User\Shipping\ShippingService;
 use Illuminate\Http\Request;
 
@@ -16,6 +16,18 @@ class ShippingController extends Controller
     {
         // $result = $this->shippingService->index($request);
         return view('user.pages.shippings.create');
+    }
+
+    public function create()
+    {
+        return view('user.pages.shippings.create');
+    }
+
+    public function store(StoreShippingRequest $request)
+    {
+        $this->shippingService->store($request);
+        return back()
+            ->with('Success', __('admin.created_successfully'));
     }
 
     public function receivers()
@@ -30,17 +42,6 @@ class ShippingController extends Controller
         return response()->json($companies);
     }
 
-    public function create()
-    {
-        return view('user.pages.shippings.create');
-    }
-
-    public function store(StoreTransactionRequest $request)
-    {
-        $this->shippingService->store($request);
-        return back()
-            ->with('Success', __('admin.created_successfully'));
-    }
 
     public function getStates()
     {
@@ -59,5 +60,13 @@ class ShippingController extends Controller
         $stateId = $request->get('state_id');
         $cities = $this->shippingService->getCitiesByState($stateId);
         return response()->json($cities);
+    }
+    public function walletBalance()
+    {
+        $user = auth()->user();
+        $wallet = $user->wallet;
+        return response()->json([
+            'balance' => $wallet ? $wallet->balance : 0
+        ]);
     }
 }

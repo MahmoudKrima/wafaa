@@ -3,21 +3,24 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Translatable\HasTranslations;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Reciever extends Model
 {
-    use HasFactory;
+    use HasFactory, HasTranslations;
     public static $permissions = [
         'recievers.view',
         'recievers.create',
         'recievers.update',
         'recievers.delete',
     ];
+    protected $translatable = ['city_name', 'state_name', 'country_name'];
 
     public static $relatio = [
         'user',
     ];
+
 
     public function scopeWithAllRelations($query)
     {
@@ -29,6 +32,4 @@ class Reciever extends Model
     {
         return $this->belongsTo(User::class);
     }
-
-
 }

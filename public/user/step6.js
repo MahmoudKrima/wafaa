@@ -6,19 +6,43 @@
     function companySupportsCOD(company) {
         if (!company) return false;
         if (
-            Array.isArray(company.shippingMethods) &&
-            company.shippingMethods.includes("cashOnDelivery")
+            company.hasCod === true ||
+            company.supports_cod === true ||
+            company.cash_on_delivery === true ||
+            company?.cash_on_delivery?.enabled === true ||
+            company?.cod?.enabled === true
         )
             return true;
-        if (company.supports_cod === true) return true;
-        if (company.cash_on_delivery === true) return true;
-        if (company.cash_on_delivery && company.cash_on_delivery.enabled)
-            return true;
-        if (company.cod && company.cod.enabled) return true;
-        return false;
+
+        const methods = Array.isArray(company.shippingMethods)
+            ? company.shippingMethods.map((m) => String(m).toLowerCase().trim())
+            : [];
+        const aliases = new Set([
+            "cashondelivery",
+            "cash_on_delivery",
+            "cash-on-delivery",
+            "cod",
+            "cashondelivary",
+            "cash on delivery",
+        ]);
+        return methods.some((m) => aliases.has(m));
     }
 
-    function getCodFee() {
+    // --- NEW: always prefer ADMIN fee (company._adminCodFee), fallback to global admin settings
+    function getAdminCodFee() {
+        const c = window.selectedCompany || {};
+        const globalAdmin = window.ADMIN_SETTINGS?.cod_fee_per_receiver;
+        const candidates = [
+            c._adminCodFee, // set in step1 on selection
+            c.adminCodFee, // just in case
+            globalAdmin,
+        ];
+        for (const v of candidates) if (isFinite(+v)) return +v;
+        return 0;
+    }
+
+    // kept for completeness (if you still want to show company fee somewhere)
+    function getCompanyCodFee() {
         const c = window.selectedCompany || {};
         const p =
             window.companyPricing ||
@@ -26,7 +50,7 @@
             window.currentQuote ||
             {};
         const candidates = [
-            c.codPrice, // <-- your object
+            c.codPrice,
             c.cod_fee,
             c.codFee,
             c.cash_on_delivery_fee,
@@ -71,7 +95,8 @@
             c.currencySymbol ||
             p.currency_symbol ||
             p.currencySymbol ||
-            "﷼"
+            window.translations?.currency_symbol ||
+            "SAR"
         );
     }
 
@@ -108,6 +133,11 @@
             <span>${title}${badgeHTML}</span>
           </div>
           <div class="muted">${desc}</div>
+          ${
+              value === "cod"
+                  ? `<div id="cod-note-line" class="mt-1 small text-muted"></div>`
+                  : ""
+          }
         </label>
       `;
     }
@@ -117,16 +147,13 @@
         if (!container) return;
 
         ensureStyles();
-
-        // Remove any previous grid/cards to avoid duplicates
         container
             .querySelectorAll(".payment-grid, .pay-card")
             .forEach((el) => el.remove());
 
         const supportsCOD = companySupportsCOD(window.selectedCompany);
-        const codFee = getCodFee();
+        const adminCodFee = getAdminCodFee();
         const cur = getCurrencySymbol();
-
         const t = (k, fb) =>
             (window.translations && window.translations[k]) || fb;
 
@@ -141,11 +168,11 @@
 
         if (supportsCOD) {
             const desc =
-                codFee > 0
+                adminCodFee > 0
                     ? `${t(
-                          "cod_fee",
-                          "رسوم الدفع عند الاستلام"
-                      )}: ${codFee} ${cur}`
+                          "cod_fee_per_receiver",
+                          "رسوم الدفع عند الاستلام (لكل مستلم)"
+                      )} : ${adminCodFee} ${cur}`
                     : t("cod_information", "الدفع عند الاستلام متاح");
             html += buildCard({
                 value: "cod",
@@ -155,13 +182,11 @@
                 badge: t("cash_on_delivery_available", "متاح"),
             });
         } else {
-            // hide legacy checkbox if no COD
             const codLegacy = $$("cash_on_delivery")?.closest(".form-check");
             if (codLegacy) codLegacy.style.display = "none";
         }
 
         html += `</div>`;
-        // Replace content (not append) to prevent duplication
         container.insertAdjacentHTML("afterbegin", html);
 
         const grid = container.querySelector(".payment-grid");
@@ -176,16 +201,14 @@
             toggleCodDetails(value === "cod");
             const codCheckbox = $$("cash_on_delivery");
             if (codCheckbox) codCheckbox.checked = value === "cod";
+            updateCodNote(); // NEW: refresh the note when switching
         }
 
         cards.forEach((card) =>
             card.addEventListener("click", () => select(card.dataset.value))
         );
-
-        // default to wallet
         select("wallet");
 
-        // keep legacy checkbox in sync if present
         const codCheckbox = $$("cash_on_delivery");
         if (codCheckbox && !codCheckbox.dataset.bound) {
             codCheckbox.addEventListener("change", () => {
@@ -193,43 +216,61 @@
             });
             codCheckbox.dataset.bound = "1";
         }
+
+        // initial note render (in case COD is pre-checked externally)
+        updateCodNote();
     }
 
     function toggleCodDetails(show) {
-        const wrap = $$("cod_details");
-        if (!wrap) return;
-        wrap.style.display = show ? "block" : "none";
-        if (show) updateCodDisplay();
+        // COD details are now shown in step 7 payment details card
+        // No need to toggle visibility in step 6
+        return;
+    }
+
+    function updateCodNote() {
+        const noteEl = $$("cod-note-line");
+        if (!noteEl) return;
+        const isCodSelected = document.querySelector(
+            'input[name="payment_method"][value="cod"]'
+        )?.checked;
+        if (!isCodSelected) {
+            noteEl.textContent = "";
+            return;
+        }
+
+        const count = Math.max(1, selectedReceiversCount());
+        const fee = getAdminCodFee();
+        const cur = getCurrencySymbol();
+        const total = (fee * count).toFixed(2);
+        const t = (k, fb) =>
+            (window.translations && window.translations[k]) || fb;
+
+        // Example: "3 × COD fee (per receiver) = 45 ﷼"
+        noteEl.textContent = `${count} × ${t(
+            "cod_fee_per_receiver",
+            "رسوم الدفع عند الاستلام (لكل مستلم)"
+        )} = ${total} ${cur}`;
     }
 
     function updateCodDisplay() {
-        const codPriceEl = $$("cod_price_display");
-        const totalWithCodEl = $$("total_with_cod_display");
-        if (!codPriceEl || !totalWithCodEl) return;
-
-        const cur = getCurrencySymbol();
-        const fee = getCodFee();
-        const count = Math.max(1, selectedReceiversCount());
-        const perReceiver = true; // flip to false if your fee is flat per shipment
-        const baseTotal = getBaseTotal();
-        const codTotalFee = perReceiver ? fee * count : fee;
-
-        codPriceEl.textContent = perReceiver
-            ? `${fee} ${cur} × ${count}`
-            : `${fee} ${cur}`;
-        totalWithCodEl.textContent = `${(baseTotal + codTotalFee).toFixed(
-            2
-        )} ${cur}`;
+        // COD display is now handled in step 7 payment details card
+        // No need to update elements in step 6
+        return;
     }
 
-    // Exposed to your flow
+    // expose
     window.setupPaymentDetails = function setupPaymentDetails() {
         renderPaymentOptions();
         const codCheckbox = $$("cash_on_delivery");
-        toggleCodDetails(!!(codCheckbox && codCheckbox.checked));
+        // toggleCodDetails(!!(codCheckbox && codCheckbox.checked)); // No longer needed
+
         document.addEventListener("receiversChanged", () => {
-            const codOn = $$("cash_on_delivery")?.checked;
-            if (codOn) updateCodDisplay();
+            // keep COD totals + note in sync with # of receivers
+            const codOn =
+                $$("cash_on_delivery")?.checked ||
+                document.querySelector('.pay-card[data-value="cod"].active');
+            updateCodNote();
+            // if (codOn) updateCodDisplay(); // No longer needed
         });
     };
 })();

@@ -24,7 +24,9 @@
 
     function formatMoney(n) {
         if (n === null || n === undefined || isNaN(n)) return "—";
-        return `$${(+n).toFixed(2).replace(/\.00$/, "")}`;
+        return `${(+n).toFixed(2).replace(/\.00$/, "")} ${
+            window.translations?.currency_symbol || "SAR"
+        }`;
     }
 
     function getNormalizedMethods(methodsRaw) {
@@ -208,9 +210,9 @@
                           ? `<div class="preview-box my_box_two"><small>${
                                 window.translations?.extra_weight_price ||
                                 "Extra Weight Price"
-                            }</small><strong>${kgLabel}/${formatMoney(
+                            }</small><strong>${formatMoney(
                                 adminExtraPerKg
-                            )}</strong></div>`
+                            )} / ${kgLabel}</strong></div>`
                           : ""
                   }
                   ${

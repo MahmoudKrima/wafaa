@@ -181,7 +181,36 @@ return [
         'attribute-name' => [
             'rule-name' => 'custom-message',
         ],
+        'sender_phone' => [
+            'saudi_format' => 'Phone must start with 05 followed by 8 digits (e.g., 0512345678).',
+        ],
+        'selected_receivers' => [
+            'invalid_json'   => 'Receivers payload is invalid.',
+            'empty'          => 'Please add at least one receiver.',
+            'missing_fields' => 'Each receiver must have an ID or a name.',
+            'required'       => 'Receivers are required.',
+        ],
+        'receivers_count' => [
+            'min' => 'You must have at least one receiver.',
+        ],
+        'cod_price_per_receiver' => [
+            'required_if' => 'COD price per receiver is required when payment method is Cash on Delivery.',
+        ],
+        'extra_kg' => [
+            'mismatch' => 'Extra weight does not match the (entered - max) calculation.',
+        ],
+        'accept_terms' => [
+            'accepted' => 'You must accept the terms and conditions.',
+        ],
+        'shipment_image' => [
+            'image' => 'The shipment image must be an image file.',
+            'mimes' => 'The shipment image must be a file of type: jpg, jpeg, png, webp.',
+            'max'   => 'The shipment image may not be greater than 2 MB.',
+        ],
     ],
+
+    'there_were_errors' => 'Please fix the following errors:',
+
 
     /*
     |--------------------------------------------------------------------------

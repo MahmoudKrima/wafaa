@@ -51,75 +51,47 @@
 
         const shippingMethods = (
             window.selectedCompany.shippingMethods || []
-        ).map((m) => (typeof m === "string" ? m.toLowerCase() : m));
+        ).map((m) => (typeof m === "string" ? m : "").toLowerCase());
+
         let methodsHTML = "";
 
         if (shippingMethods.includes("local")) {
-            methodsHTML += '<div class="col-lg-3 col-md-3 mb-3 mx-auto">';
-            methodsHTML +=
-                '<div class="card method-option h-100 card_step2" onclick="window.selectMethod(this, \'local\')" style="cursor:pointer;border:2px solid transparent;transition:all .3s ease">';
-            methodsHTML +=
-                '<div class="card-body text-center"><div class="mb-2" style="font-size:2rem">🏠</div>';
-            methodsHTML +=
-                '<h6 class="card-title">' +
-                (window.translations?.local || "Local") +
-                "</h6>";
-            methodsHTML +=
-                '<p class="card-text text-muted">' +
-                (window.translations?.local_delivery || "Local Delivery") +
-                "</p>";
-            methodsHTML += "</div></div></div>";
+            methodsHTML += `
+          <div class="col-lg-6 col-md-6 mb-3">
+            <div class="card method-option h-100" onclick="window.selectMethod(this, 'local')"
+                 style="cursor:pointer;border:2px solid transparent;transition:all .3s ease">
+              <div class="card-body text-center">
+                <div class="mb-2" style="font-size:2rem">🏠</div>
+                <h6 class="card-title">${
+                    window.translations?.local || "Local"
+                }</h6>
+                <p class="card-text text-muted">${
+                    window.translations?.local_delivery || "Local Delivery"
+                }</p>
+              </div>
+            </div>
+          </div>`;
         }
         if (shippingMethods.includes("international")) {
-            methodsHTML += '<div class="col-lg-3 col-md-3 mb-3 mx-auto">';
-            methodsHTML +=
-                '<div class="card method-option h-100 card_step2" onclick="window.selectMethod(this, \'international\')" style="cursor:pointer;border:2px solid transparent;transition:all .3s ease">';
-            methodsHTML +=
-                '<div class="card-body text-center"><div class="mb-2" style="font-size:2rem">🌍</div>';
-            methodsHTML +=
-                '<h6 class="card-title">' +
-                (window.translations?.international || "International") +
-                "</h6>";
-            methodsHTML +=
-                '<p class="card-text text-muted">' +
-                (window.translations?.worldwide_shipping ||
-                    "Worldwide Shipping") +
-                "</p>";
-            methodsHTML += "</div></div></div>";
+            methodsHTML += `
+          <div class="col-lg-6 col-md-6 mb-3">
+            <div class="card method-option h-100" onclick="window.selectMethod(this, 'international')"
+                 style="cursor:pointer;border:2px solid transparent;transition:all .3s ease">
+              <div class="card-body text-center">
+                <div class="mb-2" style="font-size:2rem">🌍</div>
+                <h6 class="card-title">${
+                    window.translations?.international || "International"
+                }</h6>
+                <p class="card-text text-muted">${
+                    window.translations?.worldwide_shipping ||
+                    "Worldwide Shipping"
+                }</p>
+              </div>
+            </div>
+          </div>`;
         }
 
-        if (!methodsHTML) {
-            methodsHTML += '<div class="col-lg-6 col-md-6 mb-3">';
-            methodsHTML +=
-                '<div class="card method-option h-100" onclick="window.selectMethod(this, \'local\')" style="cursor:pointer;border:2px solid transparent;transition:all .3s ease">';
-            methodsHTML +=
-                '<div class="card-body text-center"><div class="mb-2" style="font-size:2rem">🏠</div>';
-            methodsHTML +=
-                '<h6 class="card-title">' +
-                (window.translations?.local || "Local") +
-                "</h6>";
-            methodsHTML +=
-                '<p class="card-text text-muted">' +
-                (window.translations?.local_delivery || "Local Delivery") +
-                "</p>";
-            methodsHTML += "</div></div></div>";
-            methodsHTML += '<div class="col-lg-6 col-md-6 mb-3">';
-            methodsHTML +=
-                '<div class="card method-option h-100" onclick="window.selectMethod(this, \'international\')" style="cursor:pointer;border:2px solid transparent;transition:all .3s ease">';
-            methodsHTML +=
-                '<div class="card-body text-center"><div class="mb-2" style="font-size:2rem">🌍</div>';
-            methodsHTML +=
-                '<h6 class="card-title">' +
-                (window.translations?.international || "International") +
-                "</h6>";
-            methodsHTML +=
-                '<p class="card-text text-muted">' +
-                (window.translations?.worldwide_shipping ||
-                    "Worldwide Shipping") +
-                "</p>";
-            methodsHTML += "</div></div></div>";
-        }
-
+        // IMPORTANT: no auto-select even if there’s only one method
         methodOptions.innerHTML = methodsHTML;
 
         const btnNext = document.getElementById("btn-next");
@@ -139,15 +111,6 @@
                 card.style.backgroundColor = "#f8f9fa";
             }
         }
-
-        if (
-            shippingMethods.length === 1 &&
-            (shippingMethods[0] === "local" ||
-                shippingMethods[0] === "international")
-        ) {
-            const card = methodOptions.querySelector(".method-option");
-            if (card) window.selectMethod(card, shippingMethods[0]);
-        }
     }
 
     function selectMethod(card, method) {
@@ -155,7 +118,7 @@
             c.style.borderColor = "transparent";
             c.style.backgroundColor = "";
         });
-        card.style.borderColor = "#F6950D";
+        card.style.borderColor = "#007bff";
         card.style.backgroundColor = "#f8f9fa";
 
         selectedMethod = method;
@@ -171,7 +134,9 @@
             btnNext.classList.add("btn-primary");
         }
 
-        document.dispatchEvent(new CustomEvent("shippingMethodSelected", { detail: { method } }));
+        document.dispatchEvent(
+            new CustomEvent("shippingMethodSelected", { detail: { method } })
+        );
 
         if (typeof window.updateShippingStepIndicator === "function")
             window.updateShippingStepIndicator(2);
@@ -205,7 +170,6 @@
     });
 
     if (!window.goToStep) ensureGoToStep();
-
     document.addEventListener("DOMContentLoaded", () => {
         if (window.currentStep === 2) showMethodSelection();
     });

@@ -36,6 +36,10 @@ function validateStep(step) {
             return typeof window.validatePackageDetails === "function"
                 ? window.validatePackageDetails()
                 : true;
+        case 6:
+            return typeof window.validatePaymentDetails === "function"
+                ? window.validatePaymentDetails()
+                : true;
         default:
             return true;
     }
@@ -132,8 +136,13 @@ function showStep(step) {
         window.populateShippingFormFields();
     if (step === 6 && typeof window.setupPaymentDetails === "function")
         window.setupPaymentDetails();
-    if (step === 7 && typeof window.showFinalSummary === "function")
-        window.showFinalSummary();
+    if (step === 7 && typeof window.setupStep7 === "function")
+        window.setupStep7();
+    
+    // Dispatch step change event for other modules to listen to
+    document.dispatchEvent(new CustomEvent('stepChanged', {
+        detail: { currentStep: step, previousStep: currentStep }
+    }));
 }
 
 /* NEW: keep Next in sync when selections change */

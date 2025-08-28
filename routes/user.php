@@ -19,6 +19,8 @@ Route::controller(ShippingController::class)
             ->name('shippings.cities');
         Route::get('/cities-by-state', 'getCitiesByState')
             ->name('shippings.citiesByState');
+        Route::get('/wallet/balance', 'walletBalance')
+            ->name('wallet.balance');
     });
 
 Route::middleware(['web'])->group(function () {
@@ -84,5 +86,7 @@ Route::middleware(['web'])->group(function () {
                 Route::get('/shipping-companies', 'shippingCompanies')
                     ->name('shippings.companies');
             });
+
+
     });
 });

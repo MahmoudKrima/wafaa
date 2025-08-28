@@ -140,14 +140,11 @@
         }
     }
 
-    // MAIN VALIDATOR — silent by default (no UI) unless user hit Next this tick
     window.validatePackageDetails = function validatePackageDetails() {
         const packageType = document.getElementById("package_type");
         const packageNumber = document.getElementById("package_number");
         const weight = document.getElementById("weight");
         const acceptTerms = document.getElementById("accept_terms");
-
-        // If the UI elements aren't present yet, stay silent and block Next
         if (!packageType || !packageNumber || !weight || !acceptTerms) {
             return false;
         }
@@ -167,7 +164,6 @@
             return false;
         }
 
-        // weight required (>0) — keep image optional (no image checks here)
         const w = Number(weight.value);
         if (!weight.value || isNaN(w) || w <= 0) {
             showErrorStep5("Please enter a valid weight in kg");

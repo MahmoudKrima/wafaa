@@ -41,21 +41,18 @@ var App = function() {
                 get_overlay = document.querySelector('.overlay');
                 get_mainContainer = document.querySelector('.main-container')
                 if (get_CompactSubmenuShow.classList.contains('show') || get_CompactSubmenuShow.classList.contains('hide-sub') ) {
-                    console.log('main1');
 
                     if (get_CompactSubmenuShow.classList.contains('show')) {
                         get_CompactSubmenuShow.classList.remove("show");
                         get_overlay.classList.remove("show");
                         get_CompactSubmenuShow.classList.add("hide-sub");
                         return;
-                            console.log('1')
                     }
                     if (get_CompactSubmenuShow.classList.contains('hide-sub')) {
 
                         if (get_mainContainer.classList.contains('sidebar-closed')) {
                             get_mainContainer.classList.remove("sidebar-closed");
                             get_mainContainer.classList.add("sbar-open");
-                            console.log('2')
                             return;
                         }
                         if (get_mainContainer.classList.contains('sbar-open')) {
@@ -63,14 +60,12 @@ var App = function() {
                             get_CompactSubmenuShow.classList.remove("hide-sub");
                             get_CompactSubmenuShow.classList.add("show");
                             get_overlay.classList.add("show");
-                            console.log('3')
                             return;
                         }
                         $(Selector.mainContainer).addClass("sidebar-closed");
                     }
 
                 } else  {
-                    console.log('main2');
                     $(Selector.mainContainer).toggleClass("sidebar-closed");
                     $(Selector.mainContainer).toggleClass("sbar-open");
                     if (window.innerWidth <= 991) {
@@ -87,12 +82,10 @@ var App = function() {
         },
         overlay: function() {
             $('.overlay').on('click', function () {
-                // hide sidebar
                 var windowWidth = window.innerWidth;
                 if (windowWidth <= MediaSize.md) {
                     $('.main-container').addClass('sidebar-closed');
                 }
-                // hide overlay
                 $('.overlay').removeClass('show');
                 $('html,body').removeClass('sidebar-noneoverflow');
 
@@ -326,23 +319,14 @@ var App = function() {
             toggleFunction.overlay();
             toggleFunction.search();
             toggleFunction.navbarShadow();
-            /*
-                Desktop Resoltion fn
-            */
             _desktopResolution.onRefresh();
             _desktopResolution.onResize();
 
-            /*
-                Mobile Resoltion fn
-            */
             _mobileResolution.onRefresh();            
             _mobileResolution.onResize();
 
             sidebarFunctionality();
 
-            /*
-                In Built Functionality fn
-            */
             inBuiltfunctionality.subCatScroll();
             inBuiltfunctionality.preventScrollBody();
             inBuiltfunctionality.languageDropdown();
