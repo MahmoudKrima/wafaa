@@ -432,4 +432,5 @@ return [
     'no_extra_weight' => 'لا يوجد وزن إضافي',
     'insufficient_balance' => 'الرصيد غير كافي. يرجى شحن المحفظة.',
     'wallet_balance' => 'رصيد المحفظة',
+    'shipping_company_not_found' => 'شركة الشحن غير موجودة',
 ];

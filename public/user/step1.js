@@ -25,7 +25,7 @@
     function formatMoney(n) {
         if (n === null || n === undefined || isNaN(n)) return "—";
         return `${(+n).toFixed(2).replace(/\.00$/, "")} ${
-            window.translations?.currency_symbol || "R.S"
+            window.translations?.currency_symbol || "SAR"
         }`;
     }
 

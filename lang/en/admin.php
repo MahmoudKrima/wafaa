@@ -432,5 +432,6 @@ return [
     'no_extra_weight' => 'No extra weight',
     'insufficient_balance' => 'Insufficient balance! Please recharge your wallet.',
     'wallet_balance' => 'Wallet Balance',
+    'shipping_company_not_found' => 'Shipping company not found',
 
 ];

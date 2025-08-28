@@ -696,28 +696,7 @@
     window.API_ENDPOINTS = API_ENDPOINTS;
     window.APP_LOCALE = "{{ app()->getLocale() }}";
 
-    window.OLD_INPUT = {
-        !!json_encode(old(), JSON_UNESCAPED_UNICODE) !!
-    } || {};
-    window.OLD_STATE = {
-        selectedCompany: {
-            !!json_encode(session('selectedCompany'), JSON_UNESCAPED_UNICODE) !!
-        },
-        companyPricing: {
-            !!json_encode(session('companyPricing'), JSON_UNESCAPED_UNICODE) !!
-        },
-        selectedMethod: {
-            !!json_encode(session('selectedMethod'), JSON_UNESCAPED_UNICODE) !!
-        }
-    };
-    window.ADMIN_SETTINGS = window.ADMIN_SETTINGS || {
-        cod_fee_per_receiver: {
-            !!(int)(config('shipping.cod_fee_per_receiver') ?? 0) !!
-        },
-        extra_weight_price_per_kg: {
-            !!(float)(config('shipping.extra_weight_price_per_kg') ?? 0) !!
-        }
-    };
+    
 </script>
 
 <script src="{{ asset('user/step1.js') }}"></script>
