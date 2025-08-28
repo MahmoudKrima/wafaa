@@ -193,21 +193,11 @@
             } logo"></div>
                 <h5 class="card-title">${c.name}</h5>
                 ${badges ? `<div class="meta-row">${badges}</div>` : ""}
-                <div class="preview">
-                  ${
-                      hasIntl && intlUser != null
-                          ? `<div class="preview-box"><small>${
-                                window.translations
-                                    ?.international_shipping_price ||
-                                "International Price"
-                            }</small><strong>${formatMoney(
-                                intlUser
-                            )}</strong></div>`
-                          : ""
-                  }
+                <div class="preview my_card_theme">
+
                   ${
                       hasLocal && localUser != null
-                          ? `<div class="preview-box"><small>${
+                          ? `<div class="preview-box my_box_one"><small>${
                                 window.translations?.local_shipping_price ||
                                 "Local Price"
                             }</small><strong>${formatMoney(
@@ -217,7 +207,7 @@
                   }
                   ${
                       adminExtraPerKg != null
-                          ? `<div class="preview-box"><small>${
+                          ? `<div class="preview-box my_box_two"><small>${
                                 window.translations?.extra_weight_price ||
                                 "Extra Weight Price"
                             }</small><strong>${formatMoney(
@@ -227,7 +217,7 @@
                   }
                   ${
                       hasCOD && adminCodFee != null
-                          ? `<div class="preview-box"><small>${
+                          ? `<div class="preview-box my_box_three"><small>${
                                 window.translations?.cod_fee_per_receiver ||
                                 "COD fee (per receiver)"
                             }</small><strong>${formatMoney(
@@ -237,9 +227,10 @@
                   }
                   ${
                       c.maxWeight
-                          ? `<div class="preview-box"><small>${maxWeightLabel}</small><strong>${c.maxWeight} ${kgLabel}</strong></div>`
+                          ? `<div class="preview-box my_box_four"><small>${maxWeightLabel}</small><strong>${c.maxWeight} ${kgLabel}</strong></div>`
                           : ""
                   }
+
                 </div>
               </div>
             </div>
@@ -295,8 +286,8 @@
         const selectedCard = this.querySelector(".card");
         if (selectedCard) {
             selectedCard.style.boxShadow =
-                "0 0 0 3px rgba(13, 110, 253, 0.25), 0 8px 25px rgba(0, 0, 0, 0.15)";
-            selectedCard.style.background = "#f8f9ff";
+                "#f6950d 0px 0px 0px 3px, rgb(0 0 0 / 87%) 0px 8px 25px";
+            selectedCard.style.background = "rgb(235 235 235 / 67%)";
         }
 
         window.selectedCompany = company;

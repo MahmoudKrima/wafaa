@@ -1,13 +1,12 @@
 <?php
 
-namespace App\Http\Requests\Admin\Admin;
+namespace App\Http\Requests\Admin\Profile;
 
-use App\Enum\ActivationStatusEnum;
-use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateAdminRequest extends FormRequest
+class UpdateProfileRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -35,7 +34,7 @@ class UpdateAdminRequest extends FormRequest
                 'email:dns,filter',
                 'max:255',
                 Rule::unique('admins', 'email')
-                    ->ignore($this->route('admin')->id),
+                    ->ignore(auth('admin')->id()),
                 function ($attribute, $value, $fail) {
                     if (!$this->validateEmailDeliverability($value)) {
                         $fail(__('admin.wrong_mail'));
@@ -46,18 +45,7 @@ class UpdateAdminRequest extends FormRequest
                 'required',
                 'regex:/^(05|5|9665|96605|009665|\+9665)[0-9]{8}$/',
                 Rule::unique('admins', 'phone')
-                    ->ignore($this->route('admin')->id)
-            ],
-            'image' => [
-                'image',
-                'mimetypes:image/jpeg,image/png,image/webp,image/gif',
-                'mimes:jpg,jpeg,jfif,png,gif,webp',
-                'max:5120'
-            ],
-            'role' => [
-                'required',
-                'integer',
-                Rule::exists('roles', 'id')
+                    ->ignore(auth('admin')->id())
             ],
             'password' => [
                 'sometimes',
@@ -69,6 +57,12 @@ class UpdateAdminRequest extends FormRequest
                     ->mixedCase()
                     ->symbols()
             ],
+            'image' => [
+                'image',
+                'mimetypes:image/jpeg,image/png,image/webp,image/gif',
+                'mimes:jpg,jpeg,jfif,png,gif,webp',
+                'max:5120'
+            ]
         ];
     }
 

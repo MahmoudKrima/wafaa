@@ -37,6 +37,8 @@
     <!-- Style CSS -->
     <link href="{{ asset('front/assets/css/style.css') }}" rel="stylesheet">
 
+    <link rel="stylesheet" href="{{ asset('vendor/toastr/build/toastr.min.css') }}">
+
     <!-- jquery -->
     <script src="{{ asset('front/assets/js/jquery-1.12.4.min.js') }}"></script>
 

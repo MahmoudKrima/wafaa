@@ -136,6 +136,7 @@
                                 'partners.view',
                                 'services.view',
                                 'testimonials.view',
+                                'contacts.view',
                             ])
                         )
                         <li class="menu {{ isRoute([
@@ -161,6 +162,7 @@
                     'admin.testimonials.index',
                     'admin.testimonials.create',
                     'admin.testimonials.edit',
+                    'admin.contacts.index',
                 ]) ? 'active' : '' }}">
                             <a href="#settings" data-active="{{ isRoute([
                     'admin.settings.index',
@@ -185,6 +187,7 @@
                     'admin.testimonials.index',
                     'admin.testimonials.create',
                     'admin.testimonials.edit',
+                    'admin.contacts.index',
                 ]) ? 'true' : 'false' }}" class="menu-toggle">
                                 <div class="base-menu">
                                     <div class="base-icons">
@@ -312,6 +315,7 @@
                     'partners.view',
                     'services.view',
                     'testimonials.view',
+                    'contacts.view',
                 ])
             )
             <div class="submenu" id="settings">
@@ -420,6 +424,17 @@
                                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                             </svg>
                             {{ __('admin.testimonials') }} </a>
+                    </li>
+                    @endhaspermission
+                    @haspermission('contacts.view', 'admin')
+                    <li class="{{ isRoute(['admin.contacts.index']) ? 'active' : '' }}">
+                        <a href="{{ route('admin.contacts.index') }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                class="feather feather-message-square">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                            {{ __('admin.contacts') }} </a>
                     </li>
                     @endhaspermission
                 </ul>

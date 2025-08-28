@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Partner;
 use App\Models\Service;
 use App\Models\Reciever;
+use App\Models\Contact;
 use Illuminate\Database\Seeder;
 use Database\Seeders\RoleSeeder;
 use Database\Seeders\AboutSeeder;
@@ -41,5 +42,6 @@ class DatabaseSeeder extends Seeder
         Partner::factory(10)->create();
         Service::factory(10)->create();
         Testimonial::factory(10)->create();
+        Contact::factory(10)->create();
     }
 }

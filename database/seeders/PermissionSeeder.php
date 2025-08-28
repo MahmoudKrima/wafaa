@@ -18,6 +18,7 @@ use App\Models\UserShippingPrice;
 use App\Models\AdminSetting;
 use App\Models\Service;
 use App\Models\Testimonial;
+use App\Models\Contact;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 
@@ -52,6 +53,7 @@ class PermissionSeeder extends Seeder
             ...AdminSetting::$permissions,
             ...Service::$permissions,
             ...Testimonial::$permissions,
+            ...Contact::$permissions,
             ...$rolePermission,
         ];
 
