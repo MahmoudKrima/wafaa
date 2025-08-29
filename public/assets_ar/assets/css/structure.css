@@ -146,8 +146,18 @@ code {
 
 .main-container-fluid > .main-content > .container {
     float: right;
-    width: 100%; }
+    width: 100%;
+}
 
+.step-content {
+    margin-top: 40px !important;
+}
+
+@media screen and (max-width: 600px) {
+    .step-content{
+        margin-top: 10px !important;
+    }
+}
 #content > .wrapper {
     -webkit-transition: margin ease-in-out .1s;
     -moz-transition: margin ease-in-out .1s;
@@ -162,7 +172,9 @@ code {
     border-radius: 6px;
     -webkit-box-shadow: 0 4px 6px 0 rgba(85, 85, 85, 0.08), 0 1px 20px 0 rgba(0, 0, 0, 0.07), 0px 1px 11px 0px rgba(0, 0, 0, 0.07);
     -moz-box-shadow: 0 4px 6px 0 rgba(85, 85, 85, 0.08), 0 1px 20px 0 rgba(0, 0, 0, 0.07), 0px 1px 11px 0px rgba(0, 0, 0, 0.07);
-    box-shadow: 0 4px 6px 0 rgba(85, 85, 85, 0.08), 0 1px 20px 0 rgba(0, 0, 0, 0.07), 0px 1px 11px 0px rgba(0, 0, 0, 0.07); }
+    box-shadow: 0 4px 6px 0 rgba(85, 85, 85, 0.08), 0 1px 20px 0 rgba(0, 0, 0, 0.07), 0px 1px 11px 0px rgba(0, 0, 0, 0.07);
+    min-height: 700px;
+}
 
 .layout-top-spacing {
     margin-top: 15px;
@@ -225,7 +237,8 @@ code {
     position: relative;
     background-color: #fff;
     border-bottom-right-radius: 6px;
-    border-bottom-left-radius: 6px; }
+    border-bottom-left-radius: 6px;
+}
 
 .content-area {
     max-width: 58.333333%;
@@ -262,8 +275,9 @@ code {
     list-style: none; }
 
 .header-container .sidebarCollapse {
-    color: #5c1ac3;
-    display: none; }
+    color: #007bff;
+    display: none;
+}
 .header-container .sidebarCollapse svg {
     width: 27px;
     height: 27px; }
@@ -1381,6 +1395,12 @@ code {
 @media screen and (max-width: 600px) {
     .widget {
         padding: 0 0; }
+}
+
+@media screen and (max-width: 600px) {
+    .main-content {
+        margin-top: 130px !important;
+    }
 }
 
 

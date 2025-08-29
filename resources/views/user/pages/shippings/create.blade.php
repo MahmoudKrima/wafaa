@@ -2,7 +2,12 @@
 @section('title', __('admin.create_shipping'))
 
 @push('css')
-<link rel="stylesheet" href="{{ asset('user/shipping-styles.css') }}">
+    @if (App::getLocale() === 'ar')
+        <link rel="stylesheet" href="{{ asset('user/shipping-styles.css') }}">
+        @else
+        <link rel="stylesheet" href="{{ asset('user/shipping-styles_en.css') }}">
+        @endif
+
 @endpush
 
 @section('content')
@@ -10,42 +15,59 @@
     <div class="row layout-top-spacing">
         <div id="basic" class="col-12 layout-spacing">
             <div class="statbox widget box box-shadow">
-                <div class="widget-header">
-                    <div class="row">
-                        <div class="col-12">
-                            <h4 class="text-center text-md-start">{{ __('admin.create_shipping') }}</h4>
-                        </div>
-                    </div>
-                </div>
-
                 <div class="widget-content widget-content-area">
                     <div class="row mb-4">
                         <div class="col-12">
-                            <div class="d-flex justify-content-center">
-                                <div class="step-indicator d-flex flex-column flex-sm-row align-items-center">
-                                    @for ($i = 1; $i <= 7; $i++)
+                            <div class="d-flex justify-content-center my_indicators">
+
+                                <div class="step-indicator d-flex flex-column flex-sm-row align-items-center step_theme">
+
+                                    <!-- Navigation Buttons -->
+                                    <div class="prev_next_btn mb-2 mb-sm-0">
+                                        <div class="col-12 d-flex flex-column flex-sm-row justify-content-between gap-2">
+                                            <button type="button" class="btn btn-secondary" id="btn-prev" style="display: none;">
+                                                {{ app()->getLocale() === 'ar' ? '→' : '←' }} {{ __('admin.previous') }}
+                                            </button>
+                                        </div>
+                                    </div>
+
+
+                                @for ($i = 1; $i <= 7; $i++)
                                         <div class="step {{ $i === 1 ? 'active' : '' }} mb-2 mb-sm-0">
-                                        <div class="step-number {{ $i===1 ? 'bg-primary' : 'bg-secondary' }} text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mx-sm-0"
-                                            style="width:35px;height:35px;font-size:14px;font-weight:bold;">{{ $i }}</div>
-                                        <span class="d-block d-sm-inline ms-0 ms-sm-2 text-center text-sm-start mt-1 mt-sm-0 small">
-                                            @switch($i)
-                                            @case(1) {{ __('admin.select_company') }} @break
-                                            @case(2) {{ __('admin.select_method') }} @break
-                                            @case(3) {{ __('admin.user_information') }} @break
-                                            @case(4) {{ __('admin.receivers') }} @break
-                                            @case(5) {{ __('admin.shipping_details') }} @break
-                                            @case(6) {{ __('admin.payment_details') }} @break
-                                            @case(7) {{ __('admin.summary') }} @break
-                                            @endswitch
-                                        </span>
+                                            <div class="step-number {{ $i===1 ? 'bg-primary' : 'bg-secondary' }} text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mx-sm-0"
+                                                style="width:35px;height:35px;font-size:14px;font-weight:bold;">{{ $i }}
+                                            </div>
+                                            <span class="d-block d-sm-inline ms-0 ms-sm-2 text-center text-sm-start mt-1 mt-sm-0 small step_text">
+                                                @switch($i)
+                                                @case(1) {{ __('admin.select_company') }} @break
+                                                @case(2) {{ __('admin.select_method') }} @break
+                                                @case(3) {{ __('admin.user_information') }} @break
+                                                @case(4) {{ __('admin.receivers') }} @break
+                                                @case(5) {{ __('admin.shipping_details') }} @break
+                                                @case(6) {{ __('admin.payment_details') }} @break
+                                                @case(7) {{ __('admin.summary') }} @break
+                                                @endswitch
+                                            </span>
+
+                                        </div>
+                                    @if($i<7)
+                                        <div class="step-line d-none d-sm-block mx-3" style="width:40px;height:2px;background:#e9ecef;">
+                                        </div>
+                                        <div class="step-line d-block d-sm-none my-2" style="width:2px;height:20px;background:#e9ecef;"></div>
+                                  @endif
+                              @endfor
+
+                                    <!-- Navigation Buttons -->
+                                    <div class="prev_next_btn mb-2 mb-sm-0">
+                                        <div class="col-12 d-flex flex-column flex-sm-row justify-content-between gap-2">
+                                            <button type="button" class="btn btn-primary" id="btn-next" disabled>
+                                                {{ __('admin.next') }} {{ app()->getLocale() === 'ar' ? '←' : '→' }}
+                                            </button>
+                                        </div>
+                                    </div>
+
                                 </div>
-                                @if($i<7)
-                                    <div class="step-line d-none d-sm-block mx-3" style="width:40px;height:2px;background:#e9ecef;">
-                            </div>
-                            <div class="step-line d-block d-sm-none my-2" style="width:2px;height:20px;background:#e9ecef;"></div>
-                            @endif
-                            @endfor
-                        </div>
+
                     </div>
                 </div>
             </div>
@@ -65,6 +87,8 @@
                 <div id="company-selected-summary" class="mt-4" style="display:none;"></div>
                 <div id="company-pricing-display" class="mt-4" style="display:none;"></div>
             </div>
+
+
             <div class="step-content" id="step-2" style="display:none;">
                 <h5 class="text-center mb-4">{{ __('admin.choose_shipping_method') }}</h5>
                 <p class="text-center text-muted mb-4">
@@ -72,8 +96,13 @@
                 </p>
                 <div id="method-options" class="row"></div>
             </div>
+
             <div class="step-content" id="step-3" style="display:none;" data-app-locale="{{ app()->getLocale() }}">
                 <h5 class="text-center mb-4">{{ __('admin.user_information') }}</h5>
+
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> {{ __('admin.user_info_note') }}
+                </div>
 
                 <div class="row">
                     <div class="col-12 col-md-6 mb-3">
@@ -113,28 +142,26 @@
                         <label for="user_country" class="text-dark">{{ __('admin.country') }}</label>
                         <input id="user_country" type="text" class="form-control" value="{{ auth()->user()->country_name ?? '' }}" disabled>
                     </div>
-                    <div class="col-12 col-md-6 mb-3">
-                        <label for="user_address" class="text-dark">{{ __('admin.full_address') }}</label>
-                        <textarea id="user_address" class="form-control" rows="3" disabled>{{ auth()->user()->address ?? '' }}</textarea>
-                    </div>
-                </div>
 
-                <div class="row">
-                    <div class="col-12 mb-3">
+                    <div class="col-12 col-md-6 mb-3">
                         <label for="user_postal_code" class="text-dark">{{ __('admin.postal_code') }}</label>
                         <input id="user_postal_code" type="text" name="postal_code" class="form-control" value="{{ auth()->user()->postal_code ?? '' }}">
                     </div>
                 </div>
 
-                <div class="alert alert-info">
-                    <i class="fas fa-info-circle"></i> {{ __('admin.user_info_note') }}
+                <div class="row">
+                    <div class="col-12 mb-3">
+                        <label for="user_address" class="text-dark">{{ __('admin.full_address') }}</label>
+                        <textarea id="user_address" class="form-control" rows="3" disabled>{{ auth()->user()->address ?? '' }}</textarea>
+                    </div>
                 </div>
+
             </div>
 
             <div class="step-content" id="step-4" style="display:none;">
                 <h5 class="text-center mb-4">{{ __('admin.receiver_information') }}</h5>
-                <div class="row mb-4">
-                    <div class="col-12">
+                <div class="row mb-4 receiver_theme">
+                    <div class="col-12 col-md-6">
                         <label class="text-dark">{{ __('admin.receiver_type') }}</label>
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="receiver_type" id="existing_receiver" value="existing">
@@ -145,11 +172,16 @@
                             <label class="form-check-label" for="new_receiver">{{ __('admin.new_receiver') }}</label>
                         </div>
                     </div>
+                    <div class="col-12 col-md-6 mt-2">
+                        <button type="button" id="add-receiver-btn" class="btn btn-success">
+                            <i class="fas fa-plus"></i> {{ __('admin.add_receiver') }}
+                        </button>
+                    </div>
                 </div>
 
                 <div id="existing_receiver_section">
                     <div class="row mb-3">
-                        <div class="col-12">
+                        <div class="col-12 col-md-6">
                             <label for="receiver_select" class="text-dark">{{ __('admin.select_receiver') }}</label>
                             <select id="receiver_select" name="receiver_id" class="form-control">
                                 <option value="">{{ __('admin.choose_receiver') }}</option>
@@ -203,26 +235,17 @@
                                 <option value="">{{ __('admin.select_city') }}</option>
                             </select>
                         </div>
+
                         <div class="col-12 col-md-6 mb-3">
-                            <label for="address" class="text-dark">{{ __('admin.full_address') }}</label>
-                            <textarea id="address" name="address" class="form-control" rows="3" placeholder="{{ __('admin.enter_full_address') }}" required></textarea>
+                            <label for="postal_code" class="text-dark">{{ __('admin.postal_code') }}</label>
+                            <input id="postal_code" type="text" name="postal_code" class="form-control" placeholder="{{ __('admin.enter_postal_code') }}">
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-12 mb-3">
-                            <label for="postal_code" class="text-dark">{{ __('admin.postal_code') }}</label>
-                            <input id="postal_code" type="text" name="postal_code" class="form-control" placeholder="{{ __('admin.enter_postal_code') }}">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row mt-3" id="receiver-action-buttons">
-                    <div class="col-12 text-center">
-                        <div class="d-flex flex-column flex-sm-row justify-content-center gap-2">
-                            <button type="button" id="add-receiver-btn" class="btn btn-success">
-                                <i class="fas fa-plus"></i> {{ __('admin.add_receiver') }}
-                            </button>
+                            <label for="address" class="text-dark">{{ __('admin.full_address') }}</label>
+                            <textarea id="address" name="address" class="form-control" rows="3" placeholder="{{ __('admin.enter_full_address') }}" required></textarea>
                         </div>
                     </div>
                 </div>
@@ -259,7 +282,7 @@
                     <input type="hidden" name="extra_kg" id="extra_kg_hidden">
 
                     <div class="row mb-4">
-                        <div class="col-12 col-md-6 mb-3 mb-md-0">
+                        <div class="col-12 col-md-4 mb-3 mb-md-0">
                             <label for="package_type" class="text-dark mb-2">{{ __('admin.package_type') }}</label>
                             <select id="package_type" name="package_type" class="form-control" required>
                                 <option value="">{{ __('admin.select_package_type') }}</option>
@@ -267,14 +290,18 @@
                                 <option value="documents" {{ old('package_type')=='documents' ? 'selected' : '' }}>{{ __('admin.documents') }}</option>
                             </select>
                         </div>
-                        <div class="col-12 col-md-6">
+                        <div class="col-12 col-md-4 mb-3">
                             <label for="package_number" class="text-dark mb-2">{{ __('admin.number') }}</label>
                             <input id="package_number" type="number" name="package_number" class="form-control" placeholder="1" min="1" value="{{ old('package_number', 1) }}" required>
+                        </div>
+                        <div class="col-12 col-md-4 mb-3">
+                            <label for="weight" class="text-dark">{{ __('admin.weight_kg') }}</label>
+                            <input id="weight" type="number" name="weight" placeholder="{{ __('admin.weight_kg') }}" class="form-control" value="{{ old('weight') }}" step="0.1" min="0.1" required>
                         </div>
                     </div>
 
                     <div class="row">
-                        <div class="col-12 col-md-4 mb-3">
+                        <div class="col-12 col-md-4 mb-3 ">
                             <label for="length" class="text-dark">{{ __('admin.length_cm') }}</label>
                             <input id="length" type="number" name="length" class="form-control" placeholder="0" min="0" step="0.1" value="{{ old('length') }}" required>
                         </div>
@@ -288,12 +315,6 @@
                         </div>
                     </div>
 
-                    <div class="row">
-                        <div class="col-12 col-md-6 mb-3">
-                            <label for="weight" class="text-dark">{{ __('admin.weight_kg') }}</label>
-                            <input id="weight" type="number" name="weight" placeholder="{{ __('admin.weight_kg') }}" class="form-control" value="{{ old('weight') }}" step="0.1" min="0.1" required>
-                        </div>
-                    </div>
 
                     <div class="row">
                         <div class="col-12 mb-3">
@@ -303,7 +324,7 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-12 mb-3">
+                        <div class="col-12 mb-3 mt-2">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="accept_terms" name="accept_terms" {{ old('accept_terms') ? 'checked' : '' }} required>
                                 <label class="form-check-label" for="accept_terms">
@@ -332,6 +353,7 @@
                     </div>
                 </form>
             </div>
+
             <div class="step-content" id="step-6" style="display:none;">
                 <h5 class="text-center mb-4">{{ __('admin.payment_details') }}</h5>
                 <div class="row">
@@ -340,143 +362,199 @@
                     </div>
                 </div>
             </div>
+
             <div id="step-7" class="step-content" style="display:none;">
                 <div class="row">
                     <div class="col-12">
                         <h4 class="mb-4"><i class="fas fa-check-circle text-success me-2"></i>{{ __('admin.final_shipment_review') }}</h4>
                         <div id="step7-errors" class="mb-3"></div>
-                        <div class="card mb-4">
-                            <div class="card-header bg-primary text-white">
-                                <h5 class="mb-0"><i class="fas fa-shipping-fast me-2"></i>{{ __('admin.shipping_company_details') }}</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <div class="d-flex align-items-center mb-3">
-                                            <img id="company-logo-preview" src="" alt="Company Logo" class="me-3" style="width:50px;height:50px;object-fit:contain;">
-                                            <div>
-                                                <h6 id="company-name-preview" class="mb-1">{{ __('admin.company_name') }}</h6>
-                                                <small id="company-service-preview" class="text-muted">{{ __('admin.service_type') }}</small>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="text-end">
-                                            <span class="badge bg-info fs-6" id="shipping-method-preview">{{ __('admin.shipping_method') }}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
 
-                        <div class="card mb-4">
-                            <div class="card-header bg-info text-white">
-                                <h5 class="mb-0"><i class="fas fa-user me-2"></i>{{ __('admin.sender_information') }}</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-6">
+                        <!----Sender and company--->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card mb-4" style="border-radius:15px;">
+                                    <div class="card-header bg-primary text-white" style="border-top-left-radius:15px;border-top-right-radius:15px;">
+                                        <h5 class="mb-0" style="color:#fff;"><i class="fas fa-shipping-fast me-2"></i>{{ __('admin.sender_information') }}</h5>
+                                    </div>
+                                    <div class="card-body">
                                         <p><strong>{{ __('admin.name') . ': ' }}</strong> <span id="sender-name-preview">{{ __('admin.name') }}</span></p>
                                         <p><strong>{{ __('admin.phone') . ': ' }}</strong> <span id="sender-phone-preview">{{ __('admin.phone') }}</span></p>
-                                        <p><strong>{{ __('admin.email') . ': ' }}</strong> <span id="sender-email-preview">{{ __('admin.email') }}</span></p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <p><strong>{{ __('admin.address') . ': ' }}</strong> <span id="sender-address-preview">{{ __('admin.address') }}</span></p>
                                         <p><strong>{{ __('admin.city') . ': ' }}</strong> <span id="sender-city-preview">{{ __('admin.city') }}</span></p>
-                                        <p><strong>{{ __('admin.postal_code') . ': ' }}</strong> <span id="sender-postal-preview">{{ __('admin.postal_code') }}</span></p>
+                                        <p><strong>{{ __('admin.address') . ': ' }}</strong> <span id="sender-address-preview">{{ __('admin.address') }}</span></p>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="card mb-4">
-                            <div class="card-header bg-success text-white">
-                                <h5 class="mb-0"><i class="fas fa-users me-2"></i>{{ __('admin.receivers') }} (<span id="receivers-count-preview">0</span>)</h5>
-                            </div>
-                            <div class="card-body">
-                                <div id="receivers-summary-container"></div>
-                            </div>
-                        </div>
-
-                        <div class="card mb-4">
-                            <div class="card-header bg-warning text-dark">
-                                <h5 class="mb-0"><i class="fas fa-box me-2"></i>{{ __('admin.package_details') }}</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <p><strong>{{ __('admin.package_type') . ': ' }}</strong> <span id="package-type-preview">{{ __('admin.package_type') }}</span></p>
-                                        <p><strong>{{ __('admin.package_count') . ': ' }}</strong> <span id="package-count-preview">{{ __('admin.package_count') }}</span></p>
-                                        <p><strong>{{ __('admin.weight_kg') . ': ' }}</strong> <span id="package-weight-preview">{{ __('admin.weight_kg') }}</span> {{ __('admin.kg') }}</p>
+                            <div class="col-md-6">
+                                <div class="card mb-4" style="border-radius:15px;">
+                                    <div class="card-header bg-primary text-white" style="border-top-left-radius:15px;border-top-right-radius:15px;">
+                                        <h5 class="mb-0" style="color:#fff;"><i class="fas fa-shipping-fast me-2"></i>{{ __('admin.shipping_company_details') }}</h5>
                                     </div>
-                                    <div class="col-md-6">
-                                        <p><strong>{{ __('admin.length_cm') . ': ' }}</strong> <span id="package-length-preview">{{ __('admin.length_cm') }}</span> {{ __('admin.cm') }}</p>
-                                        <p><strong>{{ __('admin.width_cm') . ': ' }}</strong> <span id="package-width-preview">{{ __('admin.width_cm') }}</span> {{ __('admin.cm') }}</p>
-                                        <p><strong>{{ __('admin.height_cm') . ': ' }}</strong> <span id="package-height-preview">{{ __('admin.height_cm') }}</span> {{ __('admin.cm') }}</p>
-                                    </div>
-                                </div>
-                                <div class="mt-3">
-                                    <p><strong>{{ __('admin.package_notes') . ': ' }}</strong></p>
-                                    <p id="package-notes-preview" class="text-muted">{{ __('admin.no_special_notes') }}</p>
-                                </div>
-                            </div>
-                        </div>
+                                    <div class="card-body">
 
-                        <div class="card mb-4">
-                            <div class="card-header bg-info">
-                                <h5 class="mb-0"><i class="fas fa-credit-card me-2 text-white"></i>{{ __('admin.payment_details') }}</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="row mb-4">
-                                    <div class="col-12">
-                                        <h6 class="text-primary mb-3"><i class="fas fa-calculator me-2"></i>{{ __('admin.per_receiver_breakdown_title') }}</h6>
-                                        <div class="row g-3">
-                                            <div class="col-md-4">
-                                                <div class="border rounded p-3 bg-light">
-                                                    <div class="small text-muted mb-1">{{ __('admin.shipping_price_per_receiver') }}:</div>
-                                                    <div class="h6 mb-0 text-primary" id="price-base-per-receiver">—</div>
+                                        <div class="row">
+                                            <div class="col-md-12" style="display:flex;justify-content:space-between;">
+                                                <div>
+                                                    <img id="company-logo-preview" src="" alt="Company Logo" class="me-3" style="width:80px;height:60px;object-fit:contain;">
+                                                    <div>
+                                                        <h6 id="company-name-preview" style="margin:5px 15px;" class="mb-1">{{ __('admin.company_name') }}</h6>
+                                                        <small id="company-service-preview" style="margin:5px 15px;" class="text-muted">{{ __('admin.service_type') }}</small>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="border rounded p-3 bg-light">
-                                                    <div class="small text-muted mb-1">{{ __('admin.extra_weight_per_receiver') }}:</div>
-                                                    <div class="h6 mb-0 text-warning" id="price-extra-per-receiver">—</div>
-                                                    <div class="small text-muted mt-1" id="extra-weight-note"></div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="border rounded p-3 bg-light">
-                                                    <div class="small text-muted mb-1">{{ __('admin.cod_price_per_receiver') }}:</div>
-                                                    <div class="h6 mb-0 text-success" id="price-cod-per-receiver">—</div>
+                                                <div>
+                                                    <span class="badge bg-info fs-6" id="shipping-method-preview">{{ __('admin.shipping_method') }}</span>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
 
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <p><strong>{{ __('admin.payment_method') . ': ' }}</strong> <span id="payment-method-preview"></span></p>
-                                        <p><strong>{{ __('admin.shipping_fees') . ': ' }}</strong> <span id="shipping-fee-preview"></span></p>
-                                        <p><strong>{{ __('admin.additional_fees') . ': ' }}</strong> <span id="extra-fees-preview"></span></p>
-                                        <p><strong>{{ __('admin.cod_fees') . ': ' }}</strong> <span id="cod-fees-preview">0.00 SAR</span></p>
-                                        <div id="wallet-balance-section" style="display:none;">
-                                            <p><strong>{{ __('admin.wallet_balance') . ': ' }}</strong> <span id="wallet-balance-display" class="text-success"></span></p>
-                                            <div id="wallet-balance-warning" class="alert alert-warning py-2 mt-2" style="display:none;">
-                                                <small><i class="fas fa-exclamation-triangle me-1"></i> {{ __('admin.insufficient_balance_warning') }}</small>
+                        <!----receivers and shipment details--->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card mb-4" style="border-radius:15px;">
+                                    <div class="card-header bg-primary text-white" style="border-top-left-radius:15px;border-top-right-radius:15px;">
+                                        <h5 class="mb-0" style="color:#fff;"><i class="fas fa-users me-2"></i>{{ __('admin.receivers') }} (<span id="receivers-count-preview">0</span>)</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="receivers-summary-container"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card mb-4" style="border-radius:15px;">
+                                    <div class="card-header bg-primary text-white" style="border-top-left-radius:15px;border-top-right-radius:15px;">
+                                        <h5 class="mb-0" style="color:#fff;"><i class="fas fa-shipping-fast me-2"></i>{{ __('admin.package_details') }}</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <p><strong>{{ __('admin.package_type') . ': ' }}</strong> <span id="package-type-preview">{{ __('admin.package_type') }}</span></p>
+                                                <p><strong>{{ __('admin.package_count') . ': ' }}</strong> <span id="package-count-preview">{{ __('admin.package_count') }}</span></p>
+                                                <p><strong>{{ __('admin.weight_kg') . ': ' }}</strong> <span id="package-weight-preview">{{ __('admin.weight_kg') }}</span> {{ __('admin.kg') }}</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p><strong>{{ __('admin.length_cm') . ': ' }}</strong> <span id="package-length-preview">{{ __('admin.length_cm') }}</span> {{ __('admin.cm') }}</p>
+                                                <p><strong>{{ __('admin.width_cm') . ': ' }}</strong> <span id="package-width-preview">{{ __('admin.width_cm') }}</span> {{ __('admin.cm') }}</p>
+                                                <p><strong>{{ __('admin.height_cm') . ': ' }}</strong> <span id="package-height-preview">{{ __('admin.height_cm') }}</span> {{ __('admin.cm') }}</p>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <h5><strong>{{ __('admin.total_amount') . ': ' }}</strong> <span id="total-amount-preview" class="text-primary"></span></h5>
-                                        <div class="small text-muted mt-2">
-                                            <span id="receivers-count-display">0</span> {{ __('admin.receivers') }} ×
-                                            <span id="per-receiver-total">0.00 SAR</span> {{ __('admin.per_receiver') }}
+                                        <div class="row">
+                                           <div class="col-md-12">
+                                               <div class="mt-3">
+                                                   <p><strong>{{ __('admin.package_notes') . ': ' }}</strong></p>
+                                                   <p id="package-notes-preview" class="text-muted">{{ __('admin.no_special_notes') }}</p>
+                                               </div>
+                                           </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
+                        <!----shipment price and cost details--->
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card mb-4" style="border-radius:15px;">
+                                    <div class="card-header bg-primary text-white" style="border-top-left-radius:15px;border-top-right-radius:15px;">
+                                        <h5 class="mb-0" style="color:#fff;"><i class="fas fa-users me-2"></i>{{ __('admin.shipment_price_details') }}</h5>
+                                    </div>
+                                    <div class="card-body">
+
+                                        <div class="row">
+                                            <div class="col-md-12" style="display:flex;justify-content:space-between;">
+                                                <div class="mb-3">سعر الشحن لكل مستلم:</div>
+                                                <div class="h6 text-primary" id="price-base-per-receiver">100.00 ريال</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-12" style="display:flex;justify-content:space-between;">
+                                                <div class="mb-0">رسوم الوزن الإضافي لكل مستلم:</div>
+                                                <div class="h6 text-primary" id="price-extra-per-receiver">0.00 ريال</div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="small mb-3 text-muted mt-0" id="extra-weight-note">لا يوجد وزن إضافي</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-12" style="display:flex;justify-content:space-between;">
+                                                <div class="mb-3">نوع الشحنة: </div>
+                                                <div class="h6 mb-0 text-primary" id="payment-method-preview">الدفع عند الاستلام</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-12" style="display:flex;justify-content:space-between;">
+                                                <div class="mb-1">رسوم الدفع عند الاستلام لكل مستلم:</div>
+                                                <div class="h6 mb-0 text-primary" id="price-cod-per-receiver">20.00 ريال</div>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card mb-4" style="border-radius:15px;">
+                                    <div class="card-header bg-primary text-white" style="border-top-left-radius:15px;border-top-right-radius:15px;">
+                                        <h5 class="mb-0" style="color:#fff;"><i class="fas fa-users me-2"></i>{{ __('admin.payment_details') }}</h5>
+                                    </div>
+                                    <div class="card-body">
+
+                                        <div class="row">
+                                            <div class="col-md-12" style="display:flex;justify-content:space-between;">
+                                                <div class="mb-3">رسوم الشحن: </div>
+                                                <div class="h6 mb-0 text-primary" id="shipping-fee-preview">200.00 ريال</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-12" style="display:flex;justify-content:space-between;">
+                                                <div class="mb-3">رسوم إضافية: </div>
+                                                <div class="h6 mb-0 text-primary" id="extra-fees-preview">0.00 ريال</div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-12" style="display:flex;justify-content:space-between;">
+                                                <div class="mb-3">رسوم الدفع عند الاستلام: </div><div class="h6 mb-0 text-primary" id="cod-fees-preview">40.00 ريال</div>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="row" id="wallet-balance-section" style="display: none;">
+                                            <div class="col-md-12" style="display:flex;justify-content:space-between;">
+                                                <div class="mb-1">رصيد المحفظة: </div>
+                                                <div class="h6 mb-0 text-primary" id="wallet-balance-display">500.00 ريال</div>
+                                            </div>
+                                            <div class="col-md-12 alert alert-warning" id="wallet-balance-warning" style="display:none;">
+                                                <small><i class="fas fa-exclamation-triangle me-1"></i> admin.insufficient_balance_warning</small>
+                                            </div>
+                                        </div>
+
+
+                                        <div class="row">
+                                            <div class="col-md-12" style="display:flex;justify-content:space-between;">
+                                                <div class="mb-1">المجموع الكلي: </div>
+                                                <div class="h6 mb-0 text-primary" id="total-amount-preview">240.00 ريال</div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <span class="small mb-3 text-muted mt-0" id="receivers-count-display">2</span> المستلمين ×
+                                                <span class="small mb-3 text-muted mt-0" id="per-receiver-total">120.00 ريال</span> لكل مستلم
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
 
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="d-flex gap-2">
@@ -490,21 +568,11 @@
                 </div>
             </div>
 
-            <div class="row mt-4">
-                <div class="col-12 d-flex flex-column flex-sm-row justify-content-between gap-2">
-                    <button type="button" class="btn btn-secondary" id="btn-prev" style="display:none;">
-                        {{ app()->getLocale() === 'ar' ? '→' : '←' }} {{ __('admin.previous') }}
-                    </button>
-                    <button type="button" class="btn btn-primary" id="btn-next" disabled>
-                        {{ __('admin.next') }} {{ app()->getLocale() === 'ar' ? '←' : '→' }}
-                    </button>
-                </div>
-            </div>
 
         </div>
+            </div>
+        </div>
     </div>
-</div>
-</div>
 </div>
 @endsection
 
@@ -696,7 +764,7 @@
     window.API_ENDPOINTS = API_ENDPOINTS;
     window.APP_LOCALE = "{{ app()->getLocale() }}";
 
-    
+
 </script>
 
 <script src="{{ asset('user/step1.js') }}"></script>

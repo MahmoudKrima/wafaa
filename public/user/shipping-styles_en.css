@@ -147,40 +147,40 @@
 .preview-box small {
     display: block;
     color: #ffffff;
-    font-weight: 600;
+    font-weight: 500;
     margin-bottom: 6px;
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
+    font-size: 11px;
+    /* text-transform: uppercase; */
+    /* letter-spacing: 0.02em; */
 }
 
 .preview-box strong {
     color: #ffffff;
     font-size: 0.9rem;
-    font-weight: 700;
+    font-weight: 500;
 }
 
 .my_box_one{
     background: #198ae9;
-    border-top-right-radius:15px;
+    border-top-left-radius: 15px;
     color: #fff;
 }
 
 .my_box_two{
     background: #fe9400;
-    border-top-left-radius:15px;
+    border-top-right-radius: 15px;
     color: #fff;
 }
 
 .my_box_three{
     background: #fe9400;
-    border-bottom-right-radius:15px;
+    border-bottom-left-radius: 15px;
     color: #fff;
 }
 
 .my_box_four{
     background: #198ae9;
-    border-bottom-left-radius:15px;
+    border-bottom-right-radius: 15px;
     color: #fff;
 }
 

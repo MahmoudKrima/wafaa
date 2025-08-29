@@ -711,8 +711,9 @@ select.form-control.form-custom {
     border-top: 1px solid #5c1ac3; }
 .btn-secondary:not(:disabled):not(.disabled).active, .btn-secondary:not(:disabled):not(.disabled):active {
     color: #fff !important;
-    background-color: #5c1ac3;
-    border-color: #5c1ac3; }
+    background-color: #007bff;
+    border-color: #007bff;
+}
 
 .show > .btn-secondary.dropdown-toggle {
     color: #fff !important;
@@ -1018,6 +1019,10 @@ select.form-control.form-custom {
 
 .btn-group.open .btn-success.dropdown-toggle {
     background-color: #499249; }
+
+.summary_card{
+    border-raduis:15px;
+}
 
 .btn-dismiss {
     color: #0e1726;

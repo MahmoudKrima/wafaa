@@ -287,7 +287,7 @@
         if (selectedCard) {
             selectedCard.style.boxShadow =
                 "#f6950d 0px 0px 0px 3px, rgb(0 0 0 / 87%) 0px 8px 25px";
-            selectedCard.style.background = "rgb(235 235 235 / 67%)";
+            selectedCard.style.background = "rgb(235 235 235 / 21%)";
         }
 
         window.selectedCompany = company;
