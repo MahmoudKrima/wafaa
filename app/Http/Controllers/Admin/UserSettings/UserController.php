@@ -43,8 +43,13 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
-        return view('dashboard.pages.users.edit', compact('user'));
+        $allowedCompanies = $this->userService->allowedCompanies();
+        $userShippingMap = $user->shippingPrices()
+            ->get(['company_id', 'company_name', 'local_price', 'international_price'])
+            ->keyBy('company_id');
+        return view('dashboard.pages.users.edit', compact('user', 'allowedCompanies', 'userShippingMap'));
     }
+
 
     public function update(UpdateUserRequest $request, User $user)
     {

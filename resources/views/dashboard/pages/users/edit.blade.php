@@ -74,6 +74,76 @@
 
                                     </div>
                                 </div>
+                                @if($allowedCompanies && count($allowedCompanies) > 0)
+                                <hr>
+                                <div class="form-group">
+                                    <h5 class="mb-3">{{ __('admin.shipping_companies') }}</h5>
+                                    <div class="row">
+                                        @foreach($allowedCompanies as $company)
+                                        @php
+                                        $idx = $loop->index;
+                                        $methods = (array) ($company['shippingMethods'] ?? []);
+                                        $cid = (string) ($company['id'] ?? '');
+                                        $existing = isset($userShippingMap[$cid]) ? $userShippingMap[$cid] : null;
+                                        $hasLocal = in_array('local', $methods, true);
+                                        $hasInternational = in_array('international', $methods, true);
+                                        @endphp
+                                        <div class="col-md-6 mb-4">
+                                            <div class="card border">
+                                                <div class="card-body">
+                                                    <div class="d-flex align-items-center mb-3">
+                                                        @if(!empty($company['logoUrl']))
+                                                        <img src="{{ $company['logoUrl'] }}" alt="{{ $company['name'] ?? 'Company' }}"
+                                                            class="me-3" style="height: 40px;">
+                                                        @endif
+                                                    </div>
+                                                    <input type="hidden" name="shipping_prices[{{ $idx }}][id]" value="{{ $cid }}">
+                                                    <input type="hidden" name="shipping_prices[{{ $idx }}][name]" value="{{ $company['name'] ?? ($company['serviceName'] ?? '') }}">
+                                                    <input type="hidden" name="shipping_prices[{{ $idx }}][require_local]" value="{{ $hasLocal ? 1 : 0 }}">
+                                                    <input type="hidden" name="shipping_prices[{{ $idx }}][require_international]" value="{{ $hasInternational ? 1 : 0 }}">
+                                                    @if($hasLocal)
+                                                    <div class="mb-3">
+                                                        <label for="local_price_{{ $cid ?: $idx }}" class="form-label text-dark">
+                                                            {{ __('admin.local_price') }} ({{ __('admin.sar') }}) <span class="text-danger">*</span>
+                                                        </label>
+                                                        <input type="number"
+                                                            step="0.01" min="0"
+                                                            class="form-control"
+                                                            id="local_price_{{ $cid ?: $idx }}"
+                                                            name="shipping_prices[{{ $idx }}][localprice]"
+                                                            value="{{ old('shipping_prices.'.$idx.'.localprice', optional($existing)->local_price) }}"
+                                                            placeholder="{{ __('admin.enter_local_price') }}"
+                                                            required>
+                                                    </div>
+                                                    @endif
+                                                    @if($hasInternational)
+                                                    <div class="mb-3">
+                                                        <label for="international_price_{{ $cid ?: $idx }}" class="form-label text-dark">
+                                                            {{ __('admin.international_price') }} ({{ __('admin.sar') }}) <span class="text-danger">*</span>
+                                                        </label>
+                                                        <input type="number"
+                                                            step="0.01" min="0"
+                                                            class="form-control"
+                                                            id="international_price_{{ $cid ?: $idx }}"
+                                                            name="shipping_prices[{{ $idx }}][internationalprice]"
+                                                            value="{{ old('shipping_prices.'.$idx.'.internationalprice', optional($existing)->international_price) }}"
+                                                            placeholder="{{ __('admin.enter_international_price') }}"
+                                                            required>
+                                                    </div>
+                                                    @endif
+                                                    @if(!$hasLocal && !$hasInternational)
+                                                    <div class="text-muted small">
+                                                        {{ __('admin.no_shipping_support') }}
+                                                    </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                                @endif
+
                                 <hr>
                                 <div class="row">
                                     <div class="col-12">

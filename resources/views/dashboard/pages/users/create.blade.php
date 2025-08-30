@@ -75,6 +75,7 @@
                                         </div>
                                     </div>
                                 </div>
+                                {{-- Shipping Companies Section (CREATE) --}}
                                 @if($allowedCompanies && count($allowedCompanies) > 0)
                                 <hr>
                                 <div class="form-group">
@@ -82,8 +83,12 @@
                                     <div class="row">
                                         @foreach($allowedCompanies as $company)
                                         @php
-                                        $idx = $loop->index;
+                                        $idx = $loop->index; // 0,1,2,...
                                         $methods = (array) ($company['shippingMethods'] ?? []);
+                                        $cid = (string) ($company['id'] ?? '');
+
+                                        $hasLocal = in_array('local', $methods, true);
+                                        $hasInternational = in_array('international', $methods, true);
                                         @endphp
 
                                         <div class="col-md-6 mb-4">
@@ -94,45 +99,46 @@
                                                         <img src="{{ $company['logoUrl'] }}" alt="{{ $company['name'] ?? 'Company' }}"
                                                             class="me-3" style="height: 40px;">
                                                         @endif
-                                                        <div class="fw-bold">{{ $company['name'] ?? $company['serviceName'] ?? '—' }}</div>
                                                     </div>
 
-                                                    <input type="hidden" name="shipping_prices[{{ $idx }}][id]" value="{{ $company['id'] ?? '' }}">
+                                                    <input type="hidden" name="shipping_prices[{{ $idx }}][id]" value="{{ $cid }}">
                                                     <input type="hidden" name="shipping_prices[{{ $idx }}][name]" value="{{ $company['name'] ?? ($company['serviceName'] ?? '') }}">
+                                                    <input type="hidden" name="shipping_prices[{{ $idx }}][require_local]" value="{{ $hasLocal ? 1 : 0 }}">
+                                                    <input type="hidden" name="shipping_prices[{{ $idx }}][require_international]" value="{{ $hasInternational ? 1 : 0 }}">
 
-                                                    @if(in_array('local', $methods, true))
+                                                    @if($hasLocal)
                                                     <div class="mb-3">
-                                                        <label for="local_price_{{ $company['id'] ?? $idx }}" class="form-label text-dark">
-                                                            {{ __('admin.local_price') }} ({{ __('admin.sar') }})
+                                                        <label for="local_price_{{ $cid ?: $idx }}" class="form-label text-dark">
+                                                            {{ __('admin.local_price') }} ({{ __('admin.sar') }}) <span class="text-danger">*</span>
                                                         </label>
                                                         <input type="number"
-                                                            step="0.01"
-                                                            min="0"
+                                                            step="0.01" min="0"
                                                             class="form-control"
-                                                            id="local_price_{{ $company['id'] ?? $idx }}"
+                                                            id="local_price_{{ $cid ?: $idx }}"
                                                             name="shipping_prices[{{ $idx }}][localprice]"
                                                             value="{{ old('shipping_prices.'.$idx.'.localprice') }}"
-                                                            placeholder="{{ __('admin.enter_local_price') }}">
+                                                            placeholder="{{ __('admin.enter_local_price') }}"
+                                                            required>
                                                     </div>
                                                     @endif
 
-                                                    @if(in_array('international', $methods, true))
+                                                    @if($hasInternational)
                                                     <div class="mb-3">
-                                                        <label for="international_price_{{ $company['id'] ?? $idx }}" class="form-label text-dark">
-                                                            {{ __('admin.international_price') }} ({{ __('admin.sar') }})
+                                                        <label for="international_price_{{ $cid ?: $idx }}" class="form-label text-dark">
+                                                            {{ __('admin.international_price') }} ({{ __('admin.sar') }}) <span class="text-danger">*</span>
                                                         </label>
                                                         <input type="number"
-                                                            step="0.01"
-                                                            min="0"
+                                                            step="0.01" min="0"
                                                             class="form-control"
-                                                            id="international_price_{{ $company['id'] ?? $idx }}"
+                                                            id="international_price_{{ $cid ?: $idx }}"
                                                             name="shipping_prices[{{ $idx }}][internationalprice]"
                                                             value="{{ old('shipping_prices.'.$idx.'.internationalprice') }}"
-                                                            placeholder="{{ __('admin.enter_international_price') }}">
+                                                            placeholder="{{ __('admin.enter_international_price') }}"
+                                                            required>
                                                     </div>
                                                     @endif
 
-                                                    @if(!in_array('local', $methods, true) && !in_array('international', $methods, true))
+                                                    @if(!$hasLocal && !$hasInternational)
                                                     <div class="text-muted small">
                                                         {{ __('admin.no_shipping_support') }}
                                                     </div>
@@ -144,8 +150,6 @@
                                     </div>
                                 </div>
                                 @endif
-
-
                                 <hr>
                                 <div class="row">
                                     <div class="col-12">

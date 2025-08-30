@@ -45,7 +45,6 @@ function validateStep(step) {
     }
 }
 
-/* NEW: one place that REALLY enables/disables the Next button for all themes */
 function hardEnableNext(ok) {
     const btnNext = document.getElementById("btn-next");
     if (!btnNext) return;
@@ -97,7 +96,7 @@ function showStep(step) {
     if (btnPrev) btnPrev.style.display = step === 1 ? "none" : "inline-block";
     if (btnNext) {
         btnNext.style.display = step === 7 ? "none" : "inline-block";
-        hardEnableNext(validateStep(step)); // <- use strong enabler every time step changes
+        hardEnableNext(validateStep(step));
     }
 
     if (step === 2 && typeof window.showMethodSelection === "function")
@@ -138,14 +137,10 @@ function showStep(step) {
         window.setupPaymentDetails();
     if (step === 7 && typeof window.setupStep7 === "function")
         window.setupStep7();
-    
-    // Dispatch step change event for other modules to listen to
-    document.dispatchEvent(new CustomEvent('stepChanged', {
+        document.dispatchEvent(new CustomEvent('stepChanged', {
         detail: { currentStep: step, previousStep: currentStep }
     }));
 }
-
-/* NEW: keep Next in sync when selections change */
 document.addEventListener("shippingCompanySelected", () => {
     if (currentStep === 1) hardEnableNext(true);
 });
@@ -239,8 +234,6 @@ function initShippingForm() {
         btnPrev.addEventListener("click", handlePrevStep);
         btnPrev.dataset.bound = "1";
     }
-
-    /* On load, force the true disabled state for step 1 */
     hardEnableNext(validateStep(1));
     setupReceiverTypeHandling();
 }
