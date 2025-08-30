@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AllowedCompanies\AllowedCompaniesController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\Auth\AuthController;
 use App\Http\Controllers\Admin\Bank\BankController;
@@ -19,6 +20,7 @@ use App\Http\Controllers\Admin\WebSiteSettings\SettingsController;
 use App\Http\Controllers\Admin\FrontSettings\Slider\SliderController;
 use App\Http\Controllers\Admin\WebSiteSettings\AdminSettingsController;
 use App\Http\Controllers\Admin\UserShippingPrice\UserShippingPriceController;
+use App\Http\Controllers\Admin\Shipping\AdminShippingController;
 /*
 |--------------------------------------------------------------------------
 | Admin Routes
@@ -282,6 +284,40 @@ Route::middleware(['web'])->group(function () {
                     ->middleware('has.permission:user_shipping_prices.delete');
             });
 
+        Route::controller(AdminShippingController::class)
+            ->group(function () {
+                Route::get('/admin-shipping', 'index')
+                    ->name('admin-shipping.index')
+                    ->middleware('has.permission:admin_shipping.view');
+                Route::get('/admin-shipping/create', 'create')
+                    ->name('admin-shipping.create')
+                    ->middleware('has.permission:admin_shipping.create');
+                Route::post('/admin-shipping/store', 'store')
+                    ->name('admin-shipping.store')
+                    ->middleware('has.permission:admin_shipping.create');
+                Route::get('/admin-shipping/user-companies', 'getUserShippingCompanies')
+                    ->name('admin-shipping.user-companies')
+                    ->middleware('has.permission:admin_shipping.view');
+                Route::get('/admin-shipping/user-receivers', 'getUserReceivers')
+                    ->name('admin-shipping.user-receivers')
+                    ->middleware('has.permission:admin_shipping.view');
+                Route::get('/admin-shipping/user-wallet', 'getUserWalletBalance')
+                    ->name('admin-shipping.user-wallet')
+                    ->middleware('has.permission:admin_shipping.view');
+                Route::get('/admin-shipping/states', 'getStates')
+                    ->name('admin-shipping.states')
+                    ->middleware('has.permission:admin_shipping.view');
+                Route::get('/admin-shipping/cities', 'getCities')
+                    ->name('admin-shipping.cities')
+                    ->middleware('has.permission:admin_shipping.view');
+                Route::get('/admin-shipping/cities-by-state', 'getCitiesByState')
+                    ->name('admin-shipping.cities-by-state')
+                    ->middleware('has.permission:admin_shipping.view');
+                Route::get('/admin-shipping/countries', 'getCountries')
+                    ->name('admin-shipping.countries')
+                    ->middleware('has.permission:admin_shipping.view');
+            });
+
         Route::controller(AdminSettingsController::class)
             ->group(function () {
                 Route::get('/admin-settings', 'index')
@@ -290,6 +326,40 @@ Route::middleware(['web'])->group(function () {
                 Route::post('/admin-settings/update/{adminSetting}', 'update')
                     ->name('admin-settings.update')
                     ->middleware('has.permission:admin_settings.update');
+            });
+
+        Route::controller(AdminShippingController::class)
+            ->group(function () {
+                Route::get('/admin-shipping', 'index')
+                    ->name('admin-shipping.index')
+                    ->middleware('has.permission:admin_shipping.view');
+                Route::get('/admin-shipping/create', 'create')
+                    ->name('admin-shipping.create')
+                    ->middleware('has.permission:admin_shipping.create');
+                Route::post('/admin-shipping/store', 'store')
+                    ->name('admin-shipping.store')
+                    ->middleware('has.permission:admin_shipping.create');
+                Route::get('/admin-shipping/user-companies', 'getUserShippingCompanies')
+                    ->name('admin-shipping.user-companies')
+                    ->middleware('has.permission:admin_shipping.view');
+                Route::get('/admin-shipping/user-receivers', 'getUserReceivers')
+                    ->name('admin-shipping.user-receivers')
+                    ->middleware('has.permission:admin_shipping.view');
+                Route::get('/admin-shipping/user-wallet', 'getUserWalletBalance')
+                    ->name('admin-shipping.user-wallet')
+                    ->middleware('has.permission:admin_shipping.view');
+                Route::get('/admin-shipping/states', 'getStates')
+                    ->name('admin-shipping.states')
+                    ->middleware('has.permission:admin_shipping.view');
+                Route::get('/admin-shipping/cities', 'getCities')
+                    ->name('admin-shipping.cities')
+                    ->middleware('has.permission:admin_shipping.view');
+                Route::get('/admin-shipping/cities-by-state', 'getCitiesByState')
+                    ->name('admin-shipping.cities-by-state')
+                    ->middleware('has.permission:admin_shipping.view');
+                Route::get('/admin-shipping/countries', 'getCountries')
+                    ->name('admin-shipping.countries')
+                    ->middleware('has.permission:admin_shipping.view');
             });
 
         Route::controller(PartnerController::class)
@@ -367,7 +437,7 @@ Route::middleware(['web'])->group(function () {
                     ->middleware('has.permission:testimonials.delete');
             });
 
-            Route::controller(ContactController::class)
+        Route::controller(ContactController::class)
             ->group(function () {
                 Route::get('/contacts', 'index')
                     ->name('contacts.index')
@@ -379,6 +449,16 @@ Route::middleware(['web'])->group(function () {
                     ->name('contacts.delete')
                     ->middleware('has.permission:contacts.delete');
             });
-    
+
+
+        Route::controller(AllowedCompaniesController::class)
+            ->group(function () {
+                Route::get('/allowed-companies', 'index')
+                    ->name('allowed-companies.index')
+                    ->middleware('has.permission:allowed_companies.view');
+                Route::post('/allowed-companies/update-status/{allowedCompany}', 'updateStatus')
+                    ->name('allowed-companies.updateStatus')
+                    ->middleware('has.permission:allowed_companies.update');
+            });
     });
 });

@@ -26,7 +26,6 @@ class StoreUserRequest extends FormRequest
         return [
             'name_ar' => ['required', 'string', 'max:255'],
             'name_en' => ['required', 'string', 'max:255'],
-            'address' => ['required', 'string', 'max:999'],
             'email' => [
                 'required',
                 'email:dns,filter',
@@ -54,15 +53,6 @@ class StoreUserRequest extends FormRequest
                 Rule::unique('admins', 'phone'),
                 Rule::unique('users', 'phone'),
             ],
-            'city_id' => ['required', 'string','max:255'],
-            'state_id' => ['required', 'string','max:255'],
-            'state_name_ar' => ['required', 'string', 'max:255'],
-            'state_name_en' => ['required', 'string', 'max:255'],
-            'country_id' => ['required', 'string','max:255'],
-            'country_name_ar' => ['required', 'string', 'max:255'],
-            'country_name_en' => ['required', 'string', 'max:255'],
-            'city_name_ar' => ['required', 'string', 'max:255'],
-            'city_name_en' => ['required', 'string', 'max:255'],
             'password' => [
                 'required',
                 'string',
@@ -73,6 +63,12 @@ class StoreUserRequest extends FormRequest
                     ->mixedCase()
                     ->symbols()
             ],
+            'shipping_prices'                 => ['nullable', 'array'],
+            'shipping_prices.*'               => ['array'],
+            'shipping_prices.*.id'            => ['required', 'string'],
+            'shipping_prices.*.name'          => ['nullable', 'string', 'max:255'],
+            'shipping_prices.*.localprice'    => ['nullable', 'numeric', 'min:0', 'max:999999.99'],
+            'shipping_prices.*.internationalprice' => ['nullable', 'numeric', 'min:0', 'max:999999.99'],
         ];
     }
 

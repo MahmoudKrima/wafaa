@@ -301,6 +301,12 @@ return [
     'team_member' => 'عدد فريق العمل',
     'clients' => 'عدد العملاء',
     'shipping_companies' => 'عدد شركات الشحن',
+    'local_price' => 'السعر المحلي',
+    'international_price' => 'السعر الدولي',
+    'sar' => 'ريال',
+    'enter_local_price' => 'أدخل السعر المحلي',
+    'enter_international_price' => 'أدخل السعر الدولي',
+    'no_shipping_support' => 'لا يوجد دعم للشحن',
     'shippments' => 'عدد الشحنات',
     'contact_us_now' => 'تواصل معنا الان',
     'contact_us_description' => 'نحن هنا لمساعدتك وخدمتك عملينا العزيز على مدار الساعة.',
@@ -445,4 +451,5 @@ return [
     'insufficient_balance' => 'الرصيد غير كافي. يرجى شحن المحفظة.',
     'wallet_balance' => 'رصيد المحفظة',
     'shipping_company_not_found' => 'شركة الشحن غير موجودة',
+    'allowed_companies' => 'الشركات المسموح بها',
 ];

@@ -67,47 +67,6 @@
                                                 placeholder="{{ __('admin.email') }}" class="form-control"
                                                 value="{{ old('email') }}">
                                         </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label for="stateInput" class="text-dark">{{ __('admin.state') }}</label>
-                                            <select id="stateInput" name="state_id" class="form-control">
-                                                <option value="">{{ __('admin.choose_state') }}</option>
-                                                @foreach ($states as $state)
-                                                <option value="{{ $state['id'] }}"
-                                                    data-state-name-ar="{{ $state['name']['ar'] }}"
-                                                    data-state-name-en="{{ $state['name']['en'] }}"
-                                                    data-country-id="{{ $state['countryId'] }}"
-                                                    data-country-name-ar="{{ $state['country']['name']['ar'] }}"
-                                                    data-country-name-en="{{ $state['country']['name']['en'] }}"
-                                                    {{ old('state_id') == $state['id'] ? 'selected' : '' }}>
-                                                    {{ app()->getLocale() == 'ar' ? $state['name']['ar'] : $state['name']['en'] }}
-                                                </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label for="cityInput" class="text-dark">{{ __('admin.city') }}</label>
-                                            <select id="cityInput" name="city_id" class="form-control">
-                                                <option value="">{{ __('admin.choose_city') }}</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-6 mb-3">
-                                            <label for="addressInput" class="text-dark">{{ __('admin.address') }}</label>
-                                            <textarea id="addressInput" name="address" rows="3"
-                                                placeholder="{{ __('admin.enter_address') }}"
-                                                class="form-control">{{ old('address') }}</textarea>
-                                        </div>
-                                    </div>
-
-                                    <input type="hidden" name="state_name_ar" id="stateNameAr" value="">
-                                    <input type="hidden" name="state_name_en" id="stateNameEn" value="">
-                                    <input type="hidden" name="country_id" id="countryId" value="">
-                                    <input type="hidden" name="country_name_ar" id="countryNameAr" value="">
-                                    <input type="hidden" name="country_name_en" id="countryNameEn" value="">
-                                    <input type="hidden" name="city_name_ar" id="cityNameAr" value="">
-                                    <input type="hidden" name="city_name_en" id="cityNameEn" value="">
-                                    <div class="row">
                                         <div class="col-6 mb-3">
                                             <label for="passwordInput"
                                                 class="text-dark">{{ __('admin.password') }}</label>
@@ -116,6 +75,77 @@
                                         </div>
                                     </div>
                                 </div>
+                                @if($allowedCompanies && count($allowedCompanies) > 0)
+                                <hr>
+                                <div class="form-group">
+                                    <h5 class="mb-3">{{ __('admin.shipping_companies') }}</h5>
+                                    <div class="row">
+                                        @foreach($allowedCompanies as $company)
+                                        @php
+                                        $idx = $loop->index;
+                                        $methods = (array) ($company['shippingMethods'] ?? []);
+                                        @endphp
+
+                                        <div class="col-md-6 mb-4">
+                                            <div class="card border">
+                                                <div class="card-body">
+                                                    <div class="d-flex align-items-center mb-3">
+                                                        @if(!empty($company['logoUrl']))
+                                                        <img src="{{ $company['logoUrl'] }}" alt="{{ $company['name'] ?? 'Company' }}"
+                                                            class="me-3" style="height: 40px;">
+                                                        @endif
+                                                        <div class="fw-bold">{{ $company['name'] ?? $company['serviceName'] ?? '—' }}</div>
+                                                    </div>
+
+                                                    <input type="hidden" name="shipping_prices[{{ $idx }}][id]" value="{{ $company['id'] ?? '' }}">
+                                                    <input type="hidden" name="shipping_prices[{{ $idx }}][name]" value="{{ $company['name'] ?? ($company['serviceName'] ?? '') }}">
+
+                                                    @if(in_array('local', $methods, true))
+                                                    <div class="mb-3">
+                                                        <label for="local_price_{{ $company['id'] ?? $idx }}" class="form-label text-dark">
+                                                            {{ __('admin.local_price') }} ({{ __('admin.sar') }})
+                                                        </label>
+                                                        <input type="number"
+                                                            step="0.01"
+                                                            min="0"
+                                                            class="form-control"
+                                                            id="local_price_{{ $company['id'] ?? $idx }}"
+                                                            name="shipping_prices[{{ $idx }}][localprice]"
+                                                            value="{{ old('shipping_prices.'.$idx.'.localprice') }}"
+                                                            placeholder="{{ __('admin.enter_local_price') }}">
+                                                    </div>
+                                                    @endif
+
+                                                    @if(in_array('international', $methods, true))
+                                                    <div class="mb-3">
+                                                        <label for="international_price_{{ $company['id'] ?? $idx }}" class="form-label text-dark">
+                                                            {{ __('admin.international_price') }} ({{ __('admin.sar') }})
+                                                        </label>
+                                                        <input type="number"
+                                                            step="0.01"
+                                                            min="0"
+                                                            class="form-control"
+                                                            id="international_price_{{ $company['id'] ?? $idx }}"
+                                                            name="shipping_prices[{{ $idx }}][internationalprice]"
+                                                            value="{{ old('shipping_prices.'.$idx.'.internationalprice') }}"
+                                                            placeholder="{{ __('admin.enter_international_price') }}">
+                                                    </div>
+                                                    @endif
+
+                                                    @if(!in_array('local', $methods, true) && !in_array('international', $methods, true))
+                                                    <div class="text-muted small">
+                                                        {{ __('admin.no_shipping_support') }}
+                                                    </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                                @endif
+
+
                                 <hr>
                                 <div class="row">
                                     <div class="col-12">
@@ -132,105 +162,3 @@
     </div>
 </div>
 @endsection
-@push('js')
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const stateSelect = document.getElementById('stateInput');
-        const citySelect = document.getElementById('cityInput');
-        const currentLocale = '{{ app()->getLocale() }}';
-        const stateNameAr = document.getElementById('stateNameAr');
-        const stateNameEn = document.getElementById('stateNameEn');
-        const countryId = document.getElementById('countryId');
-        const countryNameAr = document.getElementById('countryNameAr');
-        const countryNameEn = document.getElementById('countryNameEn');
-        const cityNameAr = document.getElementById('cityNameAr');
-        const cityNameEn = document.getElementById('cityNameEn');
-        
-        const translations = {
-            chooseCity: '{{ __("admin.choose_city") }}',
-            loadingCities: '{{ __("admin.loading_cities") }}',
-            noCitiesFound: '{{ __("admin.no_cities_found") }}',
-            errorLoadingCities: '{{ __("admin.error_loading_cities") }}'
-        };
-
-        if (stateSelect && citySelect) {
-            stateSelect.addEventListener('change', function() {
-                const stateId = this.value;
-                citySelect.innerHTML = `<option value="">${translations.chooseCity}</option>`;
-                citySelect.disabled = true;
-                
-                if (cityNameAr) cityNameAr.value = '';
-                if (cityNameEn) cityNameEn.value = '';
-
-                if (stateId) {
-                    const selectedStateOption = this.options[this.selectedIndex];
-
-                    if (stateNameAr) stateNameAr.value = selectedStateOption.dataset.stateNameAr || '';
-                    if (stateNameEn) stateNameEn.value = selectedStateOption.dataset.stateNameEn || '';
-                    if (countryId) countryId.value = selectedStateOption.dataset.countryId || '';
-                    if (countryNameAr) countryNameAr.value = selectedStateOption.dataset.countryNameAr || '';
-                    if (countryNameEn) countryNameEn.value = selectedStateOption.dataset.countryNameEn || '';
-
-                    citySelect.innerHTML = `<option value="">${translations.loadingCities}</option>`;
-
-                    const apiUrl = `{{ route('admin.users.citiesByState') }}?state_id=${stateId}`;
-
-                    fetch(apiUrl)
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Network response was not ok');
-                            }
-                            return response.json();
-                        })
-                        .then(cities => {
-                            citySelect.innerHTML = `<option value="">${translations.chooseCity}</option>`;
-                            citySelect.disabled = false;
-
-                            if (cities.length === 0) {
-                                citySelect.innerHTML = `<option value="">${translations.noCitiesFound}</option>`;
-                                citySelect.disabled = true;
-                                return;
-                            }
-
-                            cities.forEach(city => {
-                                const option = document.createElement('option');
-                                option.value = city.id;
-                                option.textContent = currentLocale === 'ar' ? city.name.ar : city.name.en;
-                                option.dataset.cityNameAr = city.name.ar || '';
-                                option.dataset.cityNameEn = city.name.en || '';
-                                citySelect.appendChild(option);
-                            });
-                        })
-                        .catch(error => {
-                            citySelect.innerHTML = `<option value="">${translations.errorLoadingCities}</option>`;
-                            citySelect.disabled = true;
-                        });
-                } else {
-                    if (stateNameAr) stateNameAr.value = '';
-                    if (stateNameEn) stateNameEn.value = '';
-                    if (countryId) countryId.value = '';
-                    if (countryNameAr) countryNameAr.value = '';
-                    if (countryNameEn) countryNameEn.value = '';
-                    if (cityNameAr) cityNameAr.value = '';
-                    if (cityNameEn) cityNameEn.value = '';
-                }
-            });
-        }
-
-        if (citySelect && cityNameAr && cityNameEn) {
-            citySelect.addEventListener('change', function() {
-                const cityId = this.value;
-
-                if (cityId) {
-                    const selectedCityOption = this.options[this.selectedIndex];
-                    cityNameAr.value = selectedCityOption.dataset.cityNameAr || '';
-                    cityNameEn.value = selectedCityOption.dataset.cityNameEn || '';
-                } else {
-                    cityNameAr.value = '';
-                    cityNameEn.value = '';
-                }
-            });
-        }
-    });
-</script>
-@endpush

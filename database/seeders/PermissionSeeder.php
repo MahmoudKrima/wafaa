@@ -6,6 +6,7 @@ use App\Models\Partner;
 use App\Models\User;
 use App\Models\Admin;
 use App\Models\Banks;
+use App\Models\AllowedCompany;
 use App\Models\Setting;
 use App\Models\WalletLog;
 use App\Models\UserWallet;
@@ -54,6 +55,7 @@ class PermissionSeeder extends Seeder
             ...Service::$permissions,
             ...Testimonial::$permissions,
             ...Contact::$permissions,
+            ...AllowedCompany::$permissions,
             ...$rolePermission,
         ];
 
