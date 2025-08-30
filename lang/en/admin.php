@@ -302,6 +302,13 @@ return [
     'team_member' => 'Team Members',
     'clients' => 'Clients',
     'shipping_companies' => 'Shipping Companies',
+    'local_price' => 'Local Price',
+    'international_price' => 'International Price',
+    'sar' => 'SAR',
+    'enter_local_price' => 'Enter local price',
+    'enter_international_price' => 'Enter international price',
+    'enter_international_price' => 'Enter international price',
+    'no_shipping_support' => 'No shipping support available',
     'shippments' => 'Shippments',
     'contact_us_now' => 'Contact Us Now',
     'contact_us_description' => 'We are here to help you and your needs. We are available 24/7.',
@@ -445,5 +452,5 @@ return [
     'insufficient_balance' => 'Insufficient balance! Please recharge your wallet.',
     'wallet_balance' => 'Wallet Balance',
     'shipping_company_not_found' => 'Shipping company not found',
-
+    'allowed_companies' => 'Allowed Companies',
 ];

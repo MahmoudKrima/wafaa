@@ -99,10 +99,6 @@
                                     <th scope="col">{{ __('admin.phone') }}</th>
                                     <th scope="col">{{ __('admin.additional_phone') }}</th>
                                     <th scope="col">{{ __('admin.email') }}</th>
-                                    <th scope="col">{{ __('admin.country') }}</th>
-                                    <th scope="col">{{ __('admin.state') }}</th>
-                                    <th scope="col">{{ __('admin.city') }}</th>
-                                    <th scope="col">{{ __('admin.address') }}</th>
                                     <th scope="col">{{ __('admin.added_by') }}</th>
                                     <th scope="col">{{ __('admin.balance') }}</th>
                                     @if (auth('admin')->user()->hasAnyPermission(['users.update', 'users.delete']))
@@ -117,10 +113,6 @@
                                     <td>{{ $user->phone }}</td>
                                     <td>{{ $user->additional_phone ?? __('admin.n/a') }}</td>
                                     <td>{{ $user->email }}</td>
-                                    <td>{{ $user->country_name}}</td>
-                                    <td>{{ $user->state_name}}</td>
-                                    <td>{{ $user->city_name}}</td>
-                                    <td>{{ Str::limit($user->address, 50) }}</td>
                                     <td>{{ $user->addedByAdmin?->name}}</td>
                                     <td>{{ optional($user->wallet)->balance ?? __('admin.n/a')}}</td>
                                     @if (auth('admin')->user()->hasAnyPermission(['users.update', 'users.delete', 'user_shipping_prices.view', 'wallet_logs.view']))

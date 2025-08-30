@@ -35,20 +35,11 @@ class UserFactory extends Factory
             'password' => '123456789',
             'created_by' => $adminId,
             'added_by' => $adminId,
-            'address' => fake()->address(),
             'remember_token' => Str::random(10),
         ];
     }
 
-    /**
-     * Indicate that the model's email address should be unverified.
-     */
-    public function unverified(): static
-    {
-        return $this->state(fn(array $attributes) => [
-            'email_verified_at' => null,
-        ]);
-    }
+    
 
     /**
      * Set the created_by to a specific admin ID
@@ -57,16 +48,6 @@ class UserFactory extends Factory
     {
         return $this->state(fn(array $attributes) => [
             'created_by' => $adminId,
-        ]);
-    }
-
-    /**
-     * Set the city to a specific city ID
-     */
-    public function inCity(int $cityId): static
-    {
-        return $this->state(fn(array $attributes) => [
-            'city_id' => $cityId,
         ]);
     }
 }

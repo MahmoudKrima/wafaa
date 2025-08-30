@@ -14,7 +14,6 @@ class ShippingController extends Controller
 
     public function index(SearchTransactionRequest $request)
     {
-        // $result = $this->shippingService->index($request);
         return view('user.pages.shippings.create');
     }
 

@@ -5,15 +5,12 @@ namespace App\Services\User\Shipping;
 use App\Models\Reciever;
 use App\Models\Shipping;
 use App\Traits\ImageTrait;
-use App\Filters\CodeFilter;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Models\AdminSetting;
 use App\Traits\TranslateTrait;
-use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
-use App\Filters\ActivationStatusFilter;
 use Illuminate\Http\Client\RequestException;
 
 class ShippingService
@@ -167,42 +164,43 @@ class ShippingService
                 imageUrl: $imageUrl
             );
 
-            try {
-                $resp = Http::withHeaders($headers)
-                    ->timeout(20)
-                    ->retry(2, 200)
-                    ->post("{$baseUrl}/api/shipments", $body)
-                    ->throw();
+            // try {
+            $resp = Http::withHeaders($headers)
+                ->timeout(20)
+                ->retry(2, 200)
+                ->post("{$baseUrl}/api/shipments", $body)
+                ->throw();
 
-                $senderUserPayload = $this->buildShippingUserBodyForSender($sender);
-                $senderUserResult  = $this->postShippingUser($baseUrl, $headers, $senderUserPayload);
+            $senderUserPayload = $this->buildShippingUserBodyForSender($sender);
+            $senderUserResult  = $this->postShippingUser($baseUrl, $headers, $senderUserPayload);
 
-                $results['success'][] = [
-                    'receiver_id'    => $receiverModel->id,
-                    'status'         => $resp->status(),
-                    'body'           => $body,
-                    'response'       => $resp,
-                    'shipping_users' => [
-                        'sender' => $senderUserResult,
-                    ],
-                ];
-            } catch (RequestException $e) {
-                $response = $e->response;
-                $results['failed'][] = [
-                    'receiver_id'   => $receiverModel->id,
-                    'status'        => $response?->status(),
-                    'reason'        => $response?->reason(),
-                    'body'          => $body,
-                    'error'         => $e->getMessage(),
-                    'response_text' => Str::limit($response?->body() ?? '', 4000),
-                ];
-            } catch (\Throwable $e) {
-                $results['failed'][] = [
-                    'receiver_id' => $receiverModel->id,
-                    'body'        => $body,
-                    'error'       => $e->getMessage(),
-                ];
-            }
+            $results['success'][] = [
+                'receiver_id'    => $receiverModel->id,
+                'status'         => $resp->status(),
+                'body'           => $body,
+                'response'       => $resp,
+                'shipping_users' => [
+                    'sender' => $senderUserResult,
+                ],
+            ];
+            dd($results);
+            // } catch (RequestException $e) {
+            //     $response = $e->response;
+            //     $results['failed'][] = [
+            //         'receiver_id'   => $receiverModel->id,
+            //         'status'        => $response?->status(),
+            //         'reason'        => $response?->reason(),
+            //         'body'          => $body,
+            //         'error'         => $e->getMessage(),
+            //         'response_text' => Str::limit($response?->body() ?? '', 4000),
+            //     ];
+            // } catch (\Throwable $e) {
+            //     $results['failed'][] = [
+            //         'receiver_id' => $receiverModel->id,
+            //         'body'        => $body,
+            //         'error'       => $e->getMessage(),
+            //     ];
+            // }
         }
 
         return $results;
