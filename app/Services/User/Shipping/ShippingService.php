@@ -319,10 +319,10 @@ class ShippingService
             "senderZipCode"     => $senderZipCode,
 
             "type"              => $type,
-            "length"            => $length,
-            "width"             => $width,
-            "height"            => $height,
-            "weight"            => $weight,
+            "length"            =>  (int) $length,
+            "width"             => (int)$width,
+            "height"            => (int)$height,
+            "weight"            => (int) $weight,
             "packagesCount"     => $packagesCount,
             "description"       => $description,
             "isCommercial"      => $isCommercial,
@@ -339,7 +339,7 @@ class ShippingService
             "receiverCountryCode" => $receiverCountryCode,
             "receiverCityId"      => $receiverCityId,
             "receiverStreet"      => $receiverStreet,
-            
+
             "receiverZipCode"     => $receiverZipCode,
             "receiverCityName"    => $receiverCityName,
         ];

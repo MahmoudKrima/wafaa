@@ -335,8 +335,8 @@
                             <label for="package_type" class="text-dark mb-2">{{ __('admin.package_type') }}</label>
                             <select id="package_type" name="package_type" class="form-control" required>
                                 <option value="">{{ __('admin.select_package_type') }}</option>
-                                <option value="boxes" {{ old('package_type')=='boxes' ? 'selected' : '' }}>{{ __('admin.boxes') }}</option>
-                                <option value="documents" {{ old('package_type')=='documents' ? 'selected' : '' }}>{{ __('admin.documents') }}</option>
+                                <option value="box" {{ old('package_type')=='box' ? 'selected' : '' }}>{{ __('admin.boxes') }}</option>
+                                <option value="document" {{ old('package_type')=='document' ? 'selected' : '' }}>{{ __('admin.documents') }}</option>
                             </select>
                         </div>
                         <div class="col-12 col-md-4 mb-3">

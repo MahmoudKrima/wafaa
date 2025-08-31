@@ -83,7 +83,7 @@
         if (!packageTypeSelect) return;
 
         // initialize dimensions section based on current value
-        if (packageTypeSelect.value === "boxes") {
+        if (packageTypeSelect.value === "box") {
             showDimensionsSection();
         } else {
             hideDimensionsSection(true);
@@ -91,7 +91,7 @@
 
         if (!packageTypeSelect.dataset.bound) {
             packageTypeSelect.addEventListener("change", function () {
-                if (this.value === "boxes") {
+                if (this.value === "box") {
                     showDimensionsSection();
                 } else {
                     hideDimensionsSection(true);
@@ -170,14 +170,12 @@
             return false;
         }
 
-        // dimensions only when boxes
-        if (packageType.value === "boxes") {
+        if (packageType.value === "box") {
             const length = document.getElementById("length");
             const width = document.getElementById("width");
             const height = document.getElementById("height");
 
             if (!length || !width || !height) {
-                // fields missing: block Next silently unless user is submitting
                 showErrorStep5("Dimension fields are missing");
                 return false;
             }
