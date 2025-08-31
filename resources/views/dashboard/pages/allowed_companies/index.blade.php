@@ -38,8 +38,7 @@
                                     <tr>
                                         <td>
                                             <a href="{{ displayImage($allowedCompany->image) }}" target="_blank">
-                                                <img width="60px" height="40px" class=""
-                                                    src="{{ displayImage($allowedCompany->image) }}" alt="">
+                                                <img src="{{ displayImage($allowedCompany->image) }}" style="width:60px;height:auto;">
                                             </a>
                                         </td>
                                         <td>
