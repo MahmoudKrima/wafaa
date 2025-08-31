@@ -7,8 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
     <title>{{ app('settings')['app_name_' . assetLang()]  }} | @yield('title')</title>
     <link rel="icon" type="image/x-icon" href="{{ displayImage(app('settings')['fav_icon']) }}" />
-    <link href="{{ asset('assets_' . assetLang()) }}/assets/css/loader.css" rel="stylesheet" type="text/css" />
-    <script src="{{ asset('assets_' . assetLang()) }}/assets/js/loader.js"></script>
 
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
     @if (App::getLocale() === 'ar')
@@ -21,6 +19,9 @@
         <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     @endif
 
+
+    <link href="{{ asset('assets_' . assetLang()) }}/assets/css/loader.css" rel="stylesheet" type="text/css" />
+    <script src="{{ asset('assets_' . assetLang()) }}/assets/js/loader.js"></script>
     <link href="{{ asset('assets_' . assetLang()) }}/bootstrap/css/bootstrap.min.css" rel="stylesheet"
         type="text/css" />
     <link href="{{ asset('assets_' . assetLang()) }}/assets/css/plugins.css" rel="stylesheet" type="text/css" />

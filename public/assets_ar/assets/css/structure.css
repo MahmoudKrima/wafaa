@@ -1159,7 +1159,8 @@ code {
     margin-bottom: 0;
     color: #515365;
     font-size: 13px;
-    letter-spacing: 1px; }
+    /* letter-spacing: 1px; */
+}
 .footer-wrapper .footer-section p a {
     color: #515365; }
 
@@ -1367,7 +1368,7 @@ code {
         overflow: hidden !important;
         text-overflow: ellipsis !important;
         white-space: nowrap !important;
-        max-width: 100px;
+        max-width: 200px;
     }
     .navbar .navbar-item .nav-item.dropdown.message-dropdown .dropdown-menu {
         left: -74px; }

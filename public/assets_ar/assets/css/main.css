@@ -19,8 +19,9 @@ body {
     background: #f1f2f3;
     overflow-x: hidden;
     overflow-y: auto;
-    letter-spacing: 0.0312rem;
-    font-family: "Almarai", sans-serif; }
+    /* letter-spacing: 0.0312rem; */
+    font-family: "Almarai", sans-serif;
+}
 
 h1, h2, h3, h4, h5, h6 {
     color: #3b3f5c; }
@@ -200,7 +201,8 @@ span.red {
 .form-group label, label {
     font-size: 15px;
     color: #acb0c3;
-    letter-spacing: 1px; }
+    /* letter-spacing: 1px; */
+}
 
 /*  Disable forms     */
 .custom-control-input:disabled ~ .custom-control-label {
@@ -213,10 +215,11 @@ span.red {
     color: #3b3f5c;
     font-size: 15px;
     padding: 8px 10px;
-    letter-spacing: 1px;
+    /* letter-spacing: 1px; */
     height: calc(1.4em + 1.4rem + 2px);
     padding: .75rem 1.25rem;
-    border-radius: 6px; }
+    border-radius: 6px;
+}
 .form-control[type="range"] {
     padding: 0; }
 .form-control:focus {
