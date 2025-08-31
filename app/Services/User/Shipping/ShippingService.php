@@ -339,6 +339,7 @@ class ShippingService
             "receiverCountryCode" => $receiverCountryCode,
             "receiverCityId"      => $receiverCityId,
             "receiverStreet"      => $receiverStreet,
+            
             "receiverZipCode"     => $receiverZipCode,
             "receiverCityName"    => $receiverCityName,
         ];
