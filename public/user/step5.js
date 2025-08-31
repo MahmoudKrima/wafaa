@@ -170,6 +170,7 @@
             return false;
         }
 
+        // dimensions only when boxes
         if (packageType.value === "box") {
             const length = document.getElementById("length");
             const width = document.getElementById("width");
