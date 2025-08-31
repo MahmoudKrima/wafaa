@@ -207,12 +207,12 @@
 @media screen and (max-width: 600px) {
     div.my_indicators {
         position: fixed;
-        top: 60px;
+        top: 45px;
         left: 0;
         right: 0;
         z-index: 1000 !important;
-        background: #dbdbdb;
-        padding: 0px 0 0px 0;
+        background: #d9d9d9;
+        padding: 5px 0 0px 0;
     }
 }
 @media screen and (max-width: 600px) {

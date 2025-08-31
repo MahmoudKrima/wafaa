@@ -207,7 +207,7 @@
 @media screen and (max-width: 600px) {
     div.my_indicators {
         position: fixed;
-        top: 60px;
+        top: 45px;
         left: 0;
         right: 0;
         z-index: 1000 !important;

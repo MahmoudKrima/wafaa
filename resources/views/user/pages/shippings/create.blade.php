@@ -10,6 +10,21 @@
 
 @endpush
 
+<style>
+    .widget{
+        padding:0 100px !important;
+    }
+    @media screen and (max-width: 600px) {
+        .widget {
+            padding: 0 0 !important; }
+    }
+    @media screen and (max-width: 600px) {
+        .main-content {
+            margin-top: 130px !important;
+        }
+    }
+</style>
+
 @section('content')
 <div class="layout-px-spacing">
     <div class="row layout-top-spacing">
