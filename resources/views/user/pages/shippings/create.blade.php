@@ -11,13 +11,16 @@
 @endpush
 
 <style>
-    .widget{
-        padding:0 100px !important;
+    .widget {
+        padding: 0 100px !important;
     }
+
     @media screen and (max-width: 600px) {
         .widget {
-            padding: 0 0 !important; }
+            padding: 0 0 !important;
+        }
     }
+
     @media screen and (max-width: 600px) {
         .main-content {
             margin-top: 130px !important;
@@ -308,7 +311,12 @@
                     <input type="hidden" name="sender_phone" id="sender_phone_hidden">
                     <input type="hidden" name="sender_email" id="sender_email_hidden">
                     <input type="hidden" name="sender_address" id="sender_address_hidden">
-                    <input type="hidden" name="sender_city" id="sender_city_hidden">
+                    <input type="hidden" name="sender_country_id" id="sender_country_id_hidden">
+                    <input type="hidden" name="sender_country_name" id="sender_country_name_hidden">
+                    <input type="hidden" name="sender_state_id" id="sender_state_id_hidden">
+                    <input type="hidden" name="sender_state_name" id="sender_state_name_hidden">
+                    <input type="hidden" name="sender_city_id" id="sender_city_id_hidden">
+                    <input type="hidden" name="sender_city_name" id="sender_city_name_hidden">
                     <input type="hidden" name="sender_postal_code" id="sender_postal_code_hidden">
                     <input type="hidden" name="payment_method" id="payment_method_hidden">
                     <input type="hidden" name="shipping_price_per_receiver" id="shipping_price_per_receiver_hidden">
@@ -409,8 +417,6 @@
                     <div class="col-12">
                         <h4 class="mb-4"><i class="fas fa-check-circle text-success me-2"></i>{{ __('admin.final_shipment_review') }}</h4>
                         <div id="step7-errors" class="mb-3"></div>
-
-                        <!----Sender and company--->
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="card mb-4" style="border-radius:15px;">
@@ -505,32 +511,32 @@
 
                                         <div class="row">
                                             <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                                <div class="mb-3">سعر الشحن لكل مستلم:</div>
-                                                <div class="h6 text-primary" id="price-base-per-receiver">100.00 ريال</div>
+                                                <div class="mb-3">{{__('admin.shipping_price_per_receiver') }}: </div>
+                                                <div class="h6 text-primary" id="price-base-per-receiver"></div>
                                             </div>
                                         </div>
 
                                         <div class="row">
                                             <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                                <div class="mb-0">رسوم الوزن الإضافي لكل مستلم:</div>
-                                                <div class="h6 text-primary" id="price-extra-per-receiver">0.00 ريال</div>
+                                                <div class="mb-0">{{__('admin.extra_weight_per_receiver') }}: </div>
+                                                <div class="h6 text-primary" id="price-extra-per-receiver"></div>
                                             </div>
                                             <div class="col-md-12">
-                                                <div class="small mb-3 text-muted mt-0" id="extra-weight-note">لا يوجد وزن إضافي</div>
+                                                <div class="small mb-3 text-muted mt-0" id="extra-weight-note">{{__('admin.no_extra_weight') }}</div>
                                             </div>
                                         </div>
 
                                         <div class="row">
                                             <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                                <div class="mb-3">نوع الشحنة: </div>
-                                                <div class="h6 mb-0 text-primary" id="payment-method-preview">الدفع عند الاستلام</div>
+                                                <div class="mb-3">{{__('admin.payment_method') }}: </div>
+                                                <div class="h6 mb-0 text-primary" id="payment-method-preview">{{__('admin.cash_on_delivery') }}</div>
                                             </div>
                                         </div>
 
                                         <div class="row">
                                             <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                                <div class="mb-1">رسوم الدفع عند الاستلام لكل مستلم:</div>
-                                                <div class="h6 mb-0 text-primary" id="price-cod-per-receiver">20.00 ريال</div>
+                                                <div class="mb-1">{{__('admin.cod_fee_per_receiver') }}: </div>
+                                                <div class="h6 mb-0 text-primary" id="price-cod-per-receiver"></div>
                                             </div>
                                         </div>
 
@@ -547,45 +553,45 @@
 
                                         <div class="row">
                                             <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                                <div class="mb-3">رسوم الشحن: </div>
-                                                <div class="h6 mb-0 text-primary" id="shipping-fee-preview">200.00 ريال</div>
+                                                <div class="mb-3">{{__('admin.shipping_fee') }}: </div>
+                                                <div class="h6 mb-0 text-primary" id="shipping-fee-preview"></div>
                                             </div>
                                         </div>
 
                                         <div class="row">
                                             <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                                <div class="mb-3">رسوم إضافية: </div>
-                                                <div class="h6 mb-0 text-primary" id="extra-fees-preview">0.00 ريال</div>
+                                                <div class="mb-3">{{__('admin.extra_fees') }}: </div>
+                                                <div class="h6 mb-0 text-primary" id="extra-fees-preview"></div>
                                             </div>
                                         </div>
 
                                         <div class="row">
                                             <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                                <div class="mb-3">رسوم الدفع عند الاستلام: </div>
-                                                <div class="h6 mb-0 text-primary" id="cod-fees-preview">40.00 ريال</div>
+                                                <div class="mb-3">{{__('admin.cod_fee') }}: </div>
+                                                <div class="h6 mb-0 text-primary" id="cod-fees-preview"></div>
                                             </div>
                                         </div>
 
 
                                         <div class="row" id="wallet-balance-section" style="display: none;">
                                             <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                                <div class="mb-1">رصيد المحفظة: </div>
-                                                <div class="h6 mb-0 text-primary" id="wallet-balance-display">500.00 ريال</div>
+                                                <div class="mb-1">{{__('admin.wallet_balance') }}: </div>
+                                                <div class="h6 mb-0 text-primary" id="wallet-balance-display"></div>
                                             </div>
                                             <div class="col-md-12 alert alert-warning" id="wallet-balance-warning" style="display:none;">
-                                                <small><i class="fas fa-exclamation-triangle me-1"></i> admin.insufficient_balance_warning</small>
+                                                <small><i class="fas fa-exclamation-triangle me-1"></i> {{__('admin.insufficient_balance_warning') }}</small>
                                             </div>
                                         </div>
 
 
                                         <div class="row">
                                             <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                                <div class="mb-1">المجموع الكلي: </div>
-                                                <div class="h6 mb-0 text-primary" id="total-amount-preview">240.00 ريال</div>
+                                                <div class="mb-1">{{__('admin.total_amount') }}: </div>
+                                                <div class="h6 mb-0 text-primary" id="total-amount-preview"></div>
                                             </div>
                                             <div class="col-md-12">
-                                                <span class="small mb-3 text-muted mt-0" id="receivers-count-display">2</span> المستلمين ×
-                                                <span class="small mb-3 text-muted mt-0" id="per-receiver-total">120.00 ريال</span> لكل مستلم
+                                                <span class="small mb-3 text-muted mt-0" id="receivers-count-display"></span> {{__('admin.receivers') }} ×
+                                                <span class="small mb-3 text-muted mt-0" id="per-receiver-total"></span> {{__('admin.per_receiver') }}
                                             </div>
                                         </div>
 
@@ -796,6 +802,7 @@
         wallet_balance: '{{ __("admin.wallet_balance") }}',
         insufficient_balance_warning: '{{ __("admin.insufficient_balance_warning") }}',
         insufficient_balance: '{{ __("admin.insufficient_balance") }}',
+        cod_amount: '{{ __("admin.cod_amount") }}',
     };
 
     const API_ENDPOINTS = {

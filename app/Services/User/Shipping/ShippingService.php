@@ -40,6 +40,7 @@ class ShippingService
     public function store($request)
     {
         $data = $request->validated();
+        // dd($data);
         $user = auth()->user();
         $company = $this->getShippingCompany($data['shipping_company_id'] ?? '');
         if (!$company) {
@@ -77,7 +78,7 @@ class ShippingService
             companyPrice: $companyPrice,
         );
 
-        $balanceErr = $this->ensureWalletBalance(auth()->user(), $payment, $pricing['grand_total']);
+        $balanceErr = $this->ensureWalletBalance(auth()->user(),  $pricing['grand_total']);
         if ($balanceErr) {
             return back()->with('Error', $balanceErr);
         }
@@ -88,7 +89,6 @@ class ShippingService
 
         $sync = $this->syncNewReceivers($data['selected_receivers'], $user);
         $data['selected_receivers'] = $sync['receivers'];
-
         $shipResults = $this->createShipmentsForReceivers(
             company: $company,
             user: $user,
@@ -108,9 +108,9 @@ class ShippingService
         array  $company,
         $user,
         array  $selectedReceivers,
-        array  $pricing,
+        array  $pricing,          // unused in minimal payload
         array  $requestData,
-        ?string $shipmentImagePath,
+        ?string $shipmentImagePath, // unused in minimal payload
         string $payment,
         string $method
     ) {
@@ -121,215 +121,275 @@ class ShippingService
             'Content-Type' => 'application/json',
         ];
 
-        $results = [
-            'success' => [],
-            'failed'  => [],
-        ];
+        $results = ['success' => [], 'failed' => []];
 
-        $sender = $this->resolveSenderPayload($user);
-        $imageUrl = $shipmentImagePath ? displayImage($shipmentImagePath) : null;
-
-        $isCod = $payment === 'cod';
-        $shippingCompanyId = (string) Arr::get($company, 'id', Arr::get($requestData, 'shipping_company_id', ''));
+        $senderPayload     = $this->resolveSenderPayload($user); // we’ll still prefer $requestData for sender fields
+        $isCod             = ($payment === 'cod');
+        $shippingCompanyId = (string) \Illuminate\Support\Arr::get($company, 'id', \Illuminate\Support\Arr::get($requestData, 'shipping_company_id', ''));
+        $userId            = (string) (auth()->id() ?? '');
 
         foreach ($selectedReceivers as $r) {
             $receiverId = $r['id'] ?? null;
-            if (!$receiverId || !is_numeric($receiverId)) {
-                $results['failed'][] = [
-                    'receiver' => $r,
-                    'error'    => 'Receiver id missing or invalid after sync.',
-                ];
+            if (!$receiverId) {
+                $results['failed'][] = ['receiver' => $r, 'error' => 'Receiver id is missing.'];
                 continue;
             }
 
-            $receiverModel = Reciever::find($receiverId);
-            if (!$receiverModel) {
-                $results['failed'][] = [
-                    'receiver' => $r,
-                    'error'    => "Receiver model not found (id {$receiverId}).",
-                ];
-                continue;
-            }
+            // Optional fallback to model for missing pieces ONLY
+            $receiverModel = \App\Models\Reciever::find($receiverId);
+
+            // Build minimal receiver structure (names exactly as Ghaya expects)
+            $receiver = [
+                'id'            => (string) $receiverId,
+                'name'          => (string)($r['name']             ?? $receiverModel?->name ?? ''),
+                'email'         => (string)($r['email']            ?? $receiverModel?->email ?? ''),
+                'phone'         => (string)($r['phone']            ?? $receiverModel?->phone ?? ''),
+                'phone1'        => (string)($r['additional_phone'] ?? $receiverModel?->additional_phone ?? ''),
+                'country_id'    => (string)($r['country_id']       ?? $receiverModel?->country_id ?? ''),
+                'country_name'  => (string)($r['country_name']     ?? ($receiverModel?->getTranslation('country_name', 'en') ?? '')),
+                'country_code'  => (string)($r['country_code']     ?? $receiverModel?->country_code ?? 'SA'),
+                'city_id'       => (string)($r['city_id']          ?? $receiverModel?->city_id ?? ''),
+                'city_name'     => (string)($r['city_name']        ?? ($receiverModel?->getTranslation('city_name', 'en') ?? '')),
+                'street'        => (string)($r['address']          ?? $receiverModel?->address ?? ''),
+                'zip'           => (string)($r['postal_code']      ?? $receiverModel?->postal_code ?? ''),
+            ];
 
             $body = $this->buildGhayaShipmentBody(
                 shippingCompanyId: $shippingCompanyId,
-                orderNumber: $requestData['order_number'] ?? $this->generateOrderNumber(),
                 method: $method,
                 isCod: $isCod,
-                sender: $sender,
-                receiver: $receiverModel,
-                company: $company,
+                sender: $senderPayload,
+                receiver: $receiver,
                 requestData: $requestData,
-                pricing: $pricing,
-                imageUrl: $imageUrl
+                userId: $userId
             );
 
-            // try {
-            $resp = Http::withHeaders($headers)
-                ->timeout(20)
-                ->retry(2, 200)
-                ->post("{$baseUrl}/api/shipments", $body)
-                ->throw();
+            try {
+                $resp = \Illuminate\Support\Facades\Http::withHeaders($headers)
+                    ->timeout(20)
+                    ->retry(2, 200)
+                    ->post("{$baseUrl}/api/shipments", $body);
 
-            $senderUserPayload = $this->buildShippingUserBodyForSender($sender);
-            $senderUserResult  = $this->postShippingUser($baseUrl, $headers, $senderUserPayload);
-
-            $results['success'][] = [
-                'receiver_id'    => $receiverModel->id,
-                'status'         => $resp->status(),
-                'body'           => $body,
-                'response'       => $resp,
-                'shipping_users' => [
-                    'sender' => $senderUserResult,
-                ],
-            ];
-            dd($results);
-            // } catch (RequestException $e) {
-            //     $response = $e->response;
-            //     $results['failed'][] = [
-            //         'receiver_id'   => $receiverModel->id,
-            //         'status'        => $response?->status(),
-            //         'reason'        => $response?->reason(),
-            //         'body'          => $body,
-            //         'error'         => $e->getMessage(),
-            //         'response_text' => Str::limit($response?->body() ?? '', 4000),
-            //     ];
-            // } catch (\Throwable $e) {
-            //     $results['failed'][] = [
-            //         'receiver_id' => $receiverModel->id,
-            //         'body'        => $body,
-            //         'error'       => $e->getMessage(),
-            //     ];
-            // }
+                if ($resp->failed()) {
+                    $results['failed'][] = [
+                        'receiver_id'   => $receiverId,
+                        'status'        => $resp->status(),
+                        'url'           => "{$baseUrl}/api/shipments",
+                        'body_sent'     => $body,
+                        'response_json' => $resp->json(),
+                        'response_text' => $resp->body(),
+                    ];
+                } else {
+                    $results['success'][] = [
+                        'receiver_id'   => $receiverId,
+                        'status'        => $resp->status(),
+                        'body_sent'     => $body,
+                        'response_json' => $resp->json(),
+                    ];
+                }
+            } catch (\Throwable $e) {
+                $results['failed'][] = [
+                    'receiver_id'   => $receiverId,
+                    'url'           => "{$baseUrl}/api/shipments",
+                    'body_sent'     => $body,
+                    'error_message' => $e->getMessage(),
+                ];
+            }
         }
 
-        return $results;
+        // Now you can dd or return (your choice)
+        dd($results);
+        // return $results;
     }
 
-    private function buildShippingUserBodyForSender(array $sender): array
-    {
-        return [
-            'fullName' => (string) ($sender['name'] ?? ''),
-            'email'    => (string) ($sender['email'] ?? ''),
-            'phone'    => (string) ($sender['phone'] ?? ''),
-            'phone1'   => (string) ($sender['phone1'] ?? ''),
-            'address'  => [
-                'countryId' => (string) ($sender['country_id'] ?? ''),
-                'stateId'   => (string) ($sender['state_id'] ?? ''),
-                'cityId'    => (string) ($sender['city_id'] ?? ''),
-                'street'    => (string) ($sender['street'] ?? ''),
-                'zipCode'   => (string) ($sender['zip_code'] ?? ''),
-            ],
-            'type' => 'sender',
-        ];
-    }
 
-    private function postShippingUser(string $baseUrl, array $headers, array $userBody): array
-    {
-        try {
-            $resp = Http::withHeaders($headers)
-                ->timeout(10)
-                ->retry(2, 200)
-                ->post("{$baseUrl}/api/shipping-users", $userBody)
-                ->throw();
-
-            return [
-                'status'   => $resp->status(),
-                'response' => $resp->json(),
-                'body'     => $userBody,
-            ];
-        } catch (\Throwable $e) {
-            return [
-                'error' => $e->getMessage(),
-                'body'  => $userBody,
-            ];
-        }
-    }
 
     private function buildGhayaShipmentBody(
         string $shippingCompanyId,
-        string $orderNumber,
         string $method,
         bool   $isCod,
-        array  $sender,
-        Reciever $receiver,
-        array $company,
-        array $requestData,
-        array $pricing,
-        ?string $imageUrl
+        array  $sender,        // from resolveSenderPayload($user) — fallback only
+        array  $receiver,      // merged/minimal from caller
+        array  $requestData,
+        string $userId
     ): array {
-        $type           = $requestData['package_type'] ?? 'boxes';
-        $isCommercial   = (bool) ($requestData['is_commercial'] ?? false);
-        $description    = $requestData['package_description'] ?? '';
-        $notes          = $requestData['package_notes'] ?? '';
-        $weight         = (float) ($requestData['entered_weight'] ?? $requestData['weight'] ?? 0);
-        $length         = (float) ($requestData['length'] ?? 0);
-        $width          = (float) ($requestData['width']  ?? 0);
-        $height         = (float) ($requestData['height'] ?? 0);
-        $packagesCount  = (int)   ($requestData['package_number'] ?? 1);
-        $codPrice       = $isCod ? (float) ($pricing['cod_price_per_receiver'] ?? 0) : 0.0;
-        $senderIso2     = $sender['country_code'] ?? 'SA';
-        $receiverIso2   = $receiver->country_code ?? 'SA';
-        $senderPhone    = $sender['phone']  ?? '';
-        $senderPhone1   = $sender['phone1'] ?? '';
-        $receiverPhone  = $receiver->phone ?? '';
-        $receiverPhone1 = $receiver->additional_phone ?? '';
 
-        $products = [[
-            'title' => (string) ($requestData['package_description'] ?? 'Package'),
-            'price' => (float) (
-                (($pricing['extra_weight_per_receiver'] ?? 0) + ($pricing['company_shipping_price_per_receiver'] ?? 0))
-            ),
-        ]];
+        // --- helper to normalize phones into +CCC-... and strip junk ---
+        $normalizePhone = function (?string $raw, string $defaultCC = 'SA') {
+            $p = trim((string)$raw);
 
+            // remove spaces, parentheses, and dots
+            $p = preg_replace('/[()\s.]/', '', $p) ?? '';
+
+            // if starts 00CC -> +CC
+            if (preg_match('/^00(\d+)/', $p, $m)) {
+                $p = '+' . $m[1];
+            }
+
+            // KSA convenience: 05xxxxxxxx -> +966-5xxxxxxxx
+            if (str_starts_with($p, '05')) {
+                $p = '+966-' . substr($p, 1); // 05 -> +966-5
+            }
+
+            // ensure we have at least +… or a simple +CCC-… layout
+            if (preg_match('/^\+\d+$/', $p)) {
+                // ok like +9665xxxxxxxx, format with a dash after country code if you want:
+                // try to split country code vs subscriber for +9665... form:
+                if (str_starts_with($p, '+9665')) {
+                    return '+966-' . substr($p, 4);
+                }
+                return $p;
+            }
+
+            if (preg_match('/^\+\d+-?\d+$/', $p)) {
+                return $p; // already like +966-5xxxxxxx
+            }
+
+            // fallback: if it’s all digits and length looks like local mobile, assume SA
+            if (preg_match('/^\d{9,12}$/', $p) && $defaultCC === 'SA') {
+                if (str_starts_with($p, '5')) {
+                    return '+966-' . $p;
+                }
+                if (str_starts_with($p, '05')) {
+                    return '+966-' . substr($p, 1);
+                }
+            }
+
+            // last resort: return as-is
+            return $p;
+        };
+
+        // ----- SENDER (prefer requestData, fallback to $sender) -----
+        $senderName        = (string)($requestData['sender_name']         ?? $sender['name']         ?? '');
+        $senderEmail       = (string)($requestData['sender_email']        ?? $sender['email']        ?? '');
+        $senderPhone       = $normalizePhone($requestData['sender_phone'] ?? ($sender['phone'] ?? ''));
+        $senderPhone1Raw   = $requestData['sender_additional_phone'] ?? ($sender['phone1'] ?? '');
+        $senderPhone1      = $senderPhone1Raw !== '' ? $normalizePhone($senderPhone1Raw) : '';
+
+        $senderCountryId   = (string)($requestData['sender_country_id']   ?? $sender['country_id']   ?? '');
+        $senderCountryName = (string)($requestData['sender_country_name'] ?? $sender['country_name'] ?? '');
+        $senderCountryCode = (string)($sender['country_code'] ?? 'SA');
+
+        $senderCityId      = (string)($requestData['sender_city_id']      ?? $sender['city_id']      ?? '');
+        $senderCityName    = (string)($requestData['sender_city_name']    ?? $sender['city_name']    ?? '');
+        $senderStreet      = (string)($requestData['sender_address']      ?? $sender['street']       ?? '');
+        $senderZipCode     = (string)($requestData['sender_postal_code']  ?? $sender['zip_code']     ?? '');
+
+        // ----- PACKAGE from request -----
+        $type          = (string)($requestData['package_type'] ?? 'box');
+        $length        = (float) ($requestData['length']       ?? 0);
+        $width         = (float) ($requestData['width']        ?? 0);
+        $height        = (float) ($requestData['height']       ?? 0);
+        $weight        = (float) ($requestData['entered_weight'] ?? $requestData['weight'] ?? 0);
+        $packagesCount = (int)   ($requestData['package_number'] ?? 1);
+        $description   = (string)($requestData['package_description'] ?? '');
+        $isCommercial  = (bool)  ($requestData['is_commercial'] ?? false);
+        $isWeightEdited = (bool) ($requestData['is_weight_edited'] ?? array_key_exists('entered_weight', $requestData));
+
+        // ----- RECEIVER (Ghaya minimal) -----
+        $receiverName        = (string)($receiver['name'] ?? '');
+        $receiverEmail       = (string)($receiver['email'] ?? '');
+        $receiverPhone       = $normalizePhone($receiver['phone'] ?? '');
+        $receiverPhone1Raw   = (string)($receiver['phone1'] ?? '');
+        $receiverPhone1      = $receiverPhone1Raw !== '' ? $normalizePhone($receiverPhone1Raw) : '';
+
+        $receiverCountryId   = (string)($receiver['country_id'] ?? '');
+        $receiverCountryName = (string)($receiver['country_name'] ?? '');
+        $receiverCountryCode = (string)($receiver['country_code'] ?? 'SA');
+
+        $receiverCityId      = (string)($receiver['city_id'] ?? '');
+        $receiverCityName    = (string)($receiver['city_name'] ?? '');
+        $receiverStreet      = (string)($receiver['street'] ?? '');
+        $receiverZipCode     = (string)($receiver['zip'] ?? '');
+
+        // ----- Build EXACTLY like your working body -----
         $body = [
-            'shippingCompanyId'   => (string) $shippingCompanyId,
-            'orderNumber'         => (string) $orderNumber,
-            'method'              => (string) $method,
-            'type'                => (string) $type,
-            'isCod'               => (bool) $isCod,
-            'isCommercial'        => (bool) $isCommercial,
-            'senderName'          => (string) ($sender['name'] ?? ''),
-            'senderPhone'         => (string) $senderPhone,
-            'senderPhone1'        => (string) $senderPhone1,
-            'senderEmail'         => (string) ($sender['email'] ?? ''),
-            'senderStreet'        => (string) ($sender['street'] ?? ''),
-            'senderCountryId'     => (string) ($sender['country_id'] ?? ''),
-            'senderStateId'       => (string) ($sender['state_id'] ?? ''),
-            'senderCityId'        => (string) ($sender['city_id'] ?? ''),
-            'senderCountryName'   => (string) ($sender['country_name'] ?? ''),
-            'senderCountryCode'   => (string) ($senderIso2 ?? 'SA'),
-            'senderStateName'     => (string) ($sender['state_name'] ?? ''),
-            'senderCityName'      => (string) ($sender['city_name'] ?? ''),
-            'receiverName'        => (string) ($receiver->name ?? ''),
-            'receiverPhone'       => (string) $receiverPhone,
-            'receiverPhone1'      => (string) $receiverPhone1,
-            'receiverEmail'       => (string) ($receiver->email ?? ''),
-            'receiverStreet'      => (string) ($receiver->address ?? ''),
-            'receiverCountryId'   => (string) ($receiver->country_id ?? ''),
-            'receiverStateId'     => (string) ($receiver->state_id ?? ''),
-            'receiverCityId'      => (string) ($receiver->city_id ?? ''),
-            'receiverCountryName' => (string) ($receiver->getTranslation('country_name', 'en') ?? ''),
-            'receiverCountryCode' => (string) ($receiverIso2 ?? 'SA'),
-            'receiverStateName'   => (string) ($receiver->getTranslation('state_name', 'en') ?? ''),
-            'receiverCityName'    => (string) ($receiver->getTranslation('city_name', 'en') ?? ''),
-            'description'         => (string) $description,
-            'notes'               => (string) $notes,
-            'weight'              => $weight,
-            'length'              => $length,
-            'width'               => $width,
-            'height'              => $height,
-            'packagesCount'       => $packagesCount,
-            'codPrice'            => $codPrice,
-            'products'            => $products,
+            "shippingCompanyId" => (string) $shippingCompanyId,
+            "method"            => (string) $method,
+
+            "senderName"        => $senderName,
+            "senderEmail"       => $senderEmail,
+            "senderPhone"       => $senderPhone,
+            "senderPhone1"      => $senderPhone1,
+            "senderCountryId"   => $senderCountryId,
+            "senderCountryName" => $senderCountryName,
+            "senderCountryCode" => $senderCountryCode,
+            "senderCityId"      => $senderCityId,
+            "senderStreet"      => $senderStreet,
+            "senderZipCode"     => $senderZipCode,
+
+            "type"              => $type,
+            "length"            => $length,
+            "width"             => $width,
+            "height"            => $height,
+            "weight"            => $weight,
+            "packagesCount"     => $packagesCount,
+            "description"       => $description,
+            "isCommercial"      => $isCommercial,
+            "isCod"             => (bool)$isCod,
+            "isWeightEdited"    => (bool)$isWeightEdited,
+            "senderCityName"    => $senderCityName,
+
+            "receiverName"        => $receiverName,
+            "receiverEmail"       => $receiverEmail,
+            "receiverPhone"       => "+966-501932466",
+            "receiverPhone1"      => $receiverPhone1,
+            "receiverCountryId"   => $receiverCountryId,
+            "receiverCountryName" => $receiverCountryName,
+            "receiverCountryCode" => $receiverCountryCode,
+            "receiverCityId"      => $receiverCityId,
+            "receiverStreet"      => $receiverStreet,
+            
+            "receiverZipCode"     => $receiverZipCode,
+            "receiverCityName"    => $receiverCityName,
         ];
 
-        if (!empty($imageUrl)) {
-            $body['imageUrl'] = $imageUrl;
-        }
+        // $body = [
+        //     "shippingCompanyId" => "660030be07d4cc8bca3eb0eb",
+        //     "method" => "local",
+        //     "senderName" => "متجر Oday Ahmed",
+        //     "senderEmail" => "aaaa@gmail.com",
+        //     "senderPhone" => "+966-501932466",
+        //     "senderPhone1" => "",
+        //     "senderCountryId" => "65fd1a1c1fdbc094e3369b29",
+        //     "senderCountryName" => "Saudi Arabia",
+        //     "senderCountryCode" => "SA",
+        //     "senderCityId" => "6875240b26cb8ca53909f2f4",
+        //     "senderStreet" => "635 Corkeryton, HI 98474-3921",
+        //     "senderZipCode" => "",
+        //     "type" => "box",
+        //     "length" => 1,
+        //     "width" => 1,
+        //     "height" => 1,
+        //     "weight" => 1,
+        //     "packagesCount" => 1,
+        //     "description" => "jyui",
+        //     "isCommercial" => false,
+        //     "isCod" => false,
+        //     "isWeightEdited" => true,
+        //     "senderCityName" => "Diriyah",
+        //     "receiverName" => "عدي محمود",
+        //     "receiverEmail" => "ahmedred@gmail.com",
+        //     "receiverPhone" => "+966-501932466",
+        //     "receiverPhone1" => "",
+        //     "receiverCountryId" => "65fd1a1c1fdbc094e3369b29",
+        //     "receiverCountryName" => "Saudi Arabia",
+        //     "receiverCountryCode" => "SA",
+        //     "receiverCityId" => "6875236a26cb8ca53909f28d",
+        //     "receiverStreet" => "شارع ٢٣ يوليو امام قاعة كليوباترا",
+        //     "receiverZipCode" => "",
+        //     "receiverCityName" => "Rumah",
+        // ];
+
+        // If your API sometimes requires userId, uncomment:
+        // $body['userId'] = $userId;
+
+        // Do NOT add anything else.
 
         return $body;
     }
+
+
 
     private function resolveSenderPayload($user)
     {
@@ -341,15 +401,7 @@ class ShippingService
             'email'        => (string) ($user->email ?? ''),
             'street'       => (string) ($user->address ?? ''),
             'zip_code'     => (string) ($user->postal_code ?? ''),
-            'country_id'   => (string) ($user->country_id ?? ''),
-            'state_id'     => (string) ($user->state_id ?? ''),
-            'city_id'      => (string) ($user->city_id ?? ''),
-            'country_name' => (string) ($user->getTranslation('country_name', 'en') ?? ''),
-            'country_code' => (string) ($user->country_code ?? ''),
-            'state_name'   => (string) ($user->getTranslation('state_name', 'en') ?? ''),
-            'city_name'    => (string) ($user->getTranslation('city_name', 'en') ?? ''),
         ];
-
         if (empty($sender['country_code']) && !empty($sender['country_id'])) {
             $c = $this->getCountryById($sender['country_id']);
             if (!empty($c['code'])) {
@@ -587,11 +639,8 @@ class ShippingService
         ];
     }
 
-    protected function ensureWalletBalance($user, string $payment, float $grandTotal): ?array
+    protected function ensureWalletBalance($user, float $grandTotal): ?array
     {
-        if ($payment !== 'wallet') {
-            return null;
-        }
         $balance = $this->getUserWalletBalance($user);
         if ($balance < $grandTotal) {
             return ['payment_method' => __('admin.insufficient_balance')];
