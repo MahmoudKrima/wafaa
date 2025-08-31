@@ -311,7 +311,12 @@
                     <input type="hidden" name="sender_phone" id="sender_phone_hidden">
                     <input type="hidden" name="sender_email" id="sender_email_hidden">
                     <input type="hidden" name="sender_address" id="sender_address_hidden">
-                    <input type="hidden" name="sender_city" id="sender_city_hidden">
+                    <input type="hidden" name="sender_country_id" id="sender_country_id_hidden">
+                    <input type="hidden" name="sender_country_name" id="sender_country_name_hidden">
+                    <input type="hidden" name="sender_state_id" id="sender_state_id_hidden">
+                    <input type="hidden" name="sender_state_name" id="sender_state_name_hidden">
+                    <input type="hidden" name="sender_city_id" id="sender_city_id_hidden">
+                    <input type="hidden" name="sender_city_name" id="sender_city_name_hidden">
                     <input type="hidden" name="sender_postal_code" id="sender_postal_code_hidden">
                     <input type="hidden" name="payment_method" id="payment_method_hidden">
                     <input type="hidden" name="shipping_price_per_receiver" id="shipping_price_per_receiver_hidden">
