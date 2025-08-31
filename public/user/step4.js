@@ -1,7 +1,6 @@
 (() => {
     const SAUDI_ID = "65fd1a1c1fdbc094e3369b29";
 
-    // locale helpers
     let appLocale = (
         document.documentElement?.lang ||
         document.querySelector("[data-app-locale]")?.dataset.appLocale ||
@@ -9,22 +8,50 @@
         "en"
     ).toLowerCase();
 
-    // global state
     window.selectedReceivers = Array.isArray(window.selectedReceivers)
         ? window.selectedReceivers
         : [];
     window._receiversMap = window._receiversMap || {};
 
-    // keep original fetched receivers so we can add them back if removed
     let initialExistingMap = {};
     let fetchedOnce = false;
 
-    // ----------------- utils -----------------
-    const toStr = (v) => (v == null ? "" : String(v));
+    const API_KEY =
+        document.querySelector('meta[name="ghaya-api-key"]')?.content ||
+        (window.GHAYA_API_KEY ?? "xwqn5mb5mpgf5u3vpro09i8pmw9fhkuu");
 
-    function t(k, fb) {
-        return (window.translations && window.translations[k]) || fb || k;
-    }
+    const API = {
+        countries:
+            window.API_ENDPOINTS?.countries ||
+            "https://ghaya-express-staging-af597af07557.herokuapp.com/v1/countries?page=0&pageSize=500",
+        states: (countryId, companyId) =>
+            window.API_ENDPOINTS?.states?.(countryId, companyId) ||
+            `https://ghaya-express-staging-af597af07557.herokuapp.com/v1/states?pageSize=500&page=0&countryId=${encodeURIComponent(
+                countryId
+            )}&shippingCompanyId=${encodeURIComponent(companyId)}`,
+        cities: (countryId, stateId, companyId) =>
+            window.API_ENDPOINTS?.cities?.(countryId, stateId, companyId) ||
+            `https://ghaya-express-staging-af597af07557.herokuapp.com/v1/cities?pageSize=500&page=0&countryId=${encodeURIComponent(
+                countryId
+            )}&stateId=${encodeURIComponent(
+                stateId
+            )}&shippingCompanyId=${encodeURIComponent(companyId)}`,
+    };
+
+    const $country = () => document.getElementById("country");
+    const $state = () => document.getElementById("state");
+    const $city = () => document.getElementById("city");
+    const $addBtn = () => document.getElementById("add-receiver-btn");
+    const $existingRadio = () => document.getElementById("existing_receiver");
+    const $newRadio = () => document.getElementById("new_receiver");
+    const $receiverSelect = () => document.getElementById("receiver_select");
+    const $newSection = () => document.getElementById("new_receiver_section");
+    const $existingSection = () =>
+        document.getElementById("existing_receiver_section");
+
+    const toStr = (v) => (v == null ? "" : String(v));
+    const t = (k, fb) =>
+        (window.translations && window.translations[k]) || fb || k;
 
     function labelByLocale(nameObj) {
         if (!nameObj) return "";
@@ -35,7 +62,6 @@
         const vals = Object.values(nameObj);
         return typeof vals[0] === "string" ? vals[0] : "";
     }
-
     function displayName(maybeLocalized) {
         if (!maybeLocalized) return "";
         if (typeof maybeLocalized === "object")
@@ -87,13 +113,13 @@
         setTimeout(() => el.remove(), 2200);
     }
 
-    function fetchJson(url, opts) {
-        return fetch(url, opts)
-            .then((r) => (r.ok ? r.json() : Promise.reject()))
-            .catch(() => []);
+    function getJSON(url) {
+        return fetch(url, {
+            headers: { accept: "*/*", "x-api-key": API_KEY },
+            credentials: "same-origin",
+        }).then((r) => (r.ok ? r.json() : Promise.reject()));
     }
 
-    // ----------------- validation -----------------
     const REQUIRED_KEYS = [
         "name",
         "phone",
@@ -108,19 +134,10 @@
         const missing = REQUIRED_KEYS.filter(
             (k) => !String(r?.[k] ?? "").trim()
         );
-        if (missing.length) {
-            toast(
-                t(
-                    "add_receiver_error",
-                    "Please fill all required receiver fields"
-                ) + `: ${missing.join(", ")}`
-            );
-            return false;
-        }
+        if (missing.length) return false;
         return true;
     }
 
-    // ----------------- normalize -----------------
     function normalizeReceiver(r) {
         const countryName = r.country?.name || r.country_name;
         const stateName = r.state?.name || r.state_name;
@@ -132,7 +149,6 @@
             r.receiver_id ||
             r.receiverId ||
             `tmp_${Date.now()}`;
-
         const country_id =
             r.country_id ||
             r.countryId ||
@@ -161,18 +177,188 @@
         };
     }
 
-    // ----------------- Step 4 data flow -----------------
-    function loadReceivers() {
-        const select = document.getElementById("receiver_select");
-        if (!select) return;
+    function getCompanyId() {
+        return String(
+            window.selectedCompany?.id || window.selectedCompany?._id || ""
+        );
+    }
+    function getMethod() {
+        return (window.selectedMethod || "").toLowerCase();
+    }
 
+    async function loadCountries(selectedId = "") {
+        const el = $country();
+        if (!el) return;
+        const data = await getJSON(API.countries).catch(() => null);
+        const items = Array.isArray(data?.results)
+            ? data.results
+            : Array.isArray(data)
+            ? data
+            : [];
+        el.innerHTML = `<option value="">${t(
+            "select_country",
+            "Select Country"
+        )}</option>`;
+        items.forEach((c) => {
+            const opt = document.createElement("option");
+            opt.value = c.id || c._id;
+            opt.textContent = displayName(c.name) || c.code || "";
+            el.appendChild(opt);
+        });
+
+        if (selectedId) {
+            el.value = selectedId;
+        } else if (getMethod() === "local") {
+            el.value = SAUDI_ID;
+        }
+
+        if (!el.dataset.bound) {
+            el.addEventListener("change", async () => {
+                $state().innerHTML = `<option value="">${t(
+                    "select_state",
+                    "Select State"
+                )}</option>`;
+                $city().innerHTML = `<option value="">${t(
+                    "select_city",
+                    "Select City"
+                )}</option>`;
+                $state().disabled = true;
+                $city().disabled = true;
+                if (el.value) await loadStates(el.value);
+                updateAddButtonState();
+            });
+            el.dataset.bound = "1";
+        }
+    }
+
+    async function loadStates(countryId, selectedId = "") {
+        const el = $state();
+        if (!el) return;
+        const companyId = getCompanyId();
+        if (!countryId || !companyId) return;
+        const data = await getJSON(API.states(countryId, companyId)).catch(
+            () => null
+        );
+        const items = Array.isArray(data?.results)
+            ? data.results
+            : Array.isArray(data)
+            ? data
+            : [];
+        el.innerHTML = `<option value="">${t(
+            "select_state",
+            "Select State"
+        )}</option>`;
+        items.forEach((s) => {
+            const opt = document.createElement("option");
+            opt.value = s.id || s._id;
+            opt.textContent = displayName(s.name) || "";
+            el.appendChild(opt);
+        });
+        el.disabled = false;
+        el.value = selectedId || "";
+
+        if (!el.dataset.bound) {
+            el.addEventListener("change", async () => {
+                $city().innerHTML = `<option value="">${t(
+                    "select_city",
+                    "Select City"
+                )}</option>`;
+                $city().disabled = true;
+                if (el.value) await loadCities($country().value, el.value);
+                updateAddButtonState();
+            });
+            el.dataset.bound = "1";
+        }
+    }
+
+    async function loadCities(countryId, stateId, selectedId = "") {
+        const el = $city();
+        if (!el) return;
+        const companyId = getCompanyId();
+        if (!countryId || !stateId || !companyId) return;
+        const data = await getJSON(
+            API.cities(countryId, stateId, companyId)
+        ).catch(() => null);
+        const items = Array.isArray(data?.results)
+            ? data.results
+            : Array.isArray(data)
+            ? data
+            : [];
+        el.innerHTML = `<option value="">${t(
+            "select_city",
+            "Select City"
+        )}</option>`;
+        items.forEach((c) => {
+            const opt = document.createElement("option");
+            opt.value = c.id || c._id;
+            opt.textContent = displayName(c.name) || "";
+            el.appendChild(opt);
+        });
+        el.disabled = false;
+        el.value = selectedId || "";
+    }
+
+    async function setupReceiverFormByShippingType() {
+        const c = $country(),
+            s = $state(),
+            ci = $city();
+        if (!c || !s || !ci) return;
+        c.required = s.required = ci.required = true;
+        await loadCountries();
+        if (getMethod() === "local") await loadStates(SAUDI_ID);
+        updateAddButtonState();
+    }
+
+    function ensureReceiverStateFieldVisible() {
+        const stateField = $state();
+        if (stateField) {
+            stateField.style.display = "block";
+            stateField.style.visibility = "visible";
+            stateField.style.opacity = "1";
+            stateField.disabled = false;
+        }
+    }
+
+    function populateReceiverSelect(receivers) {
+        const select = $receiverSelect();
+        if (!select) return;
+        const chosenIds = new Set(
+            (window.selectedReceivers || [])
+                .filter((x) => !x.isNew)
+                .map((x) => toStr(x.id))
+        );
+        select.innerHTML = `<option value="">${t(
+            "choose_receiver",
+            "Choose receiver"
+        )}</option>`;
+        window._receiversMap = {};
+        receivers.forEach((r) => {
+            const id = toStr(r.id || r._id);
+            if (!id) return;
+            window._receiversMap[id] = r;
+            if (chosenIds.has(id)) return;
+            const opt = document.createElement("option");
+            opt.value = id;
+            opt.textContent = r.name || r.full_name || r.email || id;
+            select.appendChild(opt);
+        });
+    }
+
+    function fetchJson(url, opts) {
+        return fetch(url, opts)
+            .then((r) => (r.ok ? r.json() : Promise.reject()))
+            .catch(() => []);
+    }
+
+    function loadReceivers() {
+        const select = $receiverSelect();
+        if (!select) return;
         fetchJson("/receivers")
             .then((data) => {
                 const arr = Array.isArray(data)
                     ? data
                     : (data && data.results) || [];
                 if (!fetchedOnce) {
-                    // preserve original map for adding back after remove
                     initialExistingMap = {};
                     arr.forEach((r) => {
                         const id = toStr(r.id || r._id);
@@ -188,48 +374,16 @@
                     "No receivers found"
                 )}</option>`;
             });
-
         wireUI();
         refreshSelectedReceiversView();
         syncNextButton();
+        updateAddButtonState();
     }
 
-    function populateReceiverSelect(receivers) {
-        const select = document.getElementById("receiver_select");
-        if (!select) return;
-
-        // Filter out already-selected existing receivers
-        const chosenIds = new Set(
-            (window.selectedReceivers || [])
-                .filter((x) => !x.isNew)
-                .map((x) => toStr(x.id))
-        );
-
-        select.innerHTML = `<option value="">${t(
-            "choose_receiver",
-            "Choose receiver"
-        )}</option>`;
-        window._receiversMap = {};
-
-        receivers.forEach((r) => {
-            const id = toStr(r.id || r._id);
-            if (!id) return;
-            window._receiversMap[id] = r;
-            if (chosenIds.has(id)) return; // hide already selected
-            const opt = document.createElement("option");
-            opt.value = id;
-            opt.textContent = r.name || r.full_name || r.email || id;
-            select.appendChild(opt);
-        });
-    }
-
-    // ----------------- add/remove -----------------
     function canAdd(item) {
         const id = toStr(item.id);
-        if (id && window.selectedReceivers.some((r) => toStr(r.id) === id)) {
-            toast(t("receiver_already_selected", "Receiver already selected"));
+        if (id && window.selectedReceivers.some((r) => toStr(r.id) === id))
             return false;
-        }
         const phone = (item.phone || "").trim();
         const email = (item.email || "").trim().toLowerCase();
         const name = (item.name || "").trim().toLowerCase();
@@ -243,42 +397,14 @@
                 return true;
             return false;
         };
-        if (window.selectedReceivers.some(dup)) {
-            toast(t("receiver_already_selected", "Receiver already selected"));
-            return false;
-        }
+        if (window.selectedReceivers.some(dup)) return false;
         return true;
     }
 
-    function addExisting() {
-        const select = document.getElementById("receiver_select");
-        const id = toStr(select ? select.value : "");
-        if (!id || !window._receiversMap[id]) {
-            toast(t("select_receiver", "Please select a receiver"));
-            return;
-        }
-        const raw = window._receiversMap[id];
-        const item = normalizeReceiver(raw);
-        item.isNew = false;
-
-        if (!validateReceiverFields(item)) return;
-        if (!canAdd(item)) return;
-
-        pushReceiver(item);
-
-        // remove from dropdown to avoid duplicates
-        const opt = select.querySelector(`option[value="${CSS.escape(id)}"]`);
-        if (opt) opt.remove();
-        if (select) select.value = "";
-
-        resetReceiverTypeSelection();
-        toast(t("receiver_added", "Receiver added"), "success");
-    }
-
-    function addNew() {
+    function collectReceiverFromForm(existingId = "") {
         const item = {
-            id: `tmp_${Date.now()}`,
-            isNew: true,
+            id: existingId || `tmp_${Date.now()}`,
+            isNew: !existingId,
             name: valueOf("name"),
             phone: valueOf("phone"),
             additional_phone: valueOf("additional_phone"),
@@ -292,10 +418,57 @@
             state_name: displayName(textOf("state")),
             city_name: displayName(textOf("city")),
         };
+        return item;
+    }
 
-        if (!validateReceiverFields(item)) return;
-        if (!canAdd(item)) return;
+    function addExisting() {
+        const select = $receiverSelect();
+        const existingId = toStr(select ? select.value : "");
+        if (!existingId || !window._receiversMap[existingId]) {
+            toast(t("select_receiver", "Please select a receiver"));
+            return;
+        }
+        const item = collectReceiverFromForm(existingId);
+        if (!validateReceiverFields(item)) {
+            toast(
+                t(
+                    "add_receiver_error",
+                    "Please fill all required receiver fields"
+                )
+            );
+            updateAddButtonState();
+            return;
+        }
+        if (!canAdd(item)) {
+            toast(t("receiver_already_selected", "Receiver already selected"));
+            return;
+        }
+        pushReceiver(item);
+        const opt = select.querySelector(
+            `option[value="${CSS.escape(existingId)}"]`
+        );
+        if (opt) opt.remove();
+        select.value = "";
+        resetReceiverTypeSelection();
+        toast(t("receiver_added", "Receiver added"), "success");
+    }
 
+    function addNew() {
+        const item = collectReceiverFromForm("");
+        if (!validateReceiverFields(item)) {
+            toast(
+                t(
+                    "add_receiver_error",
+                    "Please fill all required receiver fields"
+                )
+            );
+            updateAddButtonState();
+            return;
+        }
+        if (!canAdd(item)) {
+            toast(t("receiver_already_selected", "Receiver already selected"));
+            return;
+        }
         pushReceiver(item);
         clearReceiverForm();
         resetReceiverTypeSelection();
@@ -308,6 +481,7 @@
         refreshSelectedReceiversView();
         syncNextButton();
         document.dispatchEvent(new CustomEvent("receiversChanged"));
+        updateAddButtonState();
     }
 
     function removeReceiverAt(index) {
@@ -316,12 +490,10 @@
         refreshSelectedReceiversView();
         syncNextButton();
         document.dispatchEvent(new CustomEvent("receiversChanged"));
-
-        // if it was an existing fetched receiver, add back to dropdown
         if (removed && !removed.isNew) {
             const original = initialExistingMap[toStr(removed.id)];
             if (original) {
-                const select = document.getElementById("receiver_select");
+                const select = $receiverSelect();
                 if (
                     select &&
                     !select.querySelector(
@@ -339,14 +511,13 @@
                 }
             }
         }
+        updateAddButtonState();
     }
 
-    // ----------------- form helpers -----------------
     function valueOf(id) {
         const el = document.getElementById(id);
         return el ? el.value : "";
     }
-
     function textOf(id) {
         const el = document.getElementById(id);
         if (!el) return "";
@@ -376,29 +547,27 @@
         const phoneL = t("phone", "Phone");
         const cityL = t("city", "City");
         const addrL = t("address", "Address");
-
         let html = "";
         window.selectedReceivers.forEach((r, idx) => {
             const cityTxt = displayName(r.city_name);
             html += `
-      <div class="card mb-2">
-        <div class="card-body">
-          <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
-            <div>
-              <div><strong>${titleR} #${idx + 1}:</strong> ${r.name || ""}${
+          <div class="card mb-2">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                <div>
+                  <div><strong>${titleR} #${idx + 1}:</strong> ${r.name || ""}${
                 r.isNew ? " • NEW" : ""
             }</div>
-              <div><strong>${phoneL}:</strong> ${r.phone || ""}</div>
-              <div><strong>${cityL}:</strong> ${cityTxt}</div>
-              <div><strong>${addrL}:</strong> ${r.address || ""}</div>
+                  <div><strong>${phoneL}:</strong> ${r.phone || ""}</div>
+                  <div><strong>${cityL}:</strong> ${cityTxt}</div>
+                  <div><strong>${addrL}:</strong> ${r.address || ""}</div>
+                </div>
+                <button type="button" class="btn btn-sm btn-outline-danger" data-index="${idx}">&times;</button>
+              </div>
             </div>
-            <button type="button" class="btn btn-sm btn-outline-danger" data-index="${idx}">&times;</button>
-          </div>
-        </div>
-      </div>`;
+          </div>`;
         });
         box.innerHTML = html;
-
         box.querySelectorAll("button.btn-outline-danger").forEach((btn) => {
             if (!btn.dataset.bound) {
                 btn.addEventListener("click", function () {
@@ -426,314 +595,13 @@
         btnNext.classList.toggle("btn-primary", ok);
     }
 
-    // ----------------- country/state/city loaders -----------------
-    function ensureReceiverStateFieldVisible() {
-        const stateField = document.getElementById("state");
-        if (stateField) {
-            stateField.style.display = "block";
-            stateField.style.visibility = "visible";
-            stateField.style.opacity = "1";
-            stateField.disabled = false;
-        }
-    }
-
-    function setupReceiverFormByShippingType() {
-        const countryField = document.getElementById("country");
-        const stateField = document.getElementById("state");
-        const cityField = document.getElementById("city");
-        if (!countryField || !stateField || !cityField) return;
-
-        const isInternational = window.selectedMethod === "international";
-
-        if (isInternational) {
-            loadCountries();
-            stateField.innerHTML = `<option value="">${t(
-                "select_state",
-                "Select State"
-            )}</option>`;
-            stateField.disabled = true;
-            cityField.innerHTML = `<option value="">${t(
-                "select_city",
-                "Select City"
-            )}</option>`;
-            cityField.disabled = true;
-        } else {
-            loadCountriesForLocalShipping();
-            stateField.innerHTML = `<option value="">${t(
-                "select_state",
-                "Select State"
-            )}</option>`;
-            cityField.innerHTML = `<option value="">${t(
-                "select_city",
-                "Select City"
-            )}</option>`;
-            cityField.disabled = true;
-            setTimeout(() => {
-                if (window.selectedMethod === "local")
-                    loadStatesByCountry(SAUDI_ID, null);
-            }, 200);
-        }
-    }
-
-    function loadCountries() {
-        const countryField = document.getElementById("country");
-        if (!countryField) return;
-        fetchJson(
-            "https://ghaya-express-staging-af597af07557.herokuapp.com/api/countries?page=0&pageSize=200&orderColumn=createdAt&orderDirection=desc",
-            {
-                headers: {
-                    accept: "*/*",
-                    "x-api-key": "xwqn5mb5mpgf5u3vpro09i8pmw9fhkuu",
-                },
-            }
-        )
-            .then((data) => {
-                const list = (data && data.results) || [];
-                countryField.innerHTML = `<option value="">${t(
-                    "select_country",
-                    "Select Country"
-                )}</option>`;
-                list.forEach((c) => {
-                    const opt = document.createElement("option");
-                    opt.value = c.id || c._id;
-                    opt.textContent = displayName(c.name) || c.code || "";
-                    countryField.appendChild(opt);
-                });
-                countryField.disabled = false;
-            })
-            .catch(() => {
-                countryField.innerHTML = `<option value="">${t(
-                    "error_loading_countries",
-                    "Error loading countries"
-                )}</option>`;
-                countryField.disabled = true;
-            });
-
-        if (!countryField.dataset.bound) {
-            countryField.addEventListener("change", function () {
-                const v = this.value;
-                const stateField = document.getElementById("state");
-                const cityField = document.getElementById("city");
-                if (stateField) {
-                    stateField.disabled = true;
-                    stateField.innerHTML = `<option value="">${t(
-                        "select_state",
-                        "Select State"
-                    )}</option>`;
-                }
-                if (cityField) {
-                    cityField.disabled = true;
-                    cityField.innerHTML = `<option value="">${t(
-                        "select_city",
-                        "Select City"
-                    )}</option>`;
-                }
-                if (v) loadStatesByCountry(v, null);
-            });
-            countryField.dataset.bound = "1";
-        }
-    }
-
-    function loadCountriesForLocalShipping() {
-        const countryField = document.getElementById("country");
-        if (!countryField) return;
-        fetchJson(
-            "https://ghaya-express-staging-af597af07557.herokuapp.com/api/countries?page=0&pageSize=200&orderColumn=createdAt&orderDirection=desc",
-            {
-                headers: {
-                    accept: "*/*",
-                    "x-api-key": "xwqn5mb5mpgf5u3vpro09i8pmw9fhkuu",
-                },
-            }
-        )
-            .then((data) => {
-                const list = (data && data.results) || [];
-                countryField.innerHTML = `<option value="">${t(
-                    "select_country",
-                    "Select Country"
-                )}</option>`;
-                list.forEach((c) => {
-                    const opt = document.createElement("option");
-                    opt.value = c.id || c._id;
-                    opt.textContent = displayName(c.name) || c.code || "";
-                    if ((c.id || c._id) === SAUDI_ID) {
-                        opt.selected = true;
-                        setTimeout(
-                            () => loadStatesByCountry(SAUDI_ID, null),
-                            100
-                        );
-                    }
-                    countryField.appendChild(opt);
-                });
-                countryField.disabled = true; // local shipping locks to KSA
-            })
-            .catch(() => {
-                countryField.innerHTML = `<option value="">${t(
-                    "error_loading_countries",
-                    "Error loading countries"
-                )}</option>`;
-                countryField.disabled = true;
-            });
-    }
-
-    function loadCountriesForExistingReceiver(selectedCountryId) {
-        const countryField = document.getElementById("country");
-        if (!countryField) return;
-        fetchJson(
-            "https://ghaya-express-staging-af597af07557.herokuapp.com/api/countries?page=0&pageSize=200&orderColumn=createdAt&orderDirection=desc",
-            {
-                headers: {
-                    accept: "*/*",
-                    "x-api-key": "xwqn5mb5mpgf5u3vpro09i8pmw9fhkuu",
-                },
-            }
-        )
-            .then((data) => {
-                const list = (data && data.results) || [];
-                countryField.innerHTML = `<option value="">${t(
-                    "select_country",
-                    "Select Country"
-                )}</option>`;
-                list.forEach((c) => {
-                    const opt = document.createElement("option");
-                    opt.value = c.id || c._id;
-                    opt.textContent = displayName(c.name) || c.code || "";
-                    if ((c.id || c._id) === selectedCountryId)
-                        opt.selected = true;
-                    countryField.appendChild(opt);
-                });
-                countryField.disabled = false;
-            })
-            .catch(() => {
-                countryField.innerHTML = `<option value="">${t(
-                    "error_loading_countries",
-                    "Error loading countries"
-                )}</option>`;
-                countryField.disabled = true;
-            });
-    }
-
-    function loadStatesByCountry(countryId, selectedStateId = null) {
-        const stateField = document.getElementById("state");
-        if (!stateField) return;
-        fetchJson(
-            `https://ghaya-express-staging-af597af07557.herokuapp.com/api/states?page=0&pageSize=200&orderColumn=createdAt&orderDirection=desc&countryId=${encodeURIComponent(
-                countryId
-            )}`,
-            {
-                headers: {
-                    accept: "*/*",
-                    "x-api-key": "xwqn5mb5mpgf5u3vpro09i8pmw9fhkuu",
-                },
-            }
-        )
-            .then((data) => {
-                const list = (data && data.results) || [];
-                stateField.innerHTML = `<option value="">${t(
-                    "select_state",
-                    "Select State"
-                )}</option>`;
-                list.forEach((st) => {
-                    const opt = document.createElement("option");
-                    opt.value = st.id || st._id;
-                    opt.textContent = displayName(st.name) || "";
-                    if (
-                        selectedStateId &&
-                        (st.id === selectedStateId ||
-                            st._id === selectedStateId)
-                    )
-                        opt.selected = true;
-                    stateField.appendChild(opt);
-                });
-                stateField.disabled = false;
-            })
-            .catch(() => {
-                stateField.innerHTML = `<option value="">${t(
-                    "error_loading_states",
-                    "Error loading states"
-                )}</option>`;
-                stateField.disabled = true;
-            });
-
-        if (!stateField.dataset.bound) {
-            stateField.addEventListener("change", function () {
-                const v = this.value;
-                const cityField = document.getElementById("city");
-                if (cityField) {
-                    cityField.disabled = true;
-                    cityField.innerHTML = `<option value="">${t(
-                        "select_city",
-                        "Select City"
-                    )}</option>`;
-                }
-                if (v) loadReceiverCitiesForState(v, null);
-            });
-            stateField.dataset.bound = "1";
-        }
-    }
-
-    function loadReceiverCitiesForState(stateId, selectedCityId = null) {
-        const cityField = document.getElementById("city");
-        if (!cityField) return;
-
-        // do not preview cities when no state selected
-        if (!stateId) {
-            cityField.disabled = true;
-            cityField.innerHTML = `<option value="">${t(
-                "select_city",
-                "Select City"
-            )}</option>`;
-            return;
-        }
-
-        fetchJson(
-            `https://ghaya-express-staging-af597af07557.herokuapp.com/api/cities?page=0&pageSize=200&orderColumn=createdAt&orderDirection=desc&stateId=${encodeURIComponent(
-                stateId
-            )}`,
-            {
-                headers: {
-                    accept: "*/*",
-                    "x-api-key": "xwqn5mb5mpgf5u3vpro09i8pmw9fhkuu",
-                },
-            }
-        )
-            .then((data) => {
-                const list = (data && data.results) || [];
-                cityField.innerHTML = `<option value="">${t(
-                    "select_city",
-                    "Select City"
-                )}</option>`;
-                list.forEach((ci) => {
-                    const opt = document.createElement("option");
-                    opt.value = ci.id || ci._id;
-                    opt.textContent = displayName(ci.name) || "";
-                    if (
-                        selectedCityId &&
-                        (ci.id === selectedCityId || ci._id === selectedCityId)
-                    )
-                        opt.selected = true;
-                    cityField.appendChild(opt);
-                });
-                cityField.disabled = false;
-            })
-            .catch(() => {
-                cityField.innerHTML = `<option value="">${t(
-                    "error_loading_cities",
-                    "Error loading cities"
-                )}</option>`;
-                cityField.disabled = true;
-            });
-    }
-
-    // ----------------- form population/reset -----------------
-    function populateReceiverForm(receiverId) {
+    async function populateReceiverForm(receiverId) {
         const r =
             (window._receiversMap && window._receiversMap[receiverId]) ||
             (window.selectedReceivers || []).find(
                 (x) => toStr(x.id) === toStr(receiverId)
             );
         if (!r) return;
-
         const n = normalizeReceiver(r);
 
         setIf("name", n.name);
@@ -743,133 +611,148 @@
         setIf("address", n.address);
         setIf("postal_code", n.postal_code);
 
-        if (n.country_id) loadCountriesForExistingReceiver(n.country_id);
-        if (n.country_id) loadStatesByCountry(n.country_id, n.state_id);
-        if (n.state_id) loadReceiverCitiesForState(n.state_id, n.city_id);
-
+        await loadCountries(n.country_id || "");
+        if (n.country_id) await loadStates(n.country_id, n.state_id || "");
+        if (n.country_id && n.state_id)
+            await loadCities(n.country_id, n.state_id, n.city_id || "");
         ensureReceiverStateFieldVisible();
+
+        const formSection = $newSection();
+        if (formSection) formSection.style.display = "block";
+        updateAddButtonState();
     }
 
     function clearReceiverForm() {
-        const fieldIds = [
+        [
             "name",
             "phone",
             "additional_phone",
             "email",
             "address",
             "postal_code",
-        ];
-
-        fieldIds.forEach((id) => {
+        ].forEach((id) => {
             const el = document.getElementById(id);
-            if (el) {
-                el.value = "";
-                el.textContent = "";
-                el.innerHTML = "";
-                el.classList.remove("is-invalid", "is-valid");
-                el.setAttribute("value", "");
-            }
+            if (el) el.value = "";
         });
-        const countryField = document.getElementById("country");
-        const stateField = document.getElementById("state");
-        const cityField = document.getElementById("city");
-
-        if (countryField) {
-            countryField.innerHTML = `<option value="">${t(
+        const c = $country(),
+            s = $state(),
+            ci = $city();
+        if (c) {
+            c.innerHTML = `<option value="">${t(
                 "select_country",
                 "Select Country"
             )}</option>`;
-            countryField.value = "";
-            countryField.selectedIndex = 0;
+            c.value = "";
         }
-        if (stateField) {
-            stateField.innerHTML = `<option value="">${t(
+        if (s) {
+            s.innerHTML = `<option value="">${t(
                 "select_state",
                 "Select State"
             )}</option>`;
-            stateField.value = "";
-            stateField.selectedIndex = 0;
+            s.value = "";
+            s.disabled = true;
         }
-        if (cityField) {
-            cityField.innerHTML = `<option value="">${t(
+        if (ci) {
+            ci.innerHTML = `<option value="">${t(
                 "select_city",
                 "Select City"
             )}</option>`;
-            cityField.value = "";
-            cityField.selectedIndex = 0;
+            ci.value = "";
+            ci.disabled = true;
         }
+        updateAddButtonState();
     }
 
     function resetFormCompletely() {
         clearReceiverForm();
-        const existingRadio = document.getElementById("existing_receiver");
-        const newRadio = document.getElementById("new_receiver");
+        const existingRadio = $existingRadio();
+        const newRadio = $newRadio();
         if (existingRadio) existingRadio.checked = false;
         if (newRadio) newRadio.checked = false;
-        const receiverSelect = document.getElementById("receiver_select");
+        const receiverSelect = $receiverSelect();
         if (receiverSelect) receiverSelect.value = "";
-        const existingSection = document.getElementById(
-            "existing_receiver_section"
-        );
-        const newSection = document.getElementById("new_receiver_section");
+        const existingSection = $existingSection();
+        const newSection = $newSection();
         if (existingSection) existingSection.style.display = "none";
         if (newSection) newSection.style.display = "none";
+        updateAddButtonState();
     }
-
     function resetReceiverTypeSelection() {
         resetFormCompletely();
     }
 
     function setIf(id, val) {
         const el = document.getElementById(id);
-        if (el != null && typeof val !== "undefined" && val !== null)
-            el.value = val;
+        if (el != null) el.value = val ?? "";
+    }
+
+    function isFormComplete() {
+        const requiredIds = [
+            "name",
+            "phone",
+            "email",
+            "address",
+            "country",
+            "state",
+            "city",
+        ];
+        return requiredIds.every((id) => String(valueOf(id) || "").trim());
+    }
+
+    function updateAddButtonState() {
+        const btn = $addBtn();
+        if (!btn) return;
+        const modeExisting = $existingRadio()?.checked;
+        const modeNew = $newRadio()?.checked;
+
+        let enable = false;
+        if (modeExisting) {
+            const selectedId = $receiverSelect()?.value || "";
+            enable = !!selectedId && isFormComplete();
+        } else if (modeNew) {
+            enable = isFormComplete();
+        } else {
+            enable = false;
+        }
+
+        btn.disabled = !enable;
+        btn.classList.toggle("btn-secondary", !enable);
+        btn.classList.toggle("btn-success", enable);
+    }
+
+    function bindFormFieldListeners() {
+        const root = $newSection() || document;
+        const sel = ["input", "select", "textarea"];
+        sel.forEach((tag) => {
+            root.querySelectorAll(tag).forEach((el) => {
+                if (!el.dataset.receiverBind) {
+                    el.addEventListener("input", updateAddButtonState);
+                    el.addEventListener("change", updateAddButtonState);
+                    el.dataset.receiverBind = "1";
+                }
+            });
+        });
+        const rsel = $receiverSelect();
+        if (rsel && !rsel.dataset.receiverBind) {
+            rsel.addEventListener("change", () => {
+                const id = rsel.value;
+                if (id && $existingRadio()?.checked) populateReceiverForm(id);
+                updateAddButtonState();
+            });
+            rsel.dataset.receiverBind = "1";
+        }
     }
 
     function wireUI() {
-        const addBtn = document.getElementById("add-receiver-btn");
-        const receiverSelect = document.getElementById("receiver_select");
-        const existingRadio = document.getElementById("existing_receiver");
-        const newRadio = document.getElementById("new_receiver");
-        const newSection = document.getElementById("new_receiver_section");
-        const existingSection = document.getElementById(
-            "existing_receiver_section"
-        );
+        const addBtn = $addBtn();
+        const receiverSelect = $receiverSelect();
+        const existingRadio = $existingRadio();
+        const newRadio = $newRadio();
+        const newSection = $newSection();
+        const existingSection = $existingSection();
 
         function forceClearNewForm() {
-            const ids = [
-                "name",
-                "phone",
-                "additional_phone",
-                "email",
-                "address",
-                "postal_code",
-            ];
-            ids.forEach((id) => {
-                const el = document.getElementById(id);
-                if (el) el.value = "";
-            });
-            const country = document.getElementById("country");
-            const state = document.getElementById("state");
-            const city = document.getElementById("city");
-
-            if (country) country.value = "";
-            if (state) {
-                state.innerHTML = `<option value="">${t(
-                    "select_state",
-                    "Select State"
-                )}</option>`;
-                state.value = "";
-                state.disabled = true;
-            }
-            if (city) {
-                city.innerHTML = `<option value="">${t(
-                    "select_city",
-                    "Select City"
-                )}</option>`;
-                city.value = "";
-                city.disabled = true;
-            }
+            clearReceiverForm();
         }
 
         function resetExistingSelect() {
@@ -880,79 +763,59 @@
             existingRadio.addEventListener("change", function () {
                 if (!this.checked) return;
                 if (existingSection) existingSection.style.display = "block";
-                if (newSection) {
-                    newSection.style.display = "none";
-                    forceClearNewForm(); 
-                }
-                resetExistingSelect(); 
+                forceClearNewForm();
+                resetExistingSelect();
+                updateAddButtonState();
             });
             existingRadio.dataset.bound = "1";
         }
 
         if (newRadio && !newRadio.dataset.bound) {
-            newRadio.addEventListener("change", function () {
+            newRadio.addEventListener("change", async function () {
                 if (!this.checked) return;
                 if (existingSection) existingSection.style.display = "none";
                 if (newSection) newSection.style.display = "block";
-
                 forceClearNewForm();
                 resetExistingSelect();
-
-                if (typeof setupReceiverFormByShippingType === "function")
-                    setupReceiverFormByShippingType();
-
-                if (typeof ensureReceiverStateFieldVisible === "function")
-                    ensureReceiverStateFieldVisible();
+                await setupReceiverFormByShippingType();
+                ensureReceiverStateFieldVisible();
+                updateAddButtonState();
             });
             newRadio.dataset.bound = "1";
         }
 
-        if (receiverSelect && !receiverSelect.dataset.bound) {
-            receiverSelect.addEventListener("change", function () {
-                const id = this.value;
-                if (newRadio && newRadio.checked) {
-                    if (id) {
-                        if (typeof populateReceiverForm === "function")
-                            populateReceiverForm(id);
-                        if (newSection) newSection.style.display = "block";
-                    } else {
-                        forceClearNewForm();
-                    }
-                }
-            });
-            receiverSelect.dataset.bound = "1";
-        }
-
-        const onAdd = () => {
-            if (existingRadio && existingRadio.checked) return addExisting();
-            if (newRadio && newRadio.checked) return addNew();
-            toast(t("select_receiver", "Please choose receiver type"), "error");
-        };
         if (addBtn && !addBtn.dataset.bound) {
-            addBtn.addEventListener("click", onAdd);
+            addBtn.addEventListener("click", () => {
+                if ($existingRadio()?.checked) return addExisting();
+                if ($newRadio()?.checked) return addNew();
+                toast(
+                    t("select_receiver", "Please choose receiver type"),
+                    "error"
+                );
+            });
             addBtn.dataset.bound = "1";
         }
-    }
 
-    function canProceedToNextStep() {
-        return (
-            Array.isArray(window.selectedReceivers) &&
-            window.selectedReceivers.length > 0
-        );
+        bindFormFieldListeners();
+        updateAddButtonState();
     }
 
     window.loadReceivers = loadReceivers;
     window.populateReceiverForm = populateReceiverForm;
     window.ensureReceiverStateFieldVisible = ensureReceiverStateFieldVisible;
     window.setupReceiverFormByShippingType = setupReceiverFormByShippingType;
-    window.canProceedToNextStep = canProceedToNextStep;
+    window.canProceedToNextStep = () =>
+        Array.isArray(window.selectedReceivers) &&
+        window.selectedReceivers.length > 0;
 
     document.addEventListener("DOMContentLoaded", () => {
         resetFormCompletely();
         if (window.selectedMethod) setupReceiverFormByShippingType();
+        updateAddButtonState();
     });
 
     document.addEventListener("shippingMethodSelected", () => {
         setupReceiverFormByShippingType();
+        updateAddButtonState();
     });
 })();
