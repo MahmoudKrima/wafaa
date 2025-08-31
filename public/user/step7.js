@@ -37,15 +37,14 @@
     function restoreFormStateFromValidationErrors() {
         const oldInput = window.OLD_INPUT || {};
         const oldState = window.OLD_STATE || {};
-        if (oldState.selectedCompany) {
+        if (oldState.selectedCompany)
             window.selectedCompany = oldState.selectedCompany;
-        }
-        if (oldState.companyPricing) {
+        if (oldState.companyPricing)
             window.companyPricing = oldState.companyPricing;
-        }
-        if (oldState.selectedMethod) {
+        if (oldState.selectedMethod)
             window.selectedMethod = oldState.selectedMethod;
-        }
+
+        // Restore package fields so previews can pick them up
         const fieldsToRestore = {
             package_type: oldInput.package_type,
             package_number: oldInput.package_number,
@@ -55,46 +54,52 @@
             weight: oldInput.weight,
             package_description: oldInput.package_description,
         };
-
         Object.entries(fieldsToRestore).forEach(([fieldId, value]) => {
             if (value !== undefined && value !== null) {
                 const field = document.getElementById(fieldId);
                 if (field) {
-                    if (field.type === "checkbox") {
-                        field.checked = Boolean(value);
-                    } else if (field.tagName === "SELECT") {
+                    if (field.tagName === "SELECT") {
                         field.value = value;
+                        // if the exact value doesn't exist, try to select by text
+                        if (field.value !== String(value)) {
+                            const opt = Array.from(field.options).find(
+                                (o) =>
+                                    o.textContent.trim() ===
+                                    String(value).trim()
+                            );
+                            if (opt) field.value = opt.value;
+                        }
+                    } else if (field.type === "checkbox") {
+                        field.checked = Boolean(value);
                     } else {
                         field.value = value;
                     }
                 }
             }
         });
+
         if (oldInput.accept_terms) {
             const termsField = document.getElementById("accept_terms");
-            if (termsField) {
-                termsField.checked = true;
-            }
+            if (termsField) termsField.checked = true;
         }
         if (oldInput.payment_method) {
             const paymentMethodField = document.querySelector(
                 `input[name="payment_method"][value="${oldInput.payment_method}"]`
             );
-            if (paymentMethodField) {
-                paymentMethodField.checked = true;
-            }
+            if (paymentMethodField) paymentMethodField.checked = true;
+            window.selectedPaymentMethod = oldInput.payment_method;
+            const hidden = document.getElementById("payment_method_hidden");
+            if (hidden) hidden.value = oldInput.payment_method;
         }
         if (oldInput.selected_receivers) {
             try {
                 const receivers = JSON.parse(oldInput.selected_receivers);
-                if (Array.isArray(receivers)) {
+                if (Array.isArray(receivers))
                     window.selectedReceivers = receivers;
-                }
             } catch (e) {}
         }
-        if (typeof window.populateAllSummaries === "function") {
+        if (typeof window.populateAllSummaries === "function")
             window.populateAllSummaries();
-        }
     }
     async function fetchUserWalletBalance() {
         try {
@@ -117,7 +122,6 @@
         } catch (error) {}
         return 0;
     }
-
     function _receivers() {
         return Array.isArray(window.selectedReceivers)
             ? window.selectedReceivers
@@ -141,19 +145,18 @@
     function _userPricePerReceiver() {
         const company = window.selectedCompany || {};
         const m = _method();
-        if (m === "local") {
+        if (m === "local")
             return num(
                 company.effectiveLocalPrice ??
                     company.userLocalPrice ??
                     company.localPrice
             );
-        } else if (m === "international") {
+        if (m === "international")
             return num(
                 company.effectiveInternationalPrice ??
                     company.userInternationalPrice ??
                     company.internationalPrice
             );
-        }
         return 0;
     }
     function _adminCodPerReceiver() {
@@ -180,32 +183,114 @@
         return el ? num(el.value) : 0;
     }
     function _isCodSelected() {
+        const fromGlobal =
+            window.selectedPaymentMethod ||
+            document.getElementById("payment_method_hidden")?.value;
+        if (fromGlobal) return String(fromGlobal).toLowerCase() === "cod";
         const r = document.querySelector(
             'input[name="payment_method"]:checked'
         );
         return !!(r && r.value === "cod");
     }
+    function _codAmount() {
+        const ids = [
+            document.getElementById("cod-amount-hidden")?.value,
+            document.querySelector('input[name="cod_amount"]')?.value,
+            window.codAmount,
+        ];
+        for (const v of ids) {
+            const n = num(v, NaN);
+            if (!isNaN(n)) return Math.max(0, n);
+        }
+        return 0;
+    }
+
+    // ---------- NEW: actually fill "Package Details" ----------
+    function textOfSelect(el) {
+        if (!el) return "";
+        if (el.tagName !== "SELECT") return el.value || "";
+        const opt = el.options[el.selectedIndex];
+        return (opt && opt.textContent) || el.value || "";
+    }
+    function populatePackageDetailsSummary() {
+        const O = window.OLD_INPUT || {};
+
+        const pkgTypeEl = document.getElementById("package_type");
+        const pkgCountEl = document.getElementById("package_number");
+        const weightEl = document.getElementById("weight");
+        const lenEl = document.getElementById("length");
+        const widEl = document.getElementById("width");
+        const heiEl = document.getElementById("height");
+        const notesEl = document.getElementById("package_description");
+
+        const pkgTypeText =
+            textOfSelect(pkgTypeEl) ||
+            O.package_type ||
+            t("package_type", "Package Type");
+        const pkgCount =
+            (pkgCountEl && pkgCountEl.value) || O.package_number || "";
+        const weight = (weightEl && weightEl.value) || O.weight || "";
+        const length = (lenEl && lenEl.value) || O.length || "";
+        const width = (widEl && widEl.value) || O.width || "";
+        const height = (heiEl && heiEl.value) || O.height || "";
+        const notes = (notesEl && notesEl.value) || O.package_description || "";
+
+        const set = (id, val, fb = "") => {
+            const span = document.getElementById(id);
+            if (!span) return;
+            const clean = String(val ?? "").trim();
+            span.textContent = clean || fb;
+        };
+
+        set(
+            "package-type-preview",
+            pkgTypeText,
+            t("package_type", "Package Type")
+        );
+        set(
+            "package-count-preview",
+            pkgCount,
+            t("package_count", "Package Count")
+        );
+        set("package-weight-preview", weight, t("weight_kg", "Weight (KG)"));
+        set("package-length-preview", length, t("length_cm", "Length (cm)"));
+        set("package-width-preview", width, t("width_cm", "Width (cm)"));
+        set("package-height-preview", height, t("height_cm", "Height (cm)"));
+
+        const notesSpan = document.getElementById("package-notes-preview");
+        if (notesSpan) {
+            const txt = String(notes || "").trim();
+            if (txt) {
+                notesSpan.classList.remove("text-muted");
+                notesSpan.textContent = txt;
+            } else {
+                notesSpan.classList.add("text-muted");
+                notesSpan.textContent = t(
+                    "no_special_notes",
+                    "No special notes"
+                );
+            }
+        }
+    }
+    // ----------------------------------------------------------
+
     function populateShippingCompanySummary() {
         const company = window.selectedCompany;
         if (!company) return;
-
         const logoPreview = document.getElementById("company-logo-preview");
         const namePreview = document.getElementById("company-name-preview");
         const servicePreview = document.getElementById(
             "company-service-preview"
         );
-
         if (logoPreview && company.logoUrl) {
             logoPreview.src = company.logoUrl;
             logoPreview.style.display = "block";
         } else if (logoPreview) {
             logoPreview.style.display = "none";
         }
-
         if (namePreview) namePreview.textContent = company.name || "N/A";
         if (servicePreview)
             servicePreview.textContent = company.serviceName || "N/A";
-
         const methodPreview = document.getElementById(
             "shipping-method-preview"
         );
@@ -232,10 +317,8 @@
             }
         }
     }
-
     function populateUserInformationSummary() {
         const m = (id) => document.getElementById(id);
-
         const out = {
             name: m("sender-name-preview"),
             phone: m("sender-phone-preview"),
@@ -263,7 +346,6 @@
         };
         const firstNonEmpty = (...vals) =>
             vals.find((v) => typeof v === "string" && v.trim().length) ?? "";
-
         const mapOld = {
             name: O.sender_name,
             phone: O.sender_phone,
@@ -272,7 +354,6 @@
             city: O.sender_city,
             postal: O.sender_postal_code,
         };
-
         if (out.name)
             out.name.textContent = firstNonEmpty(
                 mapOld.name,
@@ -310,15 +391,12 @@
                 fb.postal
             );
     }
-
     function populateReceiversSummary() {
         const box = document.getElementById("receivers-summary-container");
         const countEl = document.getElementById("receivers-count-preview");
         if (!box || !countEl) return;
-
         const list = _receivers();
         countEl.textContent = list.length;
-
         if (!list.length) {
             box.innerHTML = `<p class="text-muted">${t(
                 "no_receivers_selected",
@@ -367,41 +445,24 @@
         });
         box.innerHTML = html;
     }
-
-    function populatePackageDetailsSummary() {
-        const g = (id) => document.getElementById(id);
-        const out = {
-            type: g("package-type-preview"),
-            cnt: g("package-count-preview"),
-            w: g("package-weight-preview"),
-            L: g("package-length-preview"),
-            W: g("package-width-preview"),
-            H: g("package-height-preview"),
-            notes: g("package-notes-preview"),
-        };
-        const s5 = {
-            type: g("package_type"),
-            cnt: g("package_number"),
-            w: g("weight"),
-            L: g("length"),
-            W: g("width"),
-            H: g("height"),
-            notes: g("package_description"),
-        };
-
-        if (out.type)
-            out.type.textContent = s5.type
-                ? s5.type.value
-                : t("package_type", "Type");
-        if (out.cnt) out.cnt.textContent = s5.cnt ? s5.cnt.value : "1";
-        if (out.w) out.w.textContent = s5.w ? s5.w.value : "0";
-        if (out.L) out.L.textContent = s5.L ? s5.L.value : "0";
-        if (out.W) out.W.textContent = s5.W ? s5.W.value : "0";
-        if (out.H) out.H.textContent = s5.H ? s5.H.value : "0";
-        if (out.notes)
-            out.notes.textContent = s5.notes
-                ? s5.notes.value
-                : t("no_special_notes", "No special notes");
+    function ensureCodAmountRow() {
+        const codFeesEl = document.getElementById("cod-fees-preview");
+        if (!codFeesEl) return null;
+        let row = document.getElementById("cod-amount-row");
+        if (!row) {
+            const parentRow = codFeesEl.closest(".row");
+            row = document.createElement("div");
+            row.className = "row";
+            row.id = "cod-amount-row";
+            row.innerHTML = `
+                <div class="col-md-12" style="display:flex;justify-content:space-between;">
+                    <div class="mb-3">${t("cod_amount", "COD Amount")}:</div>
+                    <div class="h6 mb-0 text-primary" id="cod-amount-display"></div>
+                </div>`;
+            if (parentRow && parentRow.parentNode)
+                parentRow.parentNode.insertBefore(row, parentRow.nextSibling);
+        }
+        return row;
     }
     function populatePaymentDetailsCard(perShip, perExtra, perCod, isCOD, cur) {
         const methodEl = document.getElementById("payment-method-preview");
@@ -409,7 +470,6 @@
             methodEl.textContent = isCOD
                 ? t("cash_on_delivery", "Cash on Delivery")
                 : t("wallet", "Wallet");
-
         const shipEl = document.getElementById("shipping-fee-preview");
         const extraEl = document.getElementById("extra-fees-preview");
         const totalEl = document.getElementById("total-amount-preview");
@@ -421,15 +481,12 @@
         );
         const perReceiverTotalEl =
             document.getElementById("per-receiver-total");
-
         const receiversCount = _receivers().length || 1;
-
         const totalShipping = perShip * receiversCount;
         const totalExtra = perExtra * receiversCount;
         const totalCod = isCOD ? perCod * receiversCount : 0;
         const totalPerReceiver = perShip + perExtra + (isCOD ? perCod : 0);
         const grandTotal = totalShipping + totalExtra + totalCod;
-
         if (shipEl) shipEl.textContent = `${totalShipping.toFixed(2)} ${cur}`;
         if (extraEl) extraEl.textContent = `${totalExtra.toFixed(2)} ${cur}`;
         if (codFeesEl) codFeesEl.textContent = `${totalCod.toFixed(2)} ${cur}`;
@@ -441,52 +498,65 @@
             perReceiverTotalEl.textContent = `${totalPerReceiver.toFixed(
                 2
             )} ${cur}`;
+        const codRow = ensureCodAmountRow();
+        const codAmount = _codAmount();
+        if (codRow) {
+            if (isCOD && codAmount > 0) {
+                codRow.style.display = "";
+                const disp = document.getElementById("cod-amount-display");
+                if (disp) disp.textContent = `${codAmount.toFixed(2)} ${cur}`;
+            } else {
+                codRow.style.display = "none";
+            }
+        }
         return grandTotal;
     }
-
     function updateWalletBalanceDisplay() {
-        const paymentMethod =
+        const method = (
+            window.selectedPaymentMethod ||
+            document.getElementById("payment_method_hidden")?.value ||
             document.querySelector('input[name="payment_method"]:checked')
-                ?.value || "wallet";
+                ?.value ||
+            "wallet"
+        ).toLowerCase();
         const walletBalanceSection = document.getElementById(
             "wallet-balance-section"
         );
         const cur = _currency();
-
-        if (paymentMethod === "wallet") {
-            if (walletBalanceSection)
-                walletBalanceSection.style.display = "block";
-
-            fetchUserWalletBalance().then((balance) => {
-                const numericBalance = parseFloat(balance) || 0;
-                const walletBalanceDisplay = document.getElementById(
-                    "wallet-balance-display"
-                );
-                const walletBalanceWarning = document.getElementById(
-                    "wallet-balance-warning"
-                );
-                const totalAmount = extractNumericValue("total-amount-preview"); // grand total
-
-                if (walletBalanceDisplay)
-                    walletBalanceDisplay.textContent = `${numericBalance.toFixed(
-                        2
-                    )} ${cur}`;
-
-                if (numericBalance < totalAmount) {
-                    if (walletBalanceWarning) {
-                        walletBalanceWarning.style.display = "block";
-                        walletBalanceWarning.innerHTML = `<small><i class="fas fa-exclamation-triangle me-1"></i> ${t(
-                            "insufficient_balance",
-                            "Insufficient balance! Please recharge your wallet."
-                        )}</small>`;
-                    }
-                    setConfirmEnabled(false);
-                } else {
-                    if (walletBalanceWarning)
-                        walletBalanceWarning.style.display = "none";
-                    setConfirmEnabled(true);
+        if (walletBalanceSection) walletBalanceSection.style.display = "block";
+        const ensureBalanceThenCheck = async () => {
+            if (typeof window.userWalletBalance !== "number")
+                await fetchUserWalletBalance();
+            const numericBalance =
+                parseFloat(window.userWalletBalance || 0) || 0;
+            const walletBalanceDisplay = document.getElementById(
+                "wallet-balance-display"
+            );
+            const walletBalanceWarning = document.getElementById(
+                "wallet-balance-warning"
+            );
+            const totalAmount = extractNumericValue("total-amount-preview");
+            if (walletBalanceDisplay)
+                walletBalanceDisplay.textContent = `${numericBalance.toFixed(
+                    2
+                )} ${cur}`;
+            if (numericBalance < totalAmount) {
+                if (walletBalanceWarning) {
+                    walletBalanceWarning.style.display = "block";
+                    walletBalanceWarning.innerHTML = `<small><i class="fas fa-exclamation-triangle me-1"></i> ${t(
+                        "insufficient_balance",
+                        "Insufficient balance! Please recharge your wallet."
+                    )}</small>`;
                 }
-            });
+                setConfirmEnabled(false);
+            } else {
+                if (walletBalanceWarning)
+                    walletBalanceWarning.style.display = "none";
+                setConfirmEnabled(true);
+            }
+        };
+        if (method === "wallet" || method === "cod") {
+            ensureBalanceThenCheck();
         } else {
             if (walletBalanceSection)
                 walletBalanceSection.style.display = "none";
@@ -500,35 +570,35 @@
         const perExtra = extraKg * _adminExtraPerKg();
         const perCod = _adminCodPerReceiver();
         const isCOD = _isCodSelected();
-
         const baseEl = document.getElementById("price-base-per-receiver");
         const extraEl = document.getElementById("price-extra-per-receiver");
         const codEl = document.getElementById("price-cod-per-receiver");
         if (baseEl) baseEl.textContent = `${perShip.toFixed(2)} ${cur}`;
         if (extraEl) extraEl.textContent = `${perExtra.toFixed(2)} ${cur}`;
         if (codEl) codEl.textContent = `${perCod.toFixed(2)} ${cur}`;
-
         const note = document.getElementById("extra-weight-note");
         if (note) {
             if (extraKg > 0) {
-                note.textContent =
-                    `${t("extra_weight_note", "Extra")} : ${extraKg.toFixed(
-                        2
-                    )} ${t("kg", "kg")} × ${_adminExtraPerKg().toFixed(
-                        2
-                    )} ${cur}/${t("kg", "kg")} ` +
-                    `(${t(
-                        "company_max_weight",
-                        "Company max"
-                    )} = ${_maxWeight()} ${t("kg", "kg")}, ${t(
-                        "entered_weight",
-                        "Entered"
-                    )} = ${_enteredWeight()} ${t("kg", "kg")})`;
+                note.textContent = `${t(
+                    "extra_weight_note",
+                    "Extra"
+                )} : ${extraKg.toFixed(2)} ${t(
+                    "kg",
+                    "kg"
+                )} × ${_adminExtraPerKg().toFixed(2)} ${cur}/${t(
+                    "kg",
+                    "kg"
+                )} (${t(
+                    "company_max_weight",
+                    "Company max"
+                )} = ${_maxWeight()} ${t("kg", "kg")}, ${t(
+                    "entered_weight",
+                    "Entered"
+                )} = ${_enteredWeight()} ${t("kg", "kg")})`;
             } else {
                 note.textContent = t("no_extra_weight", "No extra weight");
             }
         }
-
         const grandTotal = populatePaymentDetailsCard(
             perShip,
             perExtra,
@@ -536,28 +606,46 @@
             isCOD,
             cur
         );
-
         updateWalletBalanceDisplay();
-
         return grandTotal;
     }
-
     function setupTermsValidation() {
         setConfirmEnabled(true);
     }
-
+    function ensureCodHiddenInForm(form, value) {
+        let hidden = form.querySelector(
+            '#cod-amount-hidden[name="cod_amount"]'
+        );
+        if (!hidden) {
+            hidden = document.createElement("input");
+            hidden.type = "hidden";
+            hidden.name = "cod_amount";
+            hidden.id = "cod-amount-hidden";
+            form.appendChild(hidden);
+        }
+        hidden.value = value != null ? value : "";
+    }
+    function ensurePaymentMethodHiddenInForm(form, value) {
+        let hidden = form.querySelector("#payment_method_hidden");
+        if (!hidden) {
+            hidden = document.createElement("input");
+            hidden.type = "hidden";
+            hidden.name = "payment_method";
+            hidden.id = "payment_method_hidden";
+            form.appendChild(hidden);
+        }
+        hidden.value = value || "";
+    }
     function setupActionButtons() {
         const prev = document.getElementById("btn-prev-step7");
         if (prev)
             prev.addEventListener("click", () => {
                 if (typeof window.showStep === "function") window.showStep(6);
             });
-
         const confirm = document.getElementById("btn-confirm-shipping");
         if (confirm && !confirm.dataset.boundConfirm) {
             confirm.addEventListener("click", (e) => {
                 e.preventDefault();
-
                 const requiredFields = {
                     user_name: "Sender Name",
                     user_phone: "Sender Phone",
@@ -583,7 +671,6 @@
                     );
                     return;
                 }
-
                 if (!window.selectedCompany) {
                     alert("Please select a shipping company first.");
                     return;
@@ -595,27 +682,22 @@
                     alert("Please add at least one receiver.");
                     return;
                 }
-
-                const paymentMethod =
+                const paymentMethod = (
+                    window.selectedPaymentMethod ||
+                    document.getElementById("payment_method_hidden")?.value ||
                     document.querySelector(
                         'input[name="payment_method"]:checked'
-                    )?.value || "wallet";
-                if (paymentMethod === "wallet") {
-                    const totalAmount = extractNumericValue(
-                        "total-amount-preview"
-                    );
-                    const userWalletBalance = parseFloat(
-                        window.userWalletBalance || 0
-                    );
-                    if (userWalletBalance < totalAmount) {
-                        return;
-                    }
+                    )?.value ||
+                    "wallet"
+                ).toLowerCase();
+                const totalAmount = extractNumericValue("total-amount-preview");
+                const walletBalance = parseFloat(window.userWalletBalance || 0);
+                if (paymentMethod === "wallet" || paymentMethod === "cod") {
+                    if (walletBalance < totalAmount) return;
                 }
-
                 const shippingData = {
                     company_id: window.selectedCompany?.id || null,
                     shipping_method: window.selectedMethod || null,
-
                     sender_name:
                         document.getElementById("user_name")?.value || "",
                     sender_phone:
@@ -629,7 +711,6 @@
                     sender_postal_code:
                         document.getElementById("user_postal_code")?.value ||
                         "",
-
                     receivers: window.selectedReceivers || [],
                     package_type:
                         document.getElementById("package_type")?.value || "",
@@ -642,9 +723,7 @@
                     package_description:
                         document.getElementById("package_description")?.value ||
                         "",
-
                     payment_method: paymentMethod,
-
                     shipping_price_per_receiver: extractNumericValue(
                         "price-base-per-receiver"
                     ),
@@ -656,9 +735,8 @@
                     ),
                     total_per_receiver:
                         extractNumericValue("per-receiver-total"),
-                    total_amount: extractNumericValue("total-amount-preview"),
+                    total_amount: totalAmount,
                     receivers_count: window.selectedReceivers?.length || 0,
-
                     currency: window.translations?.currency_symbol || "SAR",
                     max_weight: parseFloat(
                         window.selectedCompany?.maxWeight || "7"
@@ -672,16 +750,15 @@
                             document.getElementById("weight")?.value || "0"
                         ) - parseFloat(window.selectedCompany?.maxWeight || "7")
                     ),
-
                     _token:
                         document
                             .querySelector('meta[name="csrf-token"]')
                             ?.getAttribute("content") || "",
                 };
-
-                const form = document.querySelector(
-                    'form[enctype="multipart/form-data"]'
-                );
+                const form =
+                    document.querySelector(
+                        'form[enctype="multipart/form-data"]'
+                    ) || document.querySelector("form");
                 if (form) {
                     const companyIdField = form.querySelector(
                         "#shipping_company_id"
@@ -690,7 +767,6 @@
                     const receiversField = form.querySelector(
                         "#selected_receivers_hidden"
                     );
-
                     if (companyIdField)
                         companyIdField.value = shippingData.company_id || "";
                     if (methodField)
@@ -699,7 +775,6 @@
                         receiversField.value = JSON.stringify(
                             shippingData.receivers || []
                         );
-
                     const hiddenFields = {
                         sender_name: shippingData.sender_name,
                         sender_phone: shippingData.sender_phone,
@@ -722,17 +797,16 @@
                         entered_weight: shippingData.entered_weight,
                         extra_kg: shippingData.extra_kg,
                     };
-
                     Object.entries(hiddenFields).forEach(([key, value]) => {
                         const field = form.querySelector(`#${key}_hidden`);
                         if (field) field.value = value;
                     });
-
+                    ensurePaymentMethodHiddenInForm(form, paymentMethod);
+                    ensureCodHiddenInForm(form, _codAmount());
                     const originalText = confirm.innerHTML;
                     confirm.innerHTML =
                         '<i class="fas fa-spinner fa-spin me-2"></i>Creating Shipment...';
                     confirm.disabled = true;
-
                     form.submit();
                 } else {
                     alert(
@@ -743,32 +817,26 @@
             confirm.dataset.boundConfirm = "1";
         }
     }
-
     function populateAllSummaries() {
         populateShippingCompanySummary();
         populateUserInformationSummary();
         populateReceiversSummary();
-        populatePackageDetailsSummary();
+        populatePackageDetailsSummary(); // now defined and fills real values
         populatePerReceiverPaymentSummary();
     }
-
     function setupStep7() {
         populateAllSummaries();
         setupTermsValidation();
         setupActionButtons();
         updateWalletBalanceDisplay();
     }
-
     window.setupStep7 = setupStep7;
     window.populateAllSummaries = populateAllSummaries;
-
     document.addEventListener("DOMContentLoaded", () => {
         fetchUserWalletBalance();
-
         if (window.OLD_INPUT && Object.keys(window.OLD_INPUT).length > 0) {
             restoreFormStateFromValidationErrors();
         }
-
         document.addEventListener("stepChanged", (e) => {
             if (e.detail && e.detail.currentStep === 7) {
                 if (
@@ -777,12 +845,10 @@
                 ) {
                     restoreFormStateFromValidationErrors();
                 }
-
                 setupStep7();
                 setTimeout(() => populatePerReceiverPaymentSummary(), 0);
             }
         });
-
         [
             "weight",
             "package_type",
@@ -790,12 +856,17 @@
             "length",
             "width",
             "height",
+            "package_description",
         ].forEach((id) => {
             const el = document.getElementById(id);
             if (el && !el.dataset.boundStep7Recalc) {
                 el.addEventListener(
-                    el.type === "checkbox" ? "change" : "input",
+                    el.type === "checkbox" || el.tagName === "SELECT"
+                        ? "change"
+                        : "input",
                     () => {
+                        // keep both pricing and the package summary in sync
+                        populatePackageDetailsSummary();
                         populatePerReceiverPaymentSummary();
                     }
                 );
@@ -807,11 +878,30 @@
             .forEach((r) => {
                 if (!r.dataset.boundStep7Pay) {
                     r.addEventListener("change", () => {
+                        window.selectedPaymentMethod = r.value;
+                        const hidden = document.getElementById(
+                            "payment_method_hidden"
+                        );
+                        if (hidden) hidden.value = r.value;
                         populatePerReceiverPaymentSummary();
                         updateWalletBalanceDisplay();
                     });
                     r.dataset.boundStep7Pay = "1";
                 }
             });
+        const codInput = document.getElementById("cod-amount-input");
+        if (codInput && !codInput.dataset.boundStep7Cod) {
+            codInput.addEventListener("input", () =>
+                populatePerReceiverPaymentSummary()
+            );
+            codInput.addEventListener("change", () =>
+                populatePerReceiverPaymentSummary()
+            );
+            codInput.dataset.boundStep7Cod = "1";
+        }
+        document.addEventListener("paymentMethodChanged", () => {
+            populatePerReceiverPaymentSummary();
+            updateWalletBalanceDisplay();
+        });
     });
 })();

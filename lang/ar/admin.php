@@ -455,4 +455,7 @@ return [
     'wallet_balance' => 'رصيد المحفظة',
     'shipping_company_not_found' => 'شركة الشحن غير موجودة',
     'allowed_companies' => 'الشركات المسموح بها',
+    'cod_amount' => 'مبلغ التحصيل',
+    'extra_fees' => 'رسوم إضافية',
+    'shipping_fee' => 'رسوم الشحن',
 ];

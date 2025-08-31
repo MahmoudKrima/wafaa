@@ -229,13 +229,24 @@
             });
             el.dataset.bound = "1";
         }
+
+        if (el.value) {
+            await loadStates(el.value);
+        }
     }
 
     async function loadStates(countryId, selectedId = "") {
         const el = $state();
         if (!el) return;
         const companyId = getCompanyId();
-        if (!countryId || !companyId) return;
+        if (!countryId || !companyId) {
+            el.innerHTML = `<option value="">${t(
+                "select_state",
+                "Select State"
+            )}</option>`;
+            el.disabled = true;
+            return;
+        }
         const data = await getJSON(API.states(countryId, companyId)).catch(
             () => null
         );
@@ -269,13 +280,24 @@
             });
             el.dataset.bound = "1";
         }
+
+        if (el.value) {
+            await loadCities(countryId, el.value);
+        }
     }
 
     async function loadCities(countryId, stateId, selectedId = "") {
         const el = $city();
         if (!el) return;
         const companyId = getCompanyId();
-        if (!countryId || !stateId || !companyId) return;
+        if (!countryId || !stateId || !companyId) {
+            el.innerHTML = `<option value="">${t(
+                "select_city",
+                "Select City"
+            )}</option>`;
+            el.disabled = true;
+            return;
+        }
         const data = await getJSON(
             API.cities(countryId, stateId, companyId)
         ).catch(() => null);
@@ -306,6 +328,7 @@
         c.required = s.required = ci.required = true;
         await loadCountries();
         if (getMethod() === "local") await loadStates(SAUDI_ID);
+        ensureAdditionalPhoneOptional();
         updateAddButtonState();
     }
 
@@ -612,10 +635,16 @@
         setIf("postal_code", n.postal_code);
 
         await loadCountries(n.country_id || "");
-        if (n.country_id) await loadStates(n.country_id, n.state_id || "");
-        if (n.country_id && n.state_id)
-            await loadCities(n.country_id, n.state_id, n.city_id || "");
+        if (n.country_id) {
+            await loadStates(n.country_id, n.state_id || "");
+            if (n.state_id)
+                await loadCities(n.country_id, n.state_id, n.city_id || "");
+        } else if (getMethod() === "local") {
+            await loadStates(SAUDI_ID); // ensure states appear when SA is auto-selected
+        }
+
         ensureReceiverStateFieldVisible();
+        ensureAdditionalPhoneOptional();
 
         const formSection = $newSection();
         if (formSection) formSection.style.display = "block";
@@ -660,6 +689,7 @@
             ci.value = "";
             ci.disabled = true;
         }
+        ensureAdditionalPhoneOptional();
         updateAddButtonState();
     }
 
@@ -676,6 +706,7 @@
         if (existingSection) existingSection.style.display = "none";
         if (newSection) newSection.style.display = "none";
         updateAddButtonState();
+        syncNextButton(); // keep NEXT disabled until a receiver is added
     }
     function resetReceiverTypeSelection() {
         resetFormCompletely();
@@ -718,6 +749,7 @@
         btn.disabled = !enable;
         btn.classList.toggle("btn-secondary", !enable);
         btn.classList.toggle("btn-success", enable);
+        syncNextButton();
     }
 
     function bindFormFieldListeners() {
@@ -740,6 +772,15 @@
                 updateAddButtonState();
             });
             rsel.dataset.receiverBind = "1";
+        }
+        ensureAdditionalPhoneOptional();
+    }
+
+    function ensureAdditionalPhoneOptional() {
+        const ap = document.getElementById("additional_phone");
+        if (ap) {
+            ap.required = false;
+            ap.removeAttribute("required");
         }
     }
 
@@ -765,6 +806,7 @@
                 if (existingSection) existingSection.style.display = "block";
                 forceClearNewForm();
                 resetExistingSelect();
+                ensureAdditionalPhoneOptional();
                 updateAddButtonState();
             });
             existingRadio.dataset.bound = "1";
@@ -779,6 +821,7 @@
                 resetExistingSelect();
                 await setupReceiverFormByShippingType();
                 ensureReceiverStateFieldVisible();
+                ensureAdditionalPhoneOptional();
                 updateAddButtonState();
             });
             newRadio.dataset.bound = "1";
@@ -797,6 +840,7 @@
         }
 
         bindFormFieldListeners();
+        ensureAdditionalPhoneOptional();
         updateAddButtonState();
     }
 
@@ -811,11 +855,15 @@
     document.addEventListener("DOMContentLoaded", () => {
         resetFormCompletely();
         if (window.selectedMethod) setupReceiverFormByShippingType();
+        ensureAdditionalPhoneOptional();
         updateAddButtonState();
+        syncNextButton();
     });
 
     document.addEventListener("shippingMethodSelected", () => {
         setupReceiverFormByShippingType();
+        ensureAdditionalPhoneOptional();
         updateAddButtonState();
+        syncNextButton();
     });
 })();

@@ -455,4 +455,7 @@ return [
     'wallet_balance' => 'Wallet Balance',
     'shipping_company_not_found' => 'Shipping company not found',
     'allowed_companies' => 'Allowed Companies',
+    'cod_amount' => 'COD Amount',
+    'extra_fees' => 'Extra Fees',
+    'shipping_fee' => 'Shipping Fee',
 ];
