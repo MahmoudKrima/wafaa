@@ -277,10 +277,10 @@ class ShippingService
 
         // ----- PACKAGE from request -----
         $type          = (string)($requestData['package_type'] ?? 'box');
-        $length        = (float) ($requestData['length']       ?? 0);
-        $width         = (float) ($requestData['width']        ?? 0);
-        $height        = (float) ($requestData['height']       ?? 0);
-        $weight        = (float) ($requestData['entered_weight'] ?? $requestData['weight'] ?? 0);
+        $length        = (int) ($requestData['length']       ?? 0);
+        $width         = (int) ($requestData['width']        ?? 0);
+        $height        = (int) ($requestData['height']       ?? 0);
+        $weight        = (int) ($requestData['entered_weight'] ?? $requestData['weight'] ?? 0);
         $packagesCount = (int)   ($requestData['package_number'] ?? 1);
         $description   = (string)($requestData['package_description'] ?? '');
         $isCommercial  = (bool)  ($requestData['is_commercial'] ?? false);
@@ -326,20 +326,20 @@ class ShippingService
             "packagesCount"     => $packagesCount,
             "description"       => $description,
             "isCommercial"      => $isCommercial,
-            "isCod"             => (bool)$isCod,
+            "isCod"             => (bool) false,
             "isWeightEdited"    => (bool)$isWeightEdited,
             "senderCityName"    => $senderCityName,
 
             "receiverName"        => $receiverName,
             "receiverEmail"       => $receiverEmail,
-            "receiverPhone"       => "+966-501932466",
+            "receiverPhone"       => $receiverPhone,
             "receiverPhone1"      => $receiverPhone1,
             "receiverCountryId"   => $receiverCountryId,
             "receiverCountryName" => $receiverCountryName,
             "receiverCountryCode" => $receiverCountryCode,
             "receiverCityId"      => $receiverCityId,
             "receiverStreet"      => $receiverStreet,
-            
+
             "receiverZipCode"     => $receiverZipCode,
             "receiverCityName"    => $receiverCityName,
         ];
