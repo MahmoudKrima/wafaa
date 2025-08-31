@@ -20,8 +20,6 @@ class ProfileService
             'name' => $data['name'],
             'email' => $data['email'],
             'phone' => $data['phone'],
-            'address' => $data['address'],
-            'city_id' => $data['city_id'],
         ];
 
         if (isset($data['additional_phone'])) {

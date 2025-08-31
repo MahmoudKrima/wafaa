@@ -26,7 +26,6 @@ class UpdateProfileRequest extends FormRequest
         return [
             'name_ar' => ['required', 'string', 'max:255'],
             'name_en' => ['required', 'string', 'max:255'],
-            'address' => ['required', 'string', 'max:999'],
             'email' => [
                 'required',
                 'email',
@@ -54,7 +53,6 @@ class UpdateProfileRequest extends FormRequest
                 Rule::unique('admins', 'phone'),
                 Rule::unique('users', 'phone'),
             ],
-            'city_id' => ['required', 'integer', Rule::exists('cities', 'id')],
             'password' => ['nullable', 'string', 'confirmed', 'min:8', Password::min(8)
                 ->max(50)
                 ->letters()
