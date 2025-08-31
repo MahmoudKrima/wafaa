@@ -2,11 +2,11 @@
 @section('title', __('admin.create_shipping'))
 
 @push('css')
-    @if (App::getLocale() === 'ar')
-        <link rel="stylesheet" href="{{ asset('user/shipping-styles.css') }}">
-        @else
-        <link rel="stylesheet" href="{{ asset('user/shipping-styles_en.css') }}">
-        @endif
+@if (App::getLocale() === 'ar')
+<link rel="stylesheet" href="{{ asset('user/shipping-styles.css') }}">
+@else
+<link rel="stylesheet" href="{{ asset('user/shipping-styles_en.css') }}">
+@endif
 
 @endpush
 
@@ -32,41 +32,41 @@
                                     </div>
 
 
-                                @for ($i = 1; $i <= 7; $i++)
+                                    @for ($i = 1; $i <= 7; $i++)
                                         <div class="step {{ $i === 1 ? 'active' : '' }} mb-2 mb-sm-0">
-                                            <div class="step-number {{ $i===1 ? 'bg-primary' : 'bg-secondary' }} text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mx-sm-0"
-                                                style="width:35px;height:35px;font-size:14px;font-weight:bold;">{{ $i }}
-                                            </div>
-                                            <span class="d-block d-sm-inline ms-0 ms-sm-2 text-center text-sm-start mt-1 mt-sm-0 small step_text">
-                                                @switch($i)
-                                                @case(1) {{ __('admin.select_company') }} @break
-                                                @case(2) {{ __('admin.select_method') }} @break
-                                                @case(3) {{ __('admin.user_information') }} @break
-                                                @case(4) {{ __('admin.receivers') }} @break
-                                                @case(5) {{ __('admin.shipping_details') }} @break
-                                                @case(6) {{ __('admin.payment_details') }} @break
-                                                @case(7) {{ __('admin.summary') }} @break
-                                                @endswitch
-                                            </span>
-
+                                        <div class="step-number {{ $i===1 ? 'bg-primary' : 'bg-secondary' }} text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mx-sm-0"
+                                            style="width:35px;height:35px;font-size:14px;font-weight:bold;">{{ $i }}
                                         </div>
-                                    @if($i<7)
-                                        <div class="step-line d-none d-sm-block mx-3" style="width:40px;height:2px;background:#e9ecef;">
-                                        </div>
-                                        <div class="step-line d-block d-sm-none my-2" style="width:2px;height:20px;background:#e9ecef;"></div>
-                                  @endif
-                              @endfor
-
-                                    <!-- Navigation Buttons -->
-                                    <div class="prev_next_btn mb-2 mb-sm-0">
-                                        <div class="col-12 d-flex flex-column flex-sm-row justify-content-between gap-2">
-                                            <button type="button" class="btn btn-primary" id="btn-next" disabled>
-                                                {{ __('admin.next') }} {{ app()->getLocale() === 'ar' ? '←' : '→' }}
-                                            </button>
-                                        </div>
-                                    </div>
+                                        <span class="d-block d-sm-inline ms-0 ms-sm-2 text-center text-sm-start mt-1 mt-sm-0 small step_text">
+                                            @switch($i)
+                                            @case(1) {{ __('admin.select_company') }} @break
+                                            @case(2) {{ __('admin.select_method') }} @break
+                                            @case(3) {{ __('admin.user_information') }} @break
+                                            @case(4) {{ __('admin.receivers') }} @break
+                                            @case(5) {{ __('admin.shipping_details') }} @break
+                                            @case(6) {{ __('admin.payment_details') }} @break
+                                            @case(7) {{ __('admin.summary') }} @break
+                                            @endswitch
+                                        </span>
 
                                 </div>
+                                @if($i<7)
+                                    <div class="step-line d-none d-sm-block mx-3" style="width:40px;height:2px;background:#e9ecef;">
+                            </div>
+                            <div class="step-line d-block d-sm-none my-2" style="width:2px;height:20px;background:#e9ecef;"></div>
+                            @endif
+                            @endfor
+
+                            <!-- Navigation Buttons -->
+                            <div class="prev_next_btn mb-2 mb-sm-0">
+                                <div class="col-12 d-flex flex-column flex-sm-row justify-content-between gap-2">
+                                    <button type="button" class="btn btn-primary" id="btn-next" disabled>
+                                        {{ __('admin.next') }} {{ app()->getLocale() === 'ar' ? '←' : '→' }}
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
 
                     </div>
                 </div>
@@ -103,60 +103,86 @@
                 <div class="alert alert-info">
                     <i class="fas fa-info-circle"></i> {{ __('admin.user_info_note') }}
                 </div>
+                <div id="language-note" class="alert alert-warning" style="display:none;"></div>
 
                 <div class="row">
                     <div class="col-12 col-md-6 mb-3">
                         <label for="user_name" class="text-dark">{{ __('admin.full_name') }}</label>
-                        <input id="user_name" type="text" class="form-control" value="{{ auth()->user()->name ?? '' }}" disabled>
+                        <input id="user_name" name="user_name" type="text" class="form-control" required
+                            value="{{ old('user_name', auth()->user()->name ?? '') }}"
+                            placeholder="{{ __('admin.full_name') }}">
                     </div>
                     <div class="col-12 col-md-6 mb-3">
                         <label for="user_phone" class="text-dark">{{ __('admin.phone_number') }}</label>
-                        <input id="user_phone" type="text" class="form-control" value="{{ auth()->user()->phone ?? '' }}" disabled>
+                        <input id="user_phone" name="user_phone" type="text" class="form-control" required
+                            value="{{ old('user_phone', auth()->user()->phone ?? '') }}"
+                            placeholder="{{ __('admin.phone_number') }}">
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-12 col-md-6 mb-3">
                         <label for="user_additional_phone" class="text-dark">{{ __('admin.additional_phone') }}</label>
-                        <input id="user_additional_phone" type="text" class="form-control" value="{{ auth()->user()->additional_phone ?? '' }}" disabled>
+                        <input id="user_additional_phone" name="user_additional_phone" type="text" class="form-control" required
+                            value="{{ old('user_additional_phone', auth()->user()->additional_phone ?? '') }}"
+                            placeholder="{{ __('admin.additional_phone') }}">
                     </div>
                     <div class="col-12 col-md-6 mb-3">
                         <label for="user_email" class="text-dark">{{ __('admin.email') }}</label>
-                        <input id="user_email" type="text" class="form-control" value="{{ auth()->user()->email ?? '' }}" disabled>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-12 col-md-6 mb-3">
-                        <label for="user_state" class="text-dark">{{ __('admin.state') }}</label>
-                        <input id="user_state" type="text" class="form-control" value="{{ auth()->user()->state_name ?? '' }}" disabled>
-                    </div>
-                    <div class="col-12 col-md-6 mb-3">
-                        <label for="user_city" class="text-dark">{{ __('admin.city') }}</label>
-                        <input id="user_city" type="text" class="form-control" value="{{ auth()->user()->city_name ?? '' }}" disabled>
+                        <input id="user_email" name="user_email" type="email" class="form-control" required
+                            value="{{ old('user_email', auth()->user()->email ?? '') }}"
+                            placeholder="email@example.com">
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-12 col-md-6 mb-3">
                         <label for="user_country" class="text-dark">{{ __('admin.country') }}</label>
-                        <input id="user_country" type="text" class="form-control" value="{{ auth()->user()->country_name ?? '' }}" disabled>
+                        <select id="user_country" name="country_id" class="form-control" required
+                            data-selected="{{ old('country_id') }}">
+                            <option value="">{{ __('admin.choose_country') }}</option>
+                        </select>
+                        <small class="text-muted d-block mt-1">
+                            {{ __('admin.country_hint') ?? __('admin.choose_country') }}
+                        </small>
+                    </div>
+
+                    <div class="col-12 col-md-6 mb-3">
+                        <label for="user_state" class="text-dark">{{ __('admin.state') }}</label>
+                        <select id="user_state" name="state_id" class="form-control" required
+                            data-selected="{{ old('state_id') }}">
+                            <option value="">{{ __('admin.choose_state') }}</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-12 col-md-6 mb-3">
+                        <label for="user_city" class="text-dark">{{ __('admin.city') }}</label>
+                        <select id="user_city" name="city_id" class="form-control" required
+                            data-selected="{{ old('city_id') }}">
+                            <option value="">{{ __('admin.choose_city') }}</option>
+                        </select>
                     </div>
 
                     <div class="col-12 col-md-6 mb-3">
                         <label for="user_postal_code" class="text-dark">{{ __('admin.postal_code') }}</label>
-                        <input id="user_postal_code" type="text" name="postal_code" class="form-control" value="{{ auth()->user()->postal_code ?? '' }}">
+                        <input id="user_postal_code" type="text" name="postal_code" class="form-control"
+                            value="{{ old('postal_code') }}"
+                            placeholder="{{ __('admin.postal_code') }}">
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-12 mb-3">
                         <label for="user_address" class="text-dark">{{ __('admin.full_address') }}</label>
-                        <textarea id="user_address" class="form-control" rows="3" disabled>{{ auth()->user()->address ?? '' }}</textarea>
+                        <textarea id="user_address" name="address" class="form-control" rows="3" required
+                            placeholder="{{ __('admin.full_address') }}">{{ old('address') }}</textarea>
                     </div>
                 </div>
-
             </div>
+
+
 
             <div class="step-content" id="step-4" style="display:none;">
                 <h5 class="text-center mb-4">{{ __('admin.receiver_information') }}</h5>
@@ -441,12 +467,12 @@
                                             </div>
                                         </div>
                                         <div class="row">
-                                           <div class="col-md-12">
-                                               <div class="mt-3">
-                                                   <p><strong>{{ __('admin.package_notes') . ': ' }}</strong></p>
-                                                   <p id="package-notes-preview" class="text-muted">{{ __('admin.no_special_notes') }}</p>
-                                               </div>
-                                           </div>
+                                            <div class="col-md-12">
+                                                <div class="mt-3">
+                                                    <p><strong>{{ __('admin.package_notes') . ': ' }}</strong></p>
+                                                    <p id="package-notes-preview" class="text-muted">{{ __('admin.no_special_notes') }}</p>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -520,7 +546,8 @@
 
                                         <div class="row">
                                             <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                                <div class="mb-3">رسوم الدفع عند الاستلام: </div><div class="h6 mb-0 text-primary" id="cod-fees-preview">40.00 ريال</div>
+                                                <div class="mb-3">رسوم الدفع عند الاستلام: </div>
+                                                <div class="h6 mb-0 text-primary" id="cod-fees-preview">40.00 ريال</div>
                                             </div>
                                         </div>
 
@@ -570,9 +597,9 @@
 
 
         </div>
-            </div>
-        </div>
     </div>
+</div>
+</div>
 </div>
 @endsection
 
@@ -763,8 +790,6 @@
     window.translations = translations;
     window.API_ENDPOINTS = API_ENDPOINTS;
     window.APP_LOCALE = "{{ app()->getLocale() }}";
-
-
 </script>
 
 <script src="{{ asset('user/step1.js') }}"></script>

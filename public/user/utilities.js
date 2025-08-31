@@ -18,59 +18,47 @@ function updateStepIndicator(step) {
     });
 }
 
-function validateStep(step) {
-    switch (step) {
-        case 1:
-            return !!window.selectedCompany;
-        case 2:
-            return !!window.selectedMethod;
-        case 3:
-            return typeof window.validateStep3Form === "function"
-                ? window.validateStep3Form()
-                : true;
-        case 4:
-            return typeof window.canProceedToNextStep === "function"
-                ? window.canProceedToNextStep()
-                : true;
-        case 5:
-            return typeof window.validatePackageDetails === "function"
-                ? window.validatePackageDetails()
-                : true;
-        case 6:
-            return typeof window.validatePaymentDetails === "function"
-                ? window.validatePaymentDetails()
-                : true;
-        default:
-            return true;
-    }
+function isStep1Valid() {
+    return !!window.selectedCompany;
+}
+function isStep2Valid() {
+    return !!window.selectedMethod;
+}
+function isStep3Valid() {
+    return typeof window.validateStep3Form === "function"
+        ? window.validateStep3Form()
+        : true;
 }
 
-/* NEW: one place that REALLY enables/disables the Next button for all themes */
+function setNextForStep(step) {
+    if (step === 1) return hardEnableNext(isStep1Valid());
+    if (step === 2) return hardEnableNext(isStep2Valid());
+    if (step === 3) return hardEnableNext(isStep3Valid());
+    return hardEnableNext(true);
+}
+
 function hardEnableNext(ok) {
     const btnNext = document.getElementById("btn-next");
     if (!btnNext) return;
-
     if (ok) {
         btnNext.disabled = false;
         btnNext.removeAttribute("disabled");
         btnNext.classList.remove("disabled", "btn-secondary");
         btnNext.classList.add("btn-primary");
         btnNext.setAttribute("aria-disabled", "false");
-        btnNext.style.pointerEvents = "auto";
-        btnNext.style.opacity = "";
     } else {
         btnNext.disabled = true;
         btnNext.setAttribute("disabled", "disabled");
         btnNext.classList.add("disabled", "btn-secondary");
         btnNext.classList.remove("btn-primary");
         btnNext.setAttribute("aria-disabled", "true");
-        btnNext.style.pointerEvents = "";
-        btnNext.style.opacity = "";
     }
 }
 
 function handleNextStep() {
-    if (!validateStep(currentStep)) return;
+    if (currentStep === 1 && !isStep1Valid()) return;
+    if (currentStep === 2 && !isStep2Valid()) return;
+    if (currentStep === 3 && !isStep3Valid()) return;
     currentStep += 1;
     showStep(currentStep);
 }
@@ -97,7 +85,7 @@ function showStep(step) {
     if (btnPrev) btnPrev.style.display = step === 1 ? "none" : "inline-block";
     if (btnNext) {
         btnNext.style.display = step === 7 ? "none" : "inline-block";
-        hardEnableNext(validateStep(step)); // <- use strong enabler every time step changes
+        setNextForStep(step);
     }
 
     if (step === 2 && typeof window.showMethodSelection === "function")
@@ -113,13 +101,9 @@ function showStep(step) {
         );
         inputs.forEach((inp) => {
             if (!inp.dataset.boundStep3) {
-                inp.addEventListener("input", () => {
-                    hardEnableNext(
-                        typeof window.validateStep3Form === "function"
-                            ? window.validateStep3Form()
-                            : true
-                    );
-                });
+                const sync = () => hardEnableNext(isStep3Valid());
+                inp.addEventListener("input", sync);
+                inp.addEventListener("change", sync);
                 inp.dataset.boundStep3 = "1";
             }
         });
@@ -129,7 +113,7 @@ function showStep(step) {
         if (typeof window.loadReceivers === "function") window.loadReceivers();
         if (typeof window.setupReceiverFormByShippingType === "function")
             window.setupReceiverFormByShippingType();
-        hardEnableNext(validateStep(4));
+        setNextForStep(4);
     }
 
     if (step === 5 && typeof window.populateShippingFormFields === "function")
@@ -138,91 +122,21 @@ function showStep(step) {
         window.setupPaymentDetails();
     if (step === 7 && typeof window.setupStep7 === "function")
         window.setupStep7();
-    
-    // Dispatch step change event for other modules to listen to
-    document.dispatchEvent(new CustomEvent('stepChanged', {
-        detail: { currentStep: step, previousStep: currentStep }
-    }));
+
+    document.dispatchEvent(
+        new CustomEvent("stepChanged", { detail: { currentStep: step } })
+    );
 }
 
-/* NEW: keep Next in sync when selections change */
 document.addEventListener("shippingCompanySelected", () => {
-    if (currentStep === 1) hardEnableNext(true);
+    if (currentStep === 1) setNextForStep(1);
 });
 document.addEventListener("shippingMethodSelected", () => {
-    if (currentStep === 2) hardEnableNext(true);
+    if (currentStep === 2) setNextForStep(2);
 });
 document.addEventListener("receiversChanged", () => {
-    if (currentStep === 4) hardEnableNext(validateStep(4));
+    if (currentStep === 4) hardEnableNext(true);
 });
-
-function setupReceiverTypeHandling() {
-    const existingReceiverRadio = document.getElementById("existing_receiver");
-    const newReceiverRadio = document.getElementById("new_receiver");
-    const existingSection = document.getElementById(
-        "existing_receiver_section"
-    );
-    const newSection = document.getElementById("new_receiver_section");
-
-    if (existingSection) existingSection.style.display = "none";
-    if (newSection) newSection.style.display = "none";
-
-    if (existingReceiverRadio && !existingReceiverRadio.dataset.bound) {
-        existingReceiverRadio.addEventListener("change", function () {
-            if (this.checked) {
-                if (existingSection) existingSection.style.display = "block";
-                if (newSection) newSection.style.display = "none";
-                if (typeof window.clearReceiverForm === "function")
-                    window.clearReceiverForm();
-                if (typeof window.showMultipleReceiverControls === "function")
-                    window.showMultipleReceiverControls();
-                if (
-                    typeof window.ensureReceiverStateFieldVisible === "function"
-                )
-                    window.ensureReceiverStateFieldVisible();
-            }
-        });
-        existingReceiverRadio.dataset.bound = "1";
-    }
-
-    if (newReceiverRadio && !newReceiverRadio.dataset.bound) {
-        newReceiverRadio.addEventListener("change", function () {
-            if (this.checked) {
-                if (existingSection) existingSection.style.display = "none";
-                if (newSection) newSection.style.display = "block";
-                if (typeof window.clearReceiverForm === "function")
-                    window.clearReceiverForm();
-                if (typeof window.showMultipleReceiverControls === "function")
-                    window.showMultipleReceiverControls();
-                if (
-                    typeof window.ensureReceiverStateFieldVisible === "function"
-                )
-                    window.ensureReceiverStateFieldVisible();
-                if (
-                    typeof window.setupReceiverFormByShippingType === "function"
-                )
-                    window.setupReceiverFormByShippingType();
-            }
-        });
-        newReceiverRadio.dataset.bound = "1";
-    }
-
-    const receiverSelect = document.getElementById("receiver_select");
-    if (receiverSelect && !receiverSelect.dataset.bound) {
-        receiverSelect.addEventListener("change", function () {
-            const selectedReceiverId = this.value;
-            if (selectedReceiverId) {
-                if (typeof window.populateReceiverForm === "function")
-                    window.populateReceiverForm(selectedReceiverId);
-                if (newSection) newSection.style.display = "block";
-            } else {
-                if (typeof window.clearReceiverForm === "function")
-                    window.clearReceiverForm();
-            }
-        });
-        receiverSelect.dataset.bound = "1";
-    }
-}
 
 function initShippingForm() {
     currentStep = 1;
@@ -230,7 +144,6 @@ function initShippingForm() {
 
     const btnNext = document.getElementById("btn-next");
     const btnPrev = document.getElementById("btn-prev");
-
     if (btnNext && !btnNext.dataset.bound) {
         btnNext.addEventListener("click", handleNextStep);
         btnNext.dataset.bound = "1";
@@ -240,18 +153,16 @@ function initShippingForm() {
         btnPrev.dataset.bound = "1";
     }
 
-    /* On load, force the true disabled state for step 1 */
-    hardEnableNext(validateStep(1));
-    setupReceiverTypeHandling();
+    hardEnableNext(isStep1Valid());
+
+    if (typeof window.setupReceiverTypeHandling === "function")
+        window.setupReceiverTypeHandling();
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    initShippingForm();
-});
+document.addEventListener("DOMContentLoaded", initShippingForm);
 
 window.initShippingForm = initShippingForm;
 window.showStep = showStep;
 window.handleNextStep = handleNextStep;
 window.handlePrevStep = handlePrevStep;
 window.updateStepIndicator = updateStepIndicator;
-window.setupReceiverTypeHandling = setupReceiverTypeHandling;

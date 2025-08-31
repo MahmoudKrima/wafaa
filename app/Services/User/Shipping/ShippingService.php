@@ -3,7 +3,6 @@
 namespace App\Services\User\Shipping;
 
 use App\Models\Reciever;
-use App\Models\Shipping;
 use App\Traits\ImageTrait;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -12,6 +11,7 @@ use App\Traits\TranslateTrait;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Client\RequestException;
+use App\Models\AllowedCompany;
 
 class ShippingService
 {
@@ -611,6 +611,8 @@ class ShippingService
             ->get();
     }
 
+
+
     public function getUserShippingCompanies()
     {
         try {
@@ -620,16 +622,14 @@ class ShippingService
             }
 
             $adminId = $user->added_by;
-
             if (!$adminId) {
                 $extraWeightPricePerKg = 2;
-                $codFeePerReceiver = 15;
+                $codFeePerReceiver     = 15;
             } else {
                 $adminSettings = AdminSetting::where('admin_id', $adminId)->first();
                 $extraWeightPricePerKg = $adminSettings ? $adminSettings->extra_weight_price : 2;
-                $codFeePerReceiver = $adminSettings ? $adminSettings->cash_on_delivery_price : 15;
+                $codFeePerReceiver     = $adminSettings ? $adminSettings->cash_on_delivery_price : 15;
             }
-
             $response = Http::withHeaders([
                 'accept'    => '*/*',
                 'x-api-key' => env('GHAYA_API_KEY', 'xwqn5mb5mpgf5u3vpro09i8pmw9fhkuu'),
@@ -637,7 +637,7 @@ class ShippingService
                 'page'           => 0,
                 'pageSize'       => 50,
                 'orderColumn'    => 'createdAt',
-                'orderDirection' => 'desc'
+                'orderDirection' => 'desc',
             ]);
 
             if (!$response->successful()) {
@@ -645,38 +645,54 @@ class ShippingService
             }
 
             $data = $response->json();
-            if (!isset($data['results']) || !is_array($data['results'])) {
-                return ['results' => []];
+            $apiCompanies = isset($data['results']) && is_array($data['results']) ? $data['results'] : [];
+            $allowedIds = [];
+            if ($adminId) {
+                $allowedIds = AllowedCompany::where('admin_id', $adminId)
+                    ->where('status', 'active')
+                    ->pluck('company_id')
+                    ->map(fn($v) => (string) $v)
+                    ->all();
             }
-
             $userShippingPrices = $user->shippingPrices()
                 ->select('company_id', 'company_name', 'local_price', 'international_price')
                 ->get();
 
-            $userCompanyIds = $userShippingPrices->pluck('company_id')->toArray();
+            $userCompanyIds       = $userShippingPrices->pluck('company_id')->map(fn($v) => (string) $v)->all();
             $userShippingPricesMap = $userShippingPrices->keyBy('company_id');
+            $enrich = function (array $company, $userPrice = null) use ($extraWeightPricePerKg, $codFeePerReceiver) {
+                $methods = (array) Arr::get($company, 'shippingMethods', []);
+                $company['userLocalPrice']          = $userPrice->local_price ?? Arr::get($company, 'localPrice');
+                $company['userInternationalPrice']  = $userPrice->international_price ?? Arr::get($company, 'internationalPrice');
+                $company['adminExtraWeightPrice']   = $extraWeightPricePerKg;
+                $company['adminCodFee']             = $codFeePerReceiver;
+                if (in_array('local', $methods, true)) {
+                    $company['effectiveLocalPrice'] = $userPrice->local_price ?? Arr::get($company, 'localPrice');
+                }
 
+                if (in_array('international', $methods, true)) {
+                    $company['effectiveInternationalPrice'] = $userPrice->international_price ?? Arr::get($company, 'internationalPrice');
+                }
+
+                $company['hasCod'] = in_array('cashOnDelivery', $methods, true);
+
+                return $company;
+            };
             if (empty($userCompanyIds)) {
-                $filteredCompanies = collect($data['results'])
-                    ->filter(fn($company) => $company['isActive'] === true)
-                    ->map(function ($company) use ($extraWeightPricePerKg, $codFeePerReceiver) {
-                        $company['userLocalPrice'] = $company['localPrice'] ?? null;
-                        $company['userInternationalPrice'] = $company['internationalPrice'] ?? null;
-                        $company['adminExtraWeightPrice'] = $extraWeightPricePerKg;
-                        $company['adminCodFee'] = $codFeePerReceiver;
+                $filteredCompanies = collect($apiCompanies)
+                    ->filter(function ($company) use ($allowedIds) {
+                        $id       = (string) Arr::get($company, 'id', '');
+                        $isActive = (bool) Arr::get($company, 'isActive', false);
 
-                        if ($company['shippingMethods'] && in_array('local', $company['shippingMethods'])) {
-                            $company['effectiveLocalPrice'] = $company['localPrice'];
+                        if (!$isActive) {
+                            return false;
                         }
-
-                        if ($company['shippingMethods'] && in_array('international', $company['shippingMethods'])) {
-                            $company['effectiveInternationalPrice'] = $company['internationalPrice'];
+                        if (!empty($allowedIds)) {
+                            return in_array($id, $allowedIds, true);
                         }
-
-                        $company['hasCod'] = in_array('cashOnDelivery', $company['shippingMethods']);
-
-                        return $company;
+                        return true;
                     })
+                    ->map(fn($company) => $enrich($company, null))
                     ->values()
                     ->toArray();
 
@@ -684,32 +700,24 @@ class ShippingService
                     'results' => $filteredCompanies,
                     'admin_settings' => [
                         'extra_weight_price_per_kg' => $extraWeightPricePerKg,
-                        'cod_fee_per_receiver'      => $codFeePerReceiver
-                    ]
+                        'cod_fee_per_receiver'      => $codFeePerReceiver,
+                    ],
                 ];
             }
+            $targetIds = !empty($allowedIds)
+                ? array_values(array_intersect($userCompanyIds, $allowedIds))
+                : $userCompanyIds;
 
-            $filteredCompanies = collect($data['results'])
-                ->filter(fn($company) => in_array($company['id'], $userCompanyIds) && $company['isActive'] === true)
-                ->map(function ($company) use ($userShippingPricesMap, $extraWeightPricePerKg, $codFeePerReceiver) {
-                    $userPrice = $userShippingPricesMap->get($company['id']);
-
-                    $company['userLocalPrice'] = $userPrice->local_price ?? null;
-                    $company['userInternationalPrice'] = $userPrice->international_price ?? null;
-                    $company['adminExtraWeightPrice'] = $extraWeightPricePerKg;
-                    $company['adminCodFee'] = $codFeePerReceiver;
-
-                    if ($company['shippingMethods'] && in_array('local', $company['shippingMethods'])) {
-                        $company['effectiveLocalPrice'] = $userPrice->local_price ?? $company['localPrice'];
-                    }
-
-                    if ($company['shippingMethods'] && in_array('international', $company['shippingMethods'])) {
-                        $company['effectiveInternationalPrice'] = $userPrice->international_price ?? null;
-                    }
-
-                    $company['hasCod'] = in_array('cashOnDelivery', $company['shippingMethods']);
-
-                    return $company;
+            $filteredCompanies = collect($apiCompanies)
+                ->filter(function ($company) use ($targetIds) {
+                    $id       = (string) Arr::get($company, 'id', '');
+                    $isActive = (bool) Arr::get($company, 'isActive', false);
+                    return $isActive && in_array($id, $targetIds, true);
+                })
+                ->map(function ($company) use ($userShippingPricesMap, $enrich) {
+                    $id        = (string) Arr::get($company, 'id', '');
+                    $userPrice = $userShippingPricesMap->get($id);
+                    return $enrich($company, $userPrice);
                 })
                 ->values()
                 ->toArray();
@@ -718,13 +726,14 @@ class ShippingService
                 'results' => $filteredCompanies,
                 'admin_settings' => [
                     'extra_weight_price_per_kg' => $extraWeightPricePerKg,
-                    'cod_fee_per_receiver'      => $codFeePerReceiver
-                ]
+                    'cod_fee_per_receiver'      => $codFeePerReceiver,
+                ],
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return ['results' => []];
         }
     }
+
 
     public function getStates()
     {

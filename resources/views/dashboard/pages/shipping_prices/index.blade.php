@@ -14,7 +14,7 @@
     <div class="row layout-top-spacing">
         <div id="tableCustomBasic" class="col-lg-12 col-12 layout-spacing">
             <div class="statbox widget box box-shadow">
-                <div class="widget-header">
+                <!-- <div class="widget-header">
                     <div class="row mt-2">
                         <div class="col-12" style="margin: 15px 15px 0 15px;">
                             @haspermission('user_shipping_prices.create', 'admin')
@@ -23,7 +23,7 @@
                             @endhaspermission
                         </div>
                     </div>
-                </div>
+                </div> -->
                 <div class="widget-content widget-content-area">
                     <div class="widget-header">
                         <div class="row">

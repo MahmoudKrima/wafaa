@@ -17,7 +17,8 @@ class TransactionController extends Controller
     public function index(SearchTransactionRequest $request)
     {
         $result = $this->transactionService->index($request);
-        return view('user.pages.transactions.index', compact('result'));
+        $banks = $this->transactionService->allActiveBanks();
+        return view('user.pages.transactions.index', compact('result', 'banks'));
     }
 
     public function create()

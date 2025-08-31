@@ -63,12 +63,25 @@ class StoreUserRequest extends FormRequest
                     ->mixedCase()
                     ->symbols()
             ],
-            'shipping_prices'                 => ['nullable', 'array'],
-            'shipping_prices.*'               => ['array'],
-            'shipping_prices.*.id'            => ['required', 'string'],
-            'shipping_prices.*.name'          => ['nullable', 'string', 'max:255'],
-            'shipping_prices.*.localprice'    => ['nullable', 'numeric', 'min:0', 'max:999999.99'],
-            'shipping_prices.*.internationalprice' => ['nullable', 'numeric', 'min:0', 'max:999999.99'],
+            'shipping_prices'                         => ['required', 'array'],
+            'shipping_prices.*'                       => ['required', 'array'],
+            'shipping_prices.*.id'                    => ['required', 'string', 'distinct'],
+            'shipping_prices.*.name'                  => ['required', 'string', 'max:255'],
+            'shipping_prices.*.require_local'         => ['nullable', 'in:0,1'],
+            'shipping_prices.*.require_international' => ['nullable', 'in:0,1'],
+            'shipping_prices.*.localprice' => [
+                'required_if:shipping_prices.*.require_local,1',
+                'numeric',
+                'min:0',
+                'max:999999.99',
+            ],
+            'shipping_prices.*.internationalprice' => [
+                'required_if:shipping_prices.*.require_international,1',
+                'numeric',
+                'min:0',
+                'max:999999.99',
+            ],
+
         ];
     }
 

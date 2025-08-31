@@ -25,12 +25,31 @@ class UserService
             ->orderBy('id', 'desc')
             ->paginate();
     }
+    public function search(Request $request)
+    {
+
+        $request->validated();
+        return app(Pipeline::class)
+            ->send(User::query())
+            ->through([
+                NameJsonFilter::class,
+                EmailFilter::class,
+                PhoneFilter::class,
+                CityFilter::class,
+            ])
+            ->thenReturn()
+            ->withAllRelations()
+            ->where('created_by', getAdminIdOrCreatedBy())
+            ->orderBy('id', 'desc')
+            ->paginate()
+            ->withQueryString();
+    }
+
 
     public function allowedCompanies()
     {
         $adminId = getAdminIdOrCreatedBy();
         $ids = AllowedCompany::where('admin_id', $adminId)
-            ->where('status', 'active')
             ->pluck('company_id')
             ->all();
         $companies = $this->getShippingCompaniesByIds($ids, onlyActive: true, keyById: false);
@@ -90,25 +109,6 @@ class UserService
         return $keyById ? $outMap : $outList;
     }
 
-    public function search(Request $request)
-    {
-
-        $request->validated();
-        return app(Pipeline::class)
-            ->send(User::query())
-            ->through([
-                NameJsonFilter::class,
-                EmailFilter::class,
-                PhoneFilter::class,
-                CityFilter::class,
-            ])
-            ->thenReturn()
-            ->withAllRelations()
-            ->where('created_by', getAdminIdOrCreatedBy())
-            ->orderBy('id', 'desc')
-            ->paginate()
-            ->withQueryString();
-    }
 
     public function store($request)
     {
@@ -131,19 +131,51 @@ class UserService
     public function update($request, User $user)
     {
         $data = $request->validated();
-        if (!isset($data['password'])) {
+
+        if (!isset($data['password']) || $data['password'] === null || $data['password'] === '') {
             unset($data['password']);
         }
+
         $data['name'] = $this->translate($data['name_ar'], $data['name_en']);
         $user->update($data);
 
-        // // Handle shipping prices if provided
-        // if (isset($data['shipping_prices']) && is_array($data['shipping_prices'])) {
-        //     $this->updateShippingPrices($user, $data['shipping_prices']);
-        // }
+        // Handle shipping prices if provided
+        if (isset($data['shipping_prices']) && is_array($data['shipping_prices'])) {
+            $this->updateShippingPrices($user, $data['shipping_prices']);
+        }
 
         return $user;
     }
+
+    /** Upsert shipping prices per company_id */
+    protected function updateShippingPrices(User $user, array $rows): void
+    {
+        $seen = [];
+
+        foreach ($rows as $row) {
+            $companyId = (string) ($row['id'] ?? '');
+            if ($companyId === '') {
+                continue;
+            }
+            $seen[] = $companyId;
+
+            $attrs = [
+                'company_name'         => $row['name'] ?? null,
+                'local_price'          => isset($row['localprice']) && $row['localprice'] !== '' ? $row['localprice'] : null,
+                'international_price'  => isset($row['internationalprice']) && $row['internationalprice'] !== '' ? $row['internationalprice'] : null,
+            ];
+
+            // Upsert (unique per user + company_id)
+            $user->shippingPrices()->updateOrCreate(
+                ['company_id' => $companyId],
+                $attrs
+            );
+        }
+
+        // Optional: remove prices for companies not present in the submitted form
+        // $user->shippingPrices()->whereNotIn('company_id', $seen)->delete();
+    }
+
 
     public function delete(User $user)
     {
