@@ -13,11 +13,9 @@
             <li class=" {{ isRoute(['user.dashboard.index']) ? 'active' : '' }}">
                 <a href="{{ route('user.dashboard.index') }}"
                    data-active="{{ isRoute(['user.dashboard.index']) ? 'true' : 'false' }}" class="menu-toggle">
-                    <div class="menu ">
-                        <div class="base-icons">
-                            <i class="fa fa-dashboard" style="color:#fff;font-size:35px;margin-bottom:10px;"></i>
-                            <p class="side_links_theme">{{__('admin.dashboard')}}</p>
-                        </div>
+                    <div class="base-icons">
+                        <i class="fa fa-dashboard" style="color:#fff;font-size:35px;margin-bottom:10px;"></i>
+                        <p class="side_links_theme">{{__('admin.dashboard')}}</p>
                     </div>
                 </a>
             </li>
@@ -26,11 +24,9 @@
             <li class="menu {{ isRoute(['user.shippings.index']) ? 'active' : '' }}">
                 <a href="{{ route('user.shippings.index') }}"
                    data-active="{{ isRoute(['user.shippings.index']) ? 'true' : 'false' }}" class="menu-toggle">
-                    <div class="">
-                        <div class="base-icons">
-                            <i class="fa fa-truck-arrow-right" style="color:#fff;font-size:35px;margin-bottom:10px;"></i>
-                            <p class="side_links_theme">{{__('admin.new_shipment')}}</p>
-                        </div>
+                    <div class="base-icons">
+                        <i class="fa fa-truck-arrow-right" style="color:#fff;font-size:35px;margin-bottom:10px;"></i>
+                        <p class="side_links_theme">{{__('admin.new_shipment')}}</p>
                     </div>
                 </a>
             </li>

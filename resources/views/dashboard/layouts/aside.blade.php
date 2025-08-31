@@ -12,11 +12,9 @@
             <li class=" {{ isRoute(['admin.dashboard.index']) ? 'active' : '' }}">
                 <a href="{{ route('admin.dashboard.index') }}"
                    data-active="{{ isRoute(['admin.dashboard.index']) ? 'true' : 'false' }}" class="menu-toggle">
-                    <div class="menu ">
-                        <div class="base-icons">
-                            <i class="fa fa-dashboard" style="color:#fff;font-size:35px;margin-bottom:10px;"></i>
-                            <p class="side_links_theme">{{__('admin.dashboard')}}</p>
-                        </div>
+                    <div class="base-icons">
+                        <i class="fa fa-dashboard" style="color:#fff;font-size:35px;margin-bottom:10px;"></i>
+                        <p class="side_links_theme">{{__('admin.dashboard')}}</p>
                     </div>
                 </a>
             </li>
