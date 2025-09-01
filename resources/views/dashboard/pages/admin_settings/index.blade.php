@@ -1,11 +1,11 @@
 @extends('dashboard.layouts.app')
-@section('title', __('admin.admin_settings'))
+@section('title', __('admin.admin_shipments_settings'))
 @push('breadcrumb')
 <nav class="breadcrumb-one" aria-label="{{ __('admin.breadcrumb') }}">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('admin.dashboard.index') }}">{{ __('admin.dashboard') }}</a>
         </li>
-        <li class="breadcrumb-item active" aria-current="page"><span>{{ __('admin.admin_settings') }}</span></li>
+        <li class="breadcrumb-item active" aria-current="page"><span>{{ __('admin.admin_shipments_settings') }}</span></li>
     </ol>
 </nav>
 @endpush
@@ -17,7 +17,7 @@
                 <div class="widget-header">
                     <div class="row">
                         <div class="col-xl-6 col-md-6 col-sm-6 col-6">
-                            <h4>{{ __('admin.admin_settings') }}</h4>
+                            <h4>{{ __('admin.admin_shipments_settings') }}</h4>
                         </div>
                     </div>
                 </div>

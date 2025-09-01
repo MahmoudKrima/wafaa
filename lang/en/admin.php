@@ -11,6 +11,7 @@ return [
     'deactive' => 'Deactive',
     'login' => 'Login',
     'logout' => 'Logout',
+    'admin_shipments_settings' => 'Shipments Setting',
     'phone' => 'Phone',
     'shipment_price_details' => 'Shipment Price Details',
     'new_shipment' => 'New',

@@ -41,56 +41,50 @@
                 <div class="widget-content widget-content-area">
                     <div class="row g-4">
                         @foreach($banks as $bank)
-                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
-                            <div class="card h-100">
-                                <div class="card-header bg-primary text-white">
+                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 mb-2">
+                            <div class="card h-100" style="border-top-left-radius:10px;border-top-right-radius:10px;">
+                                <div class="card-header bg-primary text-white" style="border-top-left-radius:10px;border-top-right-radius:10px;">
                                     <div class="d-flex align-items-center">
                                         @if($bank->image)
                                         <img src="{{ displayImage($bank->image) }}"
                                             alt="{{ $bank->name }}"
                                             class="me-3"
-                                            style="width: 60px; height: 40px; object-fit: cover;">
+                                            style="width: 80px; height: 60px; object-fit: contain;">
                                         @else
                                         <div class="bg-white bg-opacity-25 d-flex align-items-center justify-content-center me-3"
-                                            style="width: 60px; height: 40px;">
+                                            style="width: 80px; height: 60px;">
                                             <i class="fas fa-university text-white"></i>
                                         </div>
                                         @endif
-                                        <h5 class="card-title mb-0 text-white  mx-3">{{ $bank->name }}</h5>
+                                        <h5 class="card-title mb-0 text-white mx-3" style="font-size:15px;">{{ $bank->name }}</h5>
                                     </div>
                                 </div>
                                 <div class="card-body">
                                     <div class="mb-3">
                                         <small class="text-muted d-block">{{ __('admin.account_owner') }}</small>
-                                        <strong class="text-dark  mx-3">{{ $bank->account_owner }}</strong>
+                                        <strong class="text-dark">{{ $bank->account_owner }}</strong>
                                     </div>
 
                                     <div class="mb-3">
                                         <small class="text-muted d-block">{{ __('admin.account_number') }}</small>
-                                        <div class="d-flex align-items-center">
-                                            <strong class="text-dark me-2 text-break mx-3">{{ $bank->account_number }}</strong>
+                                        <div class="d-flex align-items-center" style="display:flex !important;justify-content: space-between;">
+                                            <strong class="text-dark me-2 text-break">{{ $bank->account_number }}</strong>
                                             <button class="btn btn-sm btn-outline-secondary btn-copy"
                                                 data-copy="{{ $bank->account_number }}"
                                                 title="{{ __('admin.copy_to_clipboard') }}">
-                                                <i class="fas fa-copy"></i>
+                                                <i class="fas fa-copy" style="font-size:15px;"></i>
                                             </button>
                                         </div>
                                     </div>
 
-                                    <div class="mb-3">
+                                    <div class="mb-2">
                                         <small class="text-muted d-block">{{ __('admin.iban_number') }}</small>
-                                        <div class="d-flex align-items-center">
-                                            <strong class="text-dark me-2 text-break mx-3">{{ $bank->iban_number }}</strong>
-                                            <button class="btn-sm btn-outline-secondary btn-copy"
-                                                data-copy="{{ $bank->iban_number }}"
-                                                title="{{ __('admin.copy_to_clipboard') }}">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="5" height="5"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                    class="feather feather-edit-2">
-                                                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z">
-                                                    </path>
-                                                </svg>
+                                        <div class="d-flex align-items-center" style="display:flex !important;justify-content: space-between;">
+                                            <strong class="text-dark me-2 text-break">{{ $bank->iban_number }}</strong>
+                                            <button class="btn btn-sm btn-outline-secondary btn-copy"
+                                                    data-copy="{{ $bank->iban_number }}"
+                                                    title="{{ __('admin.copy_to_clipboard') }}">
+                                                <i class="fas fa-copy" style="font-size:15px;"></i>
                                             </button>
                                         </div>
                                     </div>

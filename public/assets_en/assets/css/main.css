@@ -1127,8 +1127,9 @@ select.form-control.form-custom {
     color: #fff !important; }
 
 .btn-outline-secondary:not(:disabled):not(.disabled).active, .btn-outline-secondary:not(:disabled):not(.disabled):active {
-    background-color: #5c1ac3;
-    color: #fff !important; }
+    background-color: #1d69ab;
+    color: #fff !important;
+}
 
 .show > .btn-outline-secondary.dropdown-toggle {
     background-color: #5c1ac3;
@@ -1176,10 +1177,12 @@ select.form-control.form-custom {
     box-shadow: none; }
 
 .btn-outline-secondary {
-    border: 1px solid #5c1ac3 !important;
-    color: #5c1ac3 !important;
+    border: 1px solid #1d69ab !important;
+    color: #1d69ab !important;
     background-color: transparent;
-    box-shadow: none; }
+    box-shadow: none;
+    padding: 10px;
+}
 
 .btn-outline-dark {
     border: 1px solid #3b3f5c !important;
@@ -1212,7 +1215,8 @@ select.form-control.form-custom {
 
 .btn-outline-secondary:hover {
     color: #fff !important;
-    background-color: #5c1ac3; }
+    background-color: #1d69ab;
+}
 
 .btn-outline-dark:hover {
     color: #fff !important;
