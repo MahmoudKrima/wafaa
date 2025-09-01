@@ -21,6 +21,7 @@
             </li>
 
 
+
             <li class="{{ isRoute(['user.shippings.index','user.shippings.create']) ? 'active' : '' }}">
                 <a href="{{ route('user.shippings.index') }}"
                    data-active="{{ isRoute(['user.shippings.create']) ? 'true' : 'false' }}" class="menu-toggle">
