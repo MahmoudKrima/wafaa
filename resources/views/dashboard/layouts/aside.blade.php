@@ -9,7 +9,7 @@
         </div>
 
         <ul class="menu-categories">
-            <li class=" {{ isRoute(['admin.dashboard.index']) ? 'active' : '' }}">
+            <li class=" {{ isRoute(['admin.dashboard.index']) ? 'menu active' : '' }}">
                 <a href="{{ route('admin.dashboard.index') }}"
                    data-active="{{ isRoute(['admin.dashboard.index']) ? 'true' : 'false' }}" class="menu-toggle">
                     <div class="base-icons">

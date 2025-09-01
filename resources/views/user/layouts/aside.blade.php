@@ -10,9 +10,8 @@
 
         <ul class="menu-categories">
 
-            <li class=" {{ isRoute(['user.dashboard.index']) ? 'active' : '' }}">
-                <a href="{{ route('user.dashboard.index') }}"
-                   data-active="{{ isRoute(['user.dashboard.index']) ? 'true' : 'false' }}" class="menu-toggle">
+            <li class=" {{ isRoute(['user.dashboard.index']) ? 'menu active' : '' }}">
+                <a href="{{ route('user.dashboard.index') }}" class="menu-toggle">
                     <div class="base-icons">
                         <i class="fa fa-dashboard" style="color:#fff;font-size:35px;margin-bottom:10px;"></i>
                         <p class="side_links_theme">{{__('admin.dashboard')}}</p>
@@ -22,7 +21,7 @@
 
 
 
-            <li class="{{ isRoute(['user.shippings.index','user.shippings.create']) ? 'active' : '' }}">
+            <li class="{{ isRoute(['user.shippings.index','user.shippings.create']) ? 'menu active' : '' }}">
                 <a href="{{ route('user.shippings.index') }}"
                    data-active="{{ isRoute(['user.shippings.create']) ? 'true' : 'false' }}" class="menu-toggle">
                     <div class="base-icons">
