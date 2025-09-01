@@ -108,9 +108,9 @@ class ShippingService
         array  $company,
         $user,
         array  $selectedReceivers,
-        array  $pricing,          // unused in minimal payload
+        array  $pricing,
         array  $requestData,
-        ?string $shipmentImagePath, // unused in minimal payload
+        ?string $shipmentImagePath,
         string $payment,
         string $method
     ) {
@@ -123,9 +123,9 @@ class ShippingService
 
         $results = ['success' => [], 'failed' => []];
 
-        $senderPayload     = $this->resolveSenderPayload($user); // we’ll still prefer $requestData for sender fields
+        $senderPayload     = $this->resolveSenderPayload($user);
         $isCod             = ($payment === 'cod');
-        $shippingCompanyId = (string) \Illuminate\Support\Arr::get($company, 'id', \Illuminate\Support\Arr::get($requestData, 'shipping_company_id', ''));
+        $shippingCompanyId = (string) Arr::get($company, 'id', Arr::get($requestData, 'shipping_company_id', ''));
         $userId            = (string) (auth()->id() ?? '');
 
         foreach ($selectedReceivers as $r) {
@@ -135,10 +135,8 @@ class ShippingService
                 continue;
             }
 
-            // Optional fallback to model for missing pieces ONLY
-            $receiverModel = \App\Models\Reciever::find($receiverId);
+            $receiverModel = Reciever::find($receiverId);
 
-            // Build minimal receiver structure (names exactly as Ghaya expects)
             $receiver = [
                 'id'            => (string) $receiverId,
                 'name'          => (string)($r['name']             ?? $receiverModel?->name ?? ''),
@@ -165,7 +163,7 @@ class ShippingService
             );
 
             try {
-                $resp = \Illuminate\Support\Facades\Http::withHeaders($headers)
+                $resp = Http::withHeaders($headers)
                     ->timeout(20)
                     ->retry(2, 200)
                     ->post("{$baseUrl}/api/shipments", $body);
@@ -196,10 +194,7 @@ class ShippingService
                 ];
             }
         }
-
-        // Now you can dd or return (your choice)
         dd($results);
-        // return $results;
     }
 
 
@@ -208,33 +203,22 @@ class ShippingService
         string $shippingCompanyId,
         string $method,
         bool   $isCod,
-        array  $sender,        // from resolveSenderPayload($user) — fallback only
-        array  $receiver,      // merged/minimal from caller
+        array  $sender,
+        array  $receiver,
         array  $requestData,
         string $userId
     ): array {
 
-        // --- helper to normalize phones into +CCC-... and strip junk ---
         $normalizePhone = function (?string $raw, string $defaultCC = 'SA') {
             $p = trim((string)$raw);
-
-            // remove spaces, parentheses, and dots
             $p = preg_replace('/[()\s.]/', '', $p) ?? '';
-
-            // if starts 00CC -> +CC
             if (preg_match('/^00(\d+)/', $p, $m)) {
                 $p = '+' . $m[1];
             }
-
-            // KSA convenience: 05xxxxxxxx -> +966-5xxxxxxxx
             if (str_starts_with($p, '05')) {
-                $p = '+966-' . substr($p, 1); // 05 -> +966-5
+                $p = '+966-' . substr($p, 1);
             }
-
-            // ensure we have at least +… or a simple +CCC-… layout
             if (preg_match('/^\+\d+$/', $p)) {
-                // ok like +9665xxxxxxxx, format with a dash after country code if you want:
-                // try to split country code vs subscriber for +9665... form:
                 if (str_starts_with($p, '+9665')) {
                     return '+966-' . substr($p, 4);
                 }
@@ -242,10 +226,8 @@ class ShippingService
             }
 
             if (preg_match('/^\+\d+-?\d+$/', $p)) {
-                return $p; // already like +966-5xxxxxxx
+                return $p;
             }
-
-            // fallback: if it’s all digits and length looks like local mobile, assume SA
             if (preg_match('/^\d{9,12}$/', $p) && $defaultCC === 'SA') {
                 if (str_starts_with($p, '5')) {
                     return '+966-' . $p;
@@ -254,12 +236,9 @@ class ShippingService
                     return '+966-' . substr($p, 1);
                 }
             }
-
-            // last resort: return as-is
             return $p;
         };
 
-        // ----- SENDER (prefer requestData, fallback to $sender) -----
         $senderName        = (string)($requestData['sender_name']         ?? $sender['name']         ?? '');
         $senderEmail       = (string)($requestData['sender_email']        ?? $sender['email']        ?? '');
         $senderPhone       = $normalizePhone($requestData['sender_phone'] ?? ($sender['phone'] ?? ''));
@@ -302,7 +281,6 @@ class ShippingService
         $receiverStreet      = (string)($receiver['street'] ?? '');
         $receiverZipCode     = (string)($receiver['zip'] ?? '');
 
-        // ----- Build EXACTLY like your working body -----
         $body = [
             "shippingCompanyId" => (string) $shippingCompanyId,
             "method"            => (string) $method,
@@ -326,7 +304,7 @@ class ShippingService
             "packagesCount"     => $packagesCount,
             "description"       => $description,
             "isCommercial"      => $isCommercial,
-            "isCod"             => (bool) false,
+            "isCod"             => (bool) $isCod,
             "isWeightEdited"    => (bool)$isWeightEdited,
             "senderCityName"    => $senderCityName,
 
@@ -342,6 +320,7 @@ class ShippingService
 
             "receiverZipCode"     => $receiverZipCode,
             "receiverCityName"    => $receiverCityName,
+            'externalId' => $userId
         ];
 
         // $body = [

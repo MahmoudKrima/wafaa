@@ -36,7 +36,7 @@ class StoreShippingRequest extends FormRequest
             'width'                      => ['required', 'numeric', 'min:0.1'],
             'height'                     => ['required', 'numeric', 'min:0.1'],
             'weight'                     => ['required', 'numeric', 'min:0.1'],
-            'cod_amount'                     => ['sometimes', 'numeric', 'min:1'],
+            'cod_amount'                     => ['sometimes', 'nullable','numeric', 'min:0'],
             'package_description'        => ['nullable', 'string', 'max:1000'],
             'payment_method'             => ['required', 'in:wallet,cod'],
             'shipping_price_per_receiver' => ['required', 'numeric', 'min:0'],
