@@ -8,6 +8,9 @@ use App\Services\Admin\UserSettings\UserService;
 use App\Http\Requests\Admin\User\StoreUserRequest;
 use App\Http\Requests\Admin\User\SearchUserRequest;
 use App\Http\Requests\Admin\User\UpdateUserRequest;
+use App\Enum\TransactionTypeEnum;
+use App\Enum\WalletLogTypeEnum;
+use App\Http\Requests\Admin\WalletLogs\SearchWalletLogsRequest;
 
 class UserController extends Controller
 {
@@ -67,9 +70,11 @@ class UserController extends Controller
             ->with('Success', __('admin.deleted_successfully'));
     }
 
-    public function walletLogs(User $user)
+    public function walletLogs(SearchWalletLogsRequest $request, User $user)
     {
-        $walletLogs = $this->userService->walletLogs($user);
-        return view('dashboard.pages.users.wallet-logs', compact('user', 'walletLogs'));
+        $walletLogs = $this->userService->walletLogs($request, $user);
+        $types = TransactionTypeEnum::cases();
+        $trans_types = WalletLogTypeEnum::cases();
+        return view('dashboard.pages.users.wallet_logs', compact('user', 'walletLogs', 'types', 'trans_types'));
     }
 }

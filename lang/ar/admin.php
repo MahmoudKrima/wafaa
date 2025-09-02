@@ -459,4 +459,12 @@ return [
     'cod_amount' => 'مبلغ التحصيل',
     'extra_fees' => 'رسوم إضافية',
     'shipping_fee' => 'رسوم الشحن',
+    'shippment' => 'الشحنة',
+    'shippment_paid' => 'تم دفع الشحنة. الرصيد السابق :previous ريال، الرصيد الحالي :current ريال',
+    'shippment_created_successfully' => 'تم إنشاء الشحنة بنجاح',
+    'trans_type' => 'نوع المعاملة',
+    'choose_trans_type' => 'اختر نوع المعاملة',
+    'privous_balance' => 'الرصيد السابق',
+    'new_balance' => 'الرصيد الحالي',
+    'deposit_balance' => 'تم تحديث الرصيد. الرصيد السابق :previous ريال، الرصيد الحالي :current ريال',
 ];

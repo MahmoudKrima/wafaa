@@ -1,5 +1,6 @@
 <?php
 
+use App\Enum\WalletLogTypeEnum;
 use App\Enum\TransactionTypeEnum;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
@@ -14,8 +15,14 @@ return new class extends Migration
     {
         Schema::create('wallet_logs', function (Blueprint $table) {
             $table->id();
-            $table->morphs('loggable');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->enum('trans_type', WalletLogTypeEnum::vals());
+            $table->foreignId('user_id')
+                ->constrained('users')
+                ->onDelete('cascade');
+            $table->foreignId('admin_id')
+                ->nullable()
+                ->constrained('admins')
+                ->onDelete('cascade');
             $table->decimal('amount', 10, 2);
             $table->enum('type', TransactionTypeEnum::vals());
             $table->string('description');

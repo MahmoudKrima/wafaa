@@ -459,4 +459,12 @@ return [
     'cod_amount' => 'COD Amount',
     'extra_fees' => 'Extra Fees',
     'shipping_fee' => 'Shipping Fee',
+    'shippment' => 'Shippment',
+    'shippment_paid' => 'Shipment paid. Previous balance: :previous SAR, Current balance: :current SAR',
+    'shippment_created_successfully' => 'Shippment created successfully',
+    'trans_type' => 'Transaction Type',
+    'choose_trans_type' => 'Choose Transaction Type',
+    'privous_balance' => 'Privous Balance',
+    'new_balance' => 'Current Balance',
+    'deposit_balance' => 'Balance updated. Previous balance: :previous SAR, Current balance: :current SAR',
 ];

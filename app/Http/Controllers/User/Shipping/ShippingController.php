@@ -26,7 +26,7 @@ class ShippingController extends Controller
     {
         $this->shippingService->store($request);
         return back()
-            ->with('Success', __('admin.created_successfully'));
+            ->with('Success', __('admin.shippment_created_successfully'));
     }
 
     public function receivers()

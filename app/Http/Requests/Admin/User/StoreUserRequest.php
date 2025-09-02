@@ -63,6 +63,7 @@ class StoreUserRequest extends FormRequest
                     ->mixedCase()
                     ->symbols()
             ],
+            'balance' => ['sometimes', 'nullable', 'numeric', 'min:0', 'max:999999.99'],
             'shipping_prices'                         => ['required', 'array'],
             'shipping_prices.*'                       => ['required', 'array'],
             'shipping_prices.*.id'                    => ['required', 'string', 'distinct'],

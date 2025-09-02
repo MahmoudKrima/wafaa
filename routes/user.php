@@ -6,6 +6,7 @@ use App\Http\Controllers\User\Home\HomeController;
 use App\Http\Controllers\User\Profile\ProfileController;
 use App\Http\Controllers\User\Shipping\ShippingController;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
+use App\Http\Controllers\User\WalletLogs\WalletLogsController;
 use App\Http\Controllers\User\Transaction\TransactionController;
 
 
@@ -87,6 +88,10 @@ Route::middleware(['web'])->group(function () {
                     ->name('shippings.companies');
             });
 
-
+        Route::controller(WalletLogsController::class)
+            ->group(function () {
+                Route::get('/wallet-logs', 'index')
+                    ->name('wallet-logs.index');
+            });
     });
 });

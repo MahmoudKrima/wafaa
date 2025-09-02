@@ -177,7 +177,6 @@
             const height = document.getElementById("height");
 
             if (!length || !width || !height) {
-                // fields missing: block Next silently unless user is submitting
                 showErrorStep5("Dimension fields are missing");
                 return false;
             }
