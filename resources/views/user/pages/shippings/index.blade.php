@@ -42,10 +42,45 @@
                                                 class="p-3">
                                                 <div class="row">
                                                     <div class="col-md-4 mb-3">
-                                                        <label for="code">{{ __('admin.code') }}</label>
-                                                        <input type="text" value="{{ request()->get('code') }}"
-                                                            name="code" id="code" class="form-control"
-                                                            placeholder="{{ __('admin.code') }}">
+                                                        <label for="dateFrom">{{ __('admin.dateFrom') }}</label>
+                                                        <input type="date" value="{{ request()->get('dateFrom') }}"
+                                                            name="dateFrom" id="dateFrom" class="form-control"
+                                                            placeholder="{{ __('admin.dateFrom') }}">
+                                                    </div>
+                                                    <div class="col-md-4 mb-3">
+                                                        <label for="dateTo">{{ __('admin.dateTo') }}</label>
+                                                        <input type="date" value="{{ request()->get('dateTo') }}"
+                                                            name="dateTo" id="dateTo" class="form-control"
+                                                            placeholder="{{ __('admin.dateTo') }}">
+                                                    </div>
+                                                    <div class="col-md-4 mb-3">
+                                                        <label for="isCod">{{ __('admin.isCod') }}</label>
+                                                        @php $isCod = request()->get('isCod'); @endphp
+                                                        <select name="isCod" class="form-control" id="isCod">
+                                                            <option value="">{{ __('admin.choose_isCod') }}</option>
+                                                            <option value="true" @selected($isCod==='true' )>{{ __('admin.yes') }}</option>
+                                                            <option value="false" @selected($isCod==='false' )>{{ __('admin.no') }}</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-4 mb-3">
+                                                        <label for="shippingCompanyId">{{ __('admin.shippingCompanyId') }}</label>
+                                                        <select name="shippingCompanyId" class="form-control" id="shippingCompanyId">
+                                                            <option value="" selected>{{ __('admin.choose_shipping_company') }}</option>
+                                                            @foreach ($companies as $company)
+                                                            <option value="{{ $company['id'] }}"
+                                                                @selected(request()->get('shippingCompanyId') == $company['id'])>
+                                                                {{ $company['name'] }}
+                                                            </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-md-4 mb-3">
+                                                        <label for="method">{{ __('admin.method') }}</label>
+                                                        <select name="method" class="form-control" id="method">
+                                                            <option value="" selected>{{ __('admin.choose_method') }}</option>
+                                                            <option value="local" @selected(request()->get('method') == 'local')>{{ __('admin.local') }}</option>
+                                                            <option value="international" @selected(request()->get('method') == 'international')>{{ __('admin.international') }}</option>
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 <div class="row mt-2">
@@ -76,45 +111,81 @@
                         <table class="table table-striped table-vcenter">
                             <thead>
                                 <tr>
-                                    <th scope="col">{{ __('admin.code') }}</th>
-                                    <th scope="col">{{ __('admin.bank') }}</th>
-                                    <th scope="col">{{ __('admin.amount') }}</th>
+                                    <th scope="col">{{ __('admin.id') }}</th>
+                                    <th scope="col">{{ __('admin.shipping_company') }}</th>
+                                    <th scope="col">{{ __('admin.method') }}</th>
+                                    <th scope="col">{{ __('admin.receiver') }}</th>
+                                    <th scope="col">{{ __('admin.paymentMethod') }}</th>
+                                    <th scope="col">{{ __('admin.tracking_number') }}</th>
+                                    <th scope="col">{{ __('admin.tracking_link') }}</th>
                                     <th scope="col">{{ __('admin.status') }}</th>
-                                    <th scope="col">{{ __('admin.attachment') }}</th>
-                                    <th scope="col">{{ __('admin.created_at') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($result['shippings'] as $transation)
+                                @foreach ($shipments as $shipment)
                                 <tr>
                                     <td>
-                                        {{$transation->code}}
+                                        {{$shipment['id']}}
                                     </td>
                                     <td>
-                                        {{optional($transation->bank)->name ?? __('admin.n/a')}}
+                                        {{$shipment['shippingCompany']['name']}}
                                     </td>
                                     <td>
-                                        {{$transation->amount}}
+                                        @if($shipment['method'] === 'local')
+                                        <span class="badge bg-secondary">{{ __('admin.local') }}</span>
+                                        @elseif($shipment['method'] === 'international')
+                                        <span class="badge bg-info">{{ __('admin.international') }}</span>
+                                        @endif
                                     </td>
                                     <td>
-                                        <span
-                                            class="{{ $transation->status->badge() }}">{{ $transation->status->lang() }}</span>
+                                        {{$shipment['receiver']['fullName']}}
                                     </td>
                                     <td>
-                                        <a href="{{ displayImage($transation->attachment) }}"
-                                            class="btn btn-primary btn-sm" target="_blank">
-                                            {{ __('admin.attachment') }}
+                                        {{$shipment['isCod'] ? __('admin.cash_on_delivery') : __('admin.wallet')}}
+                                    </td>
+                                    <td>
+                                        {{$shipment['trackingNumber'] ?? __('admin.n/a')}}
+                                    </td>
+                                    <td>
+                                        @if(!empty($shipment['trackingUrl']))
+                                        <a href="{{ $shipment['trackingUrl'] }}" target="_blank" class="badge bg-info text-dark">
+                                            {{ __('admin.track') }}
                                         </a>
+                                        @else
+                                        <span class="badge bg-secondary">{{ __('admin.n/a') }}</span>
+                                        @endif
                                     </td>
+
                                     <td>
-                                        {{ $transation->created_at->format('Y-m-d H:i:s') }}
+                                        @php
+                                        switch ($shipment['status']) {
+                                        case 'pending':
+                                        $class = 'badge bg-warning text-dark';
+                                        $label = __('admin.pending');
+                                        break;
+                                        case 'processing':
+                                        $class = 'badge bg-info text-dark';
+                                        $label = __('admin.processing');
+                                        break;
+                                        case 'failed':
+                                        $class = 'badge bg-danger';
+                                        $label = __('admin.failed');
+                                        break;
+                                        default:
+                                        $class = 'badge bg-success';
+                                        $label = __('admin.' . strtolower($shipment['status']));
+                                        break;
+                                        }
+                                        @endphp
+                                        <span class="{{ $class }}">{{ $label }}</span>
                                     </td>
+
                                 </tr>
                                 @endforeach
                             </tbody>
                         </table>
                     </div>
-                    {{ $result['shippings']->links() }}
+                    {{ $shipments->links() }}
                 </div>
             </div>
         </div>

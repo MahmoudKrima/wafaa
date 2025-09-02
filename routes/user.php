@@ -76,6 +76,7 @@ Route::middleware(['web'])->group(function () {
                 Route::post('/create-transaction', 'store')
                     ->name('transactions.store');
             });
+            
         Route::controller(ShippingController::class)
             ->group(function () {
                 Route::get('/shippings', 'index')

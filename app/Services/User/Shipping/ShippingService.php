@@ -17,26 +17,44 @@ use Illuminate\Http\Client\RequestException;
 class ShippingService
 {
     use ImageTrait, TranslateTrait;
-
-    public function index($request)
+    public function getUserListShipments(array $filters = [])
     {
-        // $request->validated();
-        // $banks = $this->banksHasTransactions();
-        // $shippings = app(Pipeline::class)
-        //     ->send(Shipping::query())
-        //     ->through([
-        //         ActivationStatusFilter::class,
-        //         CodeFilter::class
-        //     ])
-        //     ->thenReturn()
-        //     ->where('user_id', auth()->id())
-        //     ->with('bank')
-        //     ->orderByRaw("CASE WHEN status = 'pending' THEN 0 ELSE 1 END")
-        //     ->orderBy('id')
-        //     ->paginate()
-        //     ->withQueryString();
-        // return compact('banks', 'shippings');
+        $base = [
+            'page'           => 0,
+            'pageSize'       => 10,
+            'orderColumn'    => 'createdAt',
+            'orderDirection' => 'desc',
+            // 'externalAppId'  => (string) auth()->id(),
+        ];
+
+        $clean = array_filter($filters, function ($v) {
+            return !is_null($v) && $v !== '';
+        });
+
+        $query = array_merge($base, $clean);
+
+        $res = Http::withHeaders([
+            'accept'    => '*/*',
+            'x-api-key' => 'xwqn5mb5mpgf5u3vpro09i8pmw9fhkuu',
+        ])->get('https://ghaya-express-staging-af597af07557.herokuapp.com/api/shipments', $query);
+
+        return $res->json();
     }
+
+    public function getShippingCompanies()
+    {
+        $res = Http::withHeaders([
+            'accept'    => '*/*',
+            'x-api-key' => 'xwqn5mb5mpgf5u3vpro09i8pmw9fhkuu',
+        ])->get('https://ghaya-express-staging-af597af07557.herokuapp.com/api/shipping-companies', [
+            'page'     => 0,
+            'pageSize' => 500,
+        ]);
+
+        $json = $res->json();
+        return $json['results'] ?? $json ?? [];
+    }
+
 
     public function store($request)
     {
