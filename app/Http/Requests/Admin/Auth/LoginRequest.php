@@ -25,7 +25,7 @@ class LoginRequest extends FormRequest
         return [
             'phone' => [
                 'required',
-                'digits_between:10,15',
+                'regex:/^(05|5|9665|96605|009665|\+9665)[0-9]{8}$/',
                 Rule::exists('admins', 'phone')
             ],
             'password' => [

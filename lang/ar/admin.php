@@ -442,7 +442,7 @@ return [
     'print_summary' => 'طباعة الملخص',
     'download_pdf' => 'تحميل PDF',
     'confirm_shipment' => 'تأكيد الشحنة',
-    'currency_symbol' => 'ريال',
+    'currency_symbol' => 'ر.س',
     'cm' => 'سم',
     'per_receiver_breakdown_title' => 'تفصيل التكلفة لكل مستلم',
     'shipping_price_per_receiver' => 'سعر الشحن لكل مستلم',
@@ -494,5 +494,9 @@ return [
     'shippingCompanyId' => 'معرف شركة الشحن',
     'box' => 'صندوق',
     'document' => 'مستند',
-    
+    'date_from' => 'من تاريخ',
+    'issue_shippment' => 'إصدار شحنة',
+    'edit_balance' => 'تعديل رصيد',
+    'balace_transfer' => 'تحويل رصيد',
+    'amount_due' => 'المبلغ المستحق',
 ];

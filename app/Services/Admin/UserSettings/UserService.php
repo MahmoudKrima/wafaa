@@ -16,6 +16,8 @@ use Illuminate\Pipeline\Pipeline;
 use App\Filters\TransActionFilter;
 use App\Filters\WalletLogTypeFilter;
 use Illuminate\Support\Facades\Http;
+use App\Filters\DateFromFilter;
+use App\Filters\DateToFilter;
 
 class UserService
 {
@@ -136,7 +138,7 @@ class UserService
                 'user_id' => $user->id,
                 'amount' => $data['balance'],
                 'type' => 'deposit',
-                'trans_type' => 'other',
+                'trans_type' => 'edit_balance',
                 'admin_id' => auth('admin')->id(),
                 'description' => [
                     __('admin.deposit_balance', [
@@ -175,7 +177,7 @@ class UserService
                 'user_id' => $user->id,
                 'amount' => $data['balance'] > $oldBalance ? $data['balance'] - $oldBalance : $oldBalance - $data['balance'],
                 'type' => $data['balance'] > $oldBalance ? 'deposit' : 'deduct',
-                'trans_type' => 'other',
+                'trans_type' => 'edit_balance',
                 'admin_id' => auth('admin')->id(),
                 'description' => [
                     'ar' => __('admin.deposit_balance', [
@@ -231,12 +233,14 @@ class UserService
             ->send(WalletLog::query())
             ->through([
                 WalletLogTypeFilter::class,
-                TransActionFilter::class
+                TransActionFilter::class,
+                DateFromFilter::class,
+                DateToFilter::class
             ])
             ->thenReturn()
             ->where('user_id', $user->id)
             ->withAllRelations()
-            ->orderBy('id')
+            ->orderBy('id', 'desc')
             ->paginate()
             ->withQueryString();
         return $logs;

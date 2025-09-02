@@ -494,4 +494,9 @@ return [
     'shippingCompanyId' => 'Shipping Company ID',
     'box' => 'Box',
     'document' => 'Document',
+    'date_from' => 'Date From',
+    'issue_shippment' => 'Issue Shippment',
+    'edit_balance' => 'Edit Balance',
+    'balace_transfer' => 'Balance Transfer',
+    'amount_due' => 'Amount Due',
 ];

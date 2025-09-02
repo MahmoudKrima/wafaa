@@ -68,6 +68,16 @@
                                                         </select>
                                                     </div>
                                                 </div>
+                                                <div class="row">
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="created_at">{{ __('admin.date_from') }}</label>
+                                                        <input type="date" name="date_from" class="form-control" id="date_from" value="{{ request()->get('date_from') }}">
+                                                    </div>
+                                                    <div class="col-md-6 mb-3">
+                                                        <label for="created_at">{{ __('admin.date_to') }}</label>
+                                                        <input type="date" name="date_to" class="form-control" id="date_to" value="{{ request()->get('date_to') }}">
+                                                    </div>
+                                                </div>
                                                 <div class="row mt-2">
                                                     <div class="col-md-3 mb-3">
                                                         <button type="submit"
@@ -102,6 +112,7 @@
                                     <th scope="col">{{ __('admin.amount') }}</th>
                                     <th scope="col">{{ __('admin.admin') }}</th>
                                     <th scope="col">{{ __('admin.description') }}</th>
+                                    <th scope="col">{{ __('admin.created_at') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -123,6 +134,9 @@
                                     </td>
                                     <td>
                                         {{$walletLog->description}}
+                                    </td>
+                                    <td>
+                                        {{ \Carbon\Carbon::parse($walletLog->created_at)->format('d/m/Y h:i')}}
                                     </td>
                                 </tr>
                                 @endforeach

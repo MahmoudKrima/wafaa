@@ -151,7 +151,7 @@
                                         {{$shipment['shipmentDetails']['senderName'] ?? __('admin.n/a')}}
                                     </td>
                                     <td>
-                                        {{$shipment['receiver']['fullName']}}
+                                        {{$shipment['shipmentDetails']['receiverName'] ?? __('admin.n/a')}}
                                     </td>
                                     <td>
                                         {{$shipment['shipmentDetails']['weight'] ?? __('admin.n/a')}}
@@ -171,11 +171,25 @@
                                         @endif
                                     </td>
                                     <td>
-                                        {{ \Carbon\Carbon::parse($shipment['createdAt'])->format('d/m/Y h:i')}}
+                                        {{ \Carbon\Carbon::parse($shipment['createdAt'])
+                                            ->timezone('Asia/Riyadh')
+                                            ->format('d/m/Y H:i') }}
                                     </td>
                                     <td>
-                                        {{$shipment['isCod'] ? __('admin.cash_on_delivery') : __('admin.regular_shipment')}}
+                                        @php
+                                        $isCod = (bool) data_get($shipment, 'isCod', false);
+                                        $codPrice = data_get($shipment, 'shipmentCod.codPrice');
+                                        @endphp
+
+                                        @if ($isCod)
+                                        @if ($codPrice !== null && $codPrice !== '')
+                                        {{ number_format((float) $codPrice, 2) }}  {{ __('admin.currency_symbol') }}
+                                        @endif
+                                        @else
+                                        {{ __('admin.regular_shipment') }}
+                                        @endif
                                     </td>
+
 
                                     <td>
                                         @php
