@@ -35,7 +35,7 @@
                     'admin.users.search',
                     'admin.users.create',
                     'admin.users.edit',
-                    'admin.wallet_logs.index',
+                    'admin.wallet-logs.index',
                     'admin.user-shipping-prices.index',
                     'admin.user-shipping-prices.create',
                     'admin.user-shipping-prices.edit',
@@ -51,7 +51,7 @@
                     'admin.users.search',
                     'admin.users.create',
                     'admin.users.edit',
-                    'admin.wallet_logs.index',
+                    'admin.wallet-logs.index',
                     'admin.user-shipping-prices.index',
                     'admin.user-shipping-prices.create',
                     'admin.user-shipping-prices.edit',
@@ -214,7 +214,7 @@
 
                     @haspermission('users.view', 'admin')
                     <li
-                        class="{{ isRoute(['admin.users.index', 'admin.users.search', 'admin.users.create', 'admin.users.edit', 'admin.wallet_logs.index', 'admin.user-shipping-prices.index', 'admin.user-shipping-prices.create', 'admin.user-shipping-prices.edit']) ? 'active' : '' }}">
+                        class="{{ isRoute(['admin.users.index', 'admin.users.search', 'admin.users.create', 'admin.users.edit', 'admin.wallet-logs.index', 'admin.user-shipping-prices.index', 'admin.user-shipping-prices.create', 'admin.user-shipping-prices.edit']) ? 'active' : '' }}">
                         <a href="{{ route('admin.users.index') }}">
                             <i class="fa fa-user" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
                             {{ __('admin.users') }} </a>

@@ -3,12 +3,16 @@
 namespace App\Models;
 
 use App\Enum\TransactionTypeEnum;
+use App\Enum\WalletLogTypeEnum;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Translatable\HasTranslations;
 
 class WalletLog extends Model
 {
+    use HasTranslations;
     protected $guarded = ['created_at', 'updated_at'];
+    protected $translatable = ['description'];
     public static $permissions = [
         'wallet_logs.view',
         'wallet_logs.create',
@@ -17,20 +21,25 @@ class WalletLog extends Model
     ];
 
     protected $casts = [
+        'trans_type' => WalletLogTypeEnum::class,
         'type' => TransactionTypeEnum::class
     ];
 
 
     public static $relatio = [
         'user',
-        'loggable'
+        'admin'
     ];
-    public function loggable()
-    {
-        return $this->morphTo();
-    }
 
+    public function scopeWithAllRelations($query)
+    {
+        return $query->with(self::$relatio);
+    }
     public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+    public function admin()
     {
         return $this->belongsTo(User::class);
     }

@@ -75,7 +75,14 @@
                                         </div>
                                     </div>
                                 </div>
-                                {{-- Shipping Companies Section (CREATE) --}}
+                                <div class="row">
+                                    <div class="col-6 mb-3">
+                                        <label for="balanceInput"
+                                            class="text-dark">{{ __('admin.balance') }}</label>
+                                        <input id="balanceInput" type="number" name="balance"
+                                            placeholder="{{ __('admin.balance') }}" value="{{ old('balance') }}" class="form-control">
+                                    </div>
+                                </div>
                                 @if($allowedCompanies && count($allowedCompanies) > 0)
                                 <hr>
                                 <div class="form-group">

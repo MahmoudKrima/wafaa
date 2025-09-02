@@ -133,7 +133,7 @@ Route::middleware(['web'])->group(function () {
                     ->name('users.delete')
                     ->middleware('has.permission:users.delete');
                 Route::get('/wallet-logs/{user}', 'walletLogs')
-                    ->name('wallet_logs.index')
+                    ->name('wallet-logs.index')
                     ->middleware('has.permission:wallet_logs.view');
             });
 

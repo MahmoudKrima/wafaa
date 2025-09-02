@@ -71,7 +71,19 @@
                                             <input id="passwordInput" type="password" name="password"
                                                 placeholder="{{ __('admin.password') }}" class="form-control">
                                         </div>
-
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6 mb-3">
+                                            <label for="balanceInput" class="text-dark">{{ __('admin.balance') }}</label>
+                                            <input id="balanceInput"
+                                                type="number"
+                                                name="balance"
+                                                placeholder="{{ __('admin.balance') }}"
+                                                step="any"
+                                                min="0"
+                                                value="{{ old('balance', $user->wallet->balance) }}"
+                                                class="form-control">
+                                        </div>
                                     </div>
                                 </div>
                                 @if($allowedCompanies && count($allowedCompanies) > 0)

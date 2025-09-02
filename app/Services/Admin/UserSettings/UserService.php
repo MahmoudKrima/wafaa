@@ -3,6 +3,7 @@
 namespace App\Services\Admin\UserSettings;
 
 use App\Models\User;
+use App\Models\WalletLog;
 use App\Filters\CityFilter;
 use App\Filters\EmailFilter;
 use App\Filters\PhoneFilter;
@@ -10,9 +11,11 @@ use Illuminate\Http\Request;
 use App\Models\AllowedCompany;
 use App\Traits\TranslateTrait;
 use App\Filters\NameJsonFilter;
-use Illuminate\Pipeline\Pipeline;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Client\Pool;
+use Illuminate\Pipeline\Pipeline;
+use App\Filters\TransActionFilter;
+use App\Filters\WalletLogTypeFilter;
+use Illuminate\Support\Facades\Http;
 
 class UserService
 {
@@ -125,6 +128,29 @@ class UserService
                 'international_price' => $shippingPrice['internationalprice'] ?? null,
             ]);
         }
+        if (isset($data['balance']) && $data['balance'] !== null) {
+            $user->wallet()->update([
+                'balance' => $data['balance'],
+            ]);
+            $user->walletLogs()->create([
+                'user_id' => $user->id,
+                'amount' => $data['balance'],
+                'type' => 'deposit',
+                'trans_type' => 'other',
+                'admin_id' => auth('admin')->id(),
+                'description' => [
+                    __('admin.deposit_balance', [
+                        'previous' => 0,
+                        'current'  => $data['balance']
+                    ], 'ar'),
+
+                    __('admin.deposit_balance', [
+                        'previous' => 0,
+                        'current'  => $data['balance']
+                    ], 'en'),
+                ],
+            ]);
+        }
         return $user;
     }
 
@@ -135,19 +161,38 @@ class UserService
         if (!isset($data['password']) || $data['password'] === null || $data['password'] === '') {
             unset($data['password']);
         }
-
         $data['name'] = $this->translate($data['name_ar'], $data['name_en']);
         $user->update($data);
-
-        // Handle shipping prices if provided
         if (isset($data['shipping_prices']) && is_array($data['shipping_prices'])) {
             $this->updateShippingPrices($user, $data['shipping_prices']);
         }
+        if (isset($data['balance']) && $data['balance'] !== null && $data['balance'] !== $user->wallet->balance) {
+            $oldBalance = $user->wallet->balance;
+            $user->wallet->update([
+                'balance' => $data['balance'],
+            ]);
+            $user->walletLogs()->create([
+                'user_id' => $user->id,
+                'amount' => $data['balance'] > $oldBalance ? $data['balance'] - $oldBalance : $oldBalance - $data['balance'],
+                'type' => $data['balance'] > $oldBalance ? 'deposit' : 'deduct',
+                'trans_type' => 'other',
+                'admin_id' => auth('admin')->id(),
+                'description' => [
+                    'ar' => __('admin.deposit_balance', [
+                        'previous' => $oldBalance,
+                        'current'  => $data['balance']
+                    ], 'ar'),
 
+                    'en' => __('admin.deposit_balance', [
+                        'previous' => $oldBalance,
+                        'current'  => $data['balance']
+                    ], 'en'),
+                ],
+
+            ]);
+        }
         return $user;
     }
-
-    /** Upsert shipping prices per company_id */
     protected function updateShippingPrices(User $user, array $rows): void
     {
         $seen = [];
@@ -165,15 +210,11 @@ class UserService
                 'international_price'  => isset($row['internationalprice']) && $row['internationalprice'] !== '' ? $row['internationalprice'] : null,
             ];
 
-            // Upsert (unique per user + company_id)
             $user->shippingPrices()->updateOrCreate(
                 ['company_id' => $companyId],
                 $attrs
             );
         }
-
-        // Optional: remove prices for companies not present in the submitted form
-        // $user->shippingPrices()->whereNotIn('company_id', $seen)->delete();
     }
 
 
@@ -183,8 +224,21 @@ class UserService
         return true;
     }
 
-    public function walletLogs(User $user)
+    public function walletLogs($request, User $user)
     {
-        return $user->walletLogs()->orderBy('id', 'desc')->paginate();
+        $request->validated();
+        $logs = app(Pipeline::class)
+            ->send(WalletLog::query())
+            ->through([
+                WalletLogTypeFilter::class,
+                TransActionFilter::class
+            ])
+            ->thenReturn()
+            ->where('user_id', $user->id)
+            ->withAllRelations()
+            ->orderBy('id')
+            ->paginate()
+            ->withQueryString();
+        return $logs;
     }
 }

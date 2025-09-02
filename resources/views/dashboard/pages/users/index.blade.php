@@ -134,7 +134,7 @@
                                             </a>
                                             @endhaspermission
                                             @haspermission('wallet_logs.view', 'admin')
-                                            <a href="{{ route('admin.wallet_logs.index', $user->id) }}"
+                                            <a href="{{ route('admin.wallet-logs.index', $user->id) }}"
                                                 class="action-btn btn-edit bs-tooltip me-2 badge rounded-pill bg-info mx-auto"
                                                 style="padding:7px;" title="{{ __('admin.wallet_logs') }}"
                                                 data-toggle="tooltip" data-placement="top" aria-label="Edit"

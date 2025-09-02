@@ -3,15 +3,16 @@
 namespace App\Services\User\Shipping;
 
 use App\Models\Reciever;
+use App\Models\WalletLog;
 use App\Traits\ImageTrait;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Models\AdminSetting;
+use App\Models\AllowedCompany;
 use App\Traits\TranslateTrait;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Client\RequestException;
-use App\Models\AllowedCompany;
 
 class ShippingService
 {
@@ -40,26 +41,32 @@ class ShippingService
     public function store($request)
     {
         $data = $request->validated();
-        // dd($data);
         $user = auth()->user();
-        $company = $this->getShippingCompany($data['shipping_company_id'] ?? '');
+
+        $company = $this->getShippingCompany($data['shipping_company_id'] ?? null);
         if (!$company) {
+            session()->forget('Success');
             return back()->with('Error', __('admin.shipping_company_not_found'));
         }
-        $companyPrice = $user->shippingPrices->where('company_id', $data['shipping_company_id'])->first();
+
+        $companyPrice = $user->shippingPrices
+            ->firstWhere('company_id', (string)($data['shipping_company_id'] ?? ''));
         if (!$companyPrice) {
+            session()->forget('Success');
             return back()->with('Error', __('admin.shipping_company_not_found'));
         }
+
         $method  = Str::lower(Arr::get($data, 'shipping_method', ''));
         $payment = Str::lower(Arr::get($data, 'payment_method', 'wallet'));
 
-        $capErr = $this->validateCapabilities($company, $method, $payment);
-        if ($capErr) {
+        if ($capErr = $this->validateCapabilities($company, $method, $payment)) {
+            session()->forget('Success');
             return back()->with('Error', $capErr);
         }
 
         $receivers = $this->decodeReceivers(Arr::get($data, 'selected_receivers', ''));
         if (isset($receivers['error'])) {
+            session()->forget('Success');
             return back()->with('Error', $receivers['error']);
         }
         $data['selected_receivers'] = $receivers;
@@ -78,9 +85,9 @@ class ShippingService
             companyPrice: $companyPrice,
         );
 
-        $balanceErr = $this->ensureWalletBalance(auth()->user(),  $pricing['grand_total']);
-        if ($balanceErr) {
-            return back()->with('Error', $balanceErr);
+        if ($err = $this->ensureWalletBalance($user, $pricing['grand_total'])) {
+            session()->forget('Success');
+            return back()->with('Error', $err);
         }
 
         if ($request->hasFile('shipment_image')) {
@@ -89,7 +96,8 @@ class ShippingService
 
         $sync = $this->syncNewReceivers($data['selected_receivers'], $user);
         $data['selected_receivers'] = $sync['receivers'];
-        $shipResults = $this->createShipmentsForReceivers(
+
+        $results = $this->createShipmentsForReceivers(
             company: $company,
             user: $user,
             selectedReceivers: $data['selected_receivers'],
@@ -97,22 +105,28 @@ class ShippingService
             requestData: $data,
             shipmentImagePath: $data['shipment_image_path'] ?? null,
             payment: $payment,
-            method: $method
+            method: $method,
+            companyPrice: $companyPrice
         );
+        if (!empty($results['failed'])) {
+            session()->forget('Success');
+            return back()->with('Error', __('admin.shipments_partial_or_failed'));
+        }
 
-        $data['shipments'] = $shipResults;
-        return $data;
+        session()->forget('Error');
+        return back()->with('Success', __('admin.shippment_created_successfully'));
     }
 
     private function createShipmentsForReceivers(
-        array  $company,
+        array $company,
         $user,
-        array  $selectedReceivers,
-        array  $pricing,
-        array  $requestData,
+        array $selectedReceivers,
+        array $pricing,
+        array $requestData,
         ?string $shipmentImagePath,
         string $payment,
-        string $method
+        string $method,
+        $companyPrice
     ) {
         $baseUrl = 'https://ghaya-express-staging-af597af07557.herokuapp.com';
         $headers = [
@@ -136,20 +150,19 @@ class ShippingService
             }
 
             $receiverModel = Reciever::find($receiverId);
-
             $receiver = [
-                'id'            => (string) $receiverId,
-                'name'          => (string)($r['name']             ?? $receiverModel?->name ?? ''),
-                'email'         => (string)($r['email']            ?? $receiverModel?->email ?? ''),
-                'phone'         => (string)($r['phone']            ?? $receiverModel?->phone ?? ''),
-                'phone1'        => (string)($r['additional_phone'] ?? $receiverModel?->additional_phone ?? ''),
-                'country_id'    => (string)($r['country_id']       ?? $receiverModel?->country_id ?? ''),
-                'country_name'  => (string)($r['country_name']     ?? ($receiverModel?->getTranslation('country_name', 'en') ?? '')),
-                'country_code'  => (string)($r['country_code']     ?? $receiverModel?->country_code ?? 'SA'),
-                'city_id'       => (string)($r['city_id']          ?? $receiverModel?->city_id ?? ''),
-                'city_name'     => (string)($r['city_name']        ?? ($receiverModel?->getTranslation('city_name', 'en') ?? '')),
-                'street'        => (string)($r['address']          ?? $receiverModel?->address ?? ''),
-                'zip'           => (string)($r['postal_code']      ?? $receiverModel?->postal_code ?? ''),
+                'id'           => (string) $receiverId,
+                'name'         => (string)($r['name'] ?? $receiverModel?->name ?? ''),
+                'email'        => (string)($r['email'] ?? $receiverModel?->email ?? ''),
+                'phone'        => (string)($r['phone'] ?? $receiverModel?->phone ?? ''),
+                'phone1'       => (string)($r['additional_phone'] ?? $receiverModel?->additional_phone ?? ''),
+                'country_id'   => (string)($r['country_id'] ?? $receiverModel?->country_id ?? ''),
+                'country_name' => (string)($r['country_name'] ?? ($receiverModel?->getTranslation('country_name', 'en') ?? '')),
+                'country_code' => (string)($r['country_code'] ?? $receiverModel?->country_code ?? 'SA'),
+                'city_id'      => (string)($r['city_id'] ?? $receiverModel?->city_id ?? ''),
+                'city_name'    => (string)($r['city_name'] ?? ($receiverModel?->getTranslation('city_name', 'en') ?? '')),
+                'street'       => (string)($r['address'] ?? $receiverModel?->address ?? ''),
+                'zip'          => (string)($r['postal_code'] ?? $receiverModel?->postal_code ?? ''),
             ];
 
             $body = $this->buildGhayaShipmentBody(
@@ -162,12 +175,15 @@ class ShippingService
                 userId: $userId
             );
 
+            if ($shipmentImagePath) {
+                $body["imageUrl"] = displayImage($shipmentImagePath);
+            }
+
             try {
                 $resp = Http::withHeaders($headers)
                     ->timeout(20)
                     ->retry(2, 200)
                     ->post("{$baseUrl}/api/shipments", $body);
-
                 if ($resp->failed()) {
                     $results['failed'][] = [
                         'receiver_id'   => $receiverId,
@@ -184,6 +200,8 @@ class ShippingService
                         'body_sent'     => $body,
                         'response_json' => $resp->json(),
                     ];
+
+                    $this->deductAndLog($user, $requestData, $companyPrice);
                 }
             } catch (\Throwable $e) {
                 $results['failed'][] = [
@@ -194,9 +212,58 @@ class ShippingService
                 ];
             }
         }
-        dd($results);
+        return $results;
     }
 
+    private function deductAndLog($user, array $data, $companyPrice): float
+    {
+        $amount = 0.0;
+        $isCod          = (bool) Arr::get($data, 'is_cod', false);
+        $extraKg        = (float) Arr::get($data, 'extra_kg', 0);
+        $shippingMethod = (string) Arr::get($data, 'shipping_method', 'local');
+        $adminSetting   = optional(optional($user->createdByAdmin)->adminSetting);
+
+        if ($isCod) {
+            $amount += (float) ($adminSetting->cash_on_delivery_price ?? 0);
+        }
+        if ($extraKg > 0) {
+            $amount += (float) ($adminSetting->extra_weight_price ?? 0) * $extraKg;
+        }
+        $amount += (float) ($shippingMethod === 'local'
+            ? ($companyPrice->local_price ?? 0)
+            : ($companyPrice->international_price ?? 0));
+
+        if ($amount <= 0) {
+            return (float) optional($user->wallet)->balance ?? 0.0;
+        }
+
+        return DB::transaction(function () use ($user, $amount) {
+            $oldBalance = $user->wallet->balance;
+            $newBalance = $oldBalance - $amount;
+            $wallet = $user->wallet()->lockForUpdate()->first() ?? $user->wallet()->create(['balance' => 0]);
+            $wallet->balance = (float) $wallet->balance - (float) $amount;
+            $wallet->save();
+            WalletLog::create([
+                'user_id'    => $user->id,
+                'amount'     => number_format($amount, 2, '.', ''),
+                'trans_type' => 'shippment',
+                'type'       => 'deduct',
+                'description' => [
+                    'ar' => __('admin.shippment_paid', [
+                        'previous' => number_format($oldBalance, 2),
+                        'current'  => number_format($newBalance, 2),
+                    ], 'ar'),
+
+                    'en' => __('admin.shippment_paid', [
+                        'previous' => number_format($oldBalance, 2),
+                        'current'  => number_format($newBalance, 2),
+                    ], 'en'),
+                ],
+
+            ]);
+            return (float) $wallet->balance;
+        });
+    }
 
 
     private function buildGhayaShipmentBody(
@@ -297,7 +364,7 @@ class ShippingService
             "senderZipCode"     => $senderZipCode,
 
             "type"              => $type,
-            "length"            =>  (int) $length,
+            "length"            => (int)$length,
             "width"             => (int)$width,
             "height"            => (int)$height,
             "weight"            => (int) $weight,
@@ -323,48 +390,13 @@ class ShippingService
             'externalId' => $userId
         ];
 
-        // $body = [
-        //     "shippingCompanyId" => "660030be07d4cc8bca3eb0eb",
-        //     "method" => "local",
-        //     "senderName" => "متجر Oday Ahmed",
-        //     "senderEmail" => "aaaa@gmail.com",
-        //     "senderPhone" => "+966-501932466",
-        //     "senderPhone1" => "",
-        //     "senderCountryId" => "65fd1a1c1fdbc094e3369b29",
-        //     "senderCountryName" => "Saudi Arabia",
-        //     "senderCountryCode" => "SA",
-        //     "senderCityId" => "6875240b26cb8ca53909f2f4",
-        //     "senderStreet" => "635 Corkeryton, HI 98474-3921",
-        //     "senderZipCode" => "",
-        //     "type" => "box",
-        //     "length" => 1,
-        //     "width" => 1,
-        //     "height" => 1,
-        //     "weight" => 1,
-        //     "packagesCount" => 1,
-        //     "description" => "jyui",
-        //     "isCommercial" => false,
-        //     "isCod" => false,
-        //     "isWeightEdited" => true,
-        //     "senderCityName" => "Diriyah",
-        //     "receiverName" => "عدي محمود",
-        //     "receiverEmail" => "ahmedred@gmail.com",
-        //     "receiverPhone" => "+966-501932466",
-        //     "receiverPhone1" => "",
-        //     "receiverCountryId" => "65fd1a1c1fdbc094e3369b29",
-        //     "receiverCountryName" => "Saudi Arabia",
-        //     "receiverCountryCode" => "SA",
-        //     "receiverCityId" => "6875236a26cb8ca53909f28d",
-        //     "receiverStreet" => "شارع ٢٣ يوليو امام قاعة كليوباترا",
-        //     "receiverZipCode" => "",
-        //     "receiverCityName" => "Rumah",
-        // ];
+        if ($isCod) {
+            $body["codPrice"] = (int) $requestData['cod_amount'];
+        }
 
-        // If your API sometimes requires userId, uncomment:
-        // $body['userId'] = $userId;
-
-        // Do NOT add anything else.
-
+        if ($isCod) {
+            $body["codPrice"] = (int) $requestData['cod_amount'];
+        }
         return $body;
     }
 
@@ -391,10 +423,6 @@ class ShippingService
         return $sender;
     }
 
-    private function generateOrderNumber(): string
-    {
-        return 'ORD-' . now()->format('Ymd-His') . '-' . (string) Str::uuid();
-    }
 
     private function syncNewReceivers(array $selectedReceivers, $user): array
     {
@@ -629,7 +657,7 @@ class ShippingService
 
     protected function getUserWalletBalance($user): float
     {
-        return optional($user->wallet)->balance;
+        return (float) (optional($user->wallet)->balance ?? 0);
     }
 
     public function receivers()
@@ -649,16 +677,18 @@ class ShippingService
                 return ['results' => []];
             }
 
-            $adminId = $user->added_by;
-            if (!$adminId) {
-                $extraWeightPricePerKg = 2;
-                $codFeePerReceiver     = 15;
-            } else {
+            $adminId = $user->created_by;
+
+            if ($adminId) {
                 $adminSettings = AdminSetting::where('admin_id', $adminId)->first();
-                $extraWeightPricePerKg = $adminSettings ? $adminSettings->extra_weight_price : 2;
-                $codFeePerReceiver     = $adminSettings ? $adminSettings->cash_on_delivery_price : 15;
+                $extraWeightPricePerKg = $adminSettings?->extra_weight_price;
+                $codFeePerReceiver     = $adminSettings?->cash_on_delivery_price;
+            } else {
+                $extraWeightPricePerKg = 0;
+                $codFeePerReceiver     = 0;
             }
-            $response = Http::withHeaders([
+
+            $resp = Http::withHeaders([
                 'accept'    => '*/*',
                 'x-api-key' => env('GHAYA_API_KEY', 'xwqn5mb5mpgf5u3vpro09i8pmw9fhkuu'),
             ])->get('https://ghaya-express-staging-af597af07557.herokuapp.com/api/shipping-companies', [
@@ -668,12 +698,12 @@ class ShippingService
                 'orderDirection' => 'desc',
             ]);
 
-            if (!$response->successful()) {
+            if (!$resp->successful()) {
                 return ['results' => []];
             }
 
-            $data = $response->json();
-            $apiCompanies = isset($data['results']) && is_array($data['results']) ? $data['results'] : [];
+            $apiCompanies = (array) data_get($resp->json(), 'results', []);
+
             $allowedIds = [];
             if ($adminId) {
                 $allowedIds = AllowedCompany::where('admin_id', $adminId)
@@ -682,76 +712,63 @@ class ShippingService
                     ->map(fn($v) => (string) $v)
                     ->all();
             }
+
             $userShippingPrices = $user->shippingPrices()
                 ->select('company_id', 'company_name', 'local_price', 'international_price')
                 ->get();
 
-            $userCompanyIds       = $userShippingPrices->pluck('company_id')->map(fn($v) => (string) $v)->all();
-            $userShippingPricesMap = $userShippingPrices->keyBy('company_id');
-            $enrich = function (array $company, $userPrice = null) use ($extraWeightPricePerKg, $codFeePerReceiver) {
-                $methods = (array) Arr::get($company, 'shippingMethods', []);
-                $company['userLocalPrice']          = $userPrice->local_price ?? Arr::get($company, 'localPrice');
-                $company['userInternationalPrice']  = $userPrice->international_price ?? Arr::get($company, 'internationalPrice');
-                $company['adminExtraWeightPrice']   = $extraWeightPricePerKg;
-                $company['adminCodFee']             = $codFeePerReceiver;
-                if (in_array('local', $methods, true)) {
-                    $company['effectiveLocalPrice'] = $userPrice->local_price ?? Arr::get($company, 'localPrice');
-                }
-
-                if (in_array('international', $methods, true)) {
-                    $company['effectiveInternationalPrice'] = $userPrice->international_price ?? Arr::get($company, 'internationalPrice');
-                }
-
-                $company['hasCod'] = in_array('cashOnDelivery', $methods, true);
-
-                return $company;
-            };
-            if (empty($userCompanyIds)) {
-                $filteredCompanies = collect($apiCompanies)
-                    ->filter(function ($company) use ($allowedIds) {
-                        $id       = (string) Arr::get($company, 'id', '');
-                        $isActive = (bool) Arr::get($company, 'isActive', false);
-
-                        if (!$isActive) {
-                            return false;
-                        }
-                        if (!empty($allowedIds)) {
-                            return in_array($id, $allowedIds, true);
-                        }
-                        return true;
-                    })
-                    ->map(fn($company) => $enrich($company, null))
-                    ->values()
-                    ->toArray();
-
+            if ($userShippingPrices->isEmpty()) {
                 return [
-                    'results' => $filteredCompanies,
+                    'results' => [],
                     'admin_settings' => [
                         'extra_weight_price_per_kg' => $extraWeightPricePerKg,
                         'cod_fee_per_receiver'      => $codFeePerReceiver,
                     ],
                 ];
             }
+
+            $userCompanyIds = $userShippingPrices->pluck('company_id')->map(fn($v) => (string) $v)->all();
+            $userPriceMap   = $userShippingPrices->keyBy(fn($row) => (string) $row->company_id);
+
             $targetIds = !empty($allowedIds)
                 ? array_values(array_intersect($userCompanyIds, $allowedIds))
                 : $userCompanyIds;
 
-            $filteredCompanies = collect($apiCompanies)
+            $results = collect($apiCompanies)
                 ->filter(function ($company) use ($targetIds) {
-                    $id       = (string) Arr::get($company, 'id', '');
-                    $isActive = (bool) Arr::get($company, 'isActive', false);
+                    $id = (string) data_get($company, 'id', '');
+                    $isActive = (bool) data_get($company, 'isActive', false);
                     return $isActive && in_array($id, $targetIds, true);
                 })
-                ->map(function ($company) use ($userShippingPricesMap, $enrich) {
-                    $id        = (string) Arr::get($company, 'id', '');
-                    $userPrice = $userShippingPricesMap->get($id);
-                    return $enrich($company, $userPrice);
+                ->map(function ($company) use ($userPriceMap, $extraWeightPricePerKg, $codFeePerReceiver) {
+                    $id      = (string) data_get($company, 'id', '');
+                    $methods = (array) data_get($company, 'shippingMethods', []);
+                    $userPrice = $userPriceMap->get($id);
+                    if (!$userPrice) {
+                        return null;
+                    }
+
+                    $company['userLocalPrice']         = $userPrice->local_price;
+                    $company['userInternationalPrice'] = $userPrice->international_price;
+                    $company['adminExtraWeightPrice']  = $extraWeightPricePerKg;
+                    $company['adminCodFee']            = $codFeePerReceiver;
+
+                    if (in_array('local', $methods, true)) {
+                        $company['effectiveLocalPrice'] = $userPrice->local_price;
+                    }
+                    if (in_array('international', $methods, true)) {
+                        $company['effectiveInternationalPrice'] = $userPrice->international_price;
+                    }
+
+                    $company['hasCod'] = in_array('cashOnDelivery', $methods, true);
+                    return $company;
                 })
+                ->filter()
                 ->values()
                 ->toArray();
 
             return [
-                'results' => $filteredCompanies,
+                'results' => $results,
                 'admin_settings' => [
                     'extra_weight_price_per_kg' => $extraWeightPricePerKg,
                     'cod_fee_per_receiver'      => $codFeePerReceiver,
@@ -761,6 +778,7 @@ class ShippingService
             return ['results' => []];
         }
     }
+
 
 
     public function getStates()
