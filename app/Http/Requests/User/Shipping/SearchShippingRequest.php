@@ -29,6 +29,7 @@ class SearchShippingRequest extends FormRequest
             'isCod'             => ['nullable', 'in:true,false'],
             'shippingCompanyId' => ['nullable', 'string'],
             'method'            => ['nullable', 'in:local,international'],
+            'type'            => ['nullable', 'in:box,document'],
         ];
     }
 

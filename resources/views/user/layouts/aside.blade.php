@@ -20,8 +20,8 @@
             </li>
 
 
-            <li class="{{ isRoute(['user.shippings.index','user.shippings.create']) ? 'menu active' : '' }}">
-                <a href="{{ route('user.shippings.index') }}"
+            <li class=" {{ isRoute(['user.shippings.create']) ? 'menu active' : '' }}">
+                <a href="{{ route('user.shippings.create') }}"
                     data-active="{{ isRoute(['user.shippings.create']) ? 'true' : 'false' }}" class="menu-toggle">
                     <div class="base-icons">
                         <i class="fa fa-truck-arrow-right" style="color:#1b6aab;font-size:35px;margin-bottom:10px;"></i>
@@ -58,18 +58,8 @@
                 </a>
             </li>
 
-            <li class="menu {{ isRoute([
-    'user.shippings.index',
-    'user.shippings.create',
-])
-    ? 'active'
-    : '' }}">
-                <a href="#shippings_settings" data-active="{{ isRoute([
-    'user.shippings.index',
-    'user.shippings.create',
-])
-    ? 'true'
-    : 'false' }}" class="menu-toggle">
+            <li class="menu {{ isRoute(['user.shippings.index']) ? 'active' : '' }}">
+                <a href="#shippings_settings" data-active="{{ isRoute(['user.shippings.index',])? 'true' : 'false' }}" class="menu-toggle">
                     <div class="base-menu">
                         <div class="base-icons">
                             <i class="fa fa-shipping-fast" style="color:#1b6aab;font-size:35px;margin-bottom:10px;"></i>

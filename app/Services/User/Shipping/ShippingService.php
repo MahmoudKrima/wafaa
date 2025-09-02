@@ -21,7 +21,7 @@ class ShippingService
     {
         $base = [
             'page'           => 0,
-            'pageSize'       => 10,
+            'pageSize'       => 15,
             'orderColumn'    => 'createdAt',
             'orderDirection' => 'desc',
             // 'externalAppId'  => (string) auth()->id(),
