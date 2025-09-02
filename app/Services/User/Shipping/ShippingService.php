@@ -19,6 +19,18 @@ class ShippingService
 {
     use ImageTrait, TranslateTrait;
 
+    private function ghayaRequest()
+    {
+        return Http::withHeaders([
+            'accept'    => '*/*',
+            'x-api-key' => config('services.ghaya.key'),
+        ]);
+    }
+
+    private function ghayaUrl(string $endpoint): string
+    {
+        return rtrim(config('services.ghaya.base_url'), '/') . '/' . ltrim($endpoint, '/');
+    }
 
     public function getUserListShipments(array $filters = [])
     {
@@ -36,23 +48,19 @@ class ShippingService
 
         $query = array_merge($base, $clean);
 
-        $res = Http::withHeaders([
-            'accept'    => '*/*',
-            'x-api-key' => 'xwqn5mb5mpgf5u3vpro09i8pmw9fhkuu',
-        ])->get('https://ghaya-express-staging-af597af07557.herokuapp.com/api/shipments', $query);
+        $res = $this->ghayaRequest()
+            ->get($this->ghayaUrl('shipments'), $query);
 
         return $res->json();
     }
 
     public function getShippingCompanies()
     {
-        $res = Http::withHeaders([
-            'accept'    => '*/*',
-            'x-api-key' => 'xwqn5mb5mpgf5u3vpro09i8pmw9fhkuu',
-        ])->get('https://ghaya-express-staging-af597af07557.herokuapp.com/api/shipping-companies', [
-            'page'     => 0,
-            'pageSize' => 500,
-        ]);
+        $res = $this->ghayaRequest()
+            ->get($this->ghayaUrl('shipping-companies'), [
+                'page'     => 0,
+                'pageSize' => 500,
+            ]);
 
         $json = $res->json();
         return $json['results'] ?? $json ?? [];
@@ -115,11 +123,11 @@ class ShippingService
                 $createdAt   = isset($row['createdAt']) ? \Carbon\Carbon::parse($row['createdAt'])->format('Y-m-d H:i') : __('admin.n/a');
                 $cod         = !empty($row['isCod']) ? __('admin.cash_on_delivery') : __('admin.regular_shipment');
                 $status      = __('admin.' . strtolower($row['status'])) ?? __('admin.n/a');
-                $labelUrl    = $row['labelUrl']?? __('admin.n/a');
+                $labelUrl    = $row['labelUrl'] ?? __('admin.n/a');
                 $trackUrl    = $row['trackingUrl'] ?? __('admin.n/a');
 
                 fputcsv($out, [
-                    $companyName,  
+                    $companyName,
                     $tracking,
                     $sender,
                     $receiver,
@@ -156,7 +164,6 @@ class ShippingService
         }
         return $filters;
     }
-
 
     public function store($request)
     {
@@ -248,13 +255,6 @@ class ShippingService
         string $method,
         $companyPrice
     ) {
-        $baseUrl = 'https://ghaya-express-staging-af597af07557.herokuapp.com';
-        $headers = [
-            'accept'       => '*/*',
-            'x-api-key'    => env('GHAYA_API_KEY', 'xwqn5mb5mpgf5u3vpro09i8pmw9fhkuu'),
-            'Content-Type' => 'application/json',
-        ];
-
         $results = ['success' => [], 'failed' => []];
 
         $senderPayload     = $this->resolveSenderPayload($user);
@@ -300,15 +300,16 @@ class ShippingService
             }
 
             try {
-                $resp = Http::withHeaders($headers)
+                $resp = $this->ghayaRequest()
                     ->timeout(20)
                     ->retry(2, 200)
-                    ->post("{$baseUrl}/api/shipments", $body);
+                    ->post($this->ghayaUrl('shipments'), $body);
+
                 if ($resp->failed()) {
                     $results['failed'][] = [
                         'receiver_id'   => $receiverId,
                         'status'        => $resp->status(),
-                        'url'           => "{$baseUrl}/api/shipments",
+                        'url'           => $this->ghayaUrl('shipments'),
                         'body_sent'     => $body,
                         'response_json' => $resp->json(),
                         'response_text' => $resp->body(),
@@ -326,7 +327,7 @@ class ShippingService
             } catch (\Throwable $e) {
                 $results['failed'][] = [
                     'receiver_id'   => $receiverId,
-                    'url'           => "{$baseUrl}/api/shipments",
+                    'url'           => $this->ghayaUrl('shipments'),
                     'body_sent'     => $body,
                     'error_message' => $e->getMessage(),
                 ];
@@ -373,18 +374,15 @@ class ShippingService
                         'previous' => number_format($oldBalance, 2),
                         'current'  => number_format($newBalance, 2),
                     ], 'ar'),
-
                     'en' => __('admin.shippment_paid', [
                         'previous' => number_format($oldBalance, 2),
                         'current'  => number_format($newBalance, 2),
                     ], 'en'),
                 ],
-
             ]);
             return (float) $wallet->balance;
         });
     }
-
 
     private function buildGhayaShipmentBody(
         string $shippingCompanyId,
@@ -395,7 +393,6 @@ class ShippingService
         array  $requestData,
         string $userId
     ): array {
-
         $normalizePhone = function (?string $raw, string $defaultCC = 'SA') {
             $p = trim((string)$raw);
             $p = preg_replace('/[()\s.]/', '', $p) ?? '';
@@ -507,7 +504,7 @@ class ShippingService
 
             "receiverZipCode"     => $receiverZipCode,
             "receiverCityName"    => $receiverCityName,
-            'externalAppId' => $userId
+            'externalAppId'       => $userId
         ];
 
         if ($isCod) {
@@ -516,8 +513,6 @@ class ShippingService
 
         return $body;
     }
-
-
 
     private function resolveSenderPayload($user)
     {
@@ -539,7 +534,6 @@ class ShippingService
 
         return $sender;
     }
-
 
     private function syncNewReceivers(array $selectedReceivers, $user): array
     {
@@ -675,10 +669,8 @@ class ShippingService
         if (!$companyId) return null;
 
         try {
-            $res = Http::withHeaders([
-                'accept'    => '*/*',
-                'x-api-key' => env('GHAYA_API_KEY', 'xwqn5mb5mpgf5u3vpro09i8pmw9fhkuu'),
-            ])->get("https://ghaya-express-staging-af597af07557.herokuapp.com/api/shipping-companies/{$companyId}");
+            $res = $this->ghayaRequest()
+                ->get($this->ghayaUrl("shipping-companies/{$companyId}"));
 
             if (!$res->successful()) return null;
 
@@ -784,8 +776,6 @@ class ShippingService
             ->get();
     }
 
-
-
     public function getUserShippingCompanies()
     {
         try {
@@ -805,10 +795,7 @@ class ShippingService
                 $codFeePerReceiver     = 0;
             }
 
-            $resp = Http::withHeaders([
-                'accept'    => '*/*',
-                'x-api-key' => env('GHAYA_API_KEY', 'xwqn5mb5mpgf5u3vpro09i8pmw9fhkuu'),
-            ])->get('https://ghaya-express-staging-af597af07557.herokuapp.com/api/shipping-companies', [
+            $resp = $this->ghayaRequest()->get($this->ghayaUrl('shipping-companies'), [
                 'page'           => 0,
                 'pageSize'       => 50,
                 'orderColumn'    => 'createdAt',
@@ -896,15 +883,11 @@ class ShippingService
         }
     }
 
-
-
     public function getStates()
     {
         try {
-            $response = Http::withHeaders([
-                'accept'    => '*/*',
-                'x-api-key' => env('GHAYA_API_KEY', 'xwqn5mb5mpgf5u3vpro09i8pmw9fhkuu'),
-            ])->get('https://ghaya-express-staging-af597af07557.herokuapp.com/api/states');
+            $response = $this->ghayaRequest()
+                ->get($this->ghayaUrl('states'));
 
             if ($response->successful()) {
                 return $response->json();
@@ -919,10 +902,8 @@ class ShippingService
     public function getCities()
     {
         try {
-            $response = Http::withHeaders([
-                'accept'    => '*/*',
-                'x-api-key' => env('GHAYA_API_KEY', 'xwqn5mb5mpgf5u3vpro09i8pmw9fhkuu'),
-            ])->get('https://ghaya-express-staging-af597af07557.herokuapp.com/api/cities');
+            $response = $this->ghayaRequest()
+                ->get($this->ghayaUrl('cities'));
 
             if ($response->successful()) {
                 return $response->json();
@@ -937,12 +918,10 @@ class ShippingService
     public function getCitiesByState($stateId)
     {
         try {
-            $response = Http::withHeaders([
-                'accept'    => '*/*',
-                'x-api-key' => env('GHAYA_API_KEY', 'xwqn5mb5mpgf5u3vpro09i8pmw9fhkuu'),
-            ])->get('https://ghaya-express-staging-af597af07557.herokuapp.com/api/cities', [
-                'state_id' => $stateId
-            ]);
+            $response = $this->ghayaRequest()
+                ->get($this->ghayaUrl('cities'), [
+                    'state_id' => $stateId
+                ]);
 
             if ($response->successful()) {
                 return $response->json();
@@ -957,10 +936,8 @@ class ShippingService
     public function getCountryById($countryId)
     {
         try {
-            $response = Http::withHeaders([
-                'accept'    => '*/*',
-                'x-api-key' => env('GHAYA_API_KEY', 'xwqn5mb5mpgf5u3vpro09i8pmw9fhkuu'),
-            ])->get("https://ghaya-express-staging-af597af07557.herokuapp.com/api/countries/{$countryId}");
+            $response = $this->ghayaRequest()
+                ->get($this->ghayaUrl("countries/{$countryId}"));
 
             if ($response->successful()) {
                 return $response->json();
@@ -975,10 +952,8 @@ class ShippingService
     public function getStateById($stateId)
     {
         try {
-            $response = Http::withHeaders([
-                'accept'    => '*/*',
-                'x-api-key' => env('GHAYA_API_KEY', 'xwqn5mb5mpgf5u3vpro09i8pmw9fhkuu'),
-            ])->get("https://ghaya-express-staging-af597af07557.herokuapp.com/api/states/{$stateId}");
+            $response = $this->ghayaRequest()
+                ->get($this->ghayaUrl("states/{$stateId}"));
 
             if ($response->successful()) {
                 return $response->json();
@@ -993,10 +968,8 @@ class ShippingService
     public function getCityById($cityId)
     {
         try {
-            $response = Http::withHeaders([
-                'accept'    => '*/*',
-                'x-api-key' => env('GHAYA_API_KEY', 'xwqn5mb5mpgf5u3vpro09i8pmw9fhkuu'),
-            ])->get("https://ghaya-express-staging-af597af07557.herokuapp.com/api/cities/{$cityId}");
+            $response = $this->ghayaRequest()
+                ->get($this->ghayaUrl("cities/{$cityId}"));
 
             if ($response->successful()) {
                 return $response->json();
