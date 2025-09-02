@@ -492,4 +492,7 @@ return [
     'isCod' => 'دفع عند الاستلام',
     'choose_isCod' => 'دفع عند الاستلام',
     'shippingCompanyId' => 'معرف شركة الشحن',
+    'box' => 'صندوق',
+    'document' => 'مستند',
+    
 ];

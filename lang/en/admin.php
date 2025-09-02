@@ -492,4 +492,6 @@ return [
     'isCod' => 'Is COD',
     'choose_isCod' => 'Choose Is COD',
     'shippingCompanyId' => 'Shipping Company ID',
+    'box' => 'Box',
+    'document' => 'Document',
 ];
