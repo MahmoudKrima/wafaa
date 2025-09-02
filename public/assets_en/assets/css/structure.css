@@ -54,7 +54,7 @@ p {
 }
 
 .side_links_theme{
-    color:#fff;
+    color: #1b6aab;
     font-size: 11px;
 }
 
@@ -215,9 +215,9 @@ code {
     margin-top: 0;
     margin-bottom: 0;
     border-radius: 6px;
-    -webkit-box-shadow: 0 4px 6px 0 rgba(85, 85, 85, 0.08), 0 1px 20px 0 rgba(0, 0, 0, 0.07), 0px 1px 11px 0px rgba(0, 0, 0, 0.07);
+    /* -webkit-box-shadow: 0 4px 6px 0 rgba(85, 85, 85, 0.08), 0 1px 20px 0 rgba(0, 0, 0, 0.07), 0px 1px 11px 0px rgba(0, 0, 0, 0.07); */
     -moz-box-shadow: 0 4px 6px 0 rgba(85, 85, 85, 0.08), 0 1px 20px 0 rgba(0, 0, 0, 0.07), 0px 1px 11px 0px rgba(0, 0, 0, 0.07);
-    box-shadow: 0 4px 6px 0 rgba(85, 85, 85, 0.08), 0 1px 20px 0 rgba(0, 0, 0, 0.07), 0px 1px 11px 0px rgba(0, 0, 0, 0.07);
+    /* box-shadow: 0 4px 6px 0 rgba(85, 85, 85, 0.08), 0 1px 20px 0 rgba(0, 0, 0, 0.07), 0px 1px 11px 0px rgba(0, 0, 0, 0.07); */
 }
 
 .layout-top-spacing {
@@ -443,7 +443,7 @@ code {
     content: '';
     background: #ece6f6;
     border-radius: 6px;
-    top: 18px;
+    top: 29px;
     z-index: -1;
     left: 50%;
     transition: all .3s;
@@ -965,7 +965,7 @@ code {
 }
 
 .sidebar-theme #compactSidebar {
-    background: #fe9400;
+    background: #ffffff;
 }
 
 .sidebar-theme #compactSidebar .theme-logo {
@@ -996,7 +996,7 @@ code {
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
     -webkit-box-shadow: none;
     -moz-box-shadow: none;
-    box-shadow: none;
+    box-shadow: 2px 4px 10px 0px rgba(0, 0, 0, 0.3);
 }
 
 .sidebar-closed #compactSidebar {
@@ -1010,9 +1010,9 @@ code {
     justify-content: center;
     align-self: center;
     padding: 7px;
-    background: white;
+    /* background: white; */
     border-radius: 6px;
-    /* box-shadow: 0px 1px 6px 1px rgba(0, 0, 0, 0.11); */
+    box-shadow: 0px 1px 10px 2px rgba(0, 0, 0, 0.11);
 }
 
 .sidebar-wrapper #compactSidebar .external-links {
@@ -1058,7 +1058,7 @@ code {
 .sidebar-wrapper #compactSidebar .menu-categories {
     position: relative;
     padding: 0;
-    height: calc(100vh - 250px);
+    height: calc(100vh - 100px);
     display: flex;
     margin-bottom: 0;
     flex-direction: column;
@@ -1154,26 +1154,26 @@ code {
     color: #515365;
     transition: color .3s;
     transition: background .3s;
-    margin: 9px auto;
+    margin: 10px auto;
     border-radius: 5px;
     background-color: rgba(255, 255, 255, 0.05);
-    box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.11);
+    /* box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.11); */
 }
 
 .sidebar-wrapper #compactSidebar .menu-categories li.menu a.menu-toggle {
     background-color: rgba(255, 255, 255, 0.05);
-    box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.11);
+    /* box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.11); */
 }
 
 .sidebar-wrapper #compactSidebar .menu-categories li.menu.active a.menu-toggle,
 .sidebar-wrapper #compactSidebar .menu-categories li.menu a.menu-toggle[data-active="true"] {
-    background-color: rgb(29 105 171);
-    box-shadow: 0px 1px 6px 1px rgba(0, 0, 0, 0.11);
+    background-color: rgb(255 255 255);
+    box-shadow: 0px 4px 10px 1px rgba(0, 0, 0, 0.19);
 }
 
 .sidebar-wrapper #compactSidebar .menu-categories li.menu.show a.menu-toggle {
-    background-color: rgb(29 106 172);
-    box-shadow: 0px 1px 6px 1px rgba(0, 0, 0, 0.11);
+    background-color: rgb(255 255 255);
+    box-shadow: 3px 1px 10px 1px rgba(0, 0, 0, 0.19);
 }
 
 .sidebar-wrapper #compactSidebar .menu-categories li.menu.show a.menu-toggle .base-icons svg {
@@ -1579,7 +1579,8 @@ code {
     }
 
     .sidebar-wrapper #compactSidebar .menu-categories {
-        height: calc(100vh - 120px);
+        /* height: calc(100vh - 120px); */
+        height: auto;
     }
 
     html.sidebar-noneoverflow .main-container:not(.sidebar-closed) .sidebar-wrapper #compactSidebar,
@@ -1726,7 +1727,7 @@ code {
         height: 20px;
     }
     .side_links_theme{
-        color:#fff !important;
+        color: #1b6aab !important;
         font-size:14px !important;
     }
     .navbar .navbar-item .nav-item.search-animated.show-search svg {
@@ -1769,7 +1770,8 @@ code {
     }
 
     .sidebar-wrapper #compactSidebar .menu-categories {
-        height: calc(100vh - 250px);
+        height: calc(100vh - 124px);
+        height: auto;
     }
 
     .navbar .navbar-item .nav-item.dropdown.message-dropdown .dropdown-menu {

@@ -13,19 +13,18 @@
             <li class=" {{ isRoute(['user.dashboard.index']) ? 'menu active' : '' }}">
                 <a href="{{ route('user.dashboard.index') }}" class="menu-toggle">
                     <div class="base-icons">
-                        <i class="fa fa-dashboard" style="color:#fff;font-size:35px;margin-bottom:10px;"></i>
+                        <i class="fa fa-dashboard" style="color:#1b6aab;font-size:35px;margin-bottom:10px;"></i>
                         <p class="side_links_theme">{{__('admin.dashboard')}}</p>
                     </div>
                 </a>
             </li>
 
 
-
             <li class="{{ isRoute(['user.shippings.index','user.shippings.create']) ? 'menu active' : '' }}">
                 <a href="{{ route('user.shippings.index') }}"
                     data-active="{{ isRoute(['user.shippings.create']) ? 'true' : 'false' }}" class="menu-toggle">
                     <div class="base-icons">
-                        <i class="fa fa-truck-arrow-right" style="color:#fff;font-size:35px;margin-bottom:10px;"></i>
+                        <i class="fa fa-truck-arrow-right" style="color:#1b6aab;font-size:35px;margin-bottom:10px;"></i>
                         <p class="side_links_theme">{{__('admin.new_shipment')}}</p>
                     </div>
                 </a>
@@ -52,7 +51,7 @@
     : 'false' }}" class="menu-toggle">
                     <div class="base-menu">
                         <div class="base-icons">
-                            <i class="fa fa-money-bill-trend-up" style="color:#fff;font-size:35px;margin-bottom:10px;"></i>
+                            <i class="fa fa-money-bill-trend-up" style="color:#1b6aab;font-size:35px;margin-bottom:10px;"></i>
                             <p class="side_links_theme">{{__('admin.transactions')}}</p>
                         </div>
                     </div>
@@ -73,7 +72,7 @@
     : 'false' }}" class="menu-toggle">
                     <div class="base-menu">
                         <div class="base-icons">
-                            <i class="fa fa-shipping-fast" style="color:#fff;font-size:35px;margin-bottom:10px;"></i>
+                            <i class="fa fa-shipping-fast" style="color:#1b6aab;font-size:35px;margin-bottom:10px;"></i>
                             <p class="side_links_theme">{{__('admin.shippings')}}</p>
                         </div>
                     </div>

@@ -15,7 +15,7 @@
         padding: 0 100px !important;
     }
 
-    @media screen and (max-width: 600px) {
+    @media screen and (max-width: 1025px) {
         .widget {
             padding: 0 0 !important;
         }
@@ -55,7 +55,7 @@
                                         <div class="step-number {{ $i===1 ? 'bg-primary' : 'bg-secondary' }} text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mx-sm-0"
                                             style="width:35px;height:35px;font-size:14px;font-weight:bold;">{{ $i }}
                                         </div>
-                                        <span class="d-block d-sm-inline ms-0 ms-sm-2 text-center text-sm-start mt-1 mt-sm-0 small step_text">
+                                        <span class="d-block d-sm-inline ms-0 ms-sm-2 text-center text-sm-start mt-1 mt-sm-0 small step_text step_text">
                                             @switch($i)
                                             @case(1) {{ __('admin.select_company') }} @break
                                             @case(2) {{ __('admin.select_method') }} @break
