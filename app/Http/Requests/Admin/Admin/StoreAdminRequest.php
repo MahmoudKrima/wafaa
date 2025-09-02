@@ -43,7 +43,9 @@ class StoreAdminRequest extends FormRequest
             'phone' => [
                 'required',
                 'regex:/^(05|5|9665|96605|009665|\+9665)[0-9]{8}$/',
-                Rule::unique('admins', 'phone')
+                Rule::unique('admins', 'phone'),
+                Rule::unique('users', 'phone'),
+                Rule::unique('users', 'additional_phone'),
             ],
             'password' => [
                 'required',

@@ -26,7 +26,7 @@ class SearchAdminRequest extends FormRequest
         return [
             'name' => ['sometimes', 'nullable', 'string', 'max:255'],
             'email' => ['sometimes', 'nullable', 'string', 'max:255'],
-            'phone' => ['sometimes', 'nullable',  'digits_between:10,15'],
+            'phone' => ['sometimes', 'nullable', 'regex:/^(05|5|9665|96605|009665|\+9665)[0-9]{8}$/'],
             'role' => ['sometimes', 'nullable', 'string', 'exists:roles,id'],
             'status' => ['sometimes', 'nullable', 'string', Rule::in(ActivationStatusEnum::vals())],
         ];

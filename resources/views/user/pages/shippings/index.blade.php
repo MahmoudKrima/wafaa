@@ -151,7 +151,7 @@
                                         {{$shipment['shipmentDetails']['senderName'] ?? __('admin.n/a')}}
                                     </td>
                                     <td>
-                                        {{$shipment['receiver']['fullName']}}
+                                        {{$shipment['shipmentDetails']['receiverName'] ?? __('admin.n/a')}}
                                     </td>
                                     <td>
                                         {{$shipment['shipmentDetails']['weight'] ?? __('admin.n/a')}}
@@ -171,7 +171,9 @@
                                         @endif
                                     </td>
                                     <td>
-                                        {{ \Carbon\Carbon::parse($shipment['createdAt'])->format('d/m/Y h:i')}}
+                                        {{ \Carbon\Carbon::parse($shipment['createdAt'])
+                                            ->timezone('Asia/Riyadh')
+                                            ->format('d/m/Y H:i') }}
                                     </td>
                                     <td>
                                         {{$shipment['isCod'] ? __('admin.cash_on_delivery') : __('admin.regular_shipment')}}

@@ -39,7 +39,7 @@ class ShippingService
             'pageSize'       => 15,
             'orderColumn'    => 'createdAt',
             'orderDirection' => 'desc',
-            // 'externalAppId'  => (string) auth()->id(),
+            'externalAppId'  => (string) auth()->id(),
         ];
 
         $clean = array_filter($filters, function ($v) {
