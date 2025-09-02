@@ -387,16 +387,13 @@ class ShippingService
 
             "receiverZipCode"     => $receiverZipCode,
             "receiverCityName"    => $receiverCityName,
-            'externalId' => $userId
+            'externalAppId' => $userId
         ];
 
         if ($isCod) {
             $body["codPrice"] = (int) $requestData['cod_amount'];
         }
 
-        if ($isCod) {
-            $body["codPrice"] = (int) $requestData['cod_amount'];
-        }
         return $body;
     }
 
