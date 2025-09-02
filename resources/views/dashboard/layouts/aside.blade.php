@@ -13,7 +13,7 @@
                 <a href="{{ route('admin.dashboard.index') }}"
                    data-active="{{ isRoute(['admin.dashboard.index']) ? 'true' : 'false' }}" class="menu-toggle">
                     <div class="base-icons">
-                        <i class="fa fa-dashboard" style="color:#fff;font-size:35px;margin-bottom:10px;"></i>
+                        <i class="fa fa-dashboard" style="color:#1b6aab;font-size:35px;margin-bottom:10px;"></i>
                         <p class="side_links_theme">{{__('admin.dashboard')}}</p>
                     </div>
                 </a>
@@ -60,7 +60,7 @@
                     : 'false' }}" class="menu-toggle">
                         <div class="base-menu">
                             <div class="base-icons">
-                                <i class="fa fa-users" style="color:#fff;font-size:35px;margin-bottom:10px;"></i>
+                                <i class="fa fa-users" style="color:#1b6aab;font-size:35px;margin-bottom:10px;"></i>
                                 <p class="side_links_theme">{{__('admin.users_settings')}}</p>
                             </div>
                         </div>
@@ -99,7 +99,7 @@
                     : 'false' }}" class="menu-toggle">
                         <div class="base-menu">
                             <div class="base-icons">
-                                <i class="fa fa-bank" style="color:#fff;font-size:35px;margin-bottom:10px;"></i>
+                                <i class="fa fa-bank" style="color:#1b6aab;font-size:35px;margin-bottom:10px;"></i>
                                 <p class="side_links_theme">{{__('admin.banks_settings')}}</p>
                             </div>
                         </div>
@@ -173,7 +173,7 @@
                 ]) ? 'true' : 'false' }}" class="menu-toggle">
                         <div class="base-menu">
                             <div class="base-icons">
-                                <i class="fa fa-gear" style="color:#fff;font-size:35px;margin-bottom:10px;"></i>
+                                <i class="fa fa-gear" style="color:#1b6aab;font-size:35px;margin-bottom:10px;"></i>
                                 <p class="side_links_theme">{{__('admin.manage_site')}}</p>
                             </div>
                         </div>
