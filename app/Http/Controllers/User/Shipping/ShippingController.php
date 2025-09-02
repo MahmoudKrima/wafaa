@@ -2,19 +2,49 @@
 
 namespace App\Http\Controllers\User\Shipping;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\User\Shipping\StoreShippingRequest;
-use App\Http\Requests\User\Transaction\SearchTransactionRequest;
-use App\Services\User\Shipping\ShippingService;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Services\User\Shipping\ShippingService;
+use App\Http\Requests\User\Shipping\StoreShippingRequest;
+use App\Http\Requests\User\Shipping\SearchShippingRequest;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 class ShippingController extends Controller
 {
     public function __construct(private ShippingService $shippingService) {}
 
-    public function index(SearchTransactionRequest $request)
+    public function index(SearchShippingRequest $request)
     {
-        return view('user.pages.shippings.create');
+        $page    = max(1, (int) $request->input('page', 1));
+        $perPage = (int) $request->input('pageSize', 10);
+
+        $filters = $request->validated();
+
+        if ($request->filled('isCod')) {
+            $filters['isCod'] = $request->input('isCod') === 'true' ? 'true' : 'false';
+        }
+
+        $filters = array_merge($filters, [
+            'page'     => $page - 1,
+            'pageSize' => $perPage,
+        ]);
+
+        $data = $this->shippingService->getUserListShipments($filters);
+
+        $results = collect($data['results'] ?? []);
+        $total   = $data['total'] ?? $results->count();
+
+        $shipments = new LengthAwarePaginator(
+            $results,
+            $total,
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
+        $companies = $this->shippingService->getShippingCompanies();
+
+        return view('user.pages.shippings.index', compact('shipments', 'companies'));
     }
 
     public function create()

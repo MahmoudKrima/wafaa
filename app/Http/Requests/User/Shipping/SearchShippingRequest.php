@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Http\Requests\User\Transaction;
+namespace App\Http\Requests\User\Shipping;
 
-use App\Enum\TransactionStatusEnum;
+use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class SearchShippingRequest extends FormRequest
 {
@@ -21,30 +20,37 @@ class SearchShippingRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
+
     public function rules(): array
     {
         return [
-            'code' => [
-                'sometimes',
-                'nullable',
-                'string',
-                'max:255'
-            ],
-            'bank' => [
-                'sometimes',
-                'nullable',
-                'integer',
-                Rule::exists('banks', 'id')
-                    ->where('admin_id', auth()->user()->created_by)
-                    ->where('status', 'active')
-            ],
-            'status' => [
-                'sometimes',
-                'nullable',
-                'string',
-                'max:10',
-                Rule::in(TransactionStatusEnum::vals())
-            ]
+            'dateFrom'          => ['nullable', 'date'],
+            'dateTo'            => ['nullable', 'date', 'after_or_equal:dateFrom'],
+            'isCod'             => ['nullable', 'in:true,false'],
+            'shippingCompanyId' => ['nullable', 'string'],
+            'method'            => ['nullable', 'in:local,international'],
         ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $from = $this->normalizeDate($this->input('dateFrom'));
+        $to   = $this->normalizeDate($this->input('dateTo'));
+
+        $this->merge([
+            'dateFrom' => $from,
+            'dateTo'   => $to,
+        ]);
+    }
+
+    private function normalizeDate(?string $value): ?string
+    {
+        if (!$value) return null;
+
+        try {
+            return Carbon::parse($value)->format('Y-m-d');
+        } catch (\Throwable $e) {
+            return null;
+        }
     }
 }
