@@ -22,7 +22,7 @@
                             </a>
                         </div>
                         <div style="margin: 15px 15px 0 15px;">
-                            <a href="#" class="btn btn-outline-dark">
+                            <a href="{{ route('user.shippings.export', request()->query()) }}" class="btn btn-outline-dark">
                                 <i class="fa fa-file-excel"></i> {{ __('admin.export_excel') }}
                             </a>
                         </div>
@@ -88,14 +88,14 @@
                                                     <div class="col-md-4 mb-3">
                                                         <label for="dateFrom">{{ __('admin.dateFrom') }}</label>
                                                         <input type="date" value="{{ request()->get('dateFrom') }}"
-                                                               name="dateFrom" id="dateFrom" class="form-control"
-                                                               placeholder="{{ __('admin.dateFrom') }}">
+                                                            name="dateFrom" id="dateFrom" class="form-control"
+                                                            placeholder="{{ __('admin.dateFrom') }}">
                                                     </div>
                                                     <div class="col-md-4 mb-3">
                                                         <label for="dateTo">{{ __('admin.dateTo') }}</label>
                                                         <input type="date" value="{{ request()->get('dateTo') }}"
-                                                               name="dateTo" id="dateTo" class="form-control"
-                                                               placeholder="{{ __('admin.dateTo') }}">
+                                                            name="dateTo" id="dateTo" class="form-control"
+                                                            placeholder="{{ __('admin.dateTo') }}">
                                                     </div>
                                                 </div>
                                                 <div class="row mt-2">
@@ -202,20 +202,20 @@
                                     </td>
                                     <td>
                                         @if(!empty($shipment['labelUrl']))
-                                            <a href="{{ $shipment['labelUrl'] }}" target="_blank" class="badge bg-primary text-white">
-                                                {{ __('admin.shipment_file') }}
-                                            </a>
+                                        <a href="{{ $shipment['labelUrl'] }}" target="_blank" class="badge bg-primary text-white">
+                                            {{ __('admin.shipment_file') }}
+                                        </a>
                                         @else
-                                            <span class="badge bg-primary text-white">{{ __('admin.n/a') }}</span>
+                                        <span class="badge bg-primary text-white">{{ __('admin.n/a') }}</span>
                                         @endif
 
 
                                         @if(!empty($shipment['trackingUrl']))
-                                            <a href="{{ $shipment['trackingUrl'] }}" target="_blank" class="badge bg-primary text-white">
-                                                {{ __('admin.track_shipment') }}
-                                            </a>
+                                        <a href="{{ $shipment['trackingUrl'] }}" target="_blank" class="badge bg-primary text-white">
+                                            {{ __('admin.track_shipment') }}
+                                        </a>
                                         @else
-                                            <span class="badge bg-dark text-white">{{ __('admin.n/a') }}</span>
+                                        <span class="badge bg-dark text-white">{{ __('admin.n/a') }}</span>
                                         @endif
 
                                     </td>

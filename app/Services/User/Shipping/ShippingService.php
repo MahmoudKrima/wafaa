@@ -12,11 +12,14 @@ use App\Models\AllowedCompany;
 use App\Traits\TranslateTrait;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Http\Client\RequestException;
+use App\Http\Requests\User\Shipping\SearchShippingRequest;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ShippingService
 {
     use ImageTrait, TranslateTrait;
+
+
     public function getUserListShipments(array $filters = [])
     {
         $base = [
@@ -53,6 +56,105 @@ class ShippingService
 
         $json = $res->json();
         return $json['results'] ?? $json ?? [];
+    }
+
+    public function export($request): StreamedResponse
+    {
+        $filters = $this->buildFiltersFromRequest($request);
+        $pageSize = 200;
+        $page     = 0;
+        $allRows  = [];
+
+        do {
+            $pageFilters = array_merge($filters, [
+                'page'     => $page,
+                'pageSize' => $pageSize,
+            ]);
+
+            $chunk = $this->getUserListShipments($pageFilters);
+
+            $results = $chunk['results'] ?? [];
+            $total   = (int) ($chunk['total'] ?? count($results));
+
+            foreach ($results as $r) {
+                $allRows[] = $r;
+            }
+
+            $page++;
+            $fetched = count($allRows);
+        } while ($fetched < $total && !empty($results));
+
+        $fileName = 'shipments_' . now()->format('Ymd_His') . '.csv';
+
+        return response()->streamDownload(function () use ($allRows) {
+            $out = fopen('php://output', 'w');
+            fwrite($out, "\xEF\xBB\xBF");
+            fputcsv($out, [
+                'Company',
+                'Tracking Number',
+                'Sender',
+                'Receiver',
+                'Weight',
+                'Method',
+                'Type',
+                'Created At',
+                'COD',
+                'Status',
+                'Label URL',
+                'Tracking URL',
+            ]);
+
+            foreach ($allRows as $row) {
+                $companyName = $row['shippingCompany']['name'] ?? __('admin.n/a');
+                $tracking    = $row['trackingNumber'] ?? __('admin.n/a');
+                $sender      = $row['shipmentDetails']['senderName'] ?? __('admin.n/a');
+                $receiver    = $row['receiver']['fullName'] ?? __('admin.n/a');
+                $weight      = $row['shipmentDetails']['weight'] ?? __('admin.n/a');
+                $method      = __('admin.' . $row['method']) ?? __('admin.n/a');
+                $type        = __('admin.' . $row['type']) ?? __('admin.n/a');
+                $createdAt   = isset($row['createdAt']) ? \Carbon\Carbon::parse($row['createdAt'])->format('Y-m-d H:i') : __('admin.n/a');
+                $cod         = !empty($row['isCod']) ? __('admin.cash_on_delivery') : __('admin.regular_shipment');
+                $status      = __('admin.' . strtolower($row['status'])) ?? __('admin.n/a');
+                $labelUrl    = $row['labelUrl']?? __('admin.n/a');
+                $trackUrl    = $row['trackingUrl'] ?? __('admin.n/a');
+
+                fputcsv($out, [
+                    $companyName,  
+                    $tracking,
+                    $sender,
+                    $receiver,
+                    $weight,
+                    $method,
+                    $type,
+                    $createdAt,
+                    $cod,
+                    $status,
+                    $labelUrl,
+                    $trackUrl,
+                ]);
+            }
+
+            fclose($out);
+        }, $fileName, [
+            'Content-Type'        => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+            'Cache-Control'       => 'no-store, no-cache, must-revalidate, max-age=0',
+        ]);
+    }
+
+    private function buildFiltersFromRequest(SearchShippingRequest $request): array
+    {
+        $filters = $request->validated();
+        if ($request->filled('isCod')) {
+            $filters['isCod'] = $request->input('isCod') === 'true' ? 'true' : 'false';
+        }
+        if ($request->filled('dateFrom')) {
+            $filters['dateFrom'] = \Carbon\Carbon::parse($request->input('dateFrom'))->format('Y-m-d');
+        }
+        if ($request->filled('dateTo')) {
+            $filters['dateTo'] = \Carbon\Carbon::parse($request->input('dateTo'))->format('Y-m-d');
+        }
+        return $filters;
     }
 
 

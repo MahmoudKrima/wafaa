@@ -47,6 +47,11 @@ class ShippingController extends Controller
         return view('user.pages.shippings.index', compact('shipments', 'companies'));
     }
 
+    public function export(SearchShippingRequest $request)
+    {
+        return $this->shippingService->export($request);
+    }
+
     public function create()
     {
         return view('user.pages.shippings.create');
