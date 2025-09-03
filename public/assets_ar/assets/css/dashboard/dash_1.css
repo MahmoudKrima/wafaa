@@ -266,7 +266,7 @@
     color: #888ea8;
 }
 .widget-activity-three .timeline-line .item-timeline .t-content div.tags {
-    
+
 }
 .widget-activity-three .timeline-line .item-timeline .t-content div.tags .badge {
     padding: 2px 4px;
@@ -277,7 +277,7 @@
 .widget-activity-three .timeline-line .item-timeline .t-content div.tags .badge-primary {
     background-color: #c2d5ff;
     color: #F6950D;
-    
+
 }
 
 .widget-activity-three .timeline-line .item-timeline .t-content div.tags .badge-success {
@@ -288,7 +288,7 @@
 .widget-activity-three .timeline-line .item-timeline .t-content div.tags .badge-warning {
     background-color: #ffeccb;
     color: #e2a03f;
-    
+
 }
 .widget-activity-three .timeline-line .item-timeline .t-dot:after {
     content: '';
@@ -319,7 +319,7 @@
     background: #fff;
 }
 .widget-one_hybrid .widget-heading {
-    padding: 20px 13px;
+    padding: 25px 15px;
 }
 .widget-one_hybrid .widget-heading .w-icon {
     display: inline-block;
@@ -383,9 +383,9 @@
     background-image: linear-gradient(to top, #276b6b 0%, #46177e 100%);
 }
 .widget-account-invoice-two .account-box .info {
-    display: flex;
+    display: block;
     justify-content: space-between;
-    margin-bottom: 84px;
+    margin-bottom: 35px;
 }
 .widget-account-invoice-two .account-box h5 {
     color: #e0e6ed;
@@ -400,7 +400,7 @@
     align-self: center;
 }
 .widget-account-invoice-two .account-box .acc-action {
-    margin-top: 23px;
+    /* margin-top: 23px; */
     display: flex;
     justify-content: space-between;
 }
@@ -649,7 +649,7 @@
     border: 2px solid #e0e6ed;
 }
 .widget-card-two .card-bottom-section .img-group img:not(:last-child) {
-    margin-left: 5px;    
+    margin-left: 5px;
 }
 .widget-card-two .card-bottom-section a {
     display: block;

@@ -115,7 +115,6 @@
                                                 <i class="fas fa-university text-muted" style="font-size:64px;opacity:.3;"></i>
                                             </div>
                                             <h4 class="text-muted mb-3">{{ __('admin.no_bank_accounts') }}</h4>
-                                            <p class="text-muted mb-0 fs-6">{{ __('admin.no_bank_accounts_description') }}</p>
                                         </div>
                                     </div>
                                 </div>

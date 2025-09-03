@@ -13,7 +13,7 @@ enum WalletLogTypeEnum: string
     {
         return match ($this) {
             self::SHIPPMENT => __("admin.issue_shippment"),
-            self::TRANSACTION => __("admin.balace_transfer"),   
+            self::TRANSACTION => __("admin.balace_transfer"),
             self::EDITBALANCE => __("admin.edit_balance"),
             self::OTHER => __("admin.other"),
         };
@@ -22,10 +22,10 @@ enum WalletLogTypeEnum: string
     public function badge(): string
     {
         return match ($this) {
-            self::SHIPPMENT => 'btn btn-success btn-sm text-center',
-            self::TRANSACTION => 'btn btn-warning btn-sm text-center',
-            self::EDITBALANCE => 'btn btn-info btn-sm text-center',
-            self::OTHER => 'btn btn-secondary btn-sm text-center',
+            self::SHIPPMENT => 'badge bg-success text-center',
+            self::TRANSACTION => 'badge bg-warning text-center',
+            self::EDITBALANCE => 'badge bg-info text-center',
+            self::OTHER => 'badge bg-secondary text-center',
         };
     }
 

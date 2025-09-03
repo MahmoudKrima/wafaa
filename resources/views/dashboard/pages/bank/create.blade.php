@@ -1,5 +1,5 @@
 @extends('dashboard.layouts.app')
-@section('title', __('admin.create'))
+@section('title', __('admin.create_bank'))
 @push('breadcrumb')
 <nav class="breadcrumb-one" aria-label="{{ __('admin.breadcrumb') }}">
     <ol class="breadcrumb">
@@ -107,7 +107,7 @@
                                 </div>
                                 <div class="row">
                                     <div class="col-12">
-                                        <input type="submit" value="{{ __('admin.create') }}"
+                                        <input type="submit" value="{{ __('admin.create_bank') }}"
                                             class="mt-4 btn btn-primary">
                                     </div>
                                 </div>

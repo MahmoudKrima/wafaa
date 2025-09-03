@@ -40,7 +40,7 @@
                                         </div>
                                         <div class="col-lg-12 col-md-6 mb-3 custom-file-container"
                                             data-upload-id="myFirstImage">
-                                            <label>{{ __('admin.attachment') }}<a href="javascript:void(0)"
+                                            <label>{{ __('admin.receipt_attachment') }}<a href="javascript:void(0)"
                                                     class="custom-file-container__image-clear"
                                                     title="{{ __('admin.clear_image') }}"><span
                                                         style="background-color:#ababab;padding:5px;border-radius:50%;margin:0 10px;">X</span></a></label>

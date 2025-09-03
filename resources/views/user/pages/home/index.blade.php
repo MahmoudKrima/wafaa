@@ -78,8 +78,8 @@
     .metric-card .value {
         margin: 0;
         font-weight: 700;
-        font-size: 28px;
-        color: #111827;
+        font-size: 50px;
+        color: #1b6aab;
         line-height: 1.2;
         word-break: break-word;
     }
@@ -175,16 +175,16 @@
             padding: 20px;
             min-height: 90px;
         }
-        
+
         .metric-card .value {
             font-size: 24px;
         }
-        
+
         .metric-card .icon {
             width: 50px;
             height: 50px;
         }
-        
+
         .metric-card .icon i {
             font-size: 20px;
         }
@@ -203,97 +203,118 @@ $totalCount = (int) ($stats['total'] ?? 0);
 
 <div class="layout-px-spacing" dir="{{ $rtl }}">
 
+
+    {{--Statistics--}}
+
+    {{-- Wallet Balance --}}
+    <div class="row layout-top-spacing">
+        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-12 layout-spacing">
+            <div class="widget widget-account-invoice-two">
+                <div class="widget-content">
+                    <div class="account-box">
+                        <div class="info">
+                            <h5 class="">{{ __('admin.wallet_balance') }}</h5>
+                            <p style="font-size: 35px;margin-top: 20px;">{{ number_format($walletBalance, 2) }} {{ __('admin.currency_symbol') }}</p>
+                        </div>
+                        <div class="acc-action">
+                            <div class="">
+                                <a href="javascript:void(0);">
+                                    <i class="fa fa-credit-card"></i>
+                                </a>
+                            </div>
+                            <a href="{{ route('user.transactions.create') }}">
+                                <i class="fa fa-add"></i> {{__('admin.recharge_credit')}}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     {{-- ===== Metrics as separate cards ===== --}}
     <div class="metrics-grid">
-
-        {{-- Wallet Balance --}}
-        <div class="metric-card is-primary">
-            <div class="meta">
-                <p class="label">{{ __('admin.wallet_balance') }}</p>
-                <p class="value">{{ number_format($walletBalance, 2) }} {{ __('admin.currency_symbol') }}</p>
-            </div>
-            <div class="icon"><i class="feather feather-credit-card"></i></div>
-        </div>
 
         {{-- Receivers --}}
         <div class="metric-card is-success">
             <div class="meta">
-                <p class="label">{{ __('admin.receivers') }}</p>
+                <p class="label">{{ __('admin.receivers_count') }}</p>
                 <p class="value">{{ number_format($receiversCount) }}</p>
             </div>
-            <div class="icon"><i class="feather feather-users"></i></div>
+            <div class="icon"><i class="fa fa-user-friends"></i></div>
         </div>
 
         {{-- Total Shipments --}}
-        <div class="metric-card is-purple">
+        <div class="metric-card is-info">
             <div class="meta">
                 <p class="label">{{ __('admin.shipments_total') }}</p>
                 <p class="value">{{ number_format($totalCount) }}</p>
             </div>
-            <div class="icon"><i class="feather feather-package"></i></div>
+            <div class="icon"><i class="fa fa-shipping-fast"></i></div>
         </div>
 
         {{-- Local Shipments --}}
         <div class="metric-card is-info">
             <div class="meta">
-                <p class="label">{{ __('admin.local') }}</p>
+                <p class="label">{{ __('admin.local_shipments') }}</p>
                 <p class="value">{{ number_format($localCount) }}</p>
             </div>
-            <div class="icon"><i class="feather feather-truck"></i></div>
+            <div class="icon"><i class="fa fa-truck-arrow-right"></i></div>
         </div>
 
         {{-- International Shipments --}}
-        <div class="metric-card is-secondary">
+        <div class="metric-card is-primary">
             <div class="meta">
-                <p class="label">{{ __('admin.international') }}</p>
+                <p class="label">{{ __('admin.international_shipments') }}</p>
                 <p class="value">{{ number_format($intlCount) }}</p>
             </div>
-            <div class="icon"><i class="feather feather-globe"></i></div>
+            <div class="icon"><i class="fa fa-globe-europe"></i></div>
         </div>
 
         {{-- Status: Pending --}}
         <div class="metric-card is-warning">
             <div class="meta">
-                <p class="label">{{ __('admin.pending') }}</p>
+                <p class="label">{{ __('admin.pending_shipments') }}</p>
                 <p class="value">{{ number_format($st['pending'] ?? 0) }}</p>
             </div>
-            <div class="icon"><i class="feather feather-clock"></i></div>
+            <div class="icon"><i class="fa fa-list-check"></i></div>
         </div>
 
         {{-- Status: Processing --}}
         <div class="metric-card is-success">
             <div class="meta">
-                <p class="label">{{ __('admin.processing') }}</p>
+                <p class="label">{{ __('admin.processing_shipments') }}</p>
                 <p class="value">{{ number_format($st['processing'] ?? 0) }}</p>
             </div>
-            <div class="icon"><i class="feather feather-activity"></i></div>
+            <div class="icon"><i class="fa fa-refresh"></i></div>
         </div>
 
         {{-- Status: Failed --}}
         <div class="metric-card is-danger">
             <div class="meta">
-                <p class="label">{{ __('admin.failed') }}</p>
+                <p class="label">{{ __('admin.failed_shipments') }}</p>
                 <p class="value">{{ number_format($st['failed'] ?? 0) }}</p>
             </div>
-            <div class="icon"><i class="feather feather-x-circle"></i></div>
+            <div class="icon"><i class="fa fa-window-close"></i></div>
         </div>
 
         {{-- Status: Cancel Request --}}
-        <div class="metric-card is-orange">
+        <div class="metric-card is-danger">
             <div class="meta">
-                <p class="label">{{ __('admin.cancelrequest') }}</p>
+                <p class="label">{{ __('admin.cancel_request_shipments') }}</p>
                 <p class="value">{{ number_format($st['cancelRequest'] ?? 0) }}</p>
             </div>
-            <div class="icon"><i class="feather feather-alert-triangle"></i></div>
+            <div class="icon"><i class="fa fa-trash-can"></i></div>
         </div>
 
         {{-- Status: Canceled --}}
-        <div class="metric-card is-slate">
+        <div class="metric-card is-danger">
             <div class="meta">
-                <p class="label">{{ __('admin.canceled') }}</p>
+                <p class="label">{{ __('admin.canceled_shipments') }}</p>
                 <p class="value">{{ number_format($st['canceled'] ?? 0) }}</p>
             </div>
-            <div class="icon"><i class="feather feather-slash"></i></div>
+            <div class="icon"><i class="fa fa-window-close"></i></div>
         </div>
 
     </div>

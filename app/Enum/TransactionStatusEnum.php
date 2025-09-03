@@ -20,9 +20,9 @@ enum TransactionStatusEnum: string
     public function badge(): string
     {
         return match ($this) {
-            self::ACCEPTED => 'btn btn-success btn-sm text-center',
-            self::PENDING => 'btn btn-warning btn-sm text-center',
-            self::REJECTED => 'btn btn-danger btn-sm text-center',
+            self::ACCEPTED => 'badge bg-success  text-center',
+            self::PENDING => 'btn btn-warning  text-center',
+            self::REJECTED => 'badge bg-danger  text-center',
         };
     }
 
