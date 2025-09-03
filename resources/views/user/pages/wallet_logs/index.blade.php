@@ -112,12 +112,10 @@
                                 @foreach ($logs as $log)
                                 <tr>
                                     <td>
-                                        <span
-                                            class="{{ $log->type->badge() }}">{{ $log->type->lang() }}</span>
+                                        <span class="{{ $log->type->badge() }}">{{ $log->type->lang() }}</span>
                                     </td>
                                     <td>
-                                        <span
-                                            class="{{ $log->trans_type->badge() }}">{{ $log->trans_type->lang() }}</span>
+                                        <span class="{{ $log->trans_type->badge() }}">{{ $log->trans_type->lang() }}</span>
                                     </td>
                                     <td>
                                         {{$log->amount}}
