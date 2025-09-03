@@ -32,9 +32,8 @@
 
 <body class="form">
 <div class="header-container fixed-top">
-    <header class="header navbar navbar-expand-sm" 
-        style="background-color: transparent !important; margin:0 {{ App::getLocale()==='ar' ? '251px 0 0 0' : '0 0 0 251px' }}; border:none !important;">
-
+    <header class="header navbar navbar-expand-sm" style="background-color: #eeebeb59 !important; border:none !important;display:flex;justify-content: flex-start;">
+        <div> {{__('admin.choose_lang')}} </div>
         <ul class="navbar-item flex-row navbar-dropdown" style="list-style:none; margin:0; padding:0;">
             <li class="nav-item dropdown language-dropdown more-dropdown">
                 <div class="dropdown custom-dropdown-icon">

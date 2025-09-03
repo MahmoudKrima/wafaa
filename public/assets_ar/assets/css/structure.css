@@ -68,7 +68,8 @@ code {
 
 .page-header {
     border: 0;
-    margin: 0; }
+    margin: 0;
+}
 
 .page-title h3 {
     margin: 0;
@@ -142,7 +143,7 @@ code {
     flex-grow: 8;
     margin-top: 60px;
     margin-bottom: 0;
-    margin-right: 140px;
+    margin-right: 150px;
     -webkit-transition: .3s ease all;
     transition: .3s ease all;
 }
@@ -782,7 +783,7 @@ code {
     padding: 4px;
     /* background: white; */
     border-radius: 6px;
-    box-shadow: 0px 1px 10px 2px rgba(0, 0, 0, 0.11);
+    /* box-shadow: 0px 1px 10px 2px rgba(0, 0, 0, 0.11); */
 }
 
 .sidebar-wrapper #compactSidebar .external-links {

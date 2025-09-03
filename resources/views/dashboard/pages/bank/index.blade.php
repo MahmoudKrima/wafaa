@@ -10,7 +10,7 @@
 </nav>
 @endpush
 @section('content')
-<div class="layout-px-spacing"> 
+<div class="layout-px-spacing">
     <div class="row layout-top-spacing">
         <div id="tableCustomBasic" class="col-lg-12 col-12 layout-spacing">
             <div class="statbox widget box box-shadow">
@@ -19,7 +19,7 @@
                         <div class="col-12" style="margin: 15px 15px 0 15px;">
                             @haspermission('banks.create', 'admin')
                             <a href="{{ route('admin.banks.create') }}"
-                                class="btn btn-primary">{{ __('admin.create') }}</a>
+                                class="btn btn-primary">{{ __('admin.create_bank') }}</a>
                             @endhaspermission
                             </div>
                         </div>

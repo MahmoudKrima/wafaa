@@ -19,7 +19,7 @@
                         <div class="col-12" style="margin: 15px 15px 0 15px;">
                             @haspermission('users.create', 'admin')
                             <a href="{{ route('admin.users.create') }}"
-                                class="btn btn-primary">{{ __('admin.add') }}</a>
+                                class="btn btn-primary">{{ __('admin.add_user') }}</a>
                             @endhaspermission
                         </div>
                     </div>

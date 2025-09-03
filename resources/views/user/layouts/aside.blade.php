@@ -92,17 +92,22 @@
                 <h5>{{ __('admin.transactions') }}</h5>
             </div>
             <ul class="submenu-list" data-parent-element="#transactions_settings">
-                <li class="{{ isRoute(['user.banks.index']) ? 'active' : '' }}">
+                <li class="{{ isRoute(['user.banks.index']) ? 'active' : '' }}" style="margin-bottom:5px;">
                     <a href="{{ route('user.banks.index') }}">
-                        <i class="fa fa-money-bill-trend-up" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
+                        <i class="fa fa-bank" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
                         {{ __('admin.banks') }} </a>
                 </li>
-                <li class="{{ isRoute(['user.transactions.index', 'user.transactions.create']) ? 'active' : '' }}">
-                    <a href="{{ route('user.transactions.index') }}">
-                        <i class="fa fa-money-bill-trend-up" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
-                        {{ __('admin.transactions') }} </a>
+                <li class="{{ isRoute(['user.transactions.create']) ? 'active' : '' }}" style="margin-bottom:5px;">
+                    <a href="{{ route('user.transactions.create') }}">
+                        <i class="fa fa-money-check-alt" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
+                        {{ __('admin.recharge_request') }} </a>
                 </li>
-                <li class="{{ isRoute(['user.wallet-logs.index']) ? 'active' : '' }}">
+                <li class="{{ isRoute(['user.transactions.index', 'user.transactions.create']) ? 'active' : '' }}" style="margin-bottom:5px;">
+                    <a href="{{ route('user.transactions.index') }}">
+                        <i class="fa fa-arrows-alt-h" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
+                        {{ __('admin.bank_transfer_transactions') }} </a>
+                </li>
+                <li class="{{ isRoute(['user.wallet-logs.index']) ? 'active' : '' }}" style="margin-bottom:5px;">
                     <a href="{{ route('user.wallet-logs.index') }}">
                         <i class="fa fa-money-bill-trend-up" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
                         {{ __('admin.wallet_logs') }} </a>
