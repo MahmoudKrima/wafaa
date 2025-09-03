@@ -380,6 +380,8 @@ class ShippingService
                     ], 'en'),
                 ],
             ]);
+
+            
             return (float) $wallet->balance;
         });
     }

@@ -534,5 +534,7 @@ return [
     'balance_deposited' => 'Balance deposited',
     'balance_deduction' => 'Balance deduction',
     'transaction_created_notification' => 'Transaction created :code. Status: :status.',
+    'no_notifications' => 'No Notifications',
+    'data' => 'Data',
 
 ];

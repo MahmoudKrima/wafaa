@@ -535,5 +535,7 @@ return [
     'balance_deposited' => 'تم تحديث الرصيد',
     'balance_deduction' => 'تم خصم الرصيد',
     'transaction_created_notification' => 'تم إنشاء المعاملة :code. الحالة: :status.',
+    'no_notifications' => 'لا يوجد إشعارات',
+    'data' => 'البيانات',
 
 ];
