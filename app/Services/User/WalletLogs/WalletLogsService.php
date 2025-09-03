@@ -6,7 +6,8 @@ use App\Models\WalletLog;
 use Illuminate\Pipeline\Pipeline;
 use App\Filters\TransActionFilter;
 use App\Filters\WalletLogTypeFilter;
-
+use App\Filters\DateFromFilter;
+use App\Filters\DateToFilter;
 
 class WalletLogsService
 {
@@ -19,12 +20,14 @@ class WalletLogsService
             ->send(WalletLog::query())
             ->through([
                 WalletLogTypeFilter::class,
-                TransActionFilter::class
+                TransActionFilter::class,
+                DateFromFilter::class,
+                DateToFilter::class
             ])
             ->thenReturn()
             ->where('user_id', auth()->id())
             ->withAllRelations()
-            ->orderBy('id')
+            ->orderBy('id', 'desc')
             ->paginate()
             ->withQueryString();
         return $logs;

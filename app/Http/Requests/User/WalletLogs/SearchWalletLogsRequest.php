@@ -39,7 +39,9 @@ class SearchWalletLogsRequest extends FormRequest
                 'string',
                 'max:10',
                 Rule::in(TransactionTypeEnum::vals())
-            ]
+            ],
+            'date_from'          => ['nullable', 'date'],
+            'date_to'            => ['nullable', 'date', 'after_or_equal:date_from'],
         ];
     }
 }

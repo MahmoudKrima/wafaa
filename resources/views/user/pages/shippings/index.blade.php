@@ -176,8 +176,20 @@
                                             ->format('d/m/Y H:i') }}
                                     </td>
                                     <td>
-                                        {{$shipment['isCod'] ? __('admin.cash_on_delivery') : __('admin.regular_shipment')}}
+                                        @php
+                                        $isCod = (bool) data_get($shipment, 'isCod', false);
+                                        $codPrice = data_get($shipment, 'shipmentCod.codPrice');
+                                        @endphp
+
+                                        @if ($isCod)
+                                        @if ($codPrice !== null && $codPrice !== '')
+                                        {{ number_format((float) $codPrice, 2) }}  {{ __('admin.currency_symbol') }}
+                                        @endif
+                                        @else
+                                        {{ __('admin.regular_shipment') }}
+                                        @endif
                                     </td>
+
 
                                     <td>
                                         @php
