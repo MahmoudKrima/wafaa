@@ -8,6 +8,7 @@ use App\Http\Controllers\User\Shipping\ShippingController;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use App\Http\Controllers\User\WalletLogs\WalletLogsController;
 use App\Http\Controllers\User\Transaction\TransactionController;
+use App\Http\Controllers\User\Reciever\RecieverController;
 
 
 Route::controller(ShippingController::class)
@@ -97,6 +98,23 @@ Route::middleware(['web'])->group(function () {
             ->group(function () {
                 Route::get('/wallet-logs', 'index')
                     ->name('wallet-logs.index');
+            });
+        Route::controller(RecieverController::class)
+            ->group(function () {
+                Route::get('/recievers', 'index')
+                    ->name('recievers.index');
+                Route::get('/recievers/create', 'create')
+                    ->name('recievers.create');
+                Route::post('/recievers/store', 'store')
+                    ->name('recievers.store');
+                Route::get('/recievers/edit/{reciever}', 'edit')
+                    ->name('recievers.edit');
+                Route::post('/recievers/update/{reciever}', 'update')
+                    ->name('recievers.update');
+                Route::delete('/recievers/delete/{reciever}', 'delete')
+                    ->name('recievers.delete');
+                Route::get('/recievers/search', 'search')
+                    ->name('recievers.search');
             });
     });
 });

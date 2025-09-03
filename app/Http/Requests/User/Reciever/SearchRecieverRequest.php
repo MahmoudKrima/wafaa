@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Requests\Admin\User;
+namespace App\Http\Requests\User\Reciever;
 
 use Illuminate\Validation\Rule;
 use Illuminate\Foundation\Http\FormRequest;
 
-class SearchUserRequest extends FormRequest
+class SearchRecieverRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.

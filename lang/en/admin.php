@@ -505,5 +505,6 @@ return [
     'normal_shipment' => 'Normal Shipment',
     'cash_on_delivery_shippment' => 'Cash on Delivery Shipment',
     'loading_countries' => 'Loading countries...',
+    'recievers' => 'Recievers',
 
 ];

@@ -505,4 +505,5 @@ return [
     'normal_shipment' => 'شحنة عادية',
     'cash_on_delivery_shippment'=>'شحنة دفع عند الاستلام',
     'loading_countries' => 'جاري تحميل الدول...',
+    'recievers' => 'المستلمين',
 ];

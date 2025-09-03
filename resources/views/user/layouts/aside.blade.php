@@ -30,10 +30,15 @@
                 </a>
             </li>
 
-
-
-
-
+            <li class=" {{ isRoute(['user.recievers.index','user.recievers.create','user.recievers.edit','user.recievers.search']) ? 'menu active' : '' }}">
+                <a href="{{ route('user.recievers.index') }}"
+                    data-active="{{ isRoute(['user.recievers.index','user.recievers.create','user.recievers.edit','user.recievers.search']) ? 'true' : 'false' }}" class="menu-toggle">
+                    <div class="base-icons">
+                        <i class="fa fa-users" style="color:#1b6aab;font-size:35px;margin-bottom:10px;"></i>
+                        <p class="side_links_theme">{{__('admin.recievers')}}</p>
+                    </div>
+                </a>
+            </li>
 
             <li class="menu {{ isRoute([
     'user.transactions.index',
