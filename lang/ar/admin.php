@@ -503,7 +503,7 @@ return [
     'shippment_type' => 'نوع الشحنة',
     'canceled' => 'ملغاه',
     'normal_shipment' => 'شحنة عادية',
-    'cash_on_delivery_shippment'=>'شحنة دفع عند الاستلام',
+    'cash_on_delivery_shippment' => 'شحنة دفع عند الاستلام',
     'loading_countries' => 'جاري تحميل الدول...',
     'recievers' => 'المستلمين',
 ];

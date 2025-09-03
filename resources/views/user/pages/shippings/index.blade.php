@@ -108,6 +108,12 @@
                                                             <option value="cancelRequest" @selected(request()->get('status') == 'cancelRequest')>{{ __('admin.cancelrequest') }}</option>
                                                         </select>
                                                     </div>
+                                                    <div class="col-md-4 mb-3">
+                                                        <label for=trackingNumber>{{ __('admin.tracking_number') }}</label>
+                                                        <input type="input" value="{{ request()->get('search') }}"
+                                                            name="search" id="trackingNumber" class="form-control"
+                                                            placeholder="{{ __('admin.tracking_number') }}">
+                                                    </div>
                                                 </div>
                                                 <div class="row mt-2">
                                                     <div class="col-md-3 mb-3">
