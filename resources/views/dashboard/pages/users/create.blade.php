@@ -1,5 +1,5 @@
 @extends('dashboard.layouts.app')
-@section('title', __('admin.create'))
+@section('title', __('admin.add_user'))
 @push('breadcrumb')
 <nav class="breadcrumb-one" aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -7,7 +7,7 @@
         </li>
         <li class="breadcrumb-item"><a href="{{ route('admin.users.index') }}">{{ __('admin.users') }}</a>
         </li>
-        <li class="breadcrumb-item active" aria-current="page"><span>{{ __('admin.create') }}</span></li>
+        <li class="breadcrumb-item active" aria-current="page"><span>{{ __('admin.add_user') }}</span></li>
     </ol>
 </nav>
 @endpush
@@ -19,7 +19,7 @@
                 <div class="widget-header">
                     <div class="row">
                         <div class="col-xl-12 col-md-12 col-sm-12 col-12">
-                            <h4>{{ __('admin.create') }}</h4>
+                            <h4>{{ __('admin.add_user') }}</h4>
                         </div>
                     </div>
                 </div>
@@ -86,7 +86,7 @@
                                 @if($allowedCompanies && count($allowedCompanies) > 0)
                                 <hr>
                                 <div class="form-group">
-                                    <h5 class="mb-3">{{ __('admin.shipping_companies') }}</h5>
+                                    <h5 class="mb-3">{{ __('admin.shipping_companies_prices') }}</h5>
                                     <div class="row">
                                         @foreach($allowedCompanies as $company)
                                         @php
@@ -98,7 +98,7 @@
                                         $hasInternational = in_array('international', $methods, true);
                                         @endphp
 
-                                        <div class="col-md-6 mb-4">
+                                        <div class="col-md-4 mb-4">
                                             <div class="card border">
                                                 <div class="card-body">
                                                     <div class="d-flex align-items-center mb-3">
@@ -160,7 +160,7 @@
                                 <hr>
                                 <div class="row">
                                     <div class="col-12">
-                                        <input type="submit" value="{{ __('admin.create') }}"
+                                        <input type="submit" value="{{ __('admin.add_user') }}"
                                             class="mt-4 btn btn-primary">
                                     </div>
                                 </div>

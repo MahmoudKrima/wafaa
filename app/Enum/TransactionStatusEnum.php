@@ -21,7 +21,7 @@ enum TransactionStatusEnum: string
     {
         return match ($this) {
             self::ACCEPTED => 'badge bg-success  text-center',
-            self::PENDING => 'btn btn-warning  text-center',
+            self::PENDING => 'badge bg-warning  text-center',
             self::REJECTED => 'badge bg-danger  text-center',
         };
     }

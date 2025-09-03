@@ -100,7 +100,7 @@
                                         $hasLocal = in_array('local', $methods, true);
                                         $hasInternational = in_array('international', $methods, true);
                                         @endphp
-                                        <div class="col-md-6 mb-4">
+                                        <div class="col-md-4 mb-4">
                                             <div class="card border">
                                                 <div class="card-body">
                                                     <div class="d-flex align-items-center mb-3">

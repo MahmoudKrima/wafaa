@@ -57,9 +57,9 @@
                                 <div class="statbox widget box box-shadow">
                                     <div class="row g-4">
                                         @foreach($banks as $bank)
-                                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 mb-2">
+                                        <div class="col-xl-6 col-lg-6 col-md-6 col-sm-12 mb-2">
                                             <div class="card h-100" style="border-top-left-radius:10px;border-top-right-radius:10px;">
-                                                <div class="card-header bg-primary text-white" style="border-top-left-radius:10px;border-top-right-radius:10px;">
+                                                <div class="card-header bg-transparent text-white" style="border-top-left-radius:10px;border-top-right-radius:10px;display:flex;justify-content: space-between;align-items: center;">
                                                     <div class="d-flex align-items-center">
                                                         @if($bank->image)
                                                         <img src="{{ displayImage($bank->image) }}" alt="{{ $bank->name }}" class="me-3" style="width:80px;height:60px;object-fit:contain;">
@@ -69,6 +69,9 @@
                                                         </div>
                                                         @endif
                                                         <h5 class="card-title mb-0 text-white mx-3" style="font-size:15px;">{{ $bank->name }}</h5>
+                                                    </div>
+                                                    <div>
+                                                        <a href="{{ route('user.transactions.create') }}" class="btn btn-info">{{__('admin.recharge_request')}}</a>
                                                     </div>
                                                 </div>
                                                 <div class="card-body">

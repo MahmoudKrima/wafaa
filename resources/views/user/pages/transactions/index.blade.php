@@ -1,5 +1,5 @@
 @extends('user.layouts.app')
-@section('title', __('admin.transactions'))
+@section('title', __('admin.bank_transfer_transactions'))
 
 @push('css')
 <style>
@@ -19,7 +19,7 @@
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('user.dashboard.index') }}">{{ __('admin.dashboard') }}</a>
         </li>
-        <li class="breadcrumb-item active" aria-current="page"><span>{{ __('admin.transactions') }}</span></li>
+        <li class="breadcrumb-item active" aria-current="page"><span>{{ __('admin.bank_transfer_transactions') }}</span></li>
     </ol>
 </nav>
 @endpush
@@ -33,7 +33,7 @@
                     <div class="row mt-2">
                         <div class="col-12" style="margin: 15px 15px 0 15px;">
                             <a href="{{ route('user.transactions.create') }}"
-                                class="btn btn-primary">{{ __('admin.create') }}</a>
+                                class="btn btn-primary">{{ __('admin.recharge_request') }}</a>
                         </div>
                     </div>
                 </div>
@@ -117,7 +117,7 @@
                     <div class="widget-header">
                         <div class="row">
                             <div class="col-xl-12 col-md-12 col-sm-12 col-12">
-                                <h4 class="mt-4 mb-3">{{ trans('admin.transactions') }}</h4>
+                                <h4 class="mt-4 mb-3">{{ trans('admin.bank_transfer_transactions') }}</h4>
                             </div>
                         </div>
                     </div>
@@ -143,7 +143,7 @@
                                         {{optional($transation->bank)->name ?? __('admin.n/a')}}
                                     </td>
                                     <td>
-                                        {{$transation->amount}}
+                                        {{$transation->amount}} {{ __('admin.currency_symbol') }}
                                     </td>
                                     <td>
                                         <span
@@ -151,8 +151,8 @@
                                     </td>
                                     <td>
                                         <a href="{{ displayImage($transation->attachment) }}"
-                                            class="btn btn-primary btn-sm" target="_blank">
-                                            {{ __('admin.attachment') }}
+                                            class="badge bg-info text-white" target="_blank">
+                                            {{ __('admin.receipt_attachment') }}
                                         </a>
                                     </td>
                                     <td>

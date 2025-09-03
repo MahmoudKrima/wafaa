@@ -36,7 +36,6 @@
                         <table class="table table-striped table-vcenter">
                             <thead>
                                 <tr>
-                                    <th scope="col">{{ __('admin.company_id') }}</th>
                                     <th scope="col">{{ __('admin.company_name') }}</th>
                                     <th scope="col">{{ __('admin.local_price') }}</th>
                                     <th scope="col">{{ __('admin.international_price') }}</th>
@@ -48,9 +47,6 @@
                             <tbody>
                                 @foreach ($userShippingPrices as $userShippingPrice)
                                 <tr>
-                                    <td>
-                                        <p class="mb-0">{{ $userShippingPrice->company_id }}</p>
-                                    </td>
                                     <td>
                                         <p class="mb-0">{{ $userShippingPrice->company_name }}</p>
                                     </td>
@@ -67,8 +63,8 @@
                                             @haspermission('user_shipping_prices.update', 'admin')
                                             <a href="{{ route('admin.user-shipping-prices.edit', [$user->id, $userShippingPrice->id]) }}"
                                                 class="action-btn bs-tooltip me-2 mb-2 badge rounded-circle bg-warning p-2"
-                                                data-toggle="tooltip" data-placement="top" aria-label="Edit bank"
-                                                data-bs-original-title="Edit bank" title="{{ __('admin.edit_bank') }}"
+                                                data-toggle="tooltip" data-placement="top" aria-label="Edit"
+                                                data-bs-original-title="Edit bank" title="{{ __('admin.edit') }}"
                                                 style="margin-right: 10px;">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -88,8 +84,8 @@
                                                 <button type="submit"
                                                     class="action-btn btn-alert bs-tooltip mb-2 badge rounded-circle bg-danger p-2"
                                                     data-toggle="tooltip" data-placement="top"
-                                                    title="{{ __('admin.delete') }}" aria-label="Delete Service"
-                                                    data-bs-original-title="Delete Service"
+                                                    title="{{ __('admin.delete') }}" aria-label="Delete"
+                                                    data-bs-original-title="Delete"
                                                     style="border: none; background:transparent; margin-right: 10px;">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                         viewBox="0 0 24 24" fill="none" stroke="currentColor"

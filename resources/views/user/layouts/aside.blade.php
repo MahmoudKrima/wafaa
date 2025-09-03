@@ -103,7 +103,7 @@
                         <i class="fa fa-money-check-alt" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
                         {{ __('admin.recharge_request') }} </a>
                 </li>
-                <li class="{{ isRoute(['user.transactions.index', 'user.transactions.create']) ? 'active' : '' }}" style="margin-bottom:5px;">
+                <li class="{{ isRoute(['user.transactions.index']) ? 'active' : '' }}" style="margin-bottom:5px;">
                     <a href="{{ route('user.transactions.index') }}">
                         <i class="fa fa-arrows-alt-h" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
                         {{ __('admin.bank_transfer_transactions') }} </a>

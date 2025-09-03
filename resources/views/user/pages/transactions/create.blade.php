@@ -1,5 +1,5 @@
 @extends('user.layouts.app')
-@section('title', __('admin.create'))
+@section('title', __('admin.create_recharge_request'))
 @section('content')
 <div class="layout-px-spacing">
     <div class="row layout-top-spacing">
@@ -8,7 +8,7 @@
                 <div class="widget-header">
                     <div class="row">
                         <div class="col-xl-12 col-md-12 col-sm-12 col-12">
-                            <h4>{{ __('admin.create') }}</h4>
+                            <h4>{{ __('admin.create_recharge_request') }}</h4>
                         </div>
                     </div>
                 </div>
@@ -21,13 +21,13 @@
                                 <div class="form-group">
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
-                                            <label for="amountInput" class="text-dark">{{ __('admin.amount') }}</label>
+                                            <label for="amountInput" class="text-dark">{{ __('admin.transfer_amount') }}</label>
                                             <input id="amountInput" type="text" name="amount"
                                                 placeholder="{{ __('admin.amount') }}" class="form-control"
                                                 value="{{ old('amount') }}">
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            <label for="bankInput" class="text-dark">{{ __('admin.bank') }}</label>
+                                            <label for="bankInput" class="text-dark">{{ __('admin.choose_transfer_bank') }}</label>
                                             <select name="banks_id" id="bank" class="form-control">
                                                 <option value="" disabled selected>{{ __('admin.choose_bank') }}
                                                 </option>
@@ -58,7 +58,7 @@
                         </div>
                         <div class="row">
                             <div class="col-12">
-                                <input type="submit" value="{{ __('admin.create') }}" class="mt-4 btn btn-primary">
+                                <input type="submit" value="{{ __('admin.send_request') }}" class="mt-4 btn btn-primary">
                             </div>
                         </div>
                         </form>
