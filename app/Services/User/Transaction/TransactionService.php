@@ -73,13 +73,16 @@ class TransactionService
         $message = [
             'en' => __('admin.transaction_created_notification', [
                 'code'   => $transaction->code,
-                'status' => __("admin.{$transaction->status->value}"),
+                'status' => __("admin.{$transaction->status->value}", [], 'en'),
             ], 'en'),
+
             'ar' => __('admin.transaction_created_notification', [
                 'code'   => $transaction->code,
-                'status' => __("admin.{$transaction->status->value}"),
+                'status' => __("admin.{$transaction->status->value}", [], 'ar'),
             ], 'ar'),
         ];
+
+
         auth()->user()->notifications()->create([
             'id'               => (string) Str::uuid(),
             'type'             => NotificationTypeEnum::TRANSACTION_CREATED->value,

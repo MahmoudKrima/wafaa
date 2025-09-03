@@ -44,18 +44,7 @@
                                                             @endforeach
                                                         </select>
                                                     </div>
-
-                                                    <div class="col-md-4 mb-3">
-                                                        <label for="date_from">{{ __('admin.date_from') }}</label>
-                                                        <input type="date" name="date_from" class="form-control" id="date_from" value="{{ request('date_from') }}">
-                                                    </div>
-
-                                                    <div class="col-md-4 mb-3">
-                                                        <label for="date_to">{{ __('admin.date_to') }}</label>
-                                                        <input type="date" name="date_to" class="form-control" id="date_to" value="{{ request('date_to') }}">
-                                                    </div>
                                                 </div>
-
                                                 <div class="row mt-2">
                                                     <div class="col-md-3 mb-3">
                                                         <button type="submit" class="bg-success form-control btn-block">
@@ -70,9 +59,9 @@
                                                     </div>
                                                 </div>
                                             </form>
-                                        </div> <!-- /.col -->
-                                    </div> <!-- /.table-responsive -->
-                                </div> <!-- /.card-body -->
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -125,8 +114,8 @@
                                 </tr>
                                 @empty
                                 <tr>
-                                    <td colspan="3" class="text-center text-muted py-5">
-                                        <i class="feather icon-bell"></i>
+                                    <td colspan="4" class="text-center text-muted py-5">
+                                        <i class="fa fa-bell fa-3x mb-3 text-muted"></i>
                                         <div class="mt-2">{{ __('admin.no_notifications') }}</div>
                                     </td>
                                 </tr>

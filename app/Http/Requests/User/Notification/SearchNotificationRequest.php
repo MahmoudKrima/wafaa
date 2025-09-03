@@ -26,8 +26,6 @@ class SearchNotificationRequest extends FormRequest
     {
         return [
             'type'      => ['nullable', Rule::in(NotificationTypeEnum::vals())],
-            'date_from' => ['nullable', 'date'],
-            'date_to'   => ['nullable', 'date', 'after_or_equal:date_from'],
         ];
     }
 }
