@@ -499,4 +499,13 @@ return [
     'edit_balance' => 'Edit Balance',
     'balace_transfer' => 'Balance Transfer',
     'amount_due' => 'Amount Due',
+    'no_shipments_title' => 'No Shipments Right Now',
+    'shippment_type' => 'Shippment Type',
+    'canceled' => 'Canceled',
+    'normal_shipment' => 'Normal Shipment',
+    'cash_on_delivery_shippment' => 'Cash on Delivery Shipment',
+    'loading_countries' => 'Loading countries...',
+    'recievers' => 'Recievers',
+    'shipments_total' => 'Total Shipments'
+
 ];

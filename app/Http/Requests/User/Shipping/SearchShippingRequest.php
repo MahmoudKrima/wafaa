@@ -30,6 +30,8 @@ class SearchShippingRequest extends FormRequest
             'shippingCompanyId' => ['nullable', 'string'],
             'method'            => ['nullable', 'in:local,international'],
             'type'            => ['nullable', 'in:box,document'],
+            'status'            => ['nullable', 'in:pending,processing,failed,cancelRequest,canceled'],
+            'search'            => ['nullable', 'string'],
         ];
     }
 

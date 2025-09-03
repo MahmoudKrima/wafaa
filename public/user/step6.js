@@ -145,7 +145,6 @@
             <i class="${icon}"></i>
             <span>${title}${badgeHTML}</span>
           </div>
-          <div class="muted">${desc}</div>
           ${
               value === "cod"
                   ? `<div id="cod-note-line" class="mt-1 small text-muted"></div>`
@@ -180,8 +179,7 @@
         html += buildCard({
             value: "wallet",
             icon: "fas fa-wallet text-primary",
-            title: t("wallet", "المحفظة"),
-            desc: t("payment_wallet_desc", "يمكنك الدفع بالمحفظة"),
+            title: t("normal_shipment", "شحنة عادية"),
         });
 
         // COD
@@ -214,7 +212,7 @@
             html += buildCard({
                 value: "cod",
                 icon: "fas fa-money-bill-wave text-success",
-                title: t("cash_on_delivery", "الدفع عند الاستلام"),
+                title: t("cash_on_delivery_shippment", "الدفع عند الاستلام"),
                 desc,
                 badge: t("cash_on_delivery_available", "متاح"),
                 extraHtml: codExtraHtml,
@@ -308,16 +306,12 @@
             }
         };
         restoreCodAmount();
-        // ----------------------------------------------------------------
-
-        // Default selection (preserve previous choice if any)
         const initial =
             (window.OLD_INPUT && window.OLD_INPUT.payment_method) ||
             hiddenMethod.value ||
             "wallet";
         select(initial);
 
-        // Keep legacy checkbox (if present) in sync
         const codCheckbox = $$("cash_on_delivery");
         if (codCheckbox && !codCheckbox.dataset.bound) {
             codCheckbox.addEventListener("change", () => {
@@ -326,14 +320,13 @@
             codCheckbox.dataset.bound = "1";
         }
 
-        // Sync COD amount -> hidden input + global (for step 7)
         const codInput = $$("cod-amount-input");
         if (codInput && !codInput.dataset.bound) {
             const sync = () => {
                 const v = isFinite(+codInput.value) ? +codInput.value : 0;
                 const hidden = $$("cod-amount-hidden");
                 if (hidden) hidden.value = v;
-                window.codAmount = v; // persists when navigating back/forward
+                window.codAmount = v;
             };
             codInput.addEventListener("input", sync);
             codInput.addEventListener("change", sync);

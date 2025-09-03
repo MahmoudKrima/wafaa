@@ -30,15 +30,22 @@
                 </a>
             </li>
 
-
-
-
-
+            <li class=" {{ isRoute(['user.recievers.index','user.recievers.create','user.recievers.edit','user.recievers.search']) ? 'menu active' : '' }}">
+                <a href="{{ route('user.recievers.index') }}"
+                    data-active="{{ isRoute(['user.recievers.index','user.recievers.create','user.recievers.edit','user.recievers.search']) ? 'true' : 'false' }}" class="menu-toggle">
+                    <div class="base-icons">
+                        <i class="fa fa-users" style="color:#1b6aab;font-size:35px;margin-bottom:10px;"></i>
+                        <p class="side_links_theme">{{__('admin.recievers')}}</p>
+                    </div>
+                </a>
+            </li>
 
             <li class="menu {{ isRoute([
     'user.transactions.index',
     'user.transactions.create',
     'user.wallet-logs.index',
+    'user.banks.index',
+
 ])
     ? 'active'
     : '' }}">
@@ -46,6 +53,7 @@
     'user.transactions.index',
     'user.transactions.create',
     'user.wallet-logs.index',
+    'user.banks.index',
 ])
     ? 'true'
     : 'false' }}" class="menu-toggle">
@@ -84,6 +92,11 @@
                 <h5>{{ __('admin.transactions') }}</h5>
             </div>
             <ul class="submenu-list" data-parent-element="#transactions_settings">
+                <li class="{{ isRoute(['user.banks.index']) ? 'active' : '' }}">
+                    <a href="{{ route('user.banks.index') }}">
+                        <i class="fa fa-money-bill-trend-up" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
+                        {{ __('admin.banks') }} </a>
+                </li>
                 <li class="{{ isRoute(['user.transactions.index', 'user.transactions.create']) ? 'active' : '' }}">
                     <a href="{{ route('user.transactions.index') }}">
                         <i class="fa fa-money-bill-trend-up" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>

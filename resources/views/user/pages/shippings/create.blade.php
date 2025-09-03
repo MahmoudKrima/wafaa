@@ -160,9 +160,7 @@
                             data-selected="{{ old('country_id') }}">
                             <option value="">{{ __('admin.choose_country') }}</option>
                         </select>
-                        <small class="text-muted d-block mt-1">
-                            {{ __('admin.country_hint') ?? __('admin.choose_country') }}
-                        </small>
+
                     </div>
 
                     <div class="col-12 col-md-6 mb-3">
@@ -404,7 +402,7 @@
             </div>
 
             <div class="step-content" id="step-6" style="display:none;">
-                <h5 class="text-center mb-4">{{ __('admin.payment_details') }}</h5>
+                <h5 class="text-center mb-4">{{ __('admin.shippment_type') }}</h5>
                 <div class="row">
                     <div class="col-12">
                         <div class="payment-options-container"></div>
@@ -803,6 +801,9 @@
         insufficient_balance_warning: '{{ __("admin.insufficient_balance_warning") }}',
         insufficient_balance: '{{ __("admin.insufficient_balance") }}',
         cod_amount: '{{ __("admin.cod_amount") }}',
+        normal_shipment: '{{ __("admin.normal_shipment") }}',
+        cash_on_delivery_shippment: '{{ __("admin.cash_on_delivery_shippment") }}',
+        loading_countries: '{{ __("admin.loading_countries") }}',
     };
 
     const API_ENDPOINTS = {

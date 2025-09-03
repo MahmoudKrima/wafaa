@@ -60,7 +60,9 @@ class ShippingController extends Controller
     public function store(StoreShippingRequest $request)
     {
         $this->shippingService->store($request);
-        return back()
+
+        return redirect()
+            ->route('user.shippings.index')
             ->with('Success', __('admin.shippment_created_successfully'));
     }
 

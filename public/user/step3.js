@@ -125,7 +125,12 @@
         const el = $country();
         if (!el) return;
         el.required = true;
-
+    
+        fillSelect(el, [], {
+            placeholder: window.translations?.loading_countries || "Loading countries..."
+        });
+        el.disabled = true;
+    
         try {
             const data = await getJSON(API.countries);
             const items = Array.isArray(data?.results)
@@ -136,7 +141,7 @@
             fillSelect(el, items, {
                 placeholder: window.translations?.select_country,
             });
-
+    
             if (method() === "local") {
                 const ksaId = findKSAId(items);
                 if ([...el.options].some((o) => o.value === ksaId)) {
@@ -146,12 +151,13 @@
             }
         } catch {
             fillSelect(el, [], {
-                placeholder:
-                    window.translations?.no_countries_found || "No countries",
+                placeholder: window.translations?.no_countries_found || "No countries",
             });
+        } finally {
+            el.disabled = false;
         }
     }
-
+    
     async function loadStates() {
         const el = $state(),
             countryEl = $country();
@@ -167,6 +173,16 @@
             });
             return;
         }
+
+        // ⬇️ show loading
+        fillSelect(el, [], {
+            placeholder:
+                window.translations?.loading_states ||
+                (LOCALE === "ar"
+                    ? "جاري تحميل المناطق..."
+                    : "Loading states..."),
+        });
+        el.disabled = true;
 
         try {
             const data = await getJSON(API.states(cid, comp));
@@ -189,6 +205,8 @@
                 placeholder:
                     window.translations?.no_cities_available || "No cities",
             });
+        } finally {
+            el.disabled = false;
         }
     }
 
@@ -210,6 +228,14 @@
             return;
         }
 
+        // ⬇️ show loading
+        fillSelect(el, [], {
+            placeholder:
+                window.translations?.loading_cities ||
+                (LOCALE === "ar" ? "جاري تحميل المدن..." : "Loading cities..."),
+        });
+        el.disabled = true;
+
         try {
             const data = await getJSON(API.cities(cid, sid, comp));
             const items = Array.isArray(data?.results)
@@ -226,6 +252,8 @@
                 placeholder:
                     window.translations?.no_cities_available || "No cities",
             });
+        } finally {
+            el.disabled = false;
         }
     }
 
