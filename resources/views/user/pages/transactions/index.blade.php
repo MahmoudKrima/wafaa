@@ -26,95 +26,6 @@
 
 @section('content')
 <div class="layout-px-spacing">
-    @if($banks && count($banks) > 0)
-    <div class="row layout-top-spacing">
-        <div class="col-12">
-            <div class="statbox widget box box-shadow">
-                <div class="widget-header">
-                    <div class="row">
-                        <div class="col-xl-12 col-md-12 col-sm-12 col-12">
-                            <h4 class="page-title">{{ __('admin.bank_accounts') }}</h4>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="widget-content widget-content-area">
-                    <div class="row g-4">
-                        @foreach($banks as $bank)
-                        <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12 mb-2">
-                            <div class="card h-100" style="border-top-left-radius:10px;border-top-right-radius:10px;">
-                                <div class="card-header bg-primary text-white" style="border-top-left-radius:10px;border-top-right-radius:10px;">
-                                    <div class="d-flex align-items-center">
-                                        @if($bank->image)
-                                        <img src="{{ displayImage($bank->image) }}"
-                                            alt="{{ $bank->name }}"
-                                            class="me-3"
-                                            style="width: 80px; height: 60px; object-fit: contain;">
-                                        @else
-                                        <div class="bg-white bg-opacity-25 d-flex align-items-center justify-content-center me-3"
-                                            style="width: 80px; height: 60px;">
-                                            <i class="fas fa-university text-white"></i>
-                                        </div>
-                                        @endif
-                                        <h5 class="card-title mb-0 text-white mx-3" style="font-size:15px;">{{ $bank->name }}</h5>
-                                    </div>
-                                </div>
-                                <div class="card-body">
-                                    <div class="mb-3">
-                                        <small class="text-muted d-block">{{ __('admin.account_owner') }}</small>
-                                        <strong class="text-dark">{{ $bank->account_owner }}</strong>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <small class="text-muted d-block">{{ __('admin.account_number') }}</small>
-                                        <div class="d-flex align-items-center" style="display:flex !important;justify-content: space-between;">
-                                            <strong class="text-dark me-2 text-break">{{ $bank->account_number }}</strong>
-                                            <button class="btn btn-sm btn-outline-secondary btn-copy"
-                                                data-copy="{{ $bank->account_number }}"
-                                                title="{{ __('admin.copy_to_clipboard') }}">
-                                                <i class="fas fa-copy" style="font-size:15px;"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <div class="mb-2">
-                                        <small class="text-muted d-block">{{ __('admin.iban_number') }}</small>
-                                        <div class="d-flex align-items-center" style="display:flex !important;justify-content: space-between;">
-                                            <strong class="text-dark me-2 text-break">{{ $bank->iban_number }}</strong>
-                                            <button class="btn btn-sm btn-outline-secondary btn-copy"
-                                                    data-copy="{{ $bank->iban_number }}"
-                                                    title="{{ __('admin.copy_to_clipboard') }}">
-                                                <i class="fas fa-copy" style="font-size:15px;"></i>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    @else
-    <div class="row layout-top-spacing">
-        <div class="col-12">
-            <div class="statbox widget box box-shadow">
-                <div class="widget-content widget-content-area text-center py-5">
-                    <div class="empty-state">
-                        <div class="empty-state__icon mb-4">
-                            <i class="fas fa-university text-muted" style="font-size: 64px; opacity: 0.3;"></i>
-                        </div>
-                        <h4 class="text-muted mb-3">{{ __('admin.no_bank_accounts') }}</h4>
-                        <p class="text-muted mb-0 fs-6">{{ __('admin.no_bank_accounts_description') }}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    @endif
-
     <div class="row layout-top-spacing">
         <div id="tableCustomBasic" class="col-lg-12 col-12 layout-spacing">
             <div class="statbox widget box box-shadow">
@@ -176,6 +87,14 @@
                                                             </option>
                                                             @endforeach
                                                         </select>
+                                                    </div>
+                                                    <div class="col-md-4 mb-3">
+                                                        <label for="created_at">{{ __('admin.date_from') }}</label>
+                                                        <input type="date" name="date_from" class="form-control" id="date_from" value="{{ request()->get('date_from') }}">
+                                                    </div>
+                                                    <div class="col-md-4 mb-3">
+                                                        <label for="created_at">{{ __('admin.date_to') }}</label>
+                                                        <input type="date" name="date_to" class="form-control" id="date_to" value="{{ request()->get('date_to') }}">
                                                     </div>
                                                 </div>
                                                 <div class="row mt-2">
@@ -251,42 +170,3 @@
     </div>
 </div>
 @endsection
-
-@push('js')
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Copy button functionality
-        document.querySelectorAll('.btn-copy').forEach(button => {
-            button.addEventListener('click', function() {
-                const textToCopy = this.getAttribute('data-copy');
-                const icon = this.querySelector('i');
-
-                // Create a temporary textarea element to hold the text
-                const textarea = document.createElement('textarea');
-                textarea.value = textToCopy;
-                document.body.appendChild(textarea);
-
-                // Select and copy the text
-                textarea.select();
-                document.execCommand('copy');
-
-                // Remove the temporary textarea
-                document.body.removeChild(textarea);
-
-                // Visual feedback
-                const originalClass = icon.className;
-                icon.className = 'fas fa-check';
-                this.classList.add('btn-success');
-                this.classList.remove('btn-outline-secondary');
-
-                // Reset after 2 seconds
-                setTimeout(() => {
-                    icon.className = originalClass;
-                    this.classList.remove('btn-success');
-                    this.classList.add('btn-outline-secondary');
-                }, 2000);
-            });
-        });
-    });
-</script>
-@endpush

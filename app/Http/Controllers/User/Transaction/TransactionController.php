@@ -10,15 +10,12 @@ use Illuminate\Http\Request;
 
 class TransactionController extends Controller
 {
-    public function __construct(private TransactionService $transactionService)
-    {
-    }
+    public function __construct(private TransactionService $transactionService) {}
 
     public function index(SearchTransactionRequest $request)
     {
         $result = $this->transactionService->index($request);
-        $banks = $this->transactionService->allActiveBanks();
-        return view('user.pages.transactions.index', compact('result', 'banks'));
+        return view('user.pages.transactions.index', compact('result'));
     }
 
     public function create()
@@ -32,5 +29,11 @@ class TransactionController extends Controller
         $this->transactionService->store($request);
         return back()
             ->with('Success', __('admin.created_successfully'));
+    }
+
+    public function banks()
+    {
+        $banks = $this->transactionService->allActiveBanks();
+        return view('user.pages.transactions.banks', compact('banks'));
     }
 }

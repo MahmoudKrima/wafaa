@@ -39,6 +39,8 @@
     'user.transactions.index',
     'user.transactions.create',
     'user.wallet-logs.index',
+    'user.banks.index',
+
 ])
     ? 'active'
     : '' }}">
@@ -46,6 +48,7 @@
     'user.transactions.index',
     'user.transactions.create',
     'user.wallet-logs.index',
+    'user.banks.index',
 ])
     ? 'true'
     : 'false' }}" class="menu-toggle">
@@ -84,6 +87,11 @@
                 <h5>{{ __('admin.transactions') }}</h5>
             </div>
             <ul class="submenu-list" data-parent-element="#transactions_settings">
+                <li class="{{ isRoute(['user.banks.index']) ? 'active' : '' }}">
+                    <a href="{{ route('user.banks.index') }}">
+                        <i class="fa fa-money-bill-trend-up" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
+                        {{ __('admin.banks') }} </a>
+                </li>
                 <li class="{{ isRoute(['user.transactions.index', 'user.transactions.create']) ? 'active' : '' }}">
                     <a href="{{ route('user.transactions.index') }}">
                         <i class="fa fa-money-bill-trend-up" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>

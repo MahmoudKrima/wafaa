@@ -10,6 +10,8 @@ use Illuminate\Support\Str;
 use Illuminate\Pipeline\Pipeline;
 use App\Enum\TransactionStatusEnum;
 use App\Filters\ActivationStatusFilter;
+use App\Filters\DateFromFilter;
+use App\Filters\DateToFilter;
 
 class TransactionService
 {
@@ -33,7 +35,10 @@ class TransactionService
             ->send(Transaction::query())
             ->through([
                 ActivationStatusFilter::class,
-                CodeFilter::class
+                CodeFilter::class,
+                DateFromFilter::class,
+                DateToFilter::class,
+
             ])
             ->thenReturn()
             ->where('user_id', auth()->id())
