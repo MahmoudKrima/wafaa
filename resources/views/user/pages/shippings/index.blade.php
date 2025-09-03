@@ -97,6 +97,17 @@
                                                             name="dateTo" id="dateTo" class="form-control"
                                                             placeholder="{{ __('admin.dateTo') }}">
                                                     </div>
+                                                    <div class="col-md-4 mb-3">
+                                                        <label for="status">{{ __('admin.status') }}</label>
+                                                        <select name="status" class="form-control" id="status">
+                                                            <option value="" selected>{{ __('admin.choose_status') }}</option>
+                                                            <option value="pending" @selected(request()->get('status') == 'pending')>{{ __('admin.pending') }}</option>
+                                                            <option value="processing" @selected(request()->get('status') == 'processing')>{{ __('admin.processing') }}</option>
+                                                            <option value="failed" @selected(request()->get('status') == 'failed')>{{ __('admin.failed') }}</option>
+                                                            <option value="canceled" @selected(request()->get('status') == 'canceled')>{{ __('admin.canceled') }}</option>
+                                                            <option value="cancelRequest" @selected(request()->get('status') == 'cancelRequest')>{{ __('admin.cancelrequest') }}</option>
+                                                        </select>
+                                                    </div>
                                                 </div>
                                                 <div class="row mt-2">
                                                     <div class="col-md-3 mb-3">
@@ -139,24 +150,15 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($shipments as $shipment)
+                                @forelse ($shipments as $shipment)
                                 <tr>
                                     <td>
-                                        <img src="{{$shipment['shippingCompany']['logoUrl']}}" style="width:70px;height:auto;">
+                                        <img src="{{ $shipment['shippingCompany']['logoUrl'] }}" style="width:70px;height:auto;">
                                     </td>
-                                    <td>
-                                        {{$shipment['trackingNumber'] ?? __('admin.n/a')}}
-                                    </td>
-                                    <td>
-                                        {{$shipment['shipmentDetails']['senderName'] ?? __('admin.n/a')}}
-                                    </td>
-                                    <td>
-                                        {{$shipment['shipmentDetails']['receiverName'] ?? __('admin.n/a')}}
-                                    </td>
-                                    <td>
-                                        {{$shipment['shipmentDetails']['weight'] ?? __('admin.n/a')}}
-                                    </td>
-
+                                    <td>{{ $shipment['trackingNumber'] ?? __('admin.n/a') }}</td>
+                                    <td>{{ $shipment['shipmentDetails']['senderName'] ?? __('admin.n/a') }}</td>
+                                    <td>{{ $shipment['shipmentDetails']['receiverName'] ?? __('admin.n/a') }}</td>
+                                    <td>{{ $shipment['shipmentDetails']['weight'] ?? __('admin.n/a') }}</td>
                                     <td>
                                         @if($shipment['method'] === 'local')
                                         <span class="badge bg-info">{{ __('admin.local') }}</span>
@@ -171,9 +173,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        {{ \Carbon\Carbon::parse($shipment['createdAt'])
-                                            ->timezone('Asia/Riyadh')
-                                            ->format('d/m/Y H:i') }}
+                                        {{ \Carbon\Carbon::parse($shipment['createdAt'])->timezone('Asia/Riyadh')->format('d/m/Y H:i') }}
                                     </td>
                                     <td>
                                         @php
@@ -183,33 +183,25 @@
 
                                         @if ($isCod)
                                         @if ($codPrice !== null && $codPrice !== '')
-                                        {{ number_format((float) $codPrice, 2) }}  {{ __('admin.currency_symbol') }}
+                                        {{ number_format((float) $codPrice, 2) }} {{ __('admin.currency_symbol') }}
                                         @endif
                                         @else
                                         {{ __('admin.regular_shipment') }}
                                         @endif
                                     </td>
-
-
                                     <td>
                                         @php
                                         switch ($shipment['status']) {
                                         case 'pending':
-                                        $class = 'badge bg-warning text-white';
-                                        $label = __('admin.pending');
-                                        break;
+                                        $class = 'badge bg-warning text-white'; $label = __('admin.pending'); break;
                                         case 'processing':
-                                        $class = 'badge bg-success text-white';
-                                        $label = __('admin.processing');
-                                        break;
+                                        $class = 'badge bg-success text-white'; $label = __('admin.processing'); break;
                                         case 'failed':
-                                        $class = 'badge bg-danger white';
-                                        $label = __('admin.failed');
-                                        break;
+                                        $class = 'badge bg-danger white'; $label = __('admin.failed'); break;
+                                        case 'canceled':
+                                        $class = 'badge bg-danger white'; $label = __('admin.canceled'); break;
                                         default:
-                                        $class = 'badge bg-success white';
-                                        $label = __('admin.' . strtolower($shipment['status']));
-                                        break;
+                                        $class = 'badge bg-success white'; $label = __('admin.' . strtolower($shipment['status'])); break;
                                         }
                                         @endphp
                                         <span class="{{ $class }}">{{ $label }}</span>
@@ -223,7 +215,6 @@
                                         <span class="badge bg-primary text-white">{{ __('admin.n/a') }}</span>
                                         @endif
 
-
                                         @if(!empty($shipment['trackingUrl']))
                                         <a href="{{ $shipment['trackingUrl'] }}" target="_blank" class="badge bg-primary text-white">
                                             {{ __('admin.track_shipment') }}
@@ -231,15 +222,27 @@
                                         @else
                                         <span class="badge bg-dark text-white">{{ __('admin.n/a') }}</span>
                                         @endif
-
                                     </td>
-
                                 </tr>
-                                @endforeach
+                                @empty
+                                <tr>
+                                    <td colspan="10" class="bg-white">
+                                        <div class="text-center p-5">
+                                            <i class="fa fa-truck fa-3x mb-3 text-muted"></i>
+                                            <h5 class="mb-2">
+                                                {{ __('admin.no_shipments_title') ?? 'No Shippments Right Now' }}
+                                            </h5>
+                                        </div>
+                                    </td>
+                                </tr>
+                                @endforelse
                             </tbody>
+
                         </table>
                     </div>
+                    @if ($shipments->count())
                     {{ $shipments->links() }}
+                    @endif
                 </div>
             </div>
         </div>

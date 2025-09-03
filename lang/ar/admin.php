@@ -499,4 +499,10 @@ return [
     'edit_balance' => 'تعديل رصيد',
     'balace_transfer' => 'تحويل رصيد',
     'amount_due' => 'المبلغ المستحق',
+    'no_shipments_title' => 'لا يوجد شحنات حاليا',
+    'shippment_type' => 'نوع الشحنة',
+    'canceled' => 'ملغاه',
+    'normal_shipment' => 'شحنة عادية',
+    'cash_on_delivery_shippment'=>'شحنة دفع عند الاستلام',
+    'loading_countries' => 'جاري تحميل الدول...',
 ];

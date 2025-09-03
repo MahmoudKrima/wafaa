@@ -189,22 +189,27 @@
     async function loadCountries(selectedId = "") {
         const el = $country();
         if (!el) return;
+
+        fillSelect(el, [], {
+            placeholder:
+                window.translations?.loading_countries ||
+                "Loading countries...",
+        });
+        el.disabled = true;
+
         const data = await getJSON(API.countries).catch(() => null);
         const items = Array.isArray(data?.results)
             ? data.results
             : Array.isArray(data)
             ? data
             : [];
-        el.innerHTML = `<option value="">${t(
-            "select_country",
-            "Select Country"
-        )}</option>`;
-        items.forEach((c) => {
-            const opt = document.createElement("option");
-            opt.value = c.id || c._id;
-            opt.textContent = displayName(c.name) || c.code || "";
-            el.appendChild(opt);
+
+        fillSelect(el, items, {
+            placeholder:
+                window.translations?.select_country || "Select Country",
         });
+
+        el.disabled = false;
 
         if (selectedId) {
             el.value = selectedId;
@@ -239,6 +244,7 @@
         const el = $state();
         if (!el) return;
         const companyId = getCompanyId();
+
         if (!countryId || !companyId) {
             el.innerHTML = `<option value="">${t(
                 "select_state",
@@ -247,6 +253,14 @@
             el.disabled = true;
             return;
         }
+
+        // ⬇️ show loading
+        el.innerHTML = `<option value="">${t(
+            "loading_states",
+            "Loading states..."
+        )}</option>`;
+        el.disabled = true;
+
         const data = await getJSON(API.states(countryId, companyId)).catch(
             () => null
         );
@@ -255,6 +269,7 @@
             : Array.isArray(data)
             ? data
             : [];
+
         el.innerHTML = `<option value="">${t(
             "select_state",
             "Select State"
@@ -270,11 +285,14 @@
 
         if (!el.dataset.bound) {
             el.addEventListener("change", async () => {
-                $city().innerHTML = `<option value="">${t(
-                    "select_city",
-                    "Select City"
-                )}</option>`;
-                $city().disabled = true;
+                const cityEl = $city();
+                if (cityEl) {
+                    cityEl.innerHTML = `<option value="">${t(
+                        "select_city",
+                        "Select City"
+                    )}</option>`;
+                    cityEl.disabled = true;
+                }
                 if (el.value) await loadCities($country().value, el.value);
                 updateAddButtonState();
             });
@@ -290,6 +308,7 @@
         const el = $city();
         if (!el) return;
         const companyId = getCompanyId();
+
         if (!countryId || !stateId || !companyId) {
             el.innerHTML = `<option value="">${t(
                 "select_city",
@@ -298,6 +317,12 @@
             el.disabled = true;
             return;
         }
+        el.innerHTML = `<option value="">${t(
+            "loading_cities",
+            "Loading cities..."
+        )}</option>`;
+        el.disabled = true;
+
         const data = await getJSON(
             API.cities(countryId, stateId, companyId)
         ).catch(() => null);
@@ -306,6 +331,7 @@
             : Array.isArray(data)
             ? data
             : [];
+
         el.innerHTML = `<option value="">${t(
             "select_city",
             "Select City"
