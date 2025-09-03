@@ -507,4 +507,12 @@ return [
     'loading_countries' => 'جاري تحميل الدول...',
     'recievers' => 'المستلمين',
     'shipments_total'=>'إجمالي الشحنات',
+    'transaction_created' => 'تم إنشاء المعاملة',
+    'transaction_rejected' => 'تم رفض المعاملة',
+    'transaction_accepted' => 'تم قبول المعاملة',
+    'newshipment' => 'شحنة جديدة',
+    'balance_deposited' => 'تم تحديث الرصيد',
+    'balance_deduction' => 'تم خصم الرصيد',
+    'transaction_created_notification' => 'تم إنشاء المعاملة :code. الحالة: :status.',
+
 ];

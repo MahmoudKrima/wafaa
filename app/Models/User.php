@@ -9,6 +9,8 @@ use Illuminate\Notifications\Notifiable;
 use Spatie\Translatable\HasTranslations;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\DatabaseNotification;
+
 
 class User extends Authenticatable
 {
@@ -55,7 +57,9 @@ class User extends Authenticatable
         'wallet',
         'transactions',
         'walletLogs',
-        'shippingPrices'
+        'shippingPrices',
+        'notifications',
+        'reciverable'
     ];
 
 
@@ -100,5 +104,15 @@ class User extends Authenticatable
     public function shippingPrices()
     {
         return $this->hasMany(UserShippingPrice::class);
+    }
+
+    public function notifications()
+    {
+        return $this->morphMany(DatabaseNotification::class, 'notifiable')
+            ->latest();
+    }
+    public function reciverable()
+    {
+        return $this->morphMany(DatabaseNotification::class, 'reciverable')->latest();
     }
 }
