@@ -2,16 +2,18 @@
 
 namespace App\Services\User\Transaction;
 
+use App\Models\Admin;
 use App\Models\Banks;
 use App\Traits\ImageTrait;
 use App\Filters\CodeFilter;
 use App\Models\Transaction;
 use Illuminate\Support\Str;
+use App\Filters\DateToFilter;
+use App\Filters\DateFromFilter;
 use Illuminate\Pipeline\Pipeline;
+use App\Enum\NotificationTypeEnum;
 use App\Enum\TransactionStatusEnum;
 use App\Filters\ActivationStatusFilter;
-use App\Filters\DateFromFilter;
-use App\Filters\DateToFilter;
 
 class TransactionService
 {
@@ -67,6 +69,23 @@ class TransactionService
         do {
             $data['code'] = strtoupper(Str::random(4) . '-' . Str::random(4) . '-' . Str::random(4) . '-' . Str::random(4));
         } while (Transaction::where('code', $data['code'])->exists());
-        Transaction::create($data);
+        $transaction = Transaction::create($data);
+        $message = [
+            'en' => __('admin.transaction_created_notification', [
+                'code'   => $transaction->code,
+                'status' => __("admin.{$transaction->status->value}"),
+            ], 'en'),
+            'ar' => __('admin.transaction_created_notification', [
+                'code'   => $transaction->code,
+                'status' => __("admin.{$transaction->status->value}"),
+            ], 'ar'),
+        ];
+        auth()->user()->notifications()->create([
+            'id'               => (string) Str::uuid(),
+            'type'             => NotificationTypeEnum::TRANSACTION_CREATED->value,
+            'data'             => $message,
+            'reciverable_type' => Admin::class,
+            'reciverable_id'   => auth()->user()->created_by,
+        ]);
     }
 }

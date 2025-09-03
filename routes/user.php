@@ -9,6 +9,7 @@ use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use App\Http\Controllers\User\WalletLogs\WalletLogsController;
 use App\Http\Controllers\User\Transaction\TransactionController;
 use App\Http\Controllers\User\Reciever\RecieverController;
+use App\Http\Controllers\User\Notification\NotificationController;
 
 
 Route::controller(ShippingController::class)
@@ -98,6 +99,12 @@ Route::middleware(['web'])->group(function () {
             ->group(function () {
                 Route::get('/wallet-logs', 'index')
                     ->name('wallet-logs.index');
+            });
+
+        Route::controller(NotificationController::class)
+            ->group(function () {
+                Route::get('/notifications', 'index')
+                    ->name('notifications.index');
             });
         Route::controller(RecieverController::class)
             ->group(function () {

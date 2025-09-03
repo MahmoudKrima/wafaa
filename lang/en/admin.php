@@ -521,6 +521,13 @@ return [
     'cash_on_delivery_shippment' => 'Cash on Delivery Shipment',
     'loading_countries' => 'Loading countries...',
     'recievers' => 'Recievers',
-    'shipments_total' => 'Total Shipments'
+    'shipments_total' => 'Total Shipments',
+    'transaction_created' => 'Transaction created',
+    'transaction_rejected' => 'Transaction rejected',
+    'transaction_accepted' => 'Transaction accepted',
+    'newshipment' => 'New Shipment',
+    'balance_deposited' => 'Balance deposited',
+    'balance_deduction' => 'Balance deduction',
+    'transaction_created_notification' => 'Transaction created :code. Status: :status.',
 
 ];

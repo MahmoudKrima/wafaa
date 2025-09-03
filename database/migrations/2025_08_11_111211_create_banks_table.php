@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('banks', function (Blueprint $table) {
             $table->id();
             $table->foreignId('admin_id')
-                ->constrained('users')
+                ->constrained('admins')
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
             $table->foreignId('created_by')

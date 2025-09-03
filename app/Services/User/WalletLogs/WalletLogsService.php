@@ -11,8 +11,6 @@ use App\Filters\DateToFilter;
 
 class WalletLogsService
 {
-
-
     public function index($request)
     {
         $request->validated();
