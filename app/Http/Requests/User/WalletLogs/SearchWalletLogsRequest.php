@@ -30,14 +30,12 @@ class SearchWalletLogsRequest extends FormRequest
                 'sometimes',
                 'nullable',
                 'string',
-                'max:10',
                 Rule::in(WalletLogTypeEnum::vals())
             ],
             'type' => [
                 'sometimes',
                 'nullable',
                 'string',
-                'max:10',
                 Rule::in(TransactionTypeEnum::vals())
             ],
             'date_from'          => ['nullable', 'date'],
