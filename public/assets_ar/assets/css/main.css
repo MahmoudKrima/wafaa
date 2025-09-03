@@ -1277,11 +1277,12 @@ select.form-control.form-custom {
 .badge {
     font-weight: 600;
     line-height: 1.4;
-    padding: 3px 6px;
+    padding: 4px 10px;
     font-size: 12px;
     font-weight: 600;
     transition: all 0.3s ease-out;
-    -webkit-transition: all 0.3s ease-out; }
+    -webkit-transition: all 0.3s ease-out;
+}
 .badge:hover {
     transition: all 0.3s ease-out;
     -webkit-transition: all 0.3s ease-out;

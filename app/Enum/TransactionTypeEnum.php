@@ -18,8 +18,8 @@ enum TransactionTypeEnum: string
     public function badge(): string
     {
         return match ($this) {
-            self::DEPOSIT => 'btn btn-success btn-sm text-center',
-            self::DEDUCT => 'btn btn-danger btn-sm text-center',
+            self::DEPOSIT => 'badge bg-success text-center',
+            self::DEDUCT => 'badge bg-danger text-center',
         };
     }
 

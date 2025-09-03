@@ -18,8 +18,8 @@ enum ActivationStatusEnum: string
     public function badge(): string
     {
         return match ($this) {
-            self::ACTIVE => 'btn btn-success btn-sm text-center',
-            self::DEACTIVE => 'btn btn-danger btn-sm text-center',
+            self::ACTIVE => 'badge bg-success text-center',
+            self::DEACTIVE => 'badge bg-danger text-center',
         };
     }
 

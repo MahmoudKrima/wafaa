@@ -18,8 +18,8 @@ enum ContactStatusEnum: string
     public function badge(): string
     {
         return match ($this) {
-            self::PENDING => 'btn btn-warning btn-sm text-center',
-            self::REPLIED => 'btn btn-success btn-sm text-center',
+            self::PENDING => 'badge bg-warning text-center',
+            self::REPLIED => 'badge bg-success text-center',
         };
     }
 
