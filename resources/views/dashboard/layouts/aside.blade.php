@@ -248,7 +248,7 @@
                     <li class="{{ isRoute(['admin.transactions.index', 'admin.transactions.search']) ? 'active' : '' }}">
                         <a href="{{ route('admin.transactions.index') }}">
                             <i class="fa fa-money-bill-trend-up" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
-                            {{ __('admin.transactions') }} </a>
+                            {{ __('admin.recharge_requests') }} </a>
                     </li>
                     @endhaspermission
                     @haspermission('allowed_companies.view', 'admin')
