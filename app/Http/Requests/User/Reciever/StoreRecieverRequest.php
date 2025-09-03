@@ -56,7 +56,7 @@ class StoreRecieverRequest extends FormRequest
                 Rule::unique('users', 'phone'),
                 Rule::unique('users', 'additional_phone'),
             ],
-            'postal_code' => ['required', 'string', 'max:255'],
+            'postal_code' => ['sometimes', 'nullable', 'string', 'max:255'],
         ];
     }
 
