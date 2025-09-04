@@ -42,6 +42,29 @@
                                                 value="{{ old('cash_on_delivery_price', $adminSetting->cash_on_delivery_price) }}">
                                         </div>
                                     </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="email" class="text-dark">{{ __('admin.email') }}</label>
+                                            <input type="text" step="0.01" name="email" id="email"
+                                                class="form-control" placeholder="{{ __('admin.email') }}"
+                                                value="{{ old('email', default: $adminSetting->email) }}">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="phone" class="text-dark">{{ __('admin.phone') }}</label>
+                                            <input type="text" name="phone" id="phone"
+                                                class="form-control" placeholder="{{ __('admin.phone') }}"
+                                                value="{{ old('phone', $adminSetting->phone) }}">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="whatsapp" class="text-dark">{{ __('admin.whatsapp') }}</label>
+                                            <input type="text" name="whatsapp" id="whatsapp"
+                                                class="form-control" placeholder="{{ __('admin.whatsapp') }}"
+                                                value="{{ old('whatsapp', $adminSetting->whatsapp) }}">
+                                        </div>
+
+                                    </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-12">

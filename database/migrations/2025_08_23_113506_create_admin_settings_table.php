@@ -15,6 +15,9 @@ return new class extends Migration
             $table->id();
             $table->decimal('extra_weight_price', 10, 2)->default(0);
             $table->decimal('cash_on_delivery_price', 10, 2)->default(0);
+            $table->string('email');
+            $table->string('phone');
+            $table->string('whatsapp');
             $table->foreignId('admin_id')
                 ->nullable()
                 ->constrained('admins')

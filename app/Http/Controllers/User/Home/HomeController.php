@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User\Home;
 
 use App\Models\Reciever;
+use App\Models\AdminSetting;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Http;
@@ -107,5 +108,14 @@ class HomeController extends Controller
     private function ghayaUrl(string $endpoint): string
     {
         return rtrim(config('services.ghaya.base_url'), '/') . '/' . ltrim($endpoint, '/');
+    }
+
+    public function contacts()
+    {
+        $user = auth()->user();
+        $contacts = AdminSetting::where('admin_id', $user->created_by)
+            ->select('email', 'phone', 'whatsapp')
+            ->first();
+        return view('user.pages.home.contacts', compact('contacts'));
     }
 }

@@ -543,5 +543,6 @@ return [
     'transaction_created_notification' => 'تم إنشاء المعاملة :code  -  الحالة: :status',
     'no_notifications' => 'لا يوجد إشعارات',
     'data' => 'البيانات',
+    'contacts_details'=>'بيانات التواصل',
 
 ];

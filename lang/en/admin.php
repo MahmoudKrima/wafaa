@@ -540,5 +540,6 @@ return [
     'transaction_created_notification' => 'Transaction created :code  -   Status: :status',
     'no_notifications' => 'No Notifications',
     'data' => 'Data',
+    'contacts_details' => 'Contacts Details',
 
 ];

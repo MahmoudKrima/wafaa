@@ -46,6 +46,7 @@
     'user.wallet-logs.index',
     'user.banks.index',
     'user.notifications.index',
+    'user.contacts.index',
 ])
     ? 'active'
     : '' }}">
@@ -55,6 +56,7 @@
     'user.wallet-logs.index',
     'user.banks.index',
     'user.notifications.index',
+    'user.contacts.index',
 ])
     ? 'true'
     : 'false' }}" class="menu-toggle">
@@ -117,6 +119,11 @@
                     <a href="{{ route('user.notifications.index') }}">
                         <i class="fa fa-money-bill-trend-up" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
                         {{ __('admin.notifications') }} </a>
+                </li>
+                <li class="{{ isRoute(['user.contacts.index']) ? 'active' : '' }}">
+                    <a href="{{ route('user.contacts.index') }}">
+                        <i class="fa fa-money-bill-trend-up" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
+                        {{ __('admin.contacts_details') }} </a>
                 </li>
             </ul>
         </div>
