@@ -10,7 +10,7 @@
                             <div class="col-12" style="margin: 15px 15px 0 15px;">
                                 @haspermission('admins.create', 'admin')
                                     <a href="{{ route('admin.admins.create') }}"
-                                        class="btn btn-primary">{{ __('admin.add') }}</a>
+                                        class="btn btn-primary">{{ __('admin.create_admin') }}</a>
                                 @endhaspermission
                             </div>
                         </div>
@@ -107,6 +107,7 @@
                                     <tr>
                                         <th scope="col">{{ __('admin.image') }}</th>
                                         <th scope="col">{{ __('admin.name') }}</th>
+                                        <th scope="col">{{ __('admin.phone') }}</th>
                                         <th scope="col">{{ __('admin.email') }}</th>
                                         <th scope="col">{{ __('admin.role') }}</th>
                                         <th scope="col">{{ __('admin.status') }}</th>
@@ -126,6 +127,9 @@
                                             </td>
                                             <td>
                                                 <p class="mb-0">{{ $admin->name }}</p>
+                                            </td>
+                                            <td>
+                                                <p class="mb-0">{{ $admin->phone }}</p>
                                             </td>
                                             <td>{{ $admin->email }}</td>
                                             <td>{{ optional($admin->roles->first())->name ?? __('admin.n/a') }}</td>

@@ -522,6 +522,8 @@ return [
     'no_shipments_title' => 'No Shipments Right Now',
     'shippment_type' => 'Shippment Type',
     'canceled' => 'Canceled',
+    'user_wallet' => 'User Financial Transaction',
+    'update_user' => 'Update User Info',
     'normal_shipment' => 'Normal Shipment',
     'cash_on_delivery_shippment' => 'Cash on Delivery Shipment',
     'loading_countries' => 'Loading countries...',

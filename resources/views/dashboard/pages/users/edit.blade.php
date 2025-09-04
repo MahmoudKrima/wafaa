@@ -1,5 +1,5 @@
 @extends('dashboard.layouts.app')
-@section('title', __('admin.update'))
+@section('title', __('admin.update_user'))
 @push('breadcrumb')
 <nav class="breadcrumb-one" aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -7,7 +7,7 @@
         </li>
         <li class="breadcrumb-item"><a href="{{ route('admin.users.index') }}">{{ __('admin.users') }}</a>
         </li>
-        <li class="breadcrumb-item active" aria-current="page"><span>{{ __('admin.update') }}</span></li>
+        <li class="breadcrumb-item active" aria-current="page"><span>{{ __('admin.update_user') }}</span></li>
     </ol>
 </nav>
 @endpush
@@ -19,7 +19,7 @@
                 <div class="widget-header">
                     <div class="row">
                         <div class="col-xl-12 col-md-12 col-sm-12 col-12">
-                            <h4>{{ __('admin.update') }}</h4>
+                            <h4>{{ __('admin.update_user') }}</h4>
                         </div>
                     </div>
                 </div>
@@ -70,6 +70,7 @@
                                                 class="text-dark">{{ __('admin.password') }}</label>
                                             <input id="passwordInput" type="password" name="password"
                                                 placeholder="{{ __('admin.password') }}" class="form-control">
+                                            <small class="form-text text-muted">{{ __('admin.password_optional') }}</small>
                                         </div>
                                     </div>
                                     <div class="row">
