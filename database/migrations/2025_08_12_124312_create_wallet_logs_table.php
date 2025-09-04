@@ -25,7 +25,7 @@ return new class extends Migration
                 ->onDelete('cascade');
             $table->decimal('amount', 10, 2);
             $table->enum('type', TransactionTypeEnum::vals());
-            $table->string('description');
+            $table->text('description');
             $table->timestamps();
         });
     }
