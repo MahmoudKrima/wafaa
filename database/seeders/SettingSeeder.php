@@ -30,7 +30,6 @@ class SettingSeeder extends Seeder
             'snapchat' => 'https://www.snapchat.com',
             'logo' => 'defaults/admin.jpg',
             'fav_icon' => 'defaults/admin.jpg',
-            'footer_bio' => 'footer_biofooter_biofooter_biofooter_biofooter_biofooter_biofooter_biofooter_biofooter_biofooter_bio',
         ];
         foreach ($settings as $key => $value) {
             Setting::updateOrCreate(['key' => $key], ['value' => $value]);
