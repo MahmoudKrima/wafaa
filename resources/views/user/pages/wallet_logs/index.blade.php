@@ -118,7 +118,7 @@
                                         <span class="{{ $log->trans_type->badge() }}">{{ $log->trans_type->lang() }}</span>
                                     </td>
                                     <td>
-                                        {{$log->amount}}
+                                        {{$log->amount}} {{ __('admin.currency_symbol') }}
                                     </td>
                                     <td>
                                         {{optional($log->admin)->name ?? __('admin.n/a')}}

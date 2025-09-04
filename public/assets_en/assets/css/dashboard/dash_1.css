@@ -379,12 +379,8 @@
 
 .widget-account-invoice-two {
     padding: 22px 19px;
-    background: #e2a03f;
-    /*background-image: linear-gradient(to right, #d09693 0%, #c71d6f 100%);*/
-    /*background: linear-gradient(to right, #0081ff 0%, #0045ff 100%);*/
-    background-image: linear-gradient(to top, #a18cd1 0%, #fbc2eb 100%);
-    background-image: linear-gradient(to top, #30cfd0 0%, #330867 100%);
-    background-image: linear-gradient(to top, #276b6b 0%, #46177e 100%);
+    background: #1766aa;
+    background-image: linear-gradient(to top, #ee8020 0%, #1766aa 100%);
 }
 .widget-account-invoice-two .account-box .info {
     display: block;

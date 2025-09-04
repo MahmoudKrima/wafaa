@@ -127,7 +127,7 @@
                                             class="{{ $walletLog->trans_type->badge() }}">{{ $walletLog->trans_type->lang() }}</span>
                                     </td>
                                     <td>
-                                        {{$walletLog->amount}}
+                                        {{$walletLog->amount}} {{ __('admin.currency_symbol') }}
                                     </td>
                                     <td>
                                         {{optional($walletLog->admin)->name ?? __('admin.n/a')}}

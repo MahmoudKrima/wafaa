@@ -51,10 +51,10 @@
                                         <p class="mb-0">{{ $userShippingPrice->company_name }}</p>
                                     </td>
                                     <td>
-                                        <p class="mb-0">{{ $userShippingPrice->local_price ? $userShippingPrice->local_price : __('admin.n/a') }}</p>
+                                        <p class="mb-0">{{ $userShippingPrice->local_price ? $userShippingPrice->local_price .' '. __('admin.currency_symbol') : __('admin.n/a') }}</p>
                                     </td>
                                     <td>
-                                        <p class="mb-0">{{ $userShippingPrice->international_price ? $userShippingPrice->international_price : __('admin.n/a') }}</p>
+                                        <p class="mb-0">{{ $userShippingPrice->international_price ? $userShippingPrice->international_price .' '. __('admin.currency_symbol') : __('admin.n/a') }}</p>
                                     </td>
 
                                     @if (auth('admin')->user()->hasAnyPermission(['user_shipping_prices.update', 'user_shipping_prices.delete']))

@@ -114,7 +114,7 @@
                                     <td>{{ $user->additional_phone ?? __('admin.n/a') }}</td>
                                     <td>{{ $user->email }}</td>
                                     <td>{{ $user->addedByAdmin?->name}}</td>
-                                    <td>{{ optional($user->wallet)->balance ?? __('admin.n/a')}}</td>
+                                    <td>{{ optional($user->wallet)->balance .' '. __('admin.currency_symbol')  ?? __('admin.n/a')}}</td>
                                     @if (auth('admin')->user()->hasAnyPermission(['users.update', 'users.delete', 'user_shipping_prices.view', 'wallet_logs.view']))
                                     <td class="text-center">
                                         <div class="action-btns d-flex justify-content-center">
