@@ -71,6 +71,7 @@ class TransactionService
                 'user_id' => $transaction->user_id,
                 'amount' => $transaction->amount,
                 'type' => TransactionTypeEnum::DEPOSIT->value,
+                'admin_id' => auth('admin')->user()->id,
                 'description' => __('admin.transaction_status_updated', ['status' => TransactionStatusEnum::from($status)->lang()]),
             ]);
             $transaction->update([
