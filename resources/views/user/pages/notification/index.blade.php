@@ -78,7 +78,6 @@
                         <table class="table table-striped table-vcenter">
                             <thead>
                                 <tr>
-                                    <th scope="col">{{ __('admin.id') }}</th>
                                     <th scope="col">{{ __('admin.type') }}</th>
                                     <th scope="col">{{ __('admin.data') }}</th>
                                     <th scope="col">{{ __('admin.created_at') }}</th>
@@ -95,9 +94,6 @@
                                 $msgAr = $data['ar'] ?? '';
                                 @endphp
                                 <tr>
-                                    <td>
-                                        {{ $n->id }}
-                                    </td>
                                     <td>
                                         <span class="{{ $badge }}">{{ $label }}</span>
                                     </td>

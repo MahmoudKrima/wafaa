@@ -1,11 +1,11 @@
 @extends('dashboard.layouts.app')
-@section('title', __('admin.transactions'))
+@section('title', __('admin.recharge_requests'))
 @push('breadcrumb')
 <nav class="breadcrumb-one" aria-label="{{ __('admin.breadcrumb') }}">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('admin.dashboard.index') }}">{{ __('admin.dashboard') }}</a>
         </li>
-        <li class="breadcrumb-item active" aria-current="page"><span>{{ __('admin.transactions') }}</span></li>
+        <li class="breadcrumb-item active" aria-current="page"><span>{{ __('admin.recharge_requests') }}</span></li>
     </ol>
 </nav>
 @endpush
@@ -100,7 +100,7 @@
                     <div class="widget-header">
                         <div class="row">
                             <div class="col-xl-12 col-md-12 col-sm-12 col-12">
-                                <h4 style="padding: 30px 0px 15px 0px;">{{ trans('admin.transactions') }}</h4>
+                                <h4 style="padding: 30px 0px 15px 0px;">{{ trans('admin.recharge_requests') }}</h4>
                             </div>
                         </div>
                     </div>
@@ -138,7 +138,7 @@
                                     <td>
                                         <a href="{{ displayImage($transaction->attachment) }}"
                                             class="btn btn-primary btn-sm " target="_blank">
-                                            {{ __('admin.attachment') }}
+                                            {{ __('admin.receipt_attachment') }}
                                         </a>
                                     </td>
                                     <td>
@@ -214,9 +214,9 @@
 <div class="modal fade" id="statusModal{{ $transaction->id }}" tabindex="-1" role="dialog" aria-labelledby="statusModalLabel{{ $transaction->id }}" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
-            <div class="modal-header bg-primary text-white">
-                <h5 class="modal-title" id="statusModalLabel{{ $transaction->id }}">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-edit mr-2"></svg>{{ __('admin.update_transaction_status') }} - {{ $transaction->code }}
+            <div class="modal-header bg-transparent text-white text-center">
+                <h5 class="modal-title" id="statusModalLabel{{ $transaction->id }}" style="font-size:16px;">
+                    {{ __('admin.update_transaction_status') }}
                 </h5>
                 <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -225,7 +225,6 @@
             <div class="modal-body">
                 <div class="text-center mb-4">
                     <div class="alert alert-info">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-info mr-2"></svg>
                         {{ __('admin.select_new_status_for_transaction') }}: <strong>{{ $transaction->code }}</strong>
                     </div>
                 </div>
@@ -251,27 +250,22 @@
                     </div>
                 </div>
 
-                <div class="mt-3">
+                <div class="mt-3 pt-2">
                     <div class="row">
                         <div class="col-md-4">
-                            <small class="text-muted">{{ __('admin.user') }}:</small>
+                            <strong class="text-muted">{{ __('admin.user') }}:</strong>
                             <p class="mb-0"><strong>{{ $transaction->user->name }}</strong></p>
                         </div>
                         <div class="col-md-4">
-                            <small class="text-muted">{{ __('admin.bank') }}:</small>
+                            <strong class="text-muted">{{ __('admin.bank') }}:</strong>
                             <p class="mb-0"><strong>{{ $transaction->bank->name }}</strong></p>
                         </div>
                         <div class="col-md-4">
-                            <small class="text-muted">{{ __('admin.amount') }}:</small>
-                            <p class="mb-0"><strong>{{ $transaction->amount }}</strong></p>
+                            <strong class="text-muted">{{ __('admin.amount') }}:</strong>
+                            <p class="mb-3"><strong>{{ $transaction->amount }} {{ __('admin.currency_symbol') }}</strong></p>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x mr-2"></svg>{{ __('admin.cancel') }}
-                </button>
             </div>
         </div>
     </div>

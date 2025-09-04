@@ -432,8 +432,8 @@
             row.id = "cod-amount-row";
             row.innerHTML = `
                 <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                    <div class="mb-3">${t("cod_amount", "COD Amount")}:</div>
-                    <div class="h6 mb-0 text-primary" id="cod-amount-display"></div>
+                    <strong class="mb-3 text-black">${t("cod_amount", "COD Amount")}:</strong>
+                    <div class="mb-0 text-muted" id="cod-amount-display"></div>
                 </div>`;
             if (parentRow && parentRow.parentNode)
                 parentRow.parentNode.insertBefore(row, parentRow.nextSibling);
@@ -524,7 +524,7 @@
                 if (numericBalance < totalAmount) {
                     if (walletBalanceWarning) {
                         walletBalanceWarning.style.display = "block";
-                        walletBalanceWarning.innerHTML = `<small><i class="fas fa-exclamation-triangle me-1"></i> ${t(
+                        walletBalanceWarning.innerHTML = `<small><i class="fa fa-warning"></i> ${t(
                             "insufficient_balance",
                             "Insufficient balance! Please recharge your wallet."
                         )}</small>`;

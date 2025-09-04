@@ -300,7 +300,7 @@
                     <li class="{{ isRoute(['admin.admin-settings.index']) ? 'active' : '' }}">
                         <a href="{{ route('admin.admin-settings.index') }}">
                             <i class="fa fa-gears" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
-                            {{ __('admin.admin_shipments_settings') }} </a>
+                            {{ __('admin.admin_settings') }} </a>
                     </li>
                     @endhaspermission
                     @haspermission('sliders.view', 'admin')

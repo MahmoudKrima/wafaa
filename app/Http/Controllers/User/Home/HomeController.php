@@ -110,12 +110,12 @@ class HomeController extends Controller
         return rtrim(config('services.ghaya.base_url'), '/') . '/' . ltrim($endpoint, '/');
     }
 
-    public function contacts()
+    /*public function contacts()
     {
         $user = auth()->user();
         $contacts = AdminSetting::where('admin_id', $user->created_by)
             ->select('email', 'phone', 'whatsapp')
             ->first();
         return view('user.pages.home.contacts', compact('contacts'));
-    }
+    }*/
 }

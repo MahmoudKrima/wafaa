@@ -1,3 +1,4 @@
+@php use App\Models\AdminSetting; @endphp
 @extends('user.layouts.app')
 @section('title', __('admin.dashboard'))
 
@@ -321,9 +322,47 @@ $totalCount = (int) ($stats['total'] ?? 0);
     {{-- ===== /Metrics grid ===== --}}
 
 </div>
+
 @endsection
 
 @push('js')
 <script src="{{ asset('assets_' . assetLang()) }}/plugins/apex/apexcharts.min.js"></script>
 <script src="{{ asset('assets_' . assetLang()) }}/assets/js/dashboard/dash_1.js"></script>
 @endpush
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("contactData").style.display = "block";
+    });
+</script>
+@php
+    $user = auth()->user();
+    $contacts = AdminSetting::where('admin_id', $user->created_by)
+        ->select('email', 'phone', 'whatsapp')
+        ->first();
+@endphp
+<div class="floating-button-menu menu-off" id="contactData" style="display: none;">
+    <div class="floating-button-menu-links">
+
+        <a href="tel:{{ $contacts->phone }}" class="text-decoration-none">
+            <i class="fa fa-phone" style="margin:0 5px;"></i>
+            {{ $contacts->phone ?? '—' }}
+        </a>
+
+        <a href="mailto:{{ $contacts->email }}" class="text-decoration-none">
+            <i class="fa fa-envelope" style="margin:0 5px;"></i>
+            {{ $contacts->email ?? '—' }}
+        </a>
+        @if($contacts->whatsapp)
+
+            <a href="https://api.whatsapp.com/send/?phone=966{{$contacts->whatsapp}}&text&type=phone_number&app_absent=0" target="_blank" class="text-decoration-none">
+                <i class="fa-brands fa-whatsapp" style="margin:0 5px;"></i>
+                {{ $contacts->whatsapp }}
+            </a>
+        @else
+            <span>—</span>
+        @endif
+    </div>
+    <div class="floating-button-menu-label"><i class="fa fa-phone" style="font-size:25px;line-height:65px;"></i></div>
+</div>
+<div class="floating-button-menu-close"></div>

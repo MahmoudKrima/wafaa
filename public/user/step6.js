@@ -106,9 +106,9 @@
         css.id = "pay-cards-style";
         css.textContent = `
         .payment-grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
-        .pay-card{border:2px solid #fe94001a;border-radius:14px;padding:14px;transition:.2s;cursor:pointer;background:#fff}
-        .pay-card:hover{box-shadow:0 6px 18px rgb(254 148 0 / 11%);transform:translateY(-1px)}
-        .pay-card.active{border-color:#F6950D;box-shadow:0 0 0 3px rgba(13,110,253,.15)}
+        .pay-card{border:2px solid #8181814d;border-radius:10px;padding:15px;cursor:pointer;background:#fff}
+        .pay-card:hover{box-shadow:0 6px 18px rgb(128 128 128 / 27%)}
+        .pay-card.active{border-color:#F6950D;}
         .pay-card .title{display:flex;align-items:center;gap:10px;font-weight:700;margin-bottom:6px}
         .pay-card .muted{color:#6c757d;font-size:.9rem}
         .pay-card input[type="radio"]{display:none}

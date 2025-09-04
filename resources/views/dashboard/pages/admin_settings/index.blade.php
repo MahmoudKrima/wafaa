@@ -1,5 +1,5 @@
 @extends('dashboard.layouts.app')
-@section('title', __('admin.admin_shipments_settings'))
+@section('title', __('admin.admin_settings'))
 @push('breadcrumb')
 <nav class="breadcrumb-one" aria-label="{{ __('admin.breadcrumb') }}">
     <ol class="breadcrumb">
@@ -42,6 +42,11 @@
                                                 value="{{ old('cash_on_delivery_price', $adminSetting->cash_on_delivery_price) }}">
                                         </div>
                                     </div>
+
+                                    <div class="widget-header row col-xl-6 col-md-6 col-sm-6 col-6 mb-3">
+                                        <h4>{{ __('admin.admin_contacts_settings') }}</h4>
+                                    </div>
+
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label for="email" class="text-dark">{{ __('admin.email') }}</label>

@@ -112,7 +112,7 @@
                 <p class="text-center text-muted mb-4">
                     {{ __('admin.select_shipping_method_for') }} <strong id="selected-company-name"></strong>
                 </p>
-                <div id="method-options" class="row"></div>
+                <div id="method-options" class="row" style="display:flex;justify-content:center;"></div>
             </div>
 
             <div class="step-content" id="step-3" style="display:none;" data-app-locale="{{ app()->getLocale() }}">
@@ -413,13 +413,13 @@
             <div id="step-7" class="step-content" style="display:none;">
                 <div class="row">
                     <div class="col-12">
-                        <h4 class="mb-4"><i class="fas fa-check-circle text-success me-2"></i>{{ __('admin.final_shipment_review') }}</h4>
+                        <h4 class="mb-4">{{ __('admin.final_shipment_review') }}</h4>
                         <div id="step7-errors" class="mb-3"></div>
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="card mb-4" style="border-radius:15px;">
                                     <div class="card-header bg-primary text-white" style="border-top-left-radius:15px;border-top-right-radius:15px;">
-                                        <h5 class="mb-0" style="color:#fff;"><i class="fas fa-shipping-fast me-2"></i>{{ __('admin.sender_information') }}</h5>
+                                        <h5 class="mb-0" style="color:#fff;"><i class="fa fa-user-tie" style="margin:0 5px;"></i>{{ __('admin.sender_information') }}</h5>
                                     </div>
                                     <div class="card-body">
                                         <p><strong>{{ __('admin.name') . ': ' }}</strong> <span id="sender-name-preview">{{ __('admin.name') }}</span></p>
@@ -432,7 +432,7 @@
                             <div class="col-md-6">
                                 <div class="card mb-4" style="border-radius:15px;">
                                     <div class="card-header bg-primary text-white" style="border-top-left-radius:15px;border-top-right-radius:15px;">
-                                        <h5 class="mb-0" style="color:#fff;"><i class="fas fa-shipping-fast me-2"></i>{{ __('admin.shipping_company_details') }}</h5>
+                                        <h5 class="mb-0" style="color:#fff;"><i class="fa fa-house-flood-water-circle-arrow-right" style="margin:0 5px;"></i>{{ __('admin.shipping_company_details') }}</h5>
                                     </div>
                                     <div class="card-body">
 
@@ -460,7 +460,7 @@
                             <div class="col-md-6">
                                 <div class="card mb-4" style="border-radius:15px;">
                                     <div class="card-header bg-primary text-white" style="border-top-left-radius:15px;border-top-right-radius:15px;">
-                                        <h5 class="mb-0" style="color:#fff;"><i class="fas fa-users me-2"></i>{{ __('admin.receivers') }} (<span id="receivers-count-preview">0</span>)</h5>
+                                        <h5 class="mb-0" style="color:#fff;"><i class="fa fa-user-friends" style="margin:0 5px;"></i>{{ __('admin.receivers') }} (<span id="receivers-count-preview">0</span>)</h5>
                                     </div>
                                     <div class="card-body">
                                         <div id="receivers-summary-container"></div>
@@ -470,26 +470,26 @@
                             <div class="col-md-6">
                                 <div class="card mb-4" style="border-radius:15px;">
                                     <div class="card-header bg-primary text-white" style="border-top-left-radius:15px;border-top-right-radius:15px;">
-                                        <h5 class="mb-0" style="color:#fff;"><i class="fas fa-shipping-fast me-2"></i>{{ __('admin.package_details') }}</h5>
+                                        <h5 class="mb-0" style="color:#fff;"><i class="fa fa-truck-fast" style="margin:0 5px;"></i>{{ __('admin.package_details') }}</h5>
                                     </div>
                                     <div class="card-body">
                                         <div class="row">
                                             <div class="col-md-6">
                                                 <p><strong>{{ __('admin.package_type') . ': ' }}</strong> <span id="package-type-preview">{{ __('admin.package_type') }}</span></p>
                                                 <p><strong>{{ __('admin.package_count') . ': ' }}</strong> <span id="package-count-preview">{{ __('admin.package_count') }}</span></p>
-                                                <p><strong>{{ __('admin.weight_kg') . ': ' }}</strong> <span id="package-weight-preview">{{ __('admin.weight_kg') }}</span> {{ __('admin.kg') }}</p>
+                                                <p><strong>{{ __('admin.weight_summary') . ': ' }}</strong> <span id="package-weight-preview">{{ __('admin.weight_kg') }}</span> {{ __('admin.kg') }}</p>
                                             </div>
                                             <div class="col-md-6">
-                                                <p><strong>{{ __('admin.length_cm') . ': ' }}</strong> <span id="package-length-preview">{{ __('admin.length_cm') }}</span> {{ __('admin.cm') }}</p>
-                                                <p><strong>{{ __('admin.width_cm') . ': ' }}</strong> <span id="package-width-preview">{{ __('admin.width_cm') }}</span> {{ __('admin.cm') }}</p>
-                                                <p><strong>{{ __('admin.height_cm') . ': ' }}</strong> <span id="package-height-preview">{{ __('admin.height_cm') }}</span> {{ __('admin.cm') }}</p>
+                                                <p><strong>{{ __('admin.length_summary') . ': ' }}</strong> <span id="package-length-preview">{{ __('admin.length_cm') }}</span> {{ __('admin.cm') }}</p>
+                                                <p><strong>{{ __('admin.width_summary') . ': ' }}</strong> <span id="package-width-preview">{{ __('admin.width_cm') }}</span> {{ __('admin.cm') }}</p>
+                                                <p><strong>{{ __('admin.height_summary') . ': ' }}</strong> <span id="package-height-preview">{{ __('admin.height_cm') }}</span> {{ __('admin.cm') }}</p>
                                             </div>
                                         </div>
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <div class="mt-3">
                                                     <p><strong>{{ __('admin.package_notes') . ': ' }}</strong></p>
-                                                    <p id="package-notes-preview" class="text-muted">{{ __('admin.no_special_notes') }}</p>
+                                                    <p id="package_description" class="text-muted">{{ __('admin.no_special_notes') }}</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -503,21 +503,21 @@
                             <div class="col-md-6">
                                 <div class="card mb-4" style="border-radius:15px;">
                                     <div class="card-header bg-primary text-white" style="border-top-left-radius:15px;border-top-right-radius:15px;">
-                                        <h5 class="mb-0" style="color:#fff;"><i class="fas fa-users me-2"></i>{{ __('admin.shipment_price_details') }}</h5>
+                                        <h5 class="mb-0" style="color:#fff;"><i class="fa fa-info-circle" style="margin:0 5px;"></i>{{ __('admin.shipment_price_details') }}</h5>
                                     </div>
                                     <div class="card-body">
 
                                         <div class="row">
                                             <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                                <div class="mb-3">{{__('admin.shipping_price_per_receiver') }}: </div>
-                                                <div class="h6 text-primary" id="price-base-per-receiver"></div>
+                                                <strong class="mb-3 text-black">{{__('admin.shipping_price_per_receiver') }}: </strong>
+                                                <div class="text-muted" id="price-base-per-receiver"></div>
                                             </div>
                                         </div>
 
                                         <div class="row">
                                             <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                                <div class="mb-0">{{__('admin.extra_weight_per_receiver') }}: </div>
-                                                <div class="h6 text-primary" id="price-extra-per-receiver"></div>
+                                                <strong class="mb-1 text-black">{{__('admin.extra_weight_per_receiver') }}: </strong>
+                                                <div class="text-muted" id="price-extra-per-receiver"></div>
                                             </div>
                                             <div class="col-md-12">
                                                 <div class="small mb-3 text-muted mt-0" id="extra-weight-note">{{__('admin.no_extra_weight') }}</div>
@@ -526,15 +526,22 @@
 
                                         <div class="row">
                                             <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                                <div class="mb-3">{{__('admin.payment_method') }}: </div>
-                                                <div class="h6 mb-0 text-primary" id="payment-method-preview">{{__('admin.cash_on_delivery') }}</div>
+                                                <strong class="mb-3 text-black">{{__('admin.shippment_type') }}: </strong>
+                                                <div class="mb-0 text-muted" id="payment-method-preview">{{__('admin.cash_on_delivery') }}</div>
                                             </div>
                                         </div>
 
                                         <div class="row">
                                             <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                                <div class="mb-1">{{__('admin.cod_fee_per_receiver') }}: </div>
-                                                <div class="h6 mb-0 text-primary" id="price-cod-per-receiver"></div>
+                                                <strong class="mb-3 text-black">{{__('admin.cod_fee_per_receiver') }}: </strong>
+                                                <div class="mb-0 text-muted" id="price-cod-per-receiver"></div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-12" style="display:flex;justify-content:space-between;">
+                                                <strong class="mb-3 text-black">{{__('admin.cod_fee') }}: </strong>
+                                                <div class="mb-0 text-muted" id="cod-fees-preview"></div>
                                             </div>
                                         </div>
 
@@ -545,36 +552,32 @@
                             <div class="col-md-6">
                                 <div class="card mb-4" style="border-radius:15px;">
                                     <div class="card-header bg-primary text-white" style="border-top-left-radius:15px;border-top-right-radius:15px;">
-                                        <h5 class="mb-0" style="color:#fff;"><i class="fas fa-users me-2"></i>{{ __('admin.payment_details') }}</h5>
+                                        <h5 class="mb-0" style="color:#fff;"><i class="fa fa-money-bill" style="margin:0 5px;"></i>{{ __('admin.payment_details') }}</h5>
                                     </div>
                                     <div class="card-body">
 
                                         <div class="row">
                                             <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                                <div class="mb-3">{{__('admin.shipping_fee') }}: </div>
-                                                <div class="h6 mb-0 text-primary" id="shipping-fee-preview"></div>
+                                                <strong class="mb-3 text-black">{{__('admin.shipping_fee') }}: </strong>
+                                                <div class="mb-0 text-primary" id="shipping-fee-preview"></div>
                                             </div>
                                         </div>
 
                                         <div class="row">
                                             <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                                <div class="mb-3">{{__('admin.extra_fees') }}: </div>
-                                                <div class="h6 mb-0 text-primary" id="extra-fees-preview"></div>
+                                                <strong class="mb-1 text-black">{{__('admin.extra_fees') }}: </strong>
+                                                <div class="mb-0 text-primary" id="extra-fees-preview"></div>
                                             </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                                <div class="mb-3">{{__('admin.cod_fee') }}: </div>
-                                                <div class="h6 mb-0 text-primary" id="cod-fees-preview"></div>
+                                            <div class="col-md-12">
+                                                <div class="small mb-3 text-muted mt-0">{{__('admin.extra_fess_desc') }}</div>
                                             </div>
                                         </div>
 
 
                                         <div class="row" id="wallet-balance-section" style="display: none;">
                                             <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                                <div class="mb-1">{{__('admin.wallet_balance') }}: </div>
-                                                <div class="h6 mb-0 text-primary" id="wallet-balance-display"></div>
+                                                <strong class="mb-3 text-black">{{__('admin.wallet_balance') }}: </strong>
+                                                <div class="mb-0 text-primary" id="wallet-balance-display"></div>
                                             </div>
                                             <div class="col-md-12 alert alert-warning" id="wallet-balance-warning" style="display:none;">
                                                 <small><i class="fas fa-exclamation-triangle me-1"></i> {{__('admin.insufficient_balance_warning') }}</small>
@@ -584,7 +587,7 @@
 
                                         <div class="row">
                                             <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                                <div class="mb-1">{{__('admin.total_amount') }}: </div>
+                                                <strong class="mb-1 text-primary">{{__('admin.total_amount_you_pay') }}: </strong>
                                                 <div class="h6 mb-0 text-primary" id="total-amount-preview"></div>
                                             </div>
                                             <div class="col-md-12">

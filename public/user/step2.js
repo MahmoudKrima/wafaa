@@ -102,10 +102,10 @@
 
         if (shippingMethods.includes("local")) {
             methodsHTML += `
-          <div class="col-lg-4 col-md-5 mb-3 mx-auto">
+          <div class="col-lg-4 col-md-4 col-sm-12 mb-3">
             <div class="card method-option h-100 card_step2"
                  onclick="window.selectMethod(this, 'local')"
-                 style="cursor:pointer;border:2px solid transparent;transition:all .3s ease">
+                 style="cursor:pointer;border:2px solid #00000038;transition:all .3s ease">
               <div class="card-body text-center">
                 <div class="mb-2" style="font-size:2rem">🏠</div>
                 <h6 class="card-title">${
@@ -120,10 +120,10 @@
         }
         if (shippingMethods.includes("international")) {
             methodsHTML += `
-          <div class="col-lg-4 col-md-5 mb-3 mx-auto">
+          <div class="col-lg-4 col-md-4 col-sm-12 mb-3">
             <div class="card method-option h-100 card_step2"
                  onclick="window.selectMethod(this, 'international')"
-                 style="cursor:pointer;border:2px solid transparent;transition:all .3s ease">
+                 style="cursor:pointer;border:2px solid #00000038;transition:all .3s ease">
               <div class="card-body text-center">
                 <div class="mb-2" style="font-size:2rem">🌍</div>
                 <h6 class="card-title">${

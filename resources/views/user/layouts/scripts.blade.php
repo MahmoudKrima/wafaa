@@ -15,6 +15,11 @@
 <script src="{{ asset('vendor/toastr/build/toastr.min.js') }}"></script>
 <script src="{{ asset('assets_' . app()->getLocale()) }}/assets/js/scrollspyNav.js"></script>
 <script src="{{ asset('assets_' . app()->getLocale()) }}/plugins/file-upload/file-upload-with-preview.min.js"></script>
+
+
+<script src="{{ asset('assets_' . app()->getLocale()) }}/assets/js/floating_contact.js"></script>
+
+
 <!-- END GLOBAL MANDATORY SCRIPTS -->
 <script>
     $(document).ready(function() {
