@@ -66,6 +66,13 @@ class ShippingController extends Controller
             ->with('Success', __('admin.shippment_created_successfully'));
     }
 
+    public function show(string $id)
+    {
+        $data = $this->shippingService->show($id);
+        return view('user.pages.shippings.show', $data);
+    }
+
+
     public function receivers()
     {
         $recievers = $this->shippingService->receivers();
