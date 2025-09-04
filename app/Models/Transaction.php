@@ -26,7 +26,6 @@ class Transaction extends Model
         'user',
         'bank',
         'acceptedBy',
-        'walletLogs'
     ];
 
     public function scopeWithAllRelations($query)
@@ -47,10 +46,5 @@ class Transaction extends Model
     public function bank()
     {
         return $this->belongsTo(Banks::class, 'banks_id', 'id');
-    }
-
-    public function walletLogs()
-    {
-        return $this->morphMany(WalletLog::class, 'loggable');
     }
 }

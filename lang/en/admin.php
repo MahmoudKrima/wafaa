@@ -198,7 +198,7 @@ return [
     'invalid_status' => 'Invalid status provided',
     'status_already_updated' => 'Status already updated',
     'choose_user' => 'Choose User',
-    'transaction_status_updated' => 'Transaction status updated to :status',
+    'transaction_status_updated' => 'Transaction status updated to :status. Previous balance: :previous SAR, Current balance: :current SAR',
     'shipment' => 'Shipment',
     'other' => 'Other',
     'wallet_logs' => 'Financial Logs',
