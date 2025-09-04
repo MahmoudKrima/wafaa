@@ -60,8 +60,15 @@ Route::middleware(['web'])->group(function () {
         'prefix' => LaravelLocalization::setLocale() . '/user',
         'middleware' => ['localeSessionRedirect', 'localizationRedirect', 'localeViewPath', 'auth:web']
     ], function () {
-        Route::get('/dashboard', [HomeController::class, 'index'])
-            ->name('dashboard.index');
+
+        Route::controller(HomeController::class)
+            ->group(function () {
+                Route::get('/dashboard', 'index')
+                    ->name('dashboard.index');
+                Route::get('/contacts', 'contacts')
+                    ->name('contacts.index');
+            });
+
         Route::controller(ProfileController::class)
             ->group(function () {
                 Route::get('/update-profile', 'index')

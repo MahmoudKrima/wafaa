@@ -540,5 +540,11 @@ return [
     'transaction_created_notification' => 'Transaction created :code  -   Status: :status',
     'no_notifications' => 'No Notifications',
     'data' => 'Data',
+    'contacts_details' => 'Contacts Details',
+    'terms' => 'Terms and Conditions',
+    'term_description_ar' => 'Term Description Ar',
+    'term_description_en' => 'Term Description En',
+    'policy_description_ar' => 'Policy Description Ar',
+    'policy_description_en' => 'Policy Description En',
 
 ];

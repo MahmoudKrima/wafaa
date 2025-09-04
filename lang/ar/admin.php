@@ -543,5 +543,11 @@ return [
     'transaction_created_notification' => 'تم إنشاء المعاملة :code  -  الحالة: :status',
     'no_notifications' => 'لا يوجد إشعارات',
     'data' => 'البيانات',
+    'contacts_details'=>'بيانات التواصل',
+    'terms' => 'الشروط والأحكام',
+    'term_description_ar' => 'وصف الشروط بالعربية',
+    'term_description_en' => 'وصف الشروط بالانجليزية',
+    'policy_description_ar' => 'وصف السياسة الخصوصية بالعربية',
+    'policy_description_en' => 'وصف السياسة الخصوصية بالانجليزية',
 
 ];
