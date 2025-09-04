@@ -182,6 +182,8 @@ return [
     'receivers_count' => 'عدد المستلمين',
     'transactions' => 'سجل التحويلات البنكية',
     'accepted' => 'مقبولة',
+    'user_transactions' => 'المعاملات المالية',
+    'financial_settings' => 'الإعدادات المالية',
     'rejected' => 'مرفوضة',
     'code' => 'الكود',
     'admin_shipments_settings' => 'إعدادات الشحنة',

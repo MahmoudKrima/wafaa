@@ -61,7 +61,7 @@
                     <div class="base-menu">
                         <div class="base-icons">
                             <i class="fa fa-money-bill-trend-up" style="color:#1b6aab;font-size:35px;margin-bottom:10px;"></i>
-                            <p class="side_links_theme">{{__('admin.transactions')}}</p>
+                            <p class="side_links_theme">{{__('admin.user_transactions')}}</p>
                         </div>
                     </div>
                 </a>

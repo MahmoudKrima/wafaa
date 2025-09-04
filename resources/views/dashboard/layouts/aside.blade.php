@@ -99,8 +99,8 @@
                     : 'false' }}" class="menu-toggle">
                         <div class="base-menu">
                             <div class="base-icons">
-                                <i class="fa fa-bank" style="color:#1b6aab;font-size:35px;margin-bottom:10px;"></i>
-                                <p class="side_links_theme">{{__('admin.banks_settings')}}</p>
+                                <i class="fa fa-money-bill-trend-up" style="color:#1b6aab;font-size:35px;margin-bottom:10px;"></i>
+                                <p class="side_links_theme">{{__('admin.financial_settings')}}</p>
                             </div>
                         </div>
                     </a>
