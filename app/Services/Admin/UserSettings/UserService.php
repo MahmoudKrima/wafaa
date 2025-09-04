@@ -141,12 +141,11 @@ class UserService
                 'trans_type' => 'edit_balance',
                 'admin_id' => auth('admin')->id(),
                 'description' => [
-                    __('admin.deposit_balance', [
+                    'ar' => __('admin.deposit_balance', [
                         'previous' => 0,
                         'current'  => $data['balance']
                     ], 'ar'),
-
-                    __('admin.deposit_balance', [
+                    'en' => __('admin.deposit_balance', [
                         'previous' => 0,
                         'current'  => $data['balance']
                     ], 'en'),
@@ -184,13 +183,11 @@ class UserService
                         'previous' => $oldBalance,
                         'current'  => $data['balance']
                     ], 'ar'),
-
                     'en' => __('admin.deposit_balance', [
                         'previous' => $oldBalance,
                         'current'  => $data['balance']
                     ], 'en'),
                 ],
-
             ]);
         }
         return $user;
