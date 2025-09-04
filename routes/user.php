@@ -93,6 +93,8 @@ Route::middleware(['web'])->group(function () {
                     ->name('shippings.store');
                 Route::get('/shipping-companies', 'shippingCompanies')
                     ->name('shippings.companies');
+                Route::get('/shippings/{id}', 'show')
+                    ->name('shippings.show');
             });
 
         Route::controller(WalletLogsController::class)

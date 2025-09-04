@@ -153,6 +153,7 @@
                                     <th scope="col">{{ __('admin.shipment_Cod') }}</th>
                                     <th scope="col">{{ __('admin.status') }}</th>
                                     <th scope="col">{{ __('admin.actions') }}</th>
+                                    <th scope="col">{{ __('admin.settings') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -228,6 +229,11 @@
                                         @else
                                         <span class="badge bg-dark text-white">{{ __('admin.n/a') }}</span>
                                         @endif
+                                    </td>
+                                    <td>
+                                        <a href="{{ route('user.shippings.show', $shipment['id']) }}" class="badge bg-primary text-white">
+                                            {{ __('admin.settings') }}
+                                        </a>
                                     </td>
                                 </tr>
                                 @empty
