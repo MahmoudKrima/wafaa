@@ -12,7 +12,7 @@ class AdminShippingController extends Controller
 {
     public function __construct(private AdminShippingService $adminShippingService) {}
 
-    public function index(SearchShippingRequest $request)
+    public function index(SearchShippingRequest $request, ?User $user = null)
     {
         $page    = max(1, (int) $request->input('page', 1));
         $perPage = (int) $request->input('pageSize', 10);
@@ -22,16 +22,16 @@ class AdminShippingController extends Controller
         if ($request->filled('isCod')) {
             $filters['isCod'] = $request->input('isCod') === 'true' ? 'true' : 'false';
         }
-
-        if (!empty($filters['userId']) && is_array($filters['userId'])) {
-            $users = array_values(array_map('strval', $filters['userId']));
+        if ($user) {
+            $users = [(string) $user->id];
+            unset($filters['userId']);
+        } elseif (!empty($filters['userId'])) {
+            $ids = is_array($filters['userId']) ? $filters['userId'] : [$filters['userId']];
+            $users = array_values(array_map('strval', $ids));
             unset($filters['userId']);
         } else {
             $users = User::where('created_by', getAdminIdOrCreatedBy())
-                ->pluck('id')
-                ->map(fn($id) => (string) $id)
-                ->values()
-                ->all();
+                ->pluck('id')->map(fn($id) => (string) $id)->values()->all();
         }
 
         $hasReceiverFilters = !empty($filters['receiverName']) || !empty($filters['receiverPhone']);
@@ -46,7 +46,6 @@ class AdminShippingController extends Controller
         }
 
         $data = $this->adminShippingService->getUserListShipments($filters, $users);
-
         $results = collect($data['results'] ?? []);
 
         $receiverName  = $request->input('receiverName');
@@ -58,12 +57,8 @@ class AdminShippingController extends Controller
                 $name  = (string) data_get($details, 'receiverName', '');
                 $phone = (string) data_get($details, 'receiverPhone', '');
                 $ok = true;
-                if ($receiverName) {
-                    $ok = $ok && (mb_stripos($name, $receiverName) !== false);
-                }
-                if ($receiverPhone) {
-                    $ok = $ok && ($phone === $receiverPhone);
-                }
+                if ($receiverName)  $ok = $ok && (mb_stripos($name, $receiverName) !== false);
+                if ($receiverPhone) $ok = $ok && ($phone === $receiverPhone);
                 return $ok;
             })->values();
         }
@@ -81,11 +76,19 @@ class AdminShippingController extends Controller
         );
 
         $companies = $this->adminShippingService->getShippingCompanies();
-        $allUsers = User::where('created_by', getAdminIdOrCreatedBy())->get();
+        $allUsers  = User::where('created_by', getAdminIdOrCreatedBy())->get();
 
-        return view('dashboard.pages.admin_shipping.index', compact('shipments', 'companies', 'allUsers'));
+        $forcedUserId = $user?->id;
+        $companies    = $this->adminShippingService->getShippingCompanies();
+        $allUsers     = User::where('created_by', getAdminIdOrCreatedBy())->get();
+
+        return view('dashboard.pages.admin_shipping.index', compact(
+            'shipments',
+            'companies',
+            'allUsers',
+            'forcedUserId'
+        ));
     }
-
 
     public function export(SearchShippingRequest $request)
     {

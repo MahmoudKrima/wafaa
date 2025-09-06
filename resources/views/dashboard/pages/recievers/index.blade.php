@@ -31,7 +31,7 @@
                                 <div class="card-body">
                                     <div class="table-responsive mb-2">
                                         <div class="col-12 mx-auto border">
-                                            <form action="{{ route('admin.recievers.search') }}" method="GET" class="p-3">
+                                            <form action="{{ route('admin.recievers.search', $user->id) }}" method="GET" class="p-3">
                                                 <div class="row mt-2">
                                                     <div class="col-md-4 mb-3">
                                                         <label for="name">{{ __('admin.name') }}</label>
@@ -60,7 +60,7 @@
                                                     </div>
                                                     <div class="col-md-3 mb-3">
                                                         <a role="button" class="btn btn-danger form-control btn-block"
-                                                            href="{{ route('admin.recievers.index') }}">
+                                                            href="{{ route('admin.recievers.index', $user->id) }}">
                                                             {{ __('admin.cancel') }}</a>
                                                     </div>
                                                 </div>

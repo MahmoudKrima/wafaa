@@ -1,8 +1,9 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
+use App\Enum\ActivationStatusEnum;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 return new class extends Migration
 {
@@ -28,7 +29,7 @@ return new class extends Migration
                 ->constrained('admins')
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
-
+            $table->enum('status', ActivationStatusEnum::vals());
             $table->rememberToken();
             $table->timestamps();
         });

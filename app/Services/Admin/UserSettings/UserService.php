@@ -5,6 +5,7 @@ namespace App\Services\Admin\UserSettings;
 use App\Models\User;
 use App\Models\WalletLog;
 use App\Filters\CityFilter;
+use Illuminate\Support\Str;
 use App\Filters\EmailFilter;
 use App\Filters\PhoneFilter;
 use Illuminate\Http\Request;
@@ -19,7 +20,7 @@ use App\Enum\NotificationTypeEnum;
 use App\Filters\TransActionFilter;
 use App\Filters\WalletLogTypeFilter;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
+use App\Filters\ActivationStatusFilter;
 
 
 class UserService
@@ -44,6 +45,7 @@ class UserService
                 EmailFilter::class,
                 PhoneFilter::class,
                 CityFilter::class,
+                ActivationStatusFilter::class,
             ])
             ->thenReturn()
             ->withAllRelations()
@@ -260,6 +262,20 @@ class UserService
             );
         }
     }
+
+    function updateUserStatus($user)
+    {
+        if ($user->status->value == 'active') {
+            $user->update([
+                'status' => 'deactive',
+            ]);
+        } else {
+            $user->update([
+                'status' => 'active',
+            ]);
+        }
+    }
+
 
 
     public function delete(User $user)

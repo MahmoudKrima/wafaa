@@ -21,7 +21,7 @@
                 </a>
             </li>
 
-            <li class=" {{ isRoute(['admin.shippings.index','admin.shippings.export','admin.shippings.show']) ? 'menu active' : '' }}">
+            <li class=" {{ isRoute(['admin.shippings.index','admin.users.shippings','admin.shippings.export','admin.shippings.show']) ? 'menu active' : '' }}">
                 <a href="{{ route('admin.shippings.index') }}"
                     data-active="{{ isRoute(['admin.shippings.index','admin.shippings.export','admin.shippings.show']) ? 'true' : 'false' }}" class="menu-toggle">
                     <div class="base-icons">
@@ -232,18 +232,10 @@
 
                 @haspermission('users.view', 'admin')
                 <li
-                    class="{{ isRoute(['admin.users.index', 'admin.users.search', 'admin.users.create', 'admin.users.edit', 'admin.wallet-logs.index', 'admin.user-shipping-prices.index', 'admin.user-shipping-prices.create', 'admin.user-shipping-prices.edit']) ? 'active' : '' }}">
+                    class="{{ isRoute(['admin.users.index', 'admin.users.search', 'admin.users.create', 'admin.users.edit', 'admin.wallet-logs.index','admin.recievers.index', 'admin.recievers.search', 'admin.user-shipping-prices.index', 'admin.user-shipping-prices.create', 'admin.user-shipping-prices.edit', 'admin.shippings.index', 'admin.shippings.export', 'admin.shippings.show']) ? 'active' : '' }}">
                     <a href="{{ route('admin.users.index') }}">
                         <i class="fa fa-user" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
                         {{ __('admin.users') }} </a>
-                </li>
-                @endhaspermission
-                @haspermission('recievers.view', 'admin')
-                <li
-                    class="{{ isRoute(['admin.recievers.index', 'admin.recievers.search']) ? 'active' : '' }}">
-                    <a href="{{ route('admin.recievers.index') }}">
-                        <i class="fa fa-user" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
-                        {{ __('admin.recievers') }} </a>
                 </li>
                 @endhaspermission
             </ul>

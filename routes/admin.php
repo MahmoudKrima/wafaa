@@ -476,10 +476,10 @@ Route::middleware(['web'])->group(function () {
 
         Route::controller(RecieverController::class)
             ->group(function () {
-                Route::get('/recievers', 'index')
+                Route::get('/recievers/{user?}', 'index')
                     ->name('recievers.index')
                     ->middleware('has.permission:recievers.view');
-                Route::get('/recievers-search', 'search')
+                Route::get('/recievers-search/{user?}', 'search')
                     ->name('recievers.search')
                     ->middleware('has.permission:recievers.view');
             });
@@ -494,6 +494,9 @@ Route::middleware(['web'])->group(function () {
                     ->middleware('has.permission:shippings.view');
                 Route::get('/shippings/{id}', 'show')
                     ->name('shippings.show')
+                    ->middleware('has.permission:shippings.view');
+                Route::get('/users/{user}/shippings', 'index')
+                    ->name('users.shippings')
                     ->middleware('has.permission:shippings.view');
             });
     });

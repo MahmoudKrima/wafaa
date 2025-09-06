@@ -2,9 +2,10 @@
 
 namespace Database\Factories;
 
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
 use App\Models\City;
+use Illuminate\Support\Str;
+use App\Enum\ActivationStatusEnum;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
@@ -33,6 +34,7 @@ class UserFactory extends Factory
             'phone' => fake()->unique()->regexify('05[0-9]{8}'),
             'additional_phone' => fake()->unique()->regexify('05[0-9]{8}'),
             'password' => '123456789',
+            'status' => fake()->randomElement(ActivationStatusEnum::vals()),
             'created_by' => $adminId,
             'added_by' => $adminId,
             'remember_token' => Str::random(10),
