@@ -483,5 +483,18 @@ Route::middleware(['web'])->group(function () {
                     ->name('recievers.search')
                     ->middleware('has.permission:recievers.view');
             });
+
+        Route::controller(AdminShippingController::class)
+            ->group(function () {
+                Route::get('/shippings', 'index')
+                    ->name('shippings.index')
+                    ->middleware('has.permission:shippings.view');
+                Route::get('/shippings-export', 'export')
+                    ->name('shippings.export')
+                    ->middleware('has.permission:shippings.view');
+                Route::get('/shippings/{id}', 'show')
+                    ->name('shippings.show')
+                    ->middleware('has.permission:shippings.view');
+            });
     });
 });

@@ -176,7 +176,7 @@
                                     <td>{{ $shipment['trackingNumber'] ?? __('admin.n/a') }}</td>
                                     <td>{{ $shipment['shipmentDetails']['senderName'] ?? __('admin.n/a') }}</td>
                                     <td>{{ $shipment['shipmentDetails']['receiverName'] ?? __('admin.n/a') }}</td>
-                                    <td>{{ $shipment['shipmentDetails']['weight'] .' '. __('admin.kg') ?? __('admin.n/a') }}</td>
+                                    <td>{{ optional($shipment['shipmentDetails'])['weight'] .' '. __('admin.kg') ?? __('admin.n/a') }}</td>
                                     <td>
                                         @if($shipment['method'] === 'local')
                                         <span class="badge bg-info">{{ __('admin.local') }}</span>

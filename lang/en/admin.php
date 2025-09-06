@@ -560,5 +560,8 @@ return [
     'policy_description_en' => 'Privacy Policy En',
     'receiver_name' => 'Receiver Name',
     'receiver_phone' => 'Receiver Phone',
+    'length_summary' => 'Length',
+    'width_summary' => 'Width',
+    'height_summary' => 'Height',
 
 ];

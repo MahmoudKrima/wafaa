@@ -2,96 +2,99 @@
 
 namespace App\Http\Controllers\Admin\Shipping;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\Shipping\StoreAdminShippingRequest;
-use App\Services\Admin\Shipping\AdminShippingService;
 use App\Models\User;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use Illuminate\Pagination\LengthAwarePaginator;
+use App\Services\Admin\Shipping\AdminShippingService;
+use App\Http\Requests\Admin\Shipping\SearchShippingRequest;
 
 class AdminShippingController extends Controller
 {
     public function __construct(private AdminShippingService $adminShippingService) {}
 
-    public function index()
+    public function index(SearchShippingRequest $request)
     {
-        $users = User::where('created_by', getAdminIdOrCreatedBy())
-            ->withAllRelations()
-            ->orderBy('name')
-            ->get();
-        return view('dashboard.pages.admin_shipping.index', compact('users'));
-    }
+        $page    = max(1, (int) $request->input('page', 1));
+        $perPage = (int) $request->input('pageSize', 10);
 
-    public function create()
-    {
-        $users = User::where('created_by', getAdminIdOrCreatedBy())
-            ->withAllRelations()
-            ->orderBy('name')
-            ->get();
-        return view('dashboard.pages.admin_shipping.create', compact('users'));
-    }
+        $filters = $request->validated();
 
-    public function store(StoreAdminShippingRequest $request)
-    {
-        $result = $this->adminShippingService->store($request);
-        return back()
-            ->with('Success', __('admin.created_successfully'));
-    }
-
-    public function getUserShippingCompanies(Request $request)
-    {
-        $userId = $request->get('user_id');
-        if (!$userId) {
-            return response()->json(['results' => []]);
+        if ($request->filled('isCod')) {
+            $filters['isCod'] = $request->input('isCod') === 'true' ? 'true' : 'false';
         }
-        
-        $companies = $this->adminShippingService->getUserShippingCompanies($userId);
-        return response()->json($companies);
-    }
 
-    public function getUserReceivers(Request $request)
-    {
-        $userId = $request->get('user_id');
-        if (!$userId) {
-            return response()->json([]);
+        if (!empty($filters['userId']) && is_array($filters['userId'])) {
+            $users = array_values(array_map('strval', $filters['userId']));
+            unset($filters['userId']);
+        } else {
+            $users = User::where('created_by', getAdminIdOrCreatedBy())
+                ->pluck('id')
+                ->map(fn($id) => (string) $id)
+                ->values()
+                ->all();
         }
-        
-        $receivers = $this->adminShippingService->getUserReceivers($userId);
-        return response()->json($receivers);
-    }
 
-    public function getUserWalletBalance(Request $request)
-    {
-        $userId = $request->get('user_id');
-        if (!$userId) {
-            return response()->json(['balance' => 0]);
+        $hasReceiverFilters = !empty($filters['receiverName']) || !empty($filters['receiverPhone']);
+        if ($hasReceiverFilters) {
+            $filters['page']     = 0;
+            $filters['pageSize'] = max($perPage, 200);
+        } else {
+            $filters = array_merge($filters, [
+                'page'     => $page - 1,
+                'pageSize' => $perPage,
+            ]);
         }
-        
-        $balance = $this->adminShippingService->getUserWalletBalance($userId);
-        return response()->json(['balance' => $balance]);
+
+        $data = $this->adminShippingService->getUserListShipments($filters, $users);
+
+        $results = collect($data['results'] ?? []);
+
+        $receiverName  = $request->input('receiverName');
+        $receiverPhone = $request->input('receiverPhone');
+
+        if ($receiverName || $receiverPhone) {
+            $results = $results->filter(function ($shipment) use ($receiverName, $receiverPhone) {
+                $details = data_get($shipment, 'shipmentDetails', []);
+                $name  = (string) data_get($details, 'receiverName', '');
+                $phone = (string) data_get($details, 'receiverPhone', '');
+                $ok = true;
+                if ($receiverName) {
+                    $ok = $ok && (mb_stripos($name, $receiverName) !== false);
+                }
+                if ($receiverPhone) {
+                    $ok = $ok && ($phone === $receiverPhone);
+                }
+                return $ok;
+            })->values();
+        }
+
+        $total     = $results->count();
+        $offset    = ($page - 1) * $perPage;
+        $pageItems = $results->slice($offset, $perPage)->values();
+
+        $shipments = new LengthAwarePaginator(
+            $pageItems,
+            $total,
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
+        $companies = $this->adminShippingService->getShippingCompanies();
+        $allUsers = User::where('created_by', getAdminIdOrCreatedBy())->get();
+
+        return view('dashboard.pages.admin_shipping.index', compact('shipments', 'companies', 'allUsers'));
     }
 
-    public function getStates()
+
+    public function export(SearchShippingRequest $request)
     {
-        $states = $this->adminShippingService->getStates();
-        return response()->json($states);
+        return $this->adminShippingService->export($request);
     }
 
-    public function getCities()
+    public function show(string $id)
     {
-        $cities = $this->adminShippingService->getCities();
-        return response()->json($cities);
-    }
-
-    public function getCitiesByState(Request $request)
-    {
-        $stateId = $request->get('state_id');
-        $cities = $this->adminShippingService->getCitiesByState($stateId);
-        return response()->json($cities);
-    }
-
-    public function getCountries()
-    {
-        $countries = $this->adminShippingService->getCountries();
-        return response()->json($countries);
+        $data = $this->adminShippingService->show($id);
+        return view('dashboard.pages.admin_shipping.show', $data);
     }
 }
