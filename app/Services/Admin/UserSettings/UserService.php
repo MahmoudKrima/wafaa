@@ -8,16 +8,19 @@ use App\Filters\CityFilter;
 use App\Filters\EmailFilter;
 use App\Filters\PhoneFilter;
 use Illuminate\Http\Request;
+use App\Filters\DateToFilter;
 use App\Models\AllowedCompany;
 use App\Traits\TranslateTrait;
+use App\Filters\DateFromFilter;
 use App\Filters\NameJsonFilter;
 use Illuminate\Http\Client\Pool;
 use Illuminate\Pipeline\Pipeline;
+use App\Enum\NotificationTypeEnum;
 use App\Filters\TransActionFilter;
 use App\Filters\WalletLogTypeFilter;
 use Illuminate\Support\Facades\Http;
-use App\Filters\DateFromFilter;
-use App\Filters\DateToFilter;
+use Illuminate\Support\Str;
+
 
 class UserService
 {
@@ -151,6 +154,19 @@ class UserService
                     ], 'en'),
                 ],
             ]);
+            $message = [
+                'en' => __('admin.balance_deposited_notification', [], 'en'),
+
+                'ar' => __('admin.balance_deposited_notification', [], 'ar'),
+            ];
+
+            auth('admin')->user()->notifications()->create([
+                'id'               => (string) Str::uuid(),
+                'type'             => NotificationTypeEnum::BALANCEDEPOSITED->value,
+                'data'             => $message,
+                'reciverable_type' => User::class,
+                'reciverable_id'   => $user->id,
+            ]);
         }
         return $user;
     }
@@ -189,6 +205,35 @@ class UserService
                     ], 'en'),
                 ],
             ]);
+            if ($data['balance'] > $oldBalance) {
+                $message = [
+                    'en' => __('admin.balance_deposited_notification', [], 'en'),
+
+                    'ar' => __('admin.balance_deposited_notification', [], 'ar'),
+                ];
+
+                auth('admin')->user()->notifications()->create([
+                    'id'               => (string) Str::uuid(),
+                    'type'             => NotificationTypeEnum::BALANCEDEPOSITED->value,
+                    'data'             => $message,
+                    'reciverable_type' => User::class,
+                    'reciverable_id'   => $user->id,
+                ]);
+            } else {
+                $message = [
+                    'en' => __('admin.balance_deducted_notification', [], 'en'),
+
+                    'ar' => __('admin.balance_deducted_notification', [], 'ar'),
+                ];
+
+                auth('admin')->user()->notifications()->create([
+                    'id'               => (string) Str::uuid(),
+                    'type'             => NotificationTypeEnum::BALANCEDEDUCTION->value,
+                    'data'             => $message,
+                    'reciverable_type' => User::class,
+                    'reciverable_id'   => $user->id,
+                ]);
+            }
         }
         return $user;
     }

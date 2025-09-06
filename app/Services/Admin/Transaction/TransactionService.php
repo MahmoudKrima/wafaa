@@ -12,7 +12,9 @@ use App\Filters\UserFilter;
 use App\Models\Transaction;
 use App\Traits\TranslateTrait;
 use Illuminate\Pipeline\Pipeline;
+use App\Enum\NotificationTypeEnum;
 use App\Filters\ActivationStatusFilter;
+use Illuminate\Support\Str;
 
 class TransactionService
 {
@@ -61,8 +63,8 @@ class TransactionService
 
     function updateStatus($transaction, $status)
     {
+        $user = $transaction->user;
         if ($status == 'accepted') {
-            $user = $transaction->user;
             $oldBalance = $user->wallet->balance;
             $user->wallet->update([
                 'balance' => $user->wallet->balance + $transaction->amount
@@ -92,10 +94,36 @@ class TransactionService
                     ], 'en'),
                 ],
             ]);
+            $message = [
+                'en' => __('admin.balance_deposited_notification', [], 'en'),
+
+                'ar' => __('admin.balance_deposited_notification', [], 'ar'),
+            ];
+
+            auth('admin')->user()->notifications()->create([
+                'id'               => (string) Str::uuid(),
+                'type'             => NotificationTypeEnum::TRANSACTION_ACCEPTED->value,
+                'data'             => $message,
+                'reciverable_type' => User::class,
+                'reciverable_id'   => $user->id,
+            ]);
         } else {
             $transaction->update([
                 'status' => 'rejected',
                 'accepted_by' => auth('admin')->user()->id,
+            ]);
+            $message = [
+                'en' => __('admin.balance_deposite_rejected_notification', [], 'en'),
+
+                'ar' => __('admin.balance_deposite_rejected_notification', [], 'ar'),
+            ];
+
+            auth('admin')->user()->notifications()->create([
+                'id'               => (string) Str::uuid(),
+                'type'             => NotificationTypeEnum::TRANSACTION_REJECTED->value,
+                'data'             => $message,
+                'reciverable_type' => User::class,
+                'reciverable_id'   => $user->id,
             ]);
         }
     }
