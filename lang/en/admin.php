@@ -572,4 +572,5 @@ return [
     'back_to_home' => 'Back to home',
     'terms_description' => 'Terms and conditions',
     'privacy_description' => 'Privacy policy',
+    'your_account_is_not_active' => 'Your account is not active',
 ];

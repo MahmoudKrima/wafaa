@@ -29,6 +29,9 @@ class AuthService
         if (!$admin) {
             return 'wrong credentials';
         }
+        if ($admin->status->value != 'active') {
+            return 'not active';
+        }
         if (!Hash::check($data['password'], $admin->password)) {
             return 'wrong credentials';
         }

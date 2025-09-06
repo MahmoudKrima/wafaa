@@ -19,6 +19,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'guest.user' => \App\Http\Middleware\GuestUser::class,
             'user' => \App\Http\Middleware\User::class,
             'active.admin' => \App\Http\Middleware\ActiveAdmin::class,
+            'active.user' => \App\Http\Middleware\ActiveUser::class,
             'not.this.admin' => \App\Http\Middleware\NotThisAdmin::class,
             'has.permission' => \App\Http\Middleware\HasPermission::class,
             'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,

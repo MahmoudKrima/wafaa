@@ -8,22 +8,31 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use App\Mail\UserResetPasswordMail;
+use Illuminate\Support\Facades\Hash;
 
 
 class AuthService
 {
-    function checkAttempts($data)
+    public function checkAttempts(array $data)
     {
-        if (Auth::guard('web')->attempt($data)) {
-            $User = User::where('phone', $data['phone'])
-                ->first();
-            auth('web')->login($User);
-            return redirect()
-                ->to(route('user.dashboard.index'));
+        $user = User::where('phone', $data['phone'])->first();
+
+        if (!$user) {
+            return 'wrong credentials';
         }
-        return back()
-            ->with('Error', __('user.wrong_email_or_password'));
+
+        if (!Hash::check($data['password'], $user->password)) {
+            return 'wrong credentials';
+        }
+
+        if ($user->status->value != 'active') {
+            return 'not active';
+        }
+
+        Auth::guard('web')->login($user);
+        return 'login success';
     }
+
 
     function sendResetPasswordLink($data)
     {
