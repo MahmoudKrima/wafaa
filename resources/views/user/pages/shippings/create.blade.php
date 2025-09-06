@@ -378,7 +378,7 @@
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="accept_terms" name="accept_terms" {{ old('accept_terms') ? 'checked' : '' }} required>
                                 <label class="form-check-label" for="accept_terms">
-                                    <a href="#" class="text-primary" data-bs-toggle="modal" data-bs-target="#termsModal">{{ __('admin.i_accept_terms') }}</a>
+                                    <a href="{{ route('front.terms') }}" class="text-primary">{{ __('admin.i_accept_terms') }}</a>
                                 </label>
                             </div>
                         </div>

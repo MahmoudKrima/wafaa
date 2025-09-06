@@ -43,7 +43,7 @@
                                 <div class="card-body">
                                     <div class="table-responsive mb-2">
                                         <div class="col-12 mx-auto border">
-                                            <form action="{{ route('admin.shippings.index') }}" method="GET"
+                                            <form action="{{ !empty($forcedUserId) ? route('admin.users.shippings', $forcedUserId) : route('admin.shippings.index') }}" method="GET"
                                                 class="p-3">
                                                 <div class="row">
                                                     <div class="col-md-4 mb-3">
@@ -124,12 +124,22 @@
                                                             name="receiverPhone" id="receiverPhone" class="form-control"
                                                             placeholder="{{ __('admin.receiver_phone') }}">
                                                     </div>
+                                                    @php
+                                                    $selectedUserIds = array_map('strval', (array) request()->input('userId', []));
+                                                    if (!empty($forcedUserId)) {
+                                                    $selectedUserIds = array_unique(array_merge($selectedUserIds, [(string) $forcedUserId]));
+                                                    }
+                                                    @endphp
+                                                    @if(!empty($forcedUserId))
+                                                    <input type="hidden" name="userId[]" value="{{ $forcedUserId }}">
+                                                    @else
                                                     <div class="col-md-4 mb-3">
                                                         <label for="userId">{{ __('admin.choose_user') }}</label>
-                                                        @php
-                                                        $selectedUserIds = array_map('strval', (array) request()->input('userId', []));
-                                                        @endphp
-                                                        <select class="js-example-basic-multiple" name="userId[]" multiple="multiple" style="width:100%; height: 35px !important;" data-placeholder="{{ __('admin.choose_user') }}">
+                                                        <select class="js-example-basic-multiple"
+                                                            name="userId[]"
+                                                            multiple="multiple"
+                                                            style="width:100%; height: 35px !important;"
+                                                            data-placeholder="{{ __('admin.choose_user') }}">
                                                             @foreach ($allUsers as $user)
                                                             <option value="{{ $user->id }}"
                                                                 @selected(in_array((string) $user->id, $selectedUserIds))>
@@ -138,15 +148,19 @@
                                                             @endforeach
                                                         </select>
                                                     </div>
+                                                    @endif
                                                 </div>
                                                 <div class="row mt-2">
                                                     <div class="col-md-3 mb-3">
-                                                        <button type="submit"
-                                                            class="bg-success form-control btn-block">{{ __('admin.search') }}</button>
+                                                        <button type="submit" class="bg-success form-control btn-block">
+                                                            {{ __('admin.search') }}
+                                                        </button>
                                                     </div>
                                                     <div class="col-md-3 mb-3">
                                                         <a role="button" class="btn btn-danger form-control btn-block"
-                                                            href="{{ route('admin.shippings.index') }}">{{ __('admin.cancel') }}</a>
+                                                            href="{{ !empty($forcedUserId) ? route('admin.users.shippings', $forcedUserId) : route('admin.shippings.index') }}">
+                                                            {{ __('admin.cancel') }}
+                                                        </a>
                                                     </div>
                                                 </div>
                                             </form>

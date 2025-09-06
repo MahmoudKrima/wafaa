@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\Admin\UserSettings;
 
 use App\Models\User;
+use App\Enum\WalletLogTypeEnum;
+use App\Enum\TransactionTypeEnum;
+use App\Enum\ActivationStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Services\Admin\UserSettings\UserService;
 use App\Http\Requests\Admin\User\StoreUserRequest;
 use App\Http\Requests\Admin\User\SearchUserRequest;
 use App\Http\Requests\Admin\User\UpdateUserRequest;
-use App\Enum\TransactionTypeEnum;
-use App\Enum\WalletLogTypeEnum;
 use App\Http\Requests\Admin\WalletLogs\SearchWalletLogsRequest;
 
 class UserController extends Controller
@@ -21,13 +22,16 @@ class UserController extends Controller
     public function index()
     {
         $users = $this->userService->index();
-        return view('dashboard.pages.users.index', compact('users'));
+        $status = ActivationStatusEnum::cases();
+
+        return view('dashboard.pages.users.index', compact('users', 'status'));
     }
 
     public function search(SearchUserRequest $request)
     {
         $users = $this->userService->search($request);
-        return view('dashboard.pages.users.index', compact('users'));
+        $status = ActivationStatusEnum::cases();
+        return view('dashboard.pages.users.index', compact('users', 'status'));
     }
 
     public function create()
@@ -61,6 +65,14 @@ class UserController extends Controller
             ->route('admin.users.index')
             ->with('Success', __('admin.updated_successfully'));
     }
+
+    public function updateStatus(User $user)
+    {
+        $this->userService->updateUserStatus($user);
+        return back()
+            ->with("Success", __('admin.updated_successfully'));
+    }
+
 
     public function delete(User $user)
     {

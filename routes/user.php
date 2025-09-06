@@ -41,7 +41,7 @@ Route::middleware(['web'])->group(function () {
                 ->name('auth.login');
             Route::post('/logout', 'logout')
                 ->name('auth.logout')
-                ->middleware('auth:web');
+                ->middleware(['auth:web', 'active.user']);
             Route::get('/forget-password', 'forgetPasswordForm')
                 ->name('auth.forgetPasswordForm')
                 ->middleware('guest.user');
@@ -58,7 +58,7 @@ Route::middleware(['web'])->group(function () {
     Route::group([
         'as' => 'user.',
         'prefix' => LaravelLocalization::setLocale() . '/user',
-        'middleware' => ['localeSessionRedirect', 'localizationRedirect', 'localeViewPath', 'auth:web']
+        'middleware' => ['localeSessionRedirect', 'localizationRedirect', 'localeViewPath', 'auth:web', 'active.user']
     ], function () {
 
         Route::controller(HomeController::class)

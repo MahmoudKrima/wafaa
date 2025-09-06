@@ -8,7 +8,6 @@
     <title>{{ app('settings')['app_name_' . assetLang()] }} | {{ __('admin.login') }}</title>
     <link rel="icon" type="image/x-icon" href="{{ displayImage(app('settings')['fav_icon']) }}" />
 
-    <!-- BEGIN GLOBAL MANDATORY STYLES -->
     @if (App::getLocale() === 'ar')
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -172,16 +171,13 @@
         }
 
         @if(session()->has('Success'))
-        toastr.success('{{ session()->get('
-            Success ') }}');
+        toastr.success('{{ session()->get('Success') }}');
         @endif
         @if(session()->has('Error'))
-        toastr.error('{{ session()->get('
-            Error ') }}');
+        toastr.error('{{ session()->get('Error') }}');
         @endif
-
         @if(session()->has('Warn'))
-        toastr.warning('{{ session()->get('Warn ') }}');
+        toastr.warning('{{ session()->get('Warn') }}');
         @endif
 
         @if($errors->any())

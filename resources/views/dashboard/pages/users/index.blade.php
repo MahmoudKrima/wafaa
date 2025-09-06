@@ -61,6 +61,19 @@
                                                             name="email" id="email" class="form-control"
                                                             placeholder="{{ __('admin.email') }}">
                                                     </div>
+                                                    <div class="col-md-4 mb-3">
+                                                        <label for="status">{{ __('admin.status') }}</label>
+                                                        <select name="status" class="form-control" id="status">
+                                                            <option value="">{{ __('admin.choose_status') }}
+                                                            </option>
+                                                            @foreach ($status as $stat)
+                                                            <option @selected($stat->value == request()->get('status'))
+                                                                value="{{ $stat->value }}">
+                                                                {{ $stat->lang() }}
+                                                            </option>
+                                                            @endforeach
+                                                        </select>
+                                                    </div>
 
                                                 </div>
                                                 <div class="row mt-2">
@@ -99,6 +112,7 @@
                                     <th scope="col">{{ __('admin.phone') }}</th>
                                     <th scope="col">{{ __('admin.additional_phone') }}</th>
                                     <th scope="col">{{ __('admin.email') }}</th>
+                                    <th scope="col">{{ __('admin.status') }}</th>
                                     <th scope="col">{{ __('admin.added_by') }}</th>
                                     <th scope="col">{{ __('admin.balance') }}</th>
                                     @if (auth('admin')->user()->hasAnyPermission(['users.update', 'users.delete']))
@@ -113,11 +127,42 @@
                                     <td>{{ $user->phone }}</td>
                                     <td>{{ $user->additional_phone ?? __('admin.n/a') }}</td>
                                     <td>{{ $user->email }}</td>
+                                    <td>
+                                        @if (auth('admin')->user()->hasAnyPermission(['users.update']))
+                                        <form method="POST"
+                                            action="{{ route('admin.users.updateStatus', $user->id) }}">
+                                            @csrf
+                                            <button
+                                                class="{{ $user->status->badge() }} btn-sm btn-alert">{{ $user->status->lang() }}</button>
+                                        </form>
+                                        @else
+                                        <span
+                                            class="{{ $user->status->badge() }}">{{ $user->status->lang() }}</span>
+                                        @endif
+                                    </td>
                                     <td>{{ $user->addedByAdmin?->name}}</td>
                                     <td>{{ optional($user->wallet)->balance .' '. __('admin.currency_symbol')  ?? __('admin.n/a')}}</td>
                                     @if (auth('admin')->user()->hasAnyPermission(['users.update', 'users.delete', 'user_shipping_prices.view', 'wallet_logs.view']))
                                     <td class="text-center">
                                         <div class="action-btns d-flex justify-content-center">
+                                            @haspermission('shippings.view', 'admin')
+                                            <a href="{{ route('admin.users.shippings', $user->id) }}"
+                                                class="action-btn btn-edit bs-tooltip me-2 badge rounded-pill bg-info"
+                                                style="padding:7px;margin:0 5px;" title="{{ __('admin.shippings') }}"
+                                                data-toggle="tooltip" data-placement="top" aria-label="Edit"
+                                                data-bs-original-title="Edit">
+                                                <i class="fa fa-truck"></i>
+                                            </a>
+                                            @endhaspermission
+                                            @haspermission('recievers.view', 'admin')
+                                            <a href="{{ route('admin.recievers.index', $user->id) }}"
+                                                class="action-btn btn-edit bs-tooltip me-2 badge rounded-pill bg-info"
+                                                style="padding:7px;margin:0 5px;" title="{{ __('admin.recievers') }}"
+                                                data-toggle="tooltip" data-placement="top" aria-label="Edit"
+                                                data-bs-original-title="Edit">
+                                                <i class="fa fa-users"></i>
+                                            </a>
+                                            @endhaspermission
                                             @haspermission('user_shipping_prices.view', 'admin')
                                             <a href="{{ route('admin.user-shipping-prices.index', $user->id) }}"
                                                 class="action-btn btn-edit bs-tooltip me-2 badge rounded-pill bg-info"

@@ -29,6 +29,9 @@ class AuthController extends Controller
         if ($res == 'wrong credentials') {
             return back()
                 ->with('Error', __('admin.credentials_invalid'));
+        } elseif ($res == 'not active') {
+            return back()
+                ->with('Error', __('admin.your_account_is_not_active'));
         }
         Auth::guard('admin')
             ->login($res);

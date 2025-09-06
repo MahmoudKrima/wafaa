@@ -576,4 +576,5 @@ return [
     'back_to_home' => 'العودة للصفحة الرئيسية',
     'terms_description' => 'الشروط والأحكام',
     'privacy_description' => 'سياسة الخصوصية',
+    'your_account_is_not_active' => 'حسابك غير مفعل',
 ];

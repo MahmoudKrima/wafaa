@@ -27,7 +27,19 @@ class AuthController extends Controller
     public function login(LoginRequest $request)
     {
         $data = $request->validated();
-        return $this->authService->checkAttempts($data);
+        $res = $this->authService->checkAttempts($data);
+        if ($res == 'not active') {
+            return back()
+                ->with('Error', __('admin.your_account_is_not_active'));
+        } elseif ($res == 'login success') {
+            return redirect()
+                ->to(route('user.dashboard.index'));
+        } elseif ($res == 'wrong credentials') {
+            return back()
+                ->with('Error', __('admin.credentials_invalid'));
+        }
+        return back()
+            ->with('Error', __('admin.credentials_invalid'));
     }
 
     public function forgetPasswordForm()
