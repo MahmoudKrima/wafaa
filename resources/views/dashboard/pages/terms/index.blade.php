@@ -1,11 +1,11 @@
 @extends('dashboard.layouts.app')
-@section('title', __('admin.terms'))
+@section('title', __('admin.site_policies_terms'))
 @push('breadcrumb')
 <nav class="breadcrumb-one" aria-label="{{ __('admin.breadcrumb') }}">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="{{ route('admin.dashboard.index') }}">{{ __('admin.dashboard') }}</a>
         </li>
-        <li class="breadcrumb-item active" aria-current="page"><span>{{ __('admin.terms') }}</span></li>
+        <li class="breadcrumb-item active" aria-current="page"><span>{{ __('admin.site_policies_terms') }}</span></li>
     </ol>
 </nav>
 @endpush
@@ -17,7 +17,7 @@
                 <div class="widget-header">
                     <div class="row">
                         <div class="col-xl-6 col-md-6 col-sm-6 col-6">
-                            <h4>{{ __('admin.terms') }}</h4>
+                            <h4>{{ __('admin.site_policies_terms') }}</h4>
                         </div>
                     </div>
                 </div>
@@ -31,28 +31,28 @@
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label for="term_description_ar" class="text-dark">{{ __('admin.term_description_ar') }}</label>
-                                            <textarea type="text" step="0.01" name="term_description_ar" id="term_description_ar"
+                                            <textarea type="text"  name="term_description_ar" id="term_description_ar"
                                                 class="form-control" placeholder="{{ __('admin.term_description_ar') }}"
                                                 value="{{ old('term_description_ar', $term->getTranslation('term_description', 'ar')) }}">{{ $term->getTranslation('term_description', 'ar') }}</textarea>
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label for="term_description_en" class="text-dark">{{ __('admin.term_description_en') }}</label>
-                                            <textarea type="text" step="0.01" name="term_description_en" id="term_description_en"
+                                            <textarea type="text"  name="term_description_en" id="term_description_en"
                                                 class="form-control" placeholder="{{ __('admin.term_description_en') }}"
-                                                value="{{ old('term_description_ar', $term->getTranslation('term_description', 'en')) }}">{{ $term->getTranslation('term_description', 'en') }}</textarea>
+                                                value="{{ old('term_description_en', $term->getTranslation('term_description', 'en')) }}">{{ $term->getTranslation('term_description', 'en') }}</textarea>
                                         </div>
 
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label for="policy_description_ar" class="text-dark">{{ __('admin.policy_description_ar') }}</label>
-                                            <textarea type="text" step="0.01" name="policy_description_ar" id="policy_description_ar"
+                                            <textarea type="text"  name="policy_description_ar" id="policy_description_ar"
                                                 class="form-control" placeholder="{{ __('admin.policy_description_ar') }}"
                                                 value="{{ old('policy_description_ar', $term->getTranslation('policy_description', 'ar')) }}">{{ $term->getTranslation('policy_description', 'ar') }}</textarea>
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label for="policy_description_en" class="text-dark">{{ __('admin.policy_description_en') }}</label>
-                                            <textarea type="text" step="0.01" name="policy_description_en" id="policy_description_en"
+                                            <textarea type="text"  name="policy_description_en" id="policy_description_en"
                                                 class="form-control" placeholder="{{ __('admin.policy_description_en') }}"
                                                 value="{{ old('policy_description_en', $term->getTranslation('policy_description', 'en')) }}">{{ $term->getTranslation('policy_description', 'en') }}</textarea>
                                         </div>

@@ -374,12 +374,11 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-12 mb-3 mt-2">
+                        <div class="col-12 mb-5 mt-2">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="accept_terms" name="accept_terms" {{ old('accept_terms') ? 'checked' : '' }} required>
                                 <label class="form-check-label" for="accept_terms">
-                                    {{ __('admin.i_accept_terms') }}
-                                    <a href="#" class="text-primary" data-bs-toggle="modal" data-bs-target="#termsModal">{{ __('admin.terms_and_conditions') }}</a>
+                                    <a href="#" class="text-primary" data-bs-toggle="modal" data-bs-target="#termsModal">{{ __('admin.i_accept_terms') }}</a>
                                 </label>
                             </div>
                         </div>

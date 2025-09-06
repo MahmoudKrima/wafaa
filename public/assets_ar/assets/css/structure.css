@@ -994,8 +994,9 @@ code {
 .sidebar-wrapper #compact_submenuSidebar .submenu {
     display: none; }
 .sidebar-wrapper #compact_submenuSidebar .submenu .category-info {
-    margin-top: 20px;
-    margin-bottom: 20px; }
+    margin-top: 60px;
+    margin-bottom: 20px;
+}
 .sidebar-wrapper #compact_submenuSidebar .submenu .category-info h5 {
     font-weight: 600;
     font-size: 18px;

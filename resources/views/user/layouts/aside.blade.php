@@ -24,7 +24,7 @@
                 <a href="{{ route('user.shippings.create') }}"
                     data-active="{{ isRoute(['user.shippings.create']) ? 'true' : 'false' }}" class="menu-toggle">
                     <div class="base-icons">
-                        <i class="fa fa-truck-arrow-right" style="color:#1b6aab;font-size:35px;margin-bottom:10px;"></i>
+                        <i class="fa fa-cart-flatbed" style="color:#1b6aab;font-size:35px;margin-bottom:10px;"></i>
                         <p class="side_links_theme">{{__('admin.new_shipment')}}</p>
                     </div>
                 </a>

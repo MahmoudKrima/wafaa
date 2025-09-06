@@ -9,6 +9,8 @@
         </div>
 
         <ul class="menu-categories">
+
+
             <li class=" {{ isRoute(['admin.dashboard.index']) ? 'menu active' : '' }}">
                 <a href="{{ route('admin.dashboard.index') }}"
                    data-active="{{ isRoute(['admin.dashboard.index']) ? 'true' : 'false' }}" class="menu-toggle">
@@ -18,6 +20,17 @@
                     </div>
                 </a>
             </li>
+
+            <li class=" {{ isRoute(['admin.dashboard.index']) ? 'menu active' : '' }}">
+                <a href="#"
+                   data-active="{{ isRoute(['admin.dashboard.index']) ? 'true' : 'false' }}" class="menu-toggle">
+                    <div class="base-icons">
+                        <i class="fa fa fa-shipping-fast" style="color:#1b6aab;font-size:35px;margin-bottom:10px;"></i>
+                        <p class="side_links_theme">{{__('admin.shippings')}}</p>
+                    </div>
+                </a>
+            </li>
+
 
             @if (
             auth('admin')->user()->hasAnyPermission([
@@ -111,6 +124,7 @@
             auth('admin')->user()->hasAnyPermission([
             'settings.view',
             'roles.view',
+            'terms.update',
             'sliders.view',
             'about.view',
             'about-items.view',
@@ -123,6 +137,7 @@
             )
                 <li class="menu {{ isRoute([
                     'admin.settings.index',
+                    'admin.terms.index',
                     'admin.roles.index',
                     'admin.roles.search',
                     'admin.roles.create',
@@ -148,6 +163,7 @@
                 ]) ? 'active' : '' }}">
                     <a href="#settings" data-active="{{ isRoute([
                     'admin.settings.index',
+                    'admin.terms.index',
                     'admin.roles.index',
                     'admin.roles.search',
                     'admin.roles.create',
@@ -185,10 +201,6 @@
     </nav>
 
     <div id="compact_submenuSidebar" class="submenu-sidebar">
-
-        <div class="theme-brand-name">
-            <a href="{{ route('admin.dashboard.index') }}">{{ app('settings')['app_name_' . assetLang()]  }}</a>
-        </div>
 
         @if (
         auth('admin')->user()->hasAnyPermission([
@@ -267,6 +279,7 @@
         'settings.update',
         'admin_settings.update',
         'roles.view',
+        'terms.update',
         'sliders.view',
         'about.view',
         'about-items.view',
@@ -281,6 +294,7 @@
                     <h5>{{ __('admin.manage_site') }}</h5>
                 </div>
                 <ul class="submenu-list" data-parent-element="#settings">
+
                     @haspermission('roles.view', 'admin')
                     <li
                         class="{{ isRoute(['admin.roles.index', 'admin.roles.search', 'admin.roles.create', 'admin.roles.edit']) ? 'active' : '' }}">
@@ -289,6 +303,7 @@
                             {{ __('admin.roles') }} </a>
                     </li>
                     @endhaspermission
+
                     @haspermission('settings.update', 'admin')
                     <li class="{{ isRoute(['admin.settings.index']) ? 'active' : '' }}">
                         <a href="{{ route('admin.settings.index') }}">
@@ -296,6 +311,7 @@
                             {{ __('admin.settings') }} </a>
                     </li>
                     @endhaspermission
+
                     @haspermission('admin_settings.update', 'admin')
                     <li class="{{ isRoute(['admin.admin-settings.index']) ? 'active' : '' }}">
                         <a href="{{ route('admin.admin-settings.index') }}">
@@ -303,6 +319,15 @@
                             {{ __('admin.admin_settings') }} </a>
                     </li>
                     @endhaspermission
+
+                    @haspermission('terms.update', 'admin')
+                    <li class="{{ isRoute(['admin.terms.index']) ? 'active' : '' }}">
+                        <a href="{{ route('admin.terms.index') }}">
+                            <i class="fa fa-file-alt" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
+                            {{ __('admin.site_policies_terms') }} </a>
+                    </li>
+                    @endhaspermission
+
                     @haspermission('sliders.view', 'admin')
                     <li
                         class="{{ isRoute(['admin.sliders.index', 'admin.sliders.search', 'admin.sliders.create', 'admin.sliders.edit']) ? 'active' : '' }}">
@@ -311,6 +336,7 @@
                             {{ __('admin.sliders') }} </a>
                     </li>
                     @endhaspermission
+
                     @haspermission('about.view', 'admin')
                     <li
                         class="{{ isRoute(['admin.about.index', 'admin.about.edit', 'admin.about.update-item']) ? 'active' : '' }}">
@@ -319,6 +345,7 @@
                             {{ __('admin.about') }} </a>
                     </li>
                     @endhaspermission
+
                     @haspermission('partners.view', 'admin')
                     <li
                         class="{{ isRoute(['admin.partners.index', 'admin.partners.edit', 'admin.partners.create']) ? 'active' : '' }}">
@@ -327,6 +354,7 @@
                             {{ __('admin.partners') }} </a>
                     </li>
                     @endhaspermission
+
                     @haspermission('services.view', 'admin')
                     <li
                         class="{{ isRoute(['admin.services.index', 'admin.services.edit', 'admin.services.create']) ? 'active' : '' }}">
@@ -335,6 +363,7 @@
                             {{ __('admin.services') }} </a>
                     </li>
                     @endhaspermission
+
                     @haspermission('testimonials.view', 'admin')
                     <li
                         class="{{ isRoute(['admin.testimonials.index', 'admin.testimonials.edit', 'admin.testimonials.create']) ? 'active' : '' }}">
@@ -343,6 +372,7 @@
                             {{ __('admin.testimonials') }} </a>
                     </li>
                     @endhaspermission
+
                     @haspermission('contacts.view', 'admin')
                     <li class="{{ isRoute(['admin.contacts.index']) ? 'active' : '' }}">
                         <a href="{{ route('admin.contacts.index') }}">

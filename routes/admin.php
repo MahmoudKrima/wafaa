@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AllowedCompanies\AllowedCompaniesController;
+use App\Http\Controllers\Admin\WebSiteSettings\TermsController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\Auth\AuthController;
 use App\Http\Controllers\Admin\Bank\BankController;
@@ -174,6 +175,16 @@ Route::middleware(['web'])->group(function () {
                     ->middleware('has.permission:settings.update');
             });
 
+        Route::controller(TermsController::class)
+            ->group(function () {
+                Route::get('/site_policies', 'index')
+                    ->name('terms.index')
+                    ->middleware('has.permission:terms.update');
+                Route::post('/terms-update', 'update')
+                    ->name('terms.update')
+                    ->middleware('has.permission:terms.update');
+            });
+
         Route::controller(BankController::class)
             ->group(function () {
                 Route::get('/banks', 'index')
@@ -327,6 +338,7 @@ Route::middleware(['web'])->group(function () {
                     ->name('admin-settings.update')
                     ->middleware('has.permission:admin_settings.update');
             });
+
 
         Route::controller(AdminShippingController::class)
             ->group(function () {
