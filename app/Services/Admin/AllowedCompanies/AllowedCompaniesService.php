@@ -12,6 +12,18 @@ class AllowedCompaniesService
 {
     use ImageTrait, TranslateTrait;
 
+    private function ghayaRequest()
+    {
+        return Http::withHeaders([
+            'accept'    => '*/*',
+            'x-api-key' => config('services.ghaya.key'),
+        ]);
+    }
+
+    private function ghayaUrl(string $endpoint): string
+    {
+        return rtrim(config('services.ghaya.base_url'), '/') . '/' . ltrim($endpoint, '/');
+    }
     public function getAll()
     {
         $adminId = getAdminIdOrCreatedBy();
@@ -55,18 +67,11 @@ class AllowedCompaniesService
 
 
 
-    public function getShippingCompanies(): array
+    public function getShippingCompanies()
     {
-        try {
-            $response = Http::withHeaders([
-                'accept'    => '*/*',
-                'x-api-key' => env('GHAYA_API_KEY', 'xwqn5mb5mpgf5u3vpro09i8pmw9fhkuu'),
-            ])->get('https://ghaya-express-staging-af597af07557.herokuapp.com/api/shipping-companies');
-
-            return $response->successful() ? $response->json() : [];
-        } catch (\Throwable $e) {
-            return [];
-        }
+        $response = $this->ghayaRequest()
+            ->get($this->ghayaUrl('shipping-companies'));
+        return $response->successful() ? $response->json() : [];
     }
 
 

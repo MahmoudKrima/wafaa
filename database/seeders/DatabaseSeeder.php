@@ -16,6 +16,7 @@ use Database\Seeders\SliderSeeder;
 use Database\Seeders\SettingSeeder;
 use Database\Seeders\AboutItemSeeder;
 use Database\Seeders\PermissionSeeder;
+use Database\Seeders\AllowedCompaniesSeeder;
 use Illuminate\Support\Facades\Artisan;
 use Database\Seeders\AdminSettingSeeder;
 use App\Models\Testimonial;
@@ -37,6 +38,7 @@ class DatabaseSeeder extends Seeder
             AboutSeeder::class,
             AboutItemSeeder::class,
             AdminSettingSeeder::class,
+            AllowedCompaniesSeeder::class,
             TermSeeder::class,
         ]);
         User::factory(10)->create();
