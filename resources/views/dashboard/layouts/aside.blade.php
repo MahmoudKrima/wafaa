@@ -37,6 +37,7 @@
             'admins.view',
             'users.view',
             'wallet_logs.view',
+            'recievers.view',
             ])
             )
                 <li class="menu {{ isRoute([
@@ -52,6 +53,8 @@
                     'admin.user-shipping-prices.index',
                     'admin.user-shipping-prices.create',
                     'admin.user-shipping-prices.edit',
+                    'admin.recievers.index',
+                    'admin.recievers.search',
                 ])
                     ? 'active'
                     : '' }}">
@@ -68,6 +71,8 @@
                     'admin.user-shipping-prices.index',
                     'admin.user-shipping-prices.create',
                     'admin.user-shipping-prices.edit',
+                    'admin.recievers.index',
+                    'admin.recievers.search',
                 ])
                     ? 'true'
                     : 'false' }}" class="menu-toggle">
@@ -208,6 +213,7 @@
         'users.view',
         'wallet_logs.view',
         'user_shipping_prices.view',
+        'recievers.view',
         ])
         )
             <div class="submenu" id="users_settings">
@@ -230,6 +236,14 @@
                         <a href="{{ route('admin.users.index') }}">
                             <i class="fa fa-user" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
                             {{ __('admin.users') }} </a>
+                    </li>
+                    @endhaspermission
+                    @haspermission('recievers.view', 'admin')
+                    <li
+                        class="{{ isRoute(['admin.recievers.index', 'admin.recievers.search']) ? 'active' : '' }}">
+                        <a href="{{ route('admin.recievers.index') }}">
+                            <i class="fa fa-user" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
+                            {{ __('admin.recievers') }} </a>
                     </li>
                     @endhaspermission
                 </ul>

@@ -1,7 +1,5 @@
 <?php
 
-use App\Http\Controllers\Admin\AllowedCompanies\AllowedCompaniesController;
-use App\Http\Controllers\Admin\WebSiteSettings\TermsController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\Auth\AuthController;
 use App\Http\Controllers\Admin\Bank\BankController;
@@ -10,18 +8,21 @@ use App\Http\Controllers\Admin\Contact\ContactController;
 use App\Http\Controllers\Admin\Partner\PartnerController;
 use App\Http\Controllers\Admin\Profile\ProfileController;
 use App\Http\Controllers\Admin\Service\ServiceController;
+use App\Http\Controllers\Admin\Reciever\RecieverController;
 use App\Http\Controllers\Admin\UserSettings\UserController;
 use App\Http\Controllers\Admin\UserSettings\AdminController;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use App\Http\Controllers\Admin\WebSiteSettings\RoleController;
+use App\Http\Controllers\Admin\WebSiteSettings\TermsController;
+use App\Http\Controllers\Admin\Shipping\AdminShippingController;
 use App\Http\Controllers\Admin\Testimonial\TestimonialController;
 use App\Http\Controllers\Admin\Transaction\TransactionController;
 use App\Http\Controllers\Admin\FrontSetting\About\AboutController;
 use App\Http\Controllers\Admin\WebSiteSettings\SettingsController;
 use App\Http\Controllers\Admin\FrontSettings\Slider\SliderController;
 use App\Http\Controllers\Admin\WebSiteSettings\AdminSettingsController;
+use App\Http\Controllers\Admin\AllowedCompanies\AllowedCompaniesController;
 use App\Http\Controllers\Admin\UserShippingPrice\UserShippingPriceController;
-use App\Http\Controllers\Admin\Shipping\AdminShippingController;
 /*
 |--------------------------------------------------------------------------
 | Admin Routes
@@ -471,6 +472,16 @@ Route::middleware(['web'])->group(function () {
                 Route::post('/allowed-companies/update-status/{allowedCompany}', 'updateStatus')
                     ->name('allowed-companies.updateStatus')
                     ->middleware('has.permission:allowed_companies.update');
+            });
+
+        Route::controller(RecieverController::class)
+            ->group(function () {
+                Route::get('/recievers', 'index')
+                    ->name('recievers.index')
+                    ->middleware('has.permission:recievers.view');
+                Route::get('/recievers-search', 'search')
+                    ->name('recievers.search')
+                    ->middleware('has.permission:recievers.view');
             });
     });
 });

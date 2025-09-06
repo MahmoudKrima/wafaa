@@ -11,9 +11,6 @@ class Reciever extends Model
     use HasFactory, HasTranslations;
     public static $permissions = [
         'recievers.view',
-        'recievers.create',
-        'recievers.update',
-        'recievers.delete',
     ];
     protected $translatable = ['city_name', 'state_name', 'country_name'];
 

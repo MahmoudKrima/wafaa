@@ -11,6 +11,7 @@ use Illuminate\Database\Seeder;
 use Database\Seeders\RoleSeeder;
 use Database\Seeders\AboutSeeder;
 use Database\Seeders\AdminSeeder;
+use Database\Seeders\TermSeeder;
 use Database\Seeders\SliderSeeder;
 use Database\Seeders\SettingSeeder;
 use Database\Seeders\AboutItemSeeder;
@@ -36,6 +37,7 @@ class DatabaseSeeder extends Seeder
             AboutSeeder::class,
             AboutItemSeeder::class,
             AdminSettingSeeder::class,
+            TermSeeder::class,
         ]);
         User::factory(10)->create();
         Reciever::factory(10)->create();
