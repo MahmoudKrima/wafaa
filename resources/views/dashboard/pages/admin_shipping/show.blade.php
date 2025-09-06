@@ -1,9 +1,9 @@
-@extends('user.layouts.app')
+@extends('dashboard.layouts.app')
 @section('title', __('admin.shippings'))
 @push('breadcrumb')
 <nav class="breadcrumb-one" aria-label="breadcrumb">
     <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{{ route('user.dashboard.index') }}">{{ __('admin.dashboard') }}</a>
+        <li class="breadcrumb-item"><a href="{{ route('admin.dashboard.index') }}">{{ __('admin.dashboard') }}</a>
         </li>
         <li class="breadcrumb-item active" aria-current="page"><span>{{ __('admin.shippings') }}</span></li>
     </ol>
@@ -35,7 +35,6 @@
                             <div class="col-12">
                                 <div id="step7-errors" class="mb-3"></div>
 
-                                <!----Sender and company details--->
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="card mb-4" style="border-radius:15px;">
@@ -115,7 +114,6 @@
                                 $rcCount = is_countable($receiversList) ? count($receiversList) : 0;
                                 @endphp
 
-                                <!----receivers and shipment details--->
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="card mb-4" style="border-radius:15px;">
@@ -261,7 +259,7 @@
                                                     <div class="col-md-12" style="display:flex;justify-content:space-between;">
                                                         <strong class="mb-3 text-black">{{ __('admin.shippment_type') }}:</strong>
                                                         <div class="mb-0 text-muted" id="payment-method-preview">
-                                                            {{ $shipment['isCod'] ? __('admin.cash_on_delivery_shippment') : __('admin.normal_shipment') }}
+                                                            {{ $shipment['isCod']  ? __('admin.cash_on_delivery_shippment') : __('admin.normal_shipment') }}
                                                         </div>
                                                     </div>
                                                 </div>

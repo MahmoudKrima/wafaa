@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Front\Home;
 
+use App\Models\Term;
 use App\Models\User;
 use App\Models\About;
 use App\Models\Admin;
@@ -44,11 +45,11 @@ class HomeController extends Controller
                     'accept' => '*/*',
                     'x-api-key' => 'xwqn5mb5mpgf5u3vpro09i8pmw9fhkuu'
                 ])->get('https://ghaya-express-staging-af597af07557.herokuapp.com/api/shipping-companies', [
-                            'page' => 0,
-                            'pageSize' => 1,
-                            'orderColumn' => 'createdAt',
-                            'orderDirection' => 'desc'
-                        ]);
+                    'page' => 0,
+                    'pageSize' => 1,
+                    'orderColumn' => 'createdAt',
+                    'orderDirection' => 'desc'
+                ]);
 
                 if ($response->successful()) {
                     $data = $response->json();
@@ -110,5 +111,11 @@ class HomeController extends Controller
         Contact::create($request->validated());
         return back()
             ->with('Success', __('admin.message_sent_successfully'));
+    }
+
+    public function terms()
+    {
+        $term = Term::select('id', 'term_description')->first();
+        return view('front.pages.home.terms', compact('term'));
     }
 }

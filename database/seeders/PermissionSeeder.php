@@ -36,6 +36,9 @@ class PermissionSeeder extends Seeder
             'roles.create',
             'roles.update',
             'roles.delete',
+            'shippings.view',
+            'shippings.export',
+            'shippings.show',
         ];
 
         $permissions = [

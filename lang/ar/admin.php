@@ -565,5 +565,15 @@ return [
     'term_description_en' => 'الشروط والأحكام بالانجليزية',
     'policy_description_ar' => 'سياسة الخصوصية بالعربية',
     'policy_description_en' => 'سياسة الخصوصية بالانجليزية',
-
+    'receiver_name' => 'اسم المستلم',
+    'receiver_phone' => 'رقم جوال المستلم',
+    'working_hours' => 'السبت : الخميس',
+    'opinions' => 'أراء العملاء',
+    'contact' => 'تواصل معنا',
+    'faqs' => 'الأسئلة الشائعة',
+    'terms_coming_soon' => 'سيتم إضافة الشروط والأحكام قريباً',
+    'no_terms_available' => 'لا توجد شروط وأحكام متاحة حالياً',
+    'back_to_home' => 'العودة للصفحة الرئيسية',
+    'terms_description' => 'الشروط والأحكام',
+    'privacy_description' => 'سياسة الخصوصية',
 ];

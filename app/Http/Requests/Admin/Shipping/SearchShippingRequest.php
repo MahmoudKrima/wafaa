@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Requests\User\Shipping;
+namespace App\Http\Requests\Admin\Shipping;
 
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class SearchShippingRequest extends FormRequest
 {
@@ -28,6 +29,8 @@ class SearchShippingRequest extends FormRequest
             'search'            => ['nullable', 'string'],
             'receiverName'        => ['nullable', 'string'],
             'receiverPhone'       => ['nullable', 'string'],
+            'userId'              => ['nullable', 'array'],
+            'userId.*'            => ['nullable', 'string', Rule::exists('users', 'id')->where('created_by', getAdminIdOrCreatedBy())],
         ];
     }
 
