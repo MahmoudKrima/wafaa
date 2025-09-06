@@ -3,22 +3,21 @@
     <div class="shikor_loader_logo"><img src="{{ asset('front/assets/img/preload.png') }}" alt="Preload"></div>
 </div>
 
-<!-- Header Top Area -->
 
 <div id="home" class="header-top-area secondary-bg">
     <div class="container">
         <div class="row">
             <div class="col-xl-8 col-lg-8">
-                <span><i class="fa-solid fa-envelope"></i>info@example.com</span>
-                <span><i class="fa-solid fa-location-dot"></i>المملكة العربية السعودية ، جدة</span>
-                <span><i class="fa-solid fa-clock"></i>السبت : الخميس</span>
+                <span><i class="fa-solid fa-envelope"></i>{{app('settings')['email']}}</span>
+                <span><i class="fa-solid fa-location-dot"></i>{{app('settings')['address_' . assetLang()]}}</span>
+                <span><i class="fa-solid fa-clock"></i>{{__('admin.working_hours')}}</span>
             </div>
             <div class="col-xl-4 col-lg-4 text-start">
                 <div class="social-area">
-                    <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
-                    <a href="#"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="#"><i class="fa-brands fa-twitter"></i></a>
-                    <a href="#"><i class="fa-brands fa-linkedin"></i></a>
+                    <a href="{{app('settings')['facebook']}}"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="{{app('settings')['instagram']}}"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="{{app('settings')['twitter']}}"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="{{app('settings')['tiktok']}}"><i class="fa-brands fa-linkedin"></i></a>
                 </div>
             </div>
         </div>
@@ -33,25 +32,25 @@
             <div class="header-inner-box">
 
                 <div class="logo">
-                    <a href="{{ route('front.home') }}"><img src="{{ asset('front/assets/img/logo.png') }}" alt=""></a>
+                    <a href="{{ route('front.home') }}"><img src="{{ displayImage(app('settings')['logo']) }}" alt=""></a>
                 </div>
 
                 <div class="main-menu d-none d-lg-inline-block">
                     <ul>
 
-                        <li><a href="#home">الرئيسية</a></li>
+                        <li><a href="#home">{{__('admin.home')}}</a></li>
 
-                        <li><a href="#about">من نحن</a></li>
+                        <li><a href="#about">{{__('admin.about')}}</a></li>
 
-                        <li><a href="#clients">عملائنا</a></li>
+                        <li><a href="#clients">{{__('admin.clients')}}</a></li>
 
-                        <li><a href="#services">خدماتنا</a></li>
+                        <li><a href="#services">{{__('admin.services')}}</a></li>
 
-                        <li><a href="#opinions">أراء العملاء</a></li>
+                        <li><a href="#opinions">{{__('admin.opinions')}}</a></li>
 
-                        <li><a href="#contact">تواصل معنا</a></li>
+                        <li><a href="#contact">{{__('admin.contact')}}</a></li>
 
-                        <li><a href="#faqs">الأسئلة الشائعة</a></li>
+                        <li><a href="#faqs">{{__('admin.faqs')}}</a></li>
                     </ul>
                 </div>
 
@@ -60,7 +59,6 @@
                         <div id="hamburger">
                             <i class="las la-bars"></i>
                         </div>
-                        <!-- mobile menu - responsive menu  -->
                         <div class="mobile-nav">
                             <button type="button" class="close-nav">
                                 <i class="las la-times-circle"></i>
@@ -68,19 +66,19 @@
                             <nav class="sidebar-nav">
                                 <ul class="metismenu" id="mobile-menu">
 
-                                    <li><a href="#home">الرئيسية</a></li>
+                                    <li><a href="#home">{{__('admin.home')}}</a></li>
 
-                                    <li><a href="#about">من نحن</a></li>
+                                    <li><a href="#about">{{__('admin.about')}}</a></li>
 
-                                    <li><a href="#clients">عملائنا</a></li>
+                                    <li><a href="#clients">{{__('admin.clients')}}</a></li>
 
-                                    <li><a href="#services">خدماتنا</a></li>
+                                    <li><a href="#services">{{__('admin.services')}}</a></li>
 
-                                    <li><a href="#opinions">أراء العملاء</a></li>
+                                    <li><a href="#opinions">{{__('admin.opinions')}}</a></li>
 
-                                    <li><a href="#contact">تواصل معنا</a></li>
+                                    <li><a href="#contact">{{__('admin.contact')}}</a></li>
 
-                                    <li><a href="#faqs">الأسئلة الشائعة</a></li>
+                                    <li><a href="#faqs">{{__('admin.faqs')}}</a></li>
 
                                 </ul>
                             </nav>
@@ -91,8 +89,8 @@
                     <div class="contact-icon-wrap">
                         <img src="{{ asset('front/assets/img/chat.png') }}" alt="">
                         <div class="contact-info">
-                            <p>واتساب</p>
-                            <p><b>+201016202064</b></p>
+                            <p>{{__('admin.whatsapp')}}</p>
+                            <p><b>{{app('settings')['whatsapp']}}</b></p>
                         </div>
                     </div>
                 </div>

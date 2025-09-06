@@ -563,5 +563,13 @@ return [
     'length_summary' => 'Length',
     'width_summary' => 'Width',
     'height_summary' => 'Height',
-
+    'working_hours' => 'Saturday : Thursday',
+    'opinions' => 'Opinions',
+    'contact' => 'Contact',
+    'faqs' => 'FAQs',
+    'terms_coming_soon' => 'Terms and conditions coming soon',
+    'no_terms_available' => 'No terms and conditions available',
+    'back_to_home' => 'Back to home',
+    'terms_description' => 'Terms and conditions',
+    'privacy_description' => 'Privacy policy',
 ];

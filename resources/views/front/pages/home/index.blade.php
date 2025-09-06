@@ -1,5 +1,8 @@
 @extends('front.layouts.app')
-@section('title', __('admin.home_page'))
+@php
+app()->setLocale('ar');
+@endphp
+@section('title', __('admin.home'))
 
 @section('content')
     <div id="home-3" class="homepage-slides owl-carousel">

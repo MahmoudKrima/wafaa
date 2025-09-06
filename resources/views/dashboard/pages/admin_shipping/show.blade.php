@@ -259,7 +259,7 @@
                                                     <div class="col-md-12" style="display:flex;justify-content:space-between;">
                                                         <strong class="mb-3 text-black">{{ __('admin.shippment_type') }}:</strong>
                                                         <div class="mb-0 text-muted" id="payment-method-preview">
-                                                            {{ ($shipment['isCod'] ?? false) ? __('admin.cash_on_delivery') : __('admin.normal_shipment') }}
+                                                            {{ $shipment['isCod']  ? __('admin.cash_on_delivery_shippment') : __('admin.normal_shipment') }}
                                                         </div>
                                                     </div>
                                                 </div>
