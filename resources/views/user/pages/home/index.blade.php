@@ -310,6 +310,24 @@ $totalCount = (int) ($stats['total'] ?? 0);
             <div class="icon"><i class="fa fa-refresh"></i></div>
         </div>
 
+        {{-- Status: delivered --}}
+        <div class="metric-card is-success">
+            <div class="meta">
+                <p class="label">{{ __('admin.delivered_shipments') }}</p>
+                <p class="value">{{ number_format($st['delivered'] ?? 0) }}</p>
+            </div>
+            <div class="icon"><i class="fa fa-check-circle"></i></div>
+        </div>
+
+        {{-- Status: returned --}}
+        <div class="metric-card is-warning">
+            <div class="meta">
+                <p class="label">{{ __('admin.returned_shipments') }}</p>
+                <p class="value">{{ number_format($st['returned'] ?? 0) }}</p>
+            </div>
+            <div class="icon"><i class="fa fa-retweet"></i></div>
+        </div>
+
         {{-- Status: Failed --}}
         <div class="metric-card is-danger">
             <div class="meta">
@@ -325,7 +343,7 @@ $totalCount = (int) ($stats['total'] ?? 0);
                 <p class="label">{{ __('admin.cancel_request_shipments') }}</p>
                 <p class="value">{{ number_format($st['cancelRequest'] ?? 0) }}</p>
             </div>
-            <div class="icon"><i class="fa fa-trash-can"></i></div>
+            <div class="icon"><i class="fa fa-cancel"></i></div>
         </div>
 
         {{-- Status: Canceled --}}

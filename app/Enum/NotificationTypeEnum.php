@@ -26,10 +26,10 @@ enum NotificationTypeEnum: string
     public function badge(): string
     {
         return match ($this) {
-            self::TRANSACTION_CREATED => 'badge bg-success btn-sm text-center',
+            self::TRANSACTION_CREATED => 'badge bg-info btn-sm text-center',
             self::TRANSACTION_REJECTED => 'badge bg-danger btn-sm text-center',
             self::TRANSACTION_ACCEPTED => 'badge bg-success btn-sm text-center',
-            self::NEWSHIPMENT => 'badge bg-success btn-sm text-center',
+            self::NEWSHIPMENT => 'badge bg-primary btn-sm text-center',
             self::BALANCEDEPOSITED => 'badge bg-success btn-sm text-center',
             self::BALANCEDEDUCTION => 'badge bg-danger btn-sm text-center',
         };

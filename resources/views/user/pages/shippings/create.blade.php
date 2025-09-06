@@ -378,7 +378,7 @@
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="accept_terms" name="accept_terms" {{ old('accept_terms') ? 'checked' : '' }} required>
                                 <label class="form-check-label" for="accept_terms">
-                                    <a href="{{ route('front.terms') }}" class="text-primary">{{ __('admin.i_accept_terms') }}</a>
+                                    <a href="{{ route('front.terms') }}" target="_blank" class="text-primary">{{ __('admin.i_accept_terms') }}</a>
                                 </label>
                             </div>
                         </div>
@@ -492,7 +492,7 @@
                                         <div class="row">
                                             <div class="col-md-12">
                                                 <div class="mt-3">
-                                                    <p><strong>{{ __('admin.package_notes') . ': ' }}</strong></p>
+                                                    <p><strong>{{ __('admin.package_description') . ': ' }}</strong></p>
                                                     <p id="package_description" class="text-muted">{{ __('admin.no_special_notes') }}</p>
                                                 </div>
                                             </div>

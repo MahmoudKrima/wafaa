@@ -11,8 +11,8 @@ class DateFromFilter
     {
         if (request()->filled('date_from') && request()->input('date_from') != null) {
             $start = Carbon::parse(request('date_from'), 'Asia/Riyadh')
-                ->startOfDay()
-                ->utc();
+                ->startOfDay();
+                //->utc();
             $query->where('created_at', '>=', $start);
         }
         return $next($query);

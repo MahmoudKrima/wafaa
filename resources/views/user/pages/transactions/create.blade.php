@@ -22,7 +22,7 @@
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label for="amountInput" class="text-dark">{{ __('admin.transfer_amount') }}</label>
-                                            <input id="amountInput" type="text" name="amount"
+                                            <input id="amountInput" type="number" step="1" min="1" name="amount"
                                                 placeholder="{{ __('admin.amount') }}" class="form-control"
                                                 value="{{ old('amount') }}">
                                         </div>

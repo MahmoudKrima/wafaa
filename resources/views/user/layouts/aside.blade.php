@@ -30,6 +30,16 @@
                 </a>
             </li>
 
+            <li class=" {{ isRoute(['user.shippings.index']) ? 'menu active' : '' }}">
+                <a href="{{ route('user.shippings.index') }}"
+                   data-active="{{ isRoute(['user.shippings.index']) ? 'true' : 'false' }}" class="menu-toggle">
+                    <div class="base-icons">
+                        <i class="fa fa fa-shipping-fast" style="color:#1b6aab;font-size:35px;margin-bottom:10px;"></i>
+                        <p class="side_links_theme">{{__('admin.shippings')}}</p>
+                    </div>
+                </a>
+            </li>
+
             <li class=" {{ isRoute(['user.recievers.index','user.recievers.create','user.recievers.edit','user.recievers.search']) ? 'menu active' : '' }}">
                 <a href="{{ route('user.recievers.index') }}"
                     data-active="{{ isRoute(['user.recievers.index','user.recievers.create','user.recievers.edit','user.recievers.search']) ? 'true' : 'false' }}" class="menu-toggle">
@@ -69,15 +79,7 @@
                 </a>
             </li>
 
-            <li class=" {{ isRoute(['user.shippings.index']) ? 'menu active' : '' }}">
-                <a href="{{ route('user.shippings.index') }}"
-                   data-active="{{ isRoute(['user.shippings.index']) ? 'true' : 'false' }}" class="menu-toggle">
-                    <div class="base-icons">
-                        <i class="fa fa fa-shipping-fast" style="color:#1b6aab;font-size:35px;margin-bottom:10px;"></i>
-                        <p class="side_links_theme">{{__('admin.shippings')}}</p>
-                    </div>
-                </a>
-            </li>
+
         </ul>
 
     </nav>

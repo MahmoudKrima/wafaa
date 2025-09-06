@@ -30,6 +30,8 @@ class HomeController extends Controller
         $statusCounts = [
             'pending'       => 0,
             'processing'    => 0,
+            'delivered'    => 0,
+            'returned'    => 0,
             'failed'        => 0,
             'cancelRequest' => 0,
             'canceled'      => 0,

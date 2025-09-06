@@ -36,7 +36,7 @@ class SearchTransactionRequest extends FormRequest
                 'integer',
                 Rule::exists('banks', 'id')
                     ->where('admin_id', auth()->user()->created_by)
-                    ->where('status', 'active')
+                    //->where('status', 'active') // make it show all banks in filter only even bank is disabled
             ],
             'status' => [
                 'sometimes',

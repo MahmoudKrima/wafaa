@@ -48,7 +48,8 @@
                                             <form action="{{ route('user.shippings.index') }}" method="GET"
                                                 class="p-3">
                                                 <div class="row">
-                                                    <div class="col-md-4 mb-3">
+
+                                                    <div class="col-md-3 mb-3">
                                                         <label for="isCod">{{ __('admin.isCod') }}</label>
                                                         @php $isCod = request()->get('isCod'); @endphp
                                                         <select name="isCod" class="form-control" id="isCod">
@@ -57,7 +58,7 @@
                                                             <option value="false" @selected($isCod==='false' )>{{ __('admin.no') }}</option>
                                                         </select>
                                                     </div>
-                                                    <div class="col-md-4 mb-3">
+                                                    <div class="col-md-3 mb-3">
                                                         <label for="shippingCompanyId">{{ __('admin.shippingCompanyId') }}</label>
                                                         <select name="shippingCompanyId" class="form-control" id="shippingCompanyId">
                                                             <option value="" selected>{{ __('admin.choose_shipping_company') }}</option>
@@ -69,7 +70,7 @@
                                                             @endforeach
                                                         </select>
                                                     </div>
-                                                    <div class="col-md-4 mb-3">
+                                                    <div class="col-md-3 mb-3">
                                                         <label for="method">{{ __('admin.choose_shipping_method') }}</label>
                                                         <select name="method" class="form-control" id="method">
                                                             <option value="" selected>{{ __('admin.choose_shipping_method') }}</option>
@@ -77,7 +78,7 @@
                                                             <option value="international" @selected(request()->get('method') == 'international')>{{ __('admin.international') }}</option>
                                                         </select>
                                                     </div>
-                                                    <div class="col-md-4 mb-3">
+                                                    <div class="col-md-3 mb-3">
                                                         <label for="type">{{ __('admin.shipment_type') }}</label>
                                                         <select name="type" class="form-control" id="type">
                                                             <option value="" selected>{{ __('admin.choose_shipment_type') }}</option>
@@ -85,22 +86,13 @@
                                                             <option value="document" @selected(request()->get('type') == 'documents')>{{ __('admin.documents') }}</option>
                                                         </select>
                                                     </div>
-                                                    <div class="col-md-4 mb-3">
-                                                        <label for="dateFrom">{{ __('admin.dateFrom') }}</label>
-                                                        <input type="date" value="{{ request()->get('dateFrom') }}"
-                                                            name="dateFrom" id="dateFrom" class="form-control"
-                                                            placeholder="{{ __('admin.dateFrom') }}">
-                                                    </div>
-                                                    <div class="col-md-4 mb-3">
-                                                        <label for="dateTo">{{ __('admin.dateTo') }}</label>
-                                                        <input type="date" value="{{ request()->get('dateTo') }}"
-                                                            name="dateTo" id="dateTo" class="form-control"
-                                                            placeholder="{{ __('admin.dateTo') }}">
-                                                    </div>
-                                                    <div class="col-md-4 mb-3">
+
+                                                    <div class="col-md-3 mb-3">
                                                         <label for="status">{{ __('admin.status') }}</label>
                                                         <select name="status" class="form-control" id="status">
                                                             <option value="" selected>{{ __('admin.choose_status') }}</option>
+                                                            <option value="delivered" @selected(request()->get('status') == 'delivered')>{{ __('admin.delivered') }}</option>
+                                                            <option value="returned" @selected(request()->get('status') == 'returned')>{{ __('admin.returned') }}</option>
                                                             <option value="pending" @selected(request()->get('status') == 'pending')>{{ __('admin.pending') }}</option>
                                                             <option value="processing" @selected(request()->get('status') == 'processing')>{{ __('admin.processing') }}</option>
                                                             <option value="failed" @selected(request()->get('status') == 'failed')>{{ __('admin.failed') }}</option>
@@ -108,24 +100,38 @@
                                                             <option value="cancelRequest" @selected(request()->get('status') == 'cancelRequest')>{{ __('admin.cancelrequest') }}</option>
                                                         </select>
                                                     </div>
-                                                    <div class="col-md-4 mb-3">
+                                                    <div class="col-md-3 mb-3">
                                                         <label for=trackingNumber>{{ __('admin.tracking_number') }}</label>
                                                         <input type="input" value="{{ request()->get('search') }}"
                                                             name="search" id="trackingNumber" class="form-control"
                                                             placeholder="{{ __('admin.tracking_number') }}">
                                                     </div>
-                                                    <div class="col-md-4 mb-3">
+                                                    <div class="col-md-3 mb-3">
                                                         <label for="receiverName">{{ __('admin.receiver_name') }}</label>
                                                         <input type="text" value="{{ request()->get('receiverName') }}"
                                                             name="receiverName" id="receiverName" class="form-control"
                                                             placeholder="{{ __('admin.receiver_name') }}">
                                                     </div>
-                                                    <div class="col-md-4 mb-3">
+                                                    <div class="col-md-3 mb-3">
                                                         <label for="receiverPhone">{{ __('admin.receiver_phone') }}</label>
                                                         <input type="text" value="{{ request()->get('receiverPhone') }}"
                                                             name="receiverPhone" id="receiverPhone" class="form-control"
                                                             placeholder="{{ __('admin.receiver_phone') }}">
                                                     </div>
+
+                                                    <div class="col-md-3 mb-3">
+                                                        <label for="dateFrom">{{ __('admin.dateFrom') }}</label>
+                                                        <input type="date" value="{{ request()->get('dateFrom') }}"
+                                                               name="dateFrom" id="dateFrom" class="form-control"
+                                                               placeholder="{{ __('admin.dateFrom') }}">
+                                                    </div>
+                                                    <div class="col-md-3 mb-3">
+                                                        <label for="dateTo">{{ __('admin.dateTo') }}</label>
+                                                        <input type="date" value="{{ request()->get('dateTo') }}"
+                                                               name="dateTo" id="dateTo" class="form-control"
+                                                               placeholder="{{ __('admin.dateTo') }}">
+                                                    </div>
+
                                                 </div>
                                                 <div class="row mt-2">
                                                     <div class="col-md-3 mb-3">
@@ -213,11 +219,15 @@
                                         case 'pending':
                                         $class = 'badge bg-warning text-white'; $label = __('admin.pending'); break;
                                         case 'processing':
-                                        $class = 'badge bg-success text-white'; $label = __('admin.processing'); break;
+                                        $class = 'badge bg-info text-white'; $label = __('admin.processing'); break;
                                         case 'failed':
                                         $class = 'badge bg-danger white'; $label = __('admin.failed'); break;
                                         case 'canceled':
                                         $class = 'badge bg-danger white'; $label = __('admin.canceled'); break;
+                                        case 'delivered':
+                                        $class = 'badge bg-success white'; $label = __('admin.delivered'); break;
+                                        case 'returned':
+                                        $class = 'badge bg-dark white'; $label = __('admin.returned'); break;
                                         default:
                                         $class = 'badge bg-success white'; $label = __('admin.' . strtolower($shipment['status'])); break;
                                         }
