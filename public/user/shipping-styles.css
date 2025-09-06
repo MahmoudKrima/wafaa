@@ -232,6 +232,9 @@
     border: 1px solid #ccc;
     border-radius: 11px;
     padding: 15px 10px;
+    width: -webkit-fill-available;
+    display: flex !important;
+    justify-content: space-around !important;
 }
 
 @media screen and (max-width: 1025px) {

@@ -54,14 +54,14 @@
                                                 placeholder="{{ __('admin.email') }}" class="form-control"
                                                 value="{{ old('email', Auth::guard('web')->user()->email) }}" required>
                                         </div>
+                                    </div>
+                                    <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label for="passwordInput" class="text-dark">{{ __('admin.password') }}</label>
                                             <input id="passwordInput" type="password" name="password"
-                                                placeholder="{{ __('admin.password') }}" class="form-control">
+                                                   placeholder="{{ __('admin.password') }}" class="form-control">
                                             <small class="form-text text-muted">{{ __('admin.password_optional') }}</small>
                                         </div>
-                                    </div>
-                                    <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label for="passwordConfirmationInput" class="text-dark">{{ __('admin.password_confirmation') }}</label>
                                             <input id="passwordConfirmationInput" type="password" name="password_confirmation"

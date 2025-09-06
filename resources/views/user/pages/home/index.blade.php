@@ -10,7 +10,7 @@
     /* ===== Metric cards ===== */
     .metrics-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
         gap: 20px;
         margin-bottom: 30px;
     }
@@ -36,8 +36,24 @@
 
     @media (min-width: 992px) {
         .metrics-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .metrics-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    @media (min-width: 1920px) {
+        .metrics-grid {
             grid-template-columns: repeat(4, 1fr);
         }
+    }
+
+    .navbar .language-dropdown .custom-dropdown-icon a.dropdown-toggle:before, .navbar .navbar-item .nav-item.user-profile-dropdown .nav-link.user:before{
+        top:17px !important;
     }
 
     .metric-card {
@@ -209,7 +225,7 @@ $totalCount = (int) ($stats['total'] ?? 0);
 
     {{-- Wallet Balance --}}
     <div class="row layout-top-spacing">
-        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-12 layout-spacing">
+        <div class="col-lg-4 col-md-6 col-sm-12 layout-spacing">
             <div class="widget widget-account-invoice-two">
                 <div class="widget-content">
                     <div class="account-box">
@@ -233,6 +249,9 @@ $totalCount = (int) ($stats['total'] ?? 0);
         </div>
     </div>
 
+    <div class="alert alert-info" role="alert">
+       <strong> {{__('admin.statistics')}}</strong>
+    </div>
 
     {{-- ===== Metrics as separate cards ===== --}}
     <div class="metrics-grid">

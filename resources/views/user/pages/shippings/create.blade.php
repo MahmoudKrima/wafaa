@@ -12,7 +12,7 @@
 
 <style>
     .widget {
-        padding: 0 100px !important;
+        padding: 0 40px !important;
     }
 
     @media screen and (max-width: 1025px) {
@@ -21,6 +21,11 @@
         }
     }
 
+    .navbar .language-dropdown .custom-dropdown-icon a.dropdown-toggle:before, .navbar .navbar-item .nav-item.user-profile-dropdown .nav-link.user:before{
+        top:17px !important;
+    }
+
+    /*For Responsive purpose*/
     @media screen and (max-width: 600px) {
         .main-content {
             margin-top: 130px !important;
@@ -53,13 +58,13 @@
                                     @for ($i = 1; $i <= 7; $i++)
                                         <div class="step {{ $i === 1 ? 'active' : '' }} mb-2 mb-sm-0">
                                         <div class="step-number {{ $i===1 ? 'bg-primary' : 'bg-secondary' }} text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mx-sm-0"
-                                            style="width:35px;height:35px;font-size:14px;font-weight:bold;">{{ $i }}
+                                            style="width:35px;height:35px;font-size:14px;font-weight:bold;margin-bottom:10px;">{{ $i }}
                                         </div>
-                                        <span class="d-block d-sm-inline ms-0 ms-sm-2 text-center text-sm-start mt-1 mt-sm-0 small step_text step_text">
+                                        <span class="d-block d-sm-inline ms-0 ms-sm-2 text-center text-sm-start mt-2 small step_text step_text">
                                             @switch($i)
                                             @case(1) {{ __('admin.select_company') }} @break
-                                            @case(2) {{ __('admin.select_method') }} @break
-                                            @case(3) {{ __('admin.user_information') }} @break
+                                            @case(2) {{ __('admin.choose_shipping_method') }} @break
+                                            @case(3) {{ __('admin.sender_information') }} @break
                                             @case(4) {{ __('admin.receivers') }} @break
                                             @case(5) {{ __('admin.shipping_details') }} @break
                                             @case(6) {{ __('admin.payment_details') }} @break
@@ -67,13 +72,11 @@
                                             @endswitch
                                         </span>
 
-                                </div>
-                                @if($i<7)
-                                    <div class="step-line d-none d-sm-block mx-3" style="width:40px;height:2px;background:#e9ecef;">
-                            </div>
-                            <div class="step-line d-block d-sm-none my-2" style="width:2px;height:20px;background:#e9ecef;"></div>
-                            @endif
-                            @endfor
+                                        </div>
+                                        @if($i<7)
+                                            <div class="step-line d-none d-sm-block mx-3" style="width:40px;height:2px;background:#e9ecef;"></div>
+                                       @endif
+                                    @endfor
 
                             <!-- Navigation Buttons -->
                             <div class="prev_next_btn mb-2 mb-sm-0">
@@ -415,6 +418,8 @@
                     <div class="col-12">
                         <h4 class="mb-4">{{ __('admin.final_shipment_review') }}</h4>
                         <div id="step7-errors" class="mb-3"></div>
+
+                        <!----Sender and company details--->
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="card mb-4" style="border-radius:15px;">
@@ -422,10 +427,10 @@
                                         <h5 class="mb-0" style="color:#fff;"><i class="fa fa-user-tie" style="margin:0 5px;"></i>{{ __('admin.sender_information') }}</h5>
                                     </div>
                                     <div class="card-body">
-                                        <p><strong>{{ __('admin.name') . ': ' }}</strong> <span id="sender-name-preview">{{ __('admin.name') }}</span></p>
-                                        <p><strong>{{ __('admin.phone') . ': ' }}</strong> <span id="sender-phone-preview">{{ __('admin.phone') }}</span></p>
-                                        <p><strong>{{ __('admin.city') . ': ' }}</strong> <span id="sender-city-preview">{{ __('admin.city') }}</span></p>
-                                        <p><strong>{{ __('admin.address') . ': ' }}</strong> <span id="sender-address-preview">{{ __('admin.address') }}</span></p>
+                                        <p><strong>{{ __('admin.name') . ' : ' }}</strong> <span id="sender-name-preview">{{ __('admin.name') }}</span></p>
+                                        <p><strong>{{ __('admin.phone') . ' : ' }}</strong> <span id="sender-phone-preview">{{ __('admin.phone') }}</span></p>
+                                        <p><strong>{{ __('admin.city') . ' : ' }}</strong> <span id="sender-city-preview">{{ __('admin.city') }}</span></p>
+                                        <p><strong>{{ __('admin.address') . ' : ' }}</strong> <span id="sender-address-preview">{{ __('admin.address') }}</span></p>
                                     </div>
                                 </div>
                             </div>
@@ -460,7 +465,7 @@
                             <div class="col-md-6">
                                 <div class="card mb-4" style="border-radius:15px;">
                                     <div class="card-header bg-primary text-white" style="border-top-left-radius:15px;border-top-right-radius:15px;">
-                                        <h5 class="mb-0" style="color:#fff;"><i class="fa fa-user-friends" style="margin:0 5px;"></i>{{ __('admin.receivers') }} (<span id="receivers-count-preview">0</span>)</h5>
+                                        <h5 class="mb-0" style="color:#fff;"><i class="fa fa-user-friends" style="margin:0 5px;"></i>{{ __('admin.receivers_info') }} (<span id="receivers-count-preview">0</span>)</h5>
                                     </div>
                                     <div class="card-body">
                                         <div id="receivers-summary-container"></div>
