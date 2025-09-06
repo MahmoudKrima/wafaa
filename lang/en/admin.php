@@ -558,5 +558,7 @@ return [
     'term_description_en' => 'Term & Conditions En',
     'policy_description_ar' => 'Privacy Policy Ar',
     'policy_description_en' => 'Privacy Policy En',
+    'receiver_name' => 'Receiver Name',
+    'receiver_phone' => 'Receiver Phone',
 
 ];

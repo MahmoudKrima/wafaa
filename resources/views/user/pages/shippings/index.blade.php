@@ -114,6 +114,18 @@
                                                             name="search" id="trackingNumber" class="form-control"
                                                             placeholder="{{ __('admin.tracking_number') }}">
                                                     </div>
+                                                    <div class="col-md-4 mb-3">
+                                                        <label for="receiverName">{{ __('admin.receiver_name') }}</label>
+                                                        <input type="text" value="{{ request()->get('receiverName') }}"
+                                                            name="receiverName" id="receiverName" class="form-control"
+                                                            placeholder="{{ __('admin.receiver_name') }}">
+                                                    </div>
+                                                    <div class="col-md-4 mb-3">
+                                                        <label for="receiverPhone">{{ __('admin.receiver_phone') }}</label>
+                                                        <input type="text" value="{{ request()->get('receiverPhone') }}"
+                                                            name="receiverPhone" id="receiverPhone" class="form-control"
+                                                            placeholder="{{ __('admin.receiver_phone') }}">
+                                                    </div>
                                                 </div>
                                                 <div class="row mt-2">
                                                     <div class="col-md-3 mb-3">
@@ -225,8 +237,6 @@
                                         <a href="{{ route('user.shippings.show', $shipment['id']) }}" class="badge bg-info text-white">
                                             {{ __('admin.show') }}
                                         </a>
-
-
 
                                         @if(!empty($shipment['trackingUrl']))
                                         <a href="{{ $shipment['trackingUrl'] }}" target="_blank" class="badge bg-dark text-white">

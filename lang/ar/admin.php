@@ -565,5 +565,7 @@ return [
     'term_description_en' => 'الشروط والأحكام بالانجليزية',
     'policy_description_ar' => 'سياسة الخصوصية بالعربية',
     'policy_description_en' => 'سياسة الخصوصية بالانجليزية',
+    'receiver_name' => 'اسم المستلم',
+    'receiver_phone' => 'رقم جوال المستلم',
 
 ];

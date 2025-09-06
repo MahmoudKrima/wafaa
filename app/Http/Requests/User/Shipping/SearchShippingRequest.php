@@ -15,13 +15,7 @@ class SearchShippingRequest extends FormRequest
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
-
-    public function rules(): array
+    public function rules()
     {
         return [
             'dateFrom'          => ['nullable', 'date'],
@@ -29,9 +23,11 @@ class SearchShippingRequest extends FormRequest
             'isCod'             => ['nullable', 'in:true,false'],
             'shippingCompanyId' => ['nullable', 'string'],
             'method'            => ['nullable', 'in:local,international'],
-            'type'            => ['nullable', 'in:box,document'],
+            'type'              => ['nullable', 'in:box,document'],
             'status'            => ['nullable', 'in:pending,processing,failed,cancelRequest,canceled'],
             'search'            => ['nullable', 'string'],
+            'receiverName'        => ['nullable', 'string'],
+            'receiverPhone'       => ['nullable', 'string'],
         ];
     }
 
@@ -39,10 +35,13 @@ class SearchShippingRequest extends FormRequest
     {
         $from = $this->normalizeDate($this->input('dateFrom'));
         $to   = $this->normalizeDate($this->input('dateTo'));
-
+        $rawPhone = $this->input('receiverPhone');
+        $senderPhone = $this->normalizeSaudiPhone($rawPhone);
         $this->merge([
-            'dateFrom' => $from,
-            'dateTo'   => $to,
+            'dateFrom'    => $from,
+            'dateTo'      => $to,
+            'receiverPhone' => $senderPhone,
+            'receiverName'  => trim((string) $this->input('receiverName')),
         ]);
     }
 
@@ -55,5 +54,24 @@ class SearchShippingRequest extends FormRequest
         } catch (\Throwable $e) {
             return null;
         }
+    }
+
+    private function normalizeSaudiPhone(?string $value): ?string
+    {
+        if (!$value) return null;
+        $digits = preg_replace('/\D+/', '', $value ?? '');
+
+        if ($digits === '') {
+            return null;
+        }
+
+        if (str_starts_with($digits, '966')) {
+            $digits = substr($digits, 3);
+        }
+        if (str_starts_with($digits, '0')) {
+            $digits = ltrim($digits, '0');
+        }
+
+        return '+966-' . $digits;
     }
 }
