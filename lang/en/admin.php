@@ -550,5 +550,9 @@ return [
     'term_description_en' => 'Term Description En',
     'policy_description_ar' => 'Policy Description Ar',
     'policy_description_en' => 'Policy Description En',
+    'balance_deposited_notification' => 'Balance deposited successfully',
+    'balance_deposite_rejected_notification' => 'Balance deposit rejected',
+    'balance_deducted_notification' => 'Balance deducted From Your Account',
+    'new_shippment_created_notification' => 'New Shipment Created',
 
 ];

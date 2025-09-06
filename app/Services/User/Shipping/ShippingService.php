@@ -10,10 +10,11 @@ use Illuminate\Support\Str;
 use App\Models\AdminSetting;
 use App\Models\AllowedCompany;
 use App\Traits\TranslateTrait;
+use App\Enum\NotificationTypeEnum;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
-use App\Http\Requests\User\Shipping\SearchShippingRequest;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use App\Http\Requests\User\Shipping\SearchShippingRequest;
 
 class ShippingService
 {
@@ -476,6 +477,19 @@ class ShippingService
                         'current'  => number_format($newBalance, 2),
                     ], 'en'),
                 ],
+            ]);
+            $message = [
+                'en' => __('admin.new_shippment_created_notification', [], 'en'),
+
+                'ar' => __('admin.new_shippment_created_notification', [], 'ar'),
+            ];
+
+            $user->notifications()->create([
+                'id'               => (string) Str::uuid(),
+                'type'             => NotificationTypeEnum::NEWSHIPMENT->value,
+                'data'             => $message,
+                'reciverable_type' => null,
+                'reciverable_id'   => null,
             ]);
 
 

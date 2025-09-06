@@ -115,6 +115,11 @@
                         <i class="fa fa-money-bill-trend-up" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
                         {{ __('admin.wallet_logs') }} </a>
                 </li>
+                <li class="{{ isRoute(['user.notifications.index']) ? 'active' : '' }}" style="margin-bottom:5px;">
+                    <a href="{{ route('user.notifications.index') }}">
+                        <i class="fa fa-money-bill-trend-up" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
+                        {{ __('admin.notifications') }} </a>
+                </li>
             </ul>
         </div>
 
