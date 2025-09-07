@@ -407,7 +407,9 @@
                 : t("no_special_notes", "No special notes");
     }
     function ensureCodAmountRow() {
-        const codFeesEl = document.getElementById("cod-fees-preview");
+        const codFeesEl = document.getElementById(
+            "cod-fee-per-one-receiver-preview"
+        );
         if (!codFeesEl) return null;
         let row = document.getElementById("cod-amount-row");
         if (!row) {
@@ -539,9 +541,18 @@
         const baseEl = document.getElementById("price-base-per-receiver");
         const extraEl = document.getElementById("price-extra-per-receiver");
         const codEl = document.getElementById("price-cod-per-receiver");
+        const codElPreview = document.getElementById(
+            "cod-fee-per-one-receiver-preview"
+        );
         if (baseEl) baseEl.textContent = `${perShip.toFixed(2)} ${cur}`;
         if (extraEl) extraEl.textContent = `${perExtra.toFixed(2)} ${cur}`;
         if (codEl) codEl.textContent = `${perCod.toFixed(2)} ${cur}`;
+        if (codElPreview)
+            codElPreview.textContent = `${perCod.toFixed(2)} ${cur}`;
+        const codPreviewRow = codElPreview
+            ? codElPreview.closest(".row")
+            : null;
+        if (codPreviewRow) codPreviewRow.style.display = isCOD ? "" : "none";
         const note = document.getElementById("extra-weight-note");
         if (note) {
             if (extraKg > 0) {
@@ -575,6 +586,7 @@
         updateWalletBalanceDisplay();
         return grandTotal;
     }
+
     function ensureHidden(form, id, name) {
         let el = form.querySelector(`#${id}`);
         if (!el) {
