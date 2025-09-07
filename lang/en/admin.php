@@ -615,4 +615,7 @@ return [
     'total_partners' => 'Total Partners',
     'total_services' => 'Total Services',
     'total_testimonials' => 'Total Testimonials',
+    'delete_all' => 'Delete all',
+    'weight_summary' => 'Weight summary',
+    'creating_shipment' => 'Creating Shipment...',
 ];

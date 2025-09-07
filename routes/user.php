@@ -114,6 +114,10 @@ Route::middleware(['web'])->group(function () {
             ->group(function () {
                 Route::get('/notifications', 'index')
                     ->name('notifications.index');
+                Route::delete('/notifications/delete/{notification}', 'delete')
+                    ->name('notifications.delete');
+                Route::get('/notifications/delete-all', 'deleteAll')
+                    ->name('notifications.deleteAll');
             });
         Route::controller(RecieverController::class)
             ->group(function () {

@@ -16,6 +16,7 @@ use App\Enum\NotificationTypeEnum;
 use App\Enum\TransactionStatusEnum;
 use Illuminate\Support\Facades\Mail;
 use App\Filters\ActivationStatusFilter;
+use App\Filters\BankFilter;
 
 class TransactionService
 {
@@ -27,7 +28,6 @@ class TransactionService
             ->whereHas('transactions', function ($query) {
                 $query->where('user_id', auth()->id());
             })
-            ->Active()
             ->get();
     }
 
@@ -42,6 +42,7 @@ class TransactionService
                 CodeFilter::class,
                 DateFromFilter::class,
                 DateToFilter::class,
+                BankFilter::class,
 
             ])
             ->thenReturn()

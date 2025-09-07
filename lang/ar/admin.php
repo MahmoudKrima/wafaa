@@ -619,4 +619,7 @@ return [
     'total_partners' => 'إجمالي الشركاء',
     'total_services' => 'إجمالي الخدمات',
     'total_testimonials' => 'إجمالي الاراء',
+    'delete_all' => 'حذف الكل',
+    'weight_summary' => 'ملخص الوزن',
+    'creating_shipment' => 'جاري إنشاء الشحنة...',
 ];

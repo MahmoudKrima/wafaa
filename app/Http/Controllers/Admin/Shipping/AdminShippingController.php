@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Services\Admin\Shipping\AdminShippingService;
 use App\Http\Requests\Admin\Shipping\SearchShippingRequest;
+use Illuminate\Pagination\Paginator;
 
 class AdminShippingController extends Controller
 {
@@ -22,11 +23,12 @@ class AdminShippingController extends Controller
         if ($request->filled('isCod')) {
             $filters['isCod'] = $request->input('isCod') === 'true' ? 'true' : 'false';
         }
+
         if ($user) {
             $users = [(string) $user->id];
             unset($filters['userId']);
         } elseif (!empty($filters['userId'])) {
-            $ids = is_array($filters['userId']) ? $filters['userId'] : [$filters['userId']];
+            $ids   = is_array($filters['userId']) ? $filters['userId'] : [$filters['userId']];
             $users = array_values(array_map('strval', $ids));
             unset($filters['userId']);
         } else {
@@ -34,10 +36,13 @@ class AdminShippingController extends Controller
                 ->pluck('id')->map(fn($id) => (string) $id)->values()->all();
         }
 
-        $hasReceiverFilters = !empty($filters['receiverName']) || !empty($filters['receiverPhone']);
+        $hasReceiverFilters = filled($filters['receiverName'] ?? null) || filled($filters['receiverPhone'] ?? null);
+
         if ($hasReceiverFilters) {
-            $filters['page']     = 0;
-            $filters['pageSize'] = max($perPage, 200);
+            $filters = array_merge($filters, [
+                'page'     => 0,
+                'pageSize' => max($perPage, 200),
+            ]);
         } else {
             $filters = array_merge($filters, [
                 'page'     => $page - 1,
@@ -45,42 +50,64 @@ class AdminShippingController extends Controller
             ]);
         }
 
-        $data = $this->adminShippingService->getUserListShipments($filters, $users);
+        $data    = $this->adminShippingService->getUserListShipments($filters, $users);
         $results = collect($data['results'] ?? []);
 
-        $receiverName  = $request->input('receiverName');
-        $receiverPhone = $request->input('receiverPhone');
+        $receiverName  = (string) $request->input('receiverName', '');
+        $receiverPhone = (string) $request->input('receiverPhone', '');
 
         if ($receiverName || $receiverPhone) {
             $results = $results->filter(function ($shipment) use ($receiverName, $receiverPhone) {
                 $details = data_get($shipment, 'shipmentDetails', []);
-                $name  = (string) data_get($details, 'receiverName', '');
-                $phone = (string) data_get($details, 'receiverPhone', '');
-                $ok = true;
+                $name    = (string) data_get($details, 'receiverName', '');
+                $phone   = (string) data_get($details, 'receiverPhone', '');
+                $ok      = true;
                 if ($receiverName)  $ok = $ok && (mb_stripos($name, $receiverName) !== false);
                 if ($receiverPhone) $ok = $ok && ($phone === $receiverPhone);
                 return $ok;
             })->values();
+
+            $total     = $results->count();
+            $offset    = ($page - 1) * $perPage;
+            $pageItems = $results->slice($offset, $perPage)->values();
+
+            $shipments = new LengthAwarePaginator(
+                $pageItems,
+                $total,
+                $perPage,
+                $page,
+                ['path' => $request->url(), 'query' => $request->query()]
+            );
+        } else {
+            $apiTotal = (int) (
+                data_get($data, 'total') ??
+                data_get($data, 'pagination.total') ??
+                data_get($data, 'totalCount') ??
+                data_get($data, 'count') ??
+                0
+            );
+
+            if ($apiTotal > 0) {
+                $shipments = new LengthAwarePaginator(
+                    $results,
+                    $apiTotal,
+                    $perPage,
+                    $page,
+                    ['path' => $request->url(), 'query' => $request->query()]
+                );
+            } else {
+                $shipments = new Paginator(
+                    $results,
+                    $perPage,
+                    $page,
+                    ['path' => $request->url(), 'pageName' => 'page']
+                );
+            }
         }
 
-        $total     = $results->count();
-        $offset    = ($page - 1) * $perPage;
-        $pageItems = $results->slice($offset, $perPage)->values();
-
-        $shipments = new LengthAwarePaginator(
-            $pageItems,
-            $total,
-            $perPage,
-            $page,
-            ['path' => $request->url(), 'query' => $request->query()]
-        );
-
-        $companies = $this->adminShippingService->getShippingCompanies();
-        $allUsers  = User::where('created_by', getAdminIdOrCreatedBy())->get();
-
-        $forcedUserId = $user?->id;
         $companies    = $this->adminShippingService->getShippingCompanies();
         $allUsers     = User::where('created_by', getAdminIdOrCreatedBy())->get();
+        $forcedUserId = $user?->id;
 
         return view('dashboard.pages.admin_shipping.index', compact(
             'shipments',

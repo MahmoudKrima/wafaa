@@ -15,7 +15,14 @@
     <div class="row layout-top-spacing">
         <div id="tableCustomBasic" class="col-lg-12 col-12 layout-spacing">
             <div class="statbox widget box box-shadow">
-
+                <div class="widget-header">
+                    <div class="row mt-2">
+                        <div class="col-12" style="margin: 15px 15px 0 15px;">
+                            <a href="{{ route('user.notifications.deleteAll') }}"
+                                class="btn btn-danger">{{ __('admin.delete_all') }}</a>
+                        </div>
+                    </div>
+                </div>
                 <div class="widget-content widget-content-area">
                     <div id="accordion">
                         <div class="card">
@@ -81,6 +88,7 @@
                                     <th scope="col">{{ __('admin.type') }}</th>
                                     <th scope="col">{{ __('admin.data') }}</th>
                                     <th scope="col">{{ __('admin.created_at') }}</th>
+                                    <th scope="col">{{ __('admin.actions') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -106,6 +114,20 @@
                                     </td>
                                     <td>
                                         {{ \Carbon\Carbon::parse($n->created_at)->timezone('Asia/Riyadh')->format('d/m/Y H:i') }}
+                                    </td>
+                                    <td>
+                                        <form action="{{ route('user.notifications.delete', $n->id) }}" method="POST">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button
+                                                style="border: none; background:transparent;padding:7px;margin:0 5px;"
+                                                type="submit" title="{{ __('admin.delete') }}"
+                                                class="action-btn btn-dlt bs-tooltip badge rounded-pill bg-danger"
+                                                data-toggle="tooltip" data-placement="top" aria-label="Delete"
+                                                data-bs-original-title="Delete">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                                 @empty

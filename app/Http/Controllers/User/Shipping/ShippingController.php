@@ -23,43 +23,52 @@ class ShippingController extends Controller
         if ($request->filled('isCod')) {
             $filters['isCod'] = $request->input('isCod') === 'true' ? 'true' : 'false';
         }
-        $hasReceiverFilters = !empty($filters['receiverName']) || !empty($filters['receiverPhone']);
+
+        $hasReceiverFilters = filled($filters['receiverName'] ?? null) || filled($filters['receiverPhone'] ?? null);
+
         if ($hasReceiverFilters) {
             $filters['page']     = 0;
             $filters['pageSize'] = max($perPage, 200);
         } else {
-            $filters = array_merge($filters, [
-                'page'     => $page - 1,
-                'pageSize' => $perPage,
-            ]);
+            $filters['page']     = $page - 1;
+            $filters['pageSize'] = $perPage;
         }
 
         $data = $this->shippingService->getUserListShipments($filters);
 
-        $results = collect($data['results'] ?? []);
+        if ($hasReceiverFilters) {
+            $results = collect($data['results'] ?? []);
 
-        $receiverName  = $request->input('receiverName');
-        $receiverPhone = $request->input('receiverPhone');
+            $receiverName  = $request->input('receiverName');
+            $receiverPhone = $request->input('receiverPhone');
 
-        if ($receiverName || $receiverPhone) {
-            $results = $results->filter(function ($shipment) use ($receiverName, $receiverPhone) {
-                $details = data_get($shipment, 'shipmentDetails', []);
-                $name  = (string) data_get($details, 'receiverName', '');
-                $phone = (string) data_get($details, 'receiverPhone', '');
-                $ok = true;
-                if ($receiverName) {
-                    $ok = $ok && (mb_stripos($name, $receiverName) !== false);
-                }
-                if ($receiverPhone) {
-                    $ok = $ok && ($phone === $receiverPhone);
-                }
+            if ($receiverName || $receiverPhone) {
+                $results = $results->filter(function ($shipment) use ($receiverName, $receiverPhone) {
+                    $details = data_get($shipment, 'shipmentDetails', []);
+                    $name  = (string) data_get($details, 'receiverName', '');
+                    $phone = (string) data_get($details, 'receiverPhone', '');
+                    $ok = true;
+                    if ($receiverName) {
+                        $ok = $ok && (mb_stripos($name, $receiverName) !== false);
+                    }
+                    if ($receiverPhone) {
+                        $ok = $ok && ($phone === $receiverPhone);
+                    }
+                    return $ok;
+                })->values();
+            }
 
-                return $ok;
-            })->values();
+            $total   = $results->count();
+            $offset  = ($page - 1) * $perPage;
+            $pageItems = $results->slice($offset, $perPage)->values();
+        } else {
+            $pageItems = collect($data['results'] ?? []);
+            $total = (int) (
+                $data['total']
+                ?? $data['count']
+                ?? data_get($data, 'pagination.total', 0)
+            );
         }
-        $total = $results->count();
-        $offset    = ($page - 1) * $perPage;
-        $pageItems = $results->slice($offset, $perPage)->values();
 
         $shipments = new LengthAwarePaginator(
             $pageItems,
