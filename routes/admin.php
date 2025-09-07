@@ -47,7 +47,7 @@ Route::middleware(['web'])->group(function () {
             Route::get('/login', 'loginForm')
                 ->name('auth.loginForm')
                 ->middleware('guest.admin');
-            Route::post('/login', 'login')
+            Route::post('/login-admin', 'login')
                 ->name('auth.login');
             Route::post('/logout', 'logout')
                 ->name('auth.logout')
