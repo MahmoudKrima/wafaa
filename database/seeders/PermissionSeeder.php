@@ -2,27 +2,28 @@
 
 namespace Database\Seeders;
 
-use App\Models\Partner;
+use App\Models\Faq;
+use App\Models\Term;
 use App\Models\User;
+use App\Models\About;
 use App\Models\Admin;
 use App\Models\Banks;
-use App\Models\AllowedCompany;
+use App\Models\Slider;
+use App\Models\Contact;
+use App\Models\Partner;
+use App\Models\Service;
 use App\Models\Setting;
+use App\Models\Reciever;
+use App\Models\AboutItem;
 use App\Models\WalletLog;
 use App\Models\UserWallet;
-use App\Models\Transaction;
-use App\Models\Slider;
-use App\Models\About;
-use App\Models\AboutItem;
-use App\Models\Reciever;
-use App\Models\UserShippingPrice;
-use App\Models\AdminSetting;
-use App\Models\Service;
 use App\Models\Testimonial;
-use App\Models\Contact;
-use App\Models\Term;
-use App\Models\Faq;
+use App\Models\Transaction;
+use App\Models\WhyChooseUs;
+use App\Models\AdminSetting;
+use App\Models\AllowedCompany;
 use Illuminate\Database\Seeder;
+use App\Models\UserShippingPrice;
 use Spatie\Permission\Models\Permission;
 
 class PermissionSeeder extends Seeder
@@ -64,6 +65,7 @@ class PermissionSeeder extends Seeder
             ...Term::$permissions,
             ...Faq::$permissions,
             ...$rolePermission,
+            ...WhyChooseUs::$permissions,
         ];
 
         foreach ($permissions as $permission) {

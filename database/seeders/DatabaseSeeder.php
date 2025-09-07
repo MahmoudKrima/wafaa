@@ -2,25 +2,26 @@
 
 namespace Database\Seeders;
 
+use App\Models\Faq;
 use App\Models\User;
+use App\Models\Contact;
 use App\Models\Partner;
 use App\Models\Service;
 use App\Models\Reciever;
-use App\Models\Contact;
+use App\Models\Testimonial;
 use Illuminate\Database\Seeder;
 use Database\Seeders\RoleSeeder;
+use Database\Seeders\TermSeeder;
 use Database\Seeders\AboutSeeder;
 use Database\Seeders\AdminSeeder;
-use Database\Seeders\TermSeeder;
 use Database\Seeders\SliderSeeder;
 use Database\Seeders\SettingSeeder;
 use Database\Seeders\AboutItemSeeder;
 use Database\Seeders\PermissionSeeder;
-use Database\Seeders\AllowedCompaniesSeeder;
+use Database\Seeders\WhyChooseUsSeeder;
 use Illuminate\Support\Facades\Artisan;
 use Database\Seeders\AdminSettingSeeder;
-use App\Models\Testimonial;
-use App\Models\Faq;
+use Database\Seeders\AllowedCompaniesSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -41,6 +42,7 @@ class DatabaseSeeder extends Seeder
             AdminSettingSeeder::class,
             AllowedCompaniesSeeder::class,
             TermSeeder::class,
+            WhyChooseUsSeeder::class,
         ]);
         User::factory(10)->create();
         Reciever::factory(10)->create();

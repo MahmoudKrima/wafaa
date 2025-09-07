@@ -624,4 +624,5 @@ return [
     'creating_shipment' => 'جاري إنشاء الشحنة...',
     'question' => 'السؤال',
     'answer' => 'الجواب',
+    'why_choose_us' => 'لماذا نحن',
 ];

@@ -14,6 +14,7 @@ use App\Models\Service;
 use App\Models\Reciever;
 use App\Models\AboutItem;
 use App\Models\Testimonial;
+use App\Models\WhyChooseUs;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 
@@ -180,6 +181,13 @@ class HomeService
             return Faq::where('status', 'active')
                 ->orderBy('id')
                 ->get();
+        });
+    }
+
+    public function getWhyChooseUs()
+    {
+        return Cache::remember('why_choose_us', 3600, function () {
+            return WhyChooseUs::first();
         });
     }
 }

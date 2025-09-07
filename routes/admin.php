@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\Transaction\TransactionController;
 use App\Http\Controllers\Admin\FrontSetting\About\AboutController;
 use App\Http\Controllers\Admin\WebSiteSettings\SettingsController;
 use App\Http\Controllers\Admin\FrontSettings\Slider\SliderController;
+use App\Http\Controllers\Admin\WebSiteSettings\WhyChooseUsController;
 use App\Http\Controllers\Admin\WebSiteSettings\AdminSettingsController;
 use App\Http\Controllers\Admin\AllowedCompanies\AllowedCompaniesController;
 use App\Http\Controllers\Admin\UserShippingPrice\UserShippingPriceController;
@@ -525,6 +526,16 @@ Route::middleware(['web'])->group(function () {
                 Route::delete('/faqs/delete/{faq}', 'delete')
                     ->name('faqs.delete')
                     ->middleware('has.permission:faqs.delete');
+            });
+
+        Route::controller(WhyChooseUsController::class)
+            ->group(function () {
+                Route::get('/why-choose-us', 'index')
+                    ->name('why-choose-us.index')
+                    ->middleware('has.permission:why_choose_us.update');
+                Route::post('/why-choose-us/update', 'update')
+                    ->name('why-choose-us.update')
+                    ->middleware('has.permission:why_choose_us.update');
             });
     });
 });

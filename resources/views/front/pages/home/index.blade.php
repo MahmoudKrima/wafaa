@@ -336,17 +336,15 @@
             <div class="row align-items-center">
                 <div class="col-xl-6 col-lg-6 wow fadeInLeft animated" data-wow-delay="200ms">
                     <div class="about-img-wrap">
-                        <img src="{{ asset('front/assets/img/about/about-1.png') }}" alt="">
+                        <img src="{{ displayImage($whyChooseUs->image) }}" alt="">
                     </div>
                 </div>
                 <div class="col-xl-6 col-lg-6 wow fadeInUp animated" data-wow-delay="300ms">
                     <div class="about-content-wrap">
                         <div class="section-title">
-                            <h2>ليه تختار منصة دبليو إم اكسبريس ؟</h2>
+                            <h2>{{ $whyChooseUs->title }}</h2>
                         </div>
-                        <p> نجمع بين الأسعار التنافسية والشراكات القوية، مع شبكة شحن واسعة النطاق تغطي كافة البلدان، وخدمة
-                            عملاء استثنائية لتتبع شحنتك بدقة وتقدم خيارات دفع متعددة وآمنة، كل هذا متاح على مدار الساعة
-                            لتلبية احتياجاتك.</p>
+                        {{$whyChooseUs->description}}
                     </div>
                     @if(!auth()->guard('web')->check() && !auth()->guard('admin')->check())
                         <a href="{{ route('user.auth.loginForm') }}" class="bordered-btn mt-40">
