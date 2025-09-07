@@ -407,38 +407,31 @@ class ShippingService
                 $body["imageUrl"] = displayImage($shipmentImagePath);
             }
 
-            try {
-                $resp = $this->ghayaRequest()
-                    ->timeout(20)
-                    ->retry(2, 200)
-                    ->post($this->ghayaUrl('shipments'), $body);
+            $resp = $this->ghayaRequest()
+                ->timeout(20)
+                ->retry(2, 200)
+                ->post($this->ghayaUrl('shipments'), $body);
 
-                if ($resp->failed()) {
-                    $results['failed'][] = [
-                        'receiver_id'   => $receiverId,
-                        'status'        => $resp->status(),
-                        'url'           => $this->ghayaUrl('shipments'),
-                        'body_sent'     => $body,
-                        'response_json' => $resp->json(),
-                        'response_text' => $resp->body(),
-                    ];
-                } else {
-                    $results['success'][] = [
-                        'receiver_id'   => $receiverId,
-                        'status'        => $resp->status(),
-                        'body_sent'     => $body,
-                        'response_json' => $resp->json(),
-                    ];
-
-                    $this->deductAndLog($user, $requestData, $companyPrice);
-                }
-            } catch (\Throwable $e) {
+            if ($resp->failed()) {
                 $results['failed'][] = [
                     'receiver_id'   => $receiverId,
+                    'status'        => $resp->status(),
                     'url'           => $this->ghayaUrl('shipments'),
                     'body_sent'     => $body,
-                    'error_message' => $e->getMessage(),
+                    'response_json' => $resp->json(),
+                    'response_text' => $resp->body(),
                 ];
+            } else {
+                $results['success'][] = [
+                    'receiver_id'   => $receiverId,
+                    'status'        => $resp->status(),
+                    'body_sent'     => $body,
+                    'response_json' => $resp->json(),
+                ];
+
+                $this->deductAndLog($user, $requestData, $companyPrice);
+                $user->unsetRelation('wallet');
+                $user->load('wallet');
             }
         }
         return $results;
@@ -446,13 +439,12 @@ class ShippingService
 
     private function deductAndLog($user, array $data, $companyPrice): float
     {
-        $amount = 0.0;
-        $isCod          = (bool) Arr::get($data, 'is_cod', false);
+        $amount         = 0.0;
+        $isCod          = (bool) Arr::get($data, 'payment_method');
         $extraKg        = (float) Arr::get($data, 'extra_kg', 0);
         $shippingMethod = (string) Arr::get($data, 'shipping_method', 'local');
-        $adminSetting   = optional(optional($user->createdByAdmin)->adminSetting);
-
-        if ($isCod) {
+        $adminSetting   = AdminSetting::where('admin_id', $user->created_by)->first();
+        if ($isCod == 'cod') {
             $amount += (float) ($adminSetting->cash_on_delivery_price ?? 0);
         }
         if ($extraKg > 0) {
@@ -467,11 +459,15 @@ class ShippingService
         }
 
         return DB::transaction(function () use ($user, $amount) {
-            $oldBalance = $user->wallet->balance;
-            $newBalance = $oldBalance - $amount;
-            $wallet = $user->wallet()->lockForUpdate()->first() ?? $user->wallet()->create(['balance' => 0]);
-            $wallet->balance = (float) $wallet->balance - (float) $amount;
+            $wallet = $user->wallet()->lockForUpdate()->first()
+                ?? $user->wallet()->create(['balance' => 0]);
+
+            $oldBalance = (float) $wallet->balance;
+            $newBalance = $oldBalance - (float) $amount;
+
+            $wallet->balance = $newBalance;
             $wallet->save();
+
             WalletLog::create([
                 'user_id'    => $user->id,
                 'amount'     => number_format($amount, 2, '.', ''),
@@ -488,9 +484,9 @@ class ShippingService
                     ], 'en'),
                 ],
             ]);
+
             $message = [
                 'en' => __('admin.new_shippment_created_notification', [], 'en'),
-
                 'ar' => __('admin.new_shippment_created_notification', [], 'ar'),
             ];
 
@@ -502,10 +498,10 @@ class ShippingService
                 'reciverable_id'   => null,
             ]);
 
-
             return (float) $wallet->balance;
         });
     }
+
 
     private function buildGhayaShipmentBody(
         string $shippingCompanyId,

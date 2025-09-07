@@ -590,4 +590,5 @@ return [
     'privacy_description' => 'سياسة الخصوصية',
     'your_account_is_not_active' => 'حسابك غير مفعل',
     'delete_all' => 'حذف الكل',
+    'creating_shipment' => 'جاري إنشاء الشحنة...',
 ];

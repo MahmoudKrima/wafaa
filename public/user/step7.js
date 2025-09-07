@@ -44,8 +44,27 @@
         const match = text.match(/-?\d+(\.\d+)?/);
         return match ? parseFloat(match[0]) : 0;
     }
-
-    /* =============== state restore (old input) =============== */
+    async function fetchUserWalletBalance() {
+        try {
+            const response = await fetch("/wallet/balance", {
+                method: "GET",
+                headers: {
+                    Accept: "application/json",
+                    "X-CSRF-TOKEN":
+                        document
+                            .querySelector('meta[name="csrf-token"]')
+                            ?.getAttribute("content") || "",
+                },
+            });
+            if (response.ok) {
+                const data = await response.json();
+                const balance = parseFloat(data.balance) || 0;
+                window.userWalletBalance = balance;
+                return balance;
+            }
+        } catch {}
+        return 0;
+    }
     function restoreFormStateFromValidationErrors() {
         const oldInput = window.OLD_INPUT || {};
         const oldState = window.OLD_STATE || {};
@@ -55,7 +74,6 @@
             window.companyPricing = oldState.companyPricing;
         if (oldState.selectedMethod)
             window.selectedMethod = oldState.selectedMethod;
-
         const fieldsToRestore = {
             package_type: oldInput.package_type,
             package_number: oldInput.package_number,
@@ -76,7 +94,6 @@
                 }
             }
         });
-
         if (oldInput.accept_terms) {
             const termsField = document.getElementById("accept_terms");
             if (termsField) termsField.checked = true;
@@ -105,31 +122,6 @@
         if (typeof window.populateAllSummaries === "function")
             window.populateAllSummaries();
     }
-
-    /* =============== wallet =============== */
-    async function fetchUserWalletBalance() {
-        try {
-            const response = await fetch("/wallet/balance", {
-                method: "GET",
-                headers: {
-                    Accept: "application/json",
-                    "X-CSRF-TOKEN":
-                        document
-                            .querySelector('meta[name="csrf-token"]')
-                            ?.getAttribute("content") || "",
-                },
-            });
-            if (response.ok) {
-                const data = await response.json();
-                const balance = parseFloat(data.balance) || 0;
-                window.userWalletBalance = balance;
-                return balance;
-            }
-        } catch {}
-        return 0;
-    }
-
-    /* =============== getters =============== */
     function _receivers() {
         return Array.isArray(window.selectedReceivers)
             ? window.selectedReceivers
@@ -212,8 +204,6 @@
         }
         return 0;
     }
-
-    /* =============== UI summary fillers =============== */
     function populateShippingCompanySummary() {
         const company = window.selectedCompany;
         if (!company) return;
@@ -231,7 +221,6 @@
         if (namePreview) namePreview.textContent = company.name || "N/A";
         if (servicePreview)
             servicePreview.textContent = company.serviceName || "N/A";
-
         const methodPreview = document.getElementById(
             "shipping-method-preview"
         );
@@ -399,7 +388,6 @@
         const height = _val("height") || "0";
         const notes =
             _val("package_notes") || t("no_special_notes", "No special notes");
-
         set(
             "package-type-preview",
             pkgType || t("package_type", "Package Type")
@@ -412,15 +400,12 @@
         set("package-length-preview", length || t("length_cm", "Length (cm)"));
         set("package-width-preview", width || t("width_cm", "Width (cm)"));
         set("package-height-preview", height || t("height_cm", "Height (cm)"));
-
         const notesEl = document.getElementById("package-notes-preview");
         if (notesEl)
             notesEl.textContent = notes.trim()
                 ? notes
                 : t("no_special_notes", "No special notes");
     }
-
-    /* =============== totals & balance =============== */
     function ensureCodAmountRow() {
         const codFeesEl = document.getElementById("cod-fees-preview");
         if (!codFeesEl) return null;
@@ -432,7 +417,10 @@
             row.id = "cod-amount-row";
             row.innerHTML = `
                 <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                    <strong class="mb-3 text-black">${t("cod_amount", "COD Amount")}:</strong>
+                    <strong class="mb-3 text-black">${t(
+                        "cod_amount",
+                        "COD Amount"
+                    )}:</strong>
                     <div class="mb-0 text-muted" id="cod-amount-display"></div>
                 </div>`;
             if (parentRow && parentRow.parentNode)
@@ -444,8 +432,8 @@
         const methodEl = document.getElementById("payment-method-preview");
         if (methodEl)
             methodEl.textContent = isCOD
-                ? t("cash_on_delivery", "Cash on Delivery")
-                : t("wallet", "Wallet");
+                ? t("cash_on_delivery_shippment", "Cash on Delivery")
+                : t("normal_shipment", "Wallet");
         const shipEl = document.getElementById("shipping-fee-preview");
         const extraEl = document.getElementById("extra-fees-preview");
         const totalEl = document.getElementById("total-amount-preview");
@@ -455,14 +443,12 @@
         );
         const perReceiverTotalEl =
             document.getElementById("per-receiver-total");
-
         const receiversCount = _receivers().length || 1;
         const totalShipping = perShip * receiversCount;
         const totalExtra = perExtra * receiversCount;
         const totalCod = isCOD ? perCod * receiversCount : 0;
         const totalPerReceiver = perShip + perExtra + (isCOD ? perCod : 0);
         const grandTotal = totalShipping + totalExtra + totalCod;
-
         if (shipEl) shipEl.textContent = `${totalShipping.toFixed(2)} ${cur}`;
         if (extraEl) extraEl.textContent = `${totalExtra.toFixed(2)} ${cur}`;
         if (codFeesEl) codFeesEl.textContent = `${totalCod.toFixed(2)} ${cur}`;
@@ -472,7 +458,12 @@
             perReceiverTotalEl.textContent = `${totalPerReceiver.toFixed(
                 2
             )} ${cur}`;
-
+        const codPerRec = document.getElementById("price-cod-per-receiver");
+        const codPerRecRow = codPerRec ? codPerRec.closest(".row") : null;
+        if (codPerRecRow) codPerRecRow.style.display = "none";
+        const codTotal = document.getElementById("cod-fees-preview");
+        const codTotalRow = codTotal ? codTotal.closest(".row") : null;
+        if (codTotalRow) codTotalRow.style.display = isCOD ? "" : "none";
         const codRow = ensureCodAmountRow();
         const codAmount = _codAmount();
         if (codRow) {
@@ -494,13 +485,11 @@
                 ?.value ||
             "wallet"
         ).toLowerCase();
-
         const walletBalanceSection = document.getElementById(
             "wallet-balance-section"
         );
         const cur = _currency();
         if (walletBalanceSection) walletBalanceSection.style.display = "block";
-
         const ensureBalanceThenCheck = async () => {
             if (typeof window.userWalletBalance !== "number")
                 await fetchUserWalletBalance();
@@ -513,13 +502,10 @@
                 "wallet-balance-warning"
             );
             const totalAmount = extractNumericValue("total-amount-preview");
-
             if (walletBalanceDisplay)
                 walletBalanceDisplay.textContent = `${numericBalance.toFixed(
                     2
                 )} ${cur}`;
-
-            // For both WALLET and COD: must have enough balance
             if (method === "wallet" || method === "cod") {
                 if (numericBalance < totalAmount) {
                     if (walletBalanceWarning) {
@@ -550,14 +536,12 @@
         const perExtra = extraKg * _adminExtraPerKg();
         const perCod = _adminCodPerReceiver();
         const isCOD = _isCodSelected();
-
         const baseEl = document.getElementById("price-base-per-receiver");
         const extraEl = document.getElementById("price-extra-per-receiver");
         const codEl = document.getElementById("price-cod-per-receiver");
         if (baseEl) baseEl.textContent = `${perShip.toFixed(2)} ${cur}`;
         if (extraEl) extraEl.textContent = `${perExtra.toFixed(2)} ${cur}`;
         if (codEl) codEl.textContent = `${perCod.toFixed(2)} ${cur}`;
-
         const note = document.getElementById("extra-weight-note");
         if (note) {
             if (extraKg > 0) {
@@ -591,8 +575,6 @@
         updateWalletBalanceDisplay();
         return grandTotal;
     }
-
-    /* =============== hidden fields helpers =============== */
     function ensureHidden(form, id, name) {
         let el = form.querySelector(`#${id}`);
         if (!el) {
@@ -604,20 +586,13 @@
         }
         return el;
     }
-
-    // Mirrors country/state/city IDs + NAMES to hidden inputs so the server always receives them.
     function mirrorLocationToForm(form) {
-        // IDs from selects used in Step 3
         const countryId = _val("user_country");
         const stateId = _val("user_state");
         const cityId = _val("user_city");
-
-        // Visible (label) names from selected <option>
         const countryName = _textOfSelect("user_country");
         const stateName = _textOfSelect("user_state");
         const cityName = _textOfSelect("user_city");
-
-        // Your existing sender_* fields (already in Blade)
         ensureHidden(
             form,
             "sender_country_id_hidden",
@@ -642,21 +617,15 @@
             "sender_city_name_hidden",
             "sender_city_name"
         ).value = cityName;
-
-        // Also provide raw names used by your Step 3 form (if your controller expects these too)
         ensureHidden(form, "country_id_hidden", "country_id").value = countryId;
         ensureHidden(form, "state_id_hidden", "state_id").value = stateId;
         ensureHidden(form, "city_id_hidden", "city_id").value = cityId;
-
         ensureHidden(form, "country_name_hidden", "country_name").value =
             countryName;
         ensureHidden(form, "state_name_hidden", "state_name").value = stateName;
         ensureHidden(form, "city_name_hidden", "city_name").value = cityName;
     }
-
-    /* =============== terms & actions =============== */
     function setupTermsValidation() {
-        // do not auto-disable the confirm button here; wallet check will govern it
         setConfirmEnabled(true);
     }
     function ensureCodHiddenInForm(form, value) {
@@ -683,20 +652,16 @@
         }
         hidden.value = value || "";
     }
-
     function setupActionButtons() {
         const prev = document.getElementById("btn-prev-step7");
         if (prev)
             prev.addEventListener("click", () => {
                 if (typeof window.showStep === "function") window.showStep(6);
             });
-
         const confirm = document.getElementById("btn-confirm-shipping");
         if (confirm && !confirm.dataset.boundConfirm) {
             confirm.addEventListener("click", (e) => {
                 e.preventDefault();
-
-                // Basic required fields
                 const requiredFields = {
                     user_name: "Sender Name",
                     user_phone: "Sender Phone",
@@ -731,7 +696,6 @@
                     alert("Please add at least one receiver.");
                     return;
                 }
-
                 const paymentMethod = (
                     window.selectedPaymentMethod ||
                     document.getElementById("payment_method_hidden")?.value ||
@@ -740,50 +704,36 @@
                     )?.value ||
                     "wallet"
                 ).toLowerCase();
-
                 const totalAmount = extractNumericValue("total-amount-preview");
                 const walletBalance = parseFloat(window.userWalletBalance || 0);
-
-                // For Wallet or COD, ensure enough balance
                 if (
                     (paymentMethod === "wallet" || paymentMethod === "cod") &&
                     walletBalance < totalAmount
                 ) {
-                    // warning already shown in UI
                     return;
                 }
-
-                // Sender location (IDs + names)
                 const sender_country_id = _val("user_country");
                 const sender_country_name = _textOfSelect("user_country");
                 const sender_state_id = _val("user_state");
                 const sender_state_name = _textOfSelect("user_state");
                 const sender_city_id = _val("user_city");
                 const sender_city_name = _textOfSelect("user_city");
-
                 const shippingData = {
                     company_id: window.selectedCompany?.id || null,
                     shipping_method: window.selectedMethod || null,
-
                     sender_name: _val("user_name"),
                     sender_phone: _val("user_phone"),
                     sender_email: _val("user_email"),
                     sender_address: _val("user_address"),
                     sender_postal_code: _val("user_postal_code"),
-
-                    // full location
                     sender_country_id,
                     sender_country_name,
                     sender_state_id,
                     sender_state_name,
                     sender_city_id,
                     sender_city_name,
-
-                    // legacy/compat
                     sender_city: sender_city_id,
-
                     receivers: window.selectedReceivers || [],
-
                     package_type: _val("package_type"),
                     package_count: _val("package_number") || "1",
                     weight: _val("weight") || "0",
@@ -792,9 +742,7 @@
                     height: _val("height") || "0",
                     package_description: _val("package_description") || "",
                     package_notes: _val("package_notes") || "",
-
                     payment_method: paymentMethod,
-
                     shipping_price_per_receiver: extractNumericValue(
                         "price-base-per-receiver"
                     ),
@@ -823,14 +771,11 @@
                             .querySelector('meta[name="csrf-token"]')
                             ?.getAttribute("content") || "",
                 };
-
                 const form =
                     document.querySelector(
                         'form[enctype="multipart/form-data"]'
                     ) || document.querySelector("form");
-
                 if (form) {
-                    // Core hiddens already present in Blade
                     const companyIdField = form.querySelector(
                         "#shipping_company_id"
                     );
@@ -846,26 +791,19 @@
                         receiversField.value = JSON.stringify(
                             shippingData.receivers || []
                         );
-
-                    // Make sure all hidden values are present/updated
                     const hiddenFields = {
-                        // sender
                         sender_name: shippingData.sender_name,
                         sender_phone: shippingData.sender_phone,
                         sender_email: shippingData.sender_email,
                         sender_address: shippingData.sender_address,
                         sender_postal_code: shippingData.sender_postal_code,
-
-                        // location
                         sender_country_id: shippingData.sender_country_id,
                         sender_country_name: shippingData.sender_country_name,
                         sender_state_id: shippingData.sender_state_id,
                         sender_state_name: shippingData.sender_state_name,
                         sender_city_id: shippingData.sender_city_id,
                         sender_city_name: shippingData.sender_city_name,
-                        sender_city: shippingData.sender_city, // legacy
-
-                        // pricing
+                        sender_city: shippingData.sender_city,
                         payment_method: shippingData.payment_method,
                         shipping_price_per_receiver:
                             shippingData.shipping_price_per_receiver,
@@ -880,8 +818,6 @@
                         max_weight: shippingData.max_weight,
                         entered_weight: shippingData.entered_weight,
                         extra_kg: shippingData.extra_kg,
-
-                        // package convenience
                         package_type: shippingData.package_type,
                         package_count: shippingData.package_count,
                         length: shippingData.length,
@@ -902,23 +838,17 @@
                         }
                         field.value = value != null ? value : "";
                     });
-
-                    // Explicitly mirror location IDs & names to dedicated hiddens as well
                     mirrorLocationToForm(form);
-
                     ensurePaymentMethodHiddenInForm(form, paymentMethod);
                     ensureCodHiddenInForm(form, _codAmount());
-
                     const originalText = confirm.innerHTML;
                     confirm.innerHTML =
-                        '<i class="fas fa-spinner fa-spin me-2"></i>Creating Shipment...';
+                        '<i class="fas fa-spinner fa-spin me-2"></i>' +
+                        t("creating_shipment", "Creating Shipment...");
                     confirm.disabled = true;
-
-                    // ensure validateForm exists (form has onsubmit="return validateForm()")
                     if (typeof window.validateForm !== "function") {
                         window.validateForm = () => true;
                     }
-
                     form.submit();
                 } else {
                     alert(
@@ -929,7 +859,6 @@
             confirm.dataset.boundConfirm = "1";
         }
     }
-
     function populateAllSummaries() {
         populateShippingCompanySummary();
         populateUserInformationSummary();
@@ -943,25 +872,17 @@
         setupActionButtons();
         updateWalletBalanceDisplay();
     }
-
     window.setupStep7 = setupStep7;
     window.populateAllSummaries = populateAllSummaries;
-
     document.addEventListener("DOMContentLoaded", () => {
-        // guarantee validateForm exists so form onsubmit won't block
         if (typeof window.validateForm !== "function")
             window.validateForm = () => true;
-
         fetchUserWalletBalance();
         if (window.OLD_INPUT && Object.keys(window.OLD_INPUT).length > 0) {
             restoreFormStateFromValidationErrors();
         }
-
-        // step navigation hooks
         document.addEventListener("stepChanged", (e) => {
             const step = e.detail?.currentStep;
-
-            // Entering Step 7: build UI and recompute totals
             if (step === 7) {
                 if (
                     window.OLD_INPUT &&
@@ -972,8 +893,6 @@
                 setupStep7();
                 setTimeout(() => populatePerReceiverPaymentSummary(), 0);
             }
-
-            // Entering Step 6: keep COD amount persisted (mirror hidden -> input)
             if (step === 6) {
                 const codInput = document.getElementById("cod-amount-input");
                 const codHidden = document.getElementById("cod-amount-hidden");
@@ -985,7 +904,6 @@
                         : "";
                 if (codInput && v !== "") codInput.value = v;
             }
-
             if (step === 4) {
                 const form =
                     document.querySelector(
@@ -994,7 +912,6 @@
                 if (form) mirrorLocationToForm(form);
             }
         });
-
         [
             "weight",
             "package_type",
@@ -1046,7 +963,6 @@
             codInput.addEventListener("change", syncCod);
             codInput.dataset.boundStep7Cod = "1";
         }
-
         document.addEventListener("paymentMethodChanged", () => {
             populatePerReceiverPaymentSummary();
             updateWalletBalanceDisplay();

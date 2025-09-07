@@ -586,4 +586,6 @@ return [
     'privacy_description' => 'Privacy policy',
     'your_account_is_not_active' => 'Your account is not active',
     'delete_all' => 'Delete all',
+    'weight_summary' => 'Weight summary',
+    'creating_shipment' => 'Creating Shipment...',
 ];
