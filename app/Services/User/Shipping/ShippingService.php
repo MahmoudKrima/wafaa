@@ -332,25 +332,45 @@ class ShippingService
         $sync = $this->syncNewReceivers($data['selected_receivers'], $user);
         $data['selected_receivers'] = $sync['receivers'];
 
-        $results = $this->createShipmentsForReceivers(
-            company: $company,
-            user: $user,
-            selectedReceivers: $data['selected_receivers'],
-            pricing: $pricing,
-            requestData: $data,
-            shipmentImagePath: $data['shipment_image_path'] ?? null,
-            payment: $payment,
-            method: $method,
-            companyPrice: $companyPrice
-        );
+        try {
+            $results = $this->createShipmentsForReceivers(
+                company: $company,
+                user: $user,
+                selectedReceivers: $data['selected_receivers'],
+                pricing: $pricing,
+                requestData: $data,
+                shipmentImagePath: $data['shipment_image_path'] ?? null,
+                payment: $payment,
+                method: $method,
+                companyPrice: $companyPrice
+            );
+        } catch (\Throwable $e) {
+            session()->forget('Success');
+            return redirect()
+                ->route('user.shippings.index')
+                ->with('Error', __('admin.something_wrong'));
+        }
+
+        if (!empty($results['server_error'])) {
+            session()->forget('Success');
+            return redirect()
+                ->route('user.shippings.index')
+                ->with('Error', __('admin.something_wrong'));
+        }
+
         if (!empty($results['failed'])) {
             session()->forget('Success');
-            return back()->with('Error', __('admin.shipments_partial_or_failed'));
+            return redirect()
+                ->route('user.shippings.index')
+                ->with('Error', __('admin.shipments_partial_or_failed'));
         }
 
         session()->forget('Error');
-        return back()->with('Success', __('admin.shippment_created_successfully'));
+        return redirect()
+            ->route('user.shippings.index')
+            ->with('Success', __('admin.shippment_created_successfully'));
     }
+
 
     private function createShipmentsForReceivers(
         array $company,
@@ -363,7 +383,11 @@ class ShippingService
         string $method,
         $companyPrice
     ) {
-        $results = ['success' => [], 'failed' => []];
+        $results = [
+            'success'      => [],
+            'failed'       => [],
+            'server_error' => false,
+        ];
 
         $senderPayload     = $this->resolveSenderPayload($user);
         $isCod             = ($payment === 'cod');
@@ -412,6 +436,12 @@ class ShippingService
                 ->retry(2, 200)
                 ->post($this->ghayaUrl('shipments'), $body);
 
+            if ($resp->serverError()) {
+
+                $results['server_error'] = true;
+                break;
+            }
+
             if ($resp->failed()) {
                 $results['failed'][] = [
                     'receiver_id'   => $receiverId,
@@ -421,21 +451,24 @@ class ShippingService
                     'response_json' => $resp->json(),
                     'response_text' => $resp->body(),
                 ];
-            } else {
-                $results['success'][] = [
-                    'receiver_id'   => $receiverId,
-                    'status'        => $resp->status(),
-                    'body_sent'     => $body,
-                    'response_json' => $resp->json(),
-                ];
-
-                $this->deductAndLog($user, $requestData, $companyPrice);
-                $user->unsetRelation('wallet');
-                $user->load('wallet');
+                continue;
             }
+
+            $results['success'][] = [
+                'receiver_id'   => $receiverId,
+                'status'        => $resp->status(),
+                'body_sent'     => $body,
+                'response_json' => $resp->json(),
+            ];
+
+            $this->deductAndLog($user, $requestData, $companyPrice);
+            $user->unsetRelation('wallet');
+            $user->load('wallet');
         }
+
         return $results;
     }
+
 
     private function deductAndLog($user, array $data, $companyPrice): float
     {
