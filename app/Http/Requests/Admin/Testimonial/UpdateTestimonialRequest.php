@@ -24,32 +24,17 @@ class UpdateTestimonialRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name_ar' => [
+            'name' => [
                 'required',
                 'string',
                 'max:255'
             ],
-            'name_en' => [
+            'job_title' => [
                 'required',
                 'string',
                 'max:255'
             ],
-            'job_title_ar' => [
-                'required',
-                'string',
-                'max:255'
-            ],
-            'job_title_en' => [
-                'required',
-                'string',
-                'max:255'
-            ],
-            'review_en' => [
-                'required',
-                'string',
-                'max:999'
-            ],
-            'review_ar' => [
+            'review' => [
                 'required',
                 'string',
                 'max:999'

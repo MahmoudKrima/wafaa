@@ -18,18 +18,18 @@ class TestimonialService
     public function store($request)
     {
         $data = $request->validated();
-        $data['name'] = $this->translate($data['name_ar'], $data['name_en']);
-        $data['job_title'] = $this->translate($data['job_title_ar'], $data['job_title_en']);
-        $data['review'] = $this->translate($data['review_ar'], $data['review_en']);
+        $data['name'] = $this->translate($data['name'], $data['name']);
+        $data['job_title'] = $this->translate($data['job_title'], $data['job_title']);
+        $data['review'] = $this->translate($data['review'], $data['review']);
         Testimonial::create($data);
     }
 
     public function update($request, $testimonial)
     {
         $data = $request->validated();
-        $data['name'] = $this->translate($data['name_ar'], $data['name_en']);
-        $data['job_title'] = $this->translate($data['job_title_ar'], $data['job_title_en']);
-        $data['review'] = $this->translate($data['review_ar'], $data['review_en']);
+        $data['name'] = $this->translate($data['name'], $data['name']);
+        $data['job_title'] = $this->translate($data['job_title'], $data['job_title']);
+        $data['review'] = $this->translate($data['review'], $data['review']);
         $testimonial->update($data);
     }
 
