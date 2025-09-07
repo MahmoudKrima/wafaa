@@ -17,9 +17,9 @@ class TermsController extends Controller
         return view('dashboard.pages.terms.index', compact('term'));
     }
 
-    public function update(UpdateTermRequest $request, Term $term)
+    public function update(UpdateTermRequest $request)
     {
-        $this->termsService->updateSettings($request, $term);
+        $this->termsService->updateSettings($request);
         return back()
             ->with('Success', __('admin.updated_successfully'));
     }

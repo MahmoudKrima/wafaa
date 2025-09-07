@@ -14,11 +14,22 @@ class UpdateTermRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'term_description_ar' => ['required', 'string'],
-            'term_description_en' => ['required', 'string'],
-            'policy_description_ar' => ['required', 'string'],
-            'policy_description_en' => ['required', 'string'],
-
+            'term_description_ar' => [
+                'required',
+                'string'
+            ],
+            'term_description_en' => [
+                'required',
+                'string'
+            ],
+            'policy_description_ar' => [
+                'required',
+                'string'
+            ],
+            'policy_description_en' => [
+                'required',
+                'string'
+            ],
         ];
     }
 }

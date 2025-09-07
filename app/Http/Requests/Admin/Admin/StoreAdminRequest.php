@@ -57,7 +57,6 @@ class StoreAdminRequest extends FormRequest
                     ->symbols()
             ],
             'image' => [
-                'required',
                 'image',
                 'mimetypes:image/jpeg,image/png,image/webp,image/gif',
                 'mimes:jpg,jpeg,jfif,png,gif,webp',

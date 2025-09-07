@@ -120,10 +120,15 @@
                                     @foreach ($admins as $admin)
                                         <tr>
                                             <td>
+                                                @if ($admin->image)
                                                 <a href="{{ displayImage($admin->image) }}" target="_blank">
-                                                    <img width="40px" height="40px" class="rounded-circle"
-                                                        src="{{ displayImage($admin->image) }}" alt="">
-                                                </a>
+                                                        <img width="40px" height="40px" class="rounded-circle"
+                                                            src="{{ displayImage($admin->image) }}" alt="{{ $admin->name }}">
+                                                    </a>
+                                                @else
+                                                    <img width="40px" height="40px" class="rounded-circle" 
+                                                        src="{{ displayImage(app('settings')['logo']) }}" alt="{{ __('admin.logo') }}">
+                                                @endif
                                             </td>
                                             <td>
                                                 <p class="mb-0">{{ $admin->name }}</p>
