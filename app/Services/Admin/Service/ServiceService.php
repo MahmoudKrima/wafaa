@@ -19,8 +19,8 @@ class ServiceService
     public function store($request)
     {
         $data = $request->validated();
-        $data['title'] = $this->translate($data['title_ar'], $data['title_en']);
-        $data['description'] = $this->translate($data['description_ar'], $data['description_en']);
+        $data['title'] = $this->translate($data['title'], $data['title']);
+        $data['description'] = $this->translate($data['description'], $data['description']);
         $data['image'] = $this->uploadImage($request->file('image'), 'services');
         Service::create($data);
     }
@@ -28,8 +28,8 @@ class ServiceService
     public function update($request, $service)
     {
         $data = $request->validated();
-        $data['title'] = $this->translate($data['title_ar'], $data['title_en']);
-        $data['description'] = $this->translate($data['description_ar'], $data['description_en']);
+        $data['title'] = $this->translate($data['title'], $data['title']);
+        $data['description'] = $this->translate($data['description'], $data['description']);
         $data['image'] = $this->updateImage($service->image, 'services', 'image');
         $service->update($data);
     }
