@@ -40,7 +40,7 @@
                     <ul>
 
                         @if(isRoute(['front.terms','front.policy']))
-                            <li><a href={{ route('front.home') }}"#home">{{__('admin.home')}}</a></li>
+                            <li><a href="{{ route('front.home') }}#home">{{__('admin.home')}}</a></li>
 
                             <li><a href="{{ route('front.home') }}#about">{{__('admin.about_us')}}</a></li>
 
