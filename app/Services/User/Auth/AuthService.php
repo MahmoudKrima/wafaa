@@ -2,20 +2,23 @@
 
 namespace App\Services\User\Auth;
 
-use Throwable;
+use Exception;
 use App\Models\User;
+use Illuminate\Support\Str;
+use App\Mail\ForgetPasswordMail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\UserResetPasswordMail;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Crypt;
 
 
 class AuthService
 {
     public function checkAttempts(array $data)
     {
-        $user = User::where('phone', $data['phone'])->first();
+        $user = User::where('phone', $data['phone'])
+            ->first();
 
         if (!$user) {
             return 'wrong credentials';
@@ -29,65 +32,105 @@ class AuthService
             return 'not active';
         }
 
-        Auth::guard('web')->login($user);
+        Auth::guard('web')
+            ->login($user);
         return 'login success';
     }
 
 
-    function sendResetPasswordLink($data)
+    private function sendForgetPasswordMail($user, $email, $token)
     {
-        $User = User::where('email', $data['email'])
-            ->first();
-        DB::beginTransaction();
-        try {
-            $token = hash('sha256', time() . rand(10000, 100000000));
-            $User->update([
-                'token' => $token
-            ]);
-            $reset_link = url('User/reset-password/' . $token . '/' . $data['email']);
+        if (app()->getLocale() == 'ar') {
+            $subject = 'استعادة كلمة المرور';
+            $encryptedData = Crypt::encryptString($email . '|' . $token);
+            $resetLink = url(app()->getLocale() . '/user/reset-password?data=' . urlencode($encryptedData));
+            $body = "<p>قم بالضغط على الرابط لاستعادة كلمة المرور</p>
+            <a href=\"$resetLink\">استعادة كلمة المرور</a>";
+        } else {
             $subject = 'Reset Password';
-            $message = 'Click On This Link To Reset Password <br/>';
-            $message .= '<a href="' . $reset_link . '">Reset Password</a>';
-            Mail::to($data['email'])
-                ->send(new UserResetPasswordMail($subject, $message));
+            $encryptedData = Crypt::encryptString($email . '|' . $token);
+            $resetLink = url(app()->getLocale() . '/user/reset-password?data=' . urlencode($encryptedData));
+            $body = "<p>Click the following link to reset your password:</p>
+            <a href=\"$resetLink\">Reset Password</a>";
+        }
+        Mail::to($user)
+            ->send(new ForgetPasswordMail($subject, $body));
+    }
+
+    private function getUserByEmail($email)
+    {
+        return User::where('email', $email)
+            ->first();
+    }
+
+    public function forgetPassword($request)
+    {
+        $data = $request->validated();
+        $user = $this->getUserByEmail($data['email']);
+        if (!$user) {
+            return 'wrong credentials';
+        }
+        try {
+            $token = Str::random(60);
+            $user->update([
+                'token' => $token,
+            ]);
+            $this->sendForgetPasswordMail($user, $data['email'], $token);
             DB::commit();
-            return redirect()
-                ->to(route('user.auth.loginForm'))
-                ->with("Success", __('user.check_your_mail'));
-        } catch (Throwable $e) {
+            return 'reset link sent';
+        } catch (Exception $e) {
             DB::rollBack();
-            return back()
-                ->with('Error', __('user.try_again_later'));
+            return 'error sending email';
         }
     }
 
-    function resetPasswordForm($token, $email)
+    public function validateResetToken($request)
     {
-        $User = User::where('email', $email)
-            ->where('token', $token)
-            ->first();
-        if (!$User) {
-            return redirect()
-                ->to(route('user.auth.loginForm'))
-                ->with("Error", __('user.try_again_later'));
+        $data = $request->validated();
+        try {
+            $encryptedData = $data['data'];
+            $decryptedData = Crypt::decryptString($encryptedData);
+            list($email, $token) = explode('|', $decryptedData);
+            $user = User::where('email', $email)
+                ->where('token', $token)
+                ->where('status', 'active')
+                ->first();
+            return $user ? true : false;
+        } catch (Exception $e) {
+            return false;
         }
-        return view('user.pages.auth.reset_password', compact('token', 'email'));
     }
 
-    function resetPassword($data)
+    public function resetPasswordSubmit($request)
     {
-        $User = User::where('email', $data['email'])
-            ->where('token', $data['token'])
-            ->first();
-        if (!$User) {
-            return back()
-                ->with("Error", __('user.try_again_later'));
+        $data = $request->validated();
+        try {
+            $decryptedData = Crypt::decryptString($data['data']);
+            list($email, $token) = explode('|', $decryptedData);
+            $user = User::where('email', $email)
+                ->where('token', $token)
+                ->where('status', 'active')
+                ->first();
+            if (!$user) {
+                return 'invalid token';
+            }
+            $user->update([
+                'password' => $data['password'],
+                'token' => null,
+            ]);
+            DB::commit();
+            return 'password updated';
+        } catch (Exception $e) {
+            DB::rollBack();
+            return 'server error';
         }
-        $User->update([
-            'password' => $data['new_password'],
-            'token' => null
-        ]);
-        return redirect(route('user.auth.loginForm'))
-            ->with('Success', __('user.password_reset_successfully'));
+    }
+
+    public function logout()
+    {
+        Auth::guard('web')
+            ->logout();
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
     }
 }

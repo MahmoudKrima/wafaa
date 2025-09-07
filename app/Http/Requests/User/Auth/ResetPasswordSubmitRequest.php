@@ -2,10 +2,10 @@
 
 namespace App\Http\Requests\User\Auth;
 
-use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\Foundation\Http\FormRequest;
 
-class ForgetPasswordRequest extends FormRequest
+class ResetPasswordSubmitRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -23,12 +23,20 @@ class ForgetPasswordRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => [
+            'data' => [
                 'required',
-                'email:dns,filter',
-                Rule::exists('users', 'email')
-                    ->where('status', 'active')
-            ]
+                'string'
+            ],
+            'password' => [
+                'required',
+                'string',
+                'confirmed',
+                Password::min(8)
+                    ->max(50)
+                    ->letters()
+                    ->mixedCase()
+                    ->symbols(),
+            ],
         ];
     }
 }
