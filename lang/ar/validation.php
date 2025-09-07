@@ -348,6 +348,10 @@ return [
         'date_from' => 'التاريخ من',
         'date_to' => 'التاريخ إلى',
         'trans_type' => 'نوع المعاملة',
+        'items' => 'العناصر',
+        'items.*.id' => 'معرف العنصر',
+        'items.*.title' => 'العنوان',
+        'items.*.description' => 'الوصف',
     ],
 
     /*
@@ -391,6 +395,11 @@ return [
         'canceled' => 'ملغي',
         'returned' => 'مرتجع',
         'delivered' => 'تم التسليم',
+        'subtitle' => 'العنوان الفرعي',
+        'button_text' => 'نص الزر',
+        'button_url' => 'رابط الزر',
+        'description' => 'الوصف',
+        'title' => 'العنوان',
     ],
 
 ];

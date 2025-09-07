@@ -24,13 +24,47 @@ class StoreSliderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "title" => ["required", 'max:255', 'string'],
-            "description" => ["required", 'string'],
-            "subtitle" => ['nullable', 'string', 'max:255'],
-            "button_text" => ['nullable', 'string', 'max:255'],
-            'button_url' => ['nullable', 'url'],
-            'image' => ['required', 'image', 'mimetypes:image/jpeg,image/png,image/webp,image/gif', 'mimes:jpg,jpeg,jfif,png,gif,webp'],
-            'status' => ['required', 'string', Rule::in(ActivationStatusEnum::vals())],
+            "title" => [
+                "required",
+                "max:255",
+                "string"
+            ],
+            "description" => [
+                "required",
+                "max:65000",
+                "string"
+            ],
+            "subtitle" => [
+                "nullable",
+                "string",
+                "max:65000",
+                "max:255"
+            ],
+
+            "button_text" => [
+                "nullable",
+                "string",
+                "max:65000",
+                "required_with:button_url",
+            ],
+            "button_url" => [
+                "nullable",
+                "url",
+                "required_with:button_text",
+            ],
+
+            "image" => [
+                "required",
+                "image",
+                "mimetypes:image/jpeg,image/png,image/webp,image/gif",
+                "mimes:jpg,jpeg,jfif,png,gif,webp",
+            ],
+            "status" => [
+                "required",
+                "string",
+                Rule::in(ActivationStatusEnum::vals()),
+            ],
         ];
     }
+
 }

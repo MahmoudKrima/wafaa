@@ -622,4 +622,7 @@ return [
     'delete_all' => 'حذف الكل',
     'weight_summary' => 'ملخص الوزن',
     'creating_shipment' => 'جاري إنشاء الشحنة...',
+    'question' => 'السؤال',
+    'answer' => 'الجواب',
+    'why_choose_us' => 'لماذا نحن',
 ];

@@ -14,8 +14,10 @@ class UpdateAboutItemRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "title" => ["required", 'max:255', 'string'],
-            "description" => ["required", 'string'],
+            'items' => ['required', 'array'],
+            'items.*.id' => ['required', 'integer', 'exists:about_items,id'],
+            'items.*.title' => ['required', 'string', 'max:255'],
+            'items.*.description' => ['required', 'string'],
         ];
     }
 }

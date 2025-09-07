@@ -3,7 +3,7 @@
 
             <div class="footer-bottom row">
                 <div class="col-lg-6 col-md-5">
-                    <span>© WM EXPRESS 2025 | جميع الحقوق محفوظة</span>
+                    <span>© {{app('settings')['app_name_' . assetLang()]}} {{date('Y')}} | {{ __('user.all_rights_reserved') }}</span>
                 </div>
                 <div class="col-lg-6 col-md-7 text-md-end">
                     <ul>

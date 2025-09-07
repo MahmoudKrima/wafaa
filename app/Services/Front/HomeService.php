@@ -2,6 +2,7 @@
 
 namespace App\Services\Front;
 
+use App\Models\Faq;
 use App\Models\Term;
 use App\Models\User;
 use App\Models\About;
@@ -10,8 +11,10 @@ use App\Models\Slider;
 use App\Models\Contact;
 use App\Models\Partner;
 use App\Models\Service;
+use App\Models\Reciever;
 use App\Models\AboutItem;
 use App\Models\Testimonial;
+use App\Models\WhyChooseUs;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 
@@ -96,7 +99,7 @@ class HomeService
 
     public function getStatistics()
     {
-        $totalUsers = User::count();
+        $totalUsers = User::count() + Reciever::count();
         $totalAdmins = Admin::count();
         $totalShippingCompanies = $this->getTotalShippingCompanies();
         $totalShippments = $this->getTotalShipments();
@@ -170,5 +173,21 @@ class HomeService
     {
         return Term::select('id', 'policy_description', 'updated_at')
             ->first();
+    }
+
+    public function getFaqs()
+    {
+        return Cache::remember('faqs', 3600, function () {
+            return Faq::where('status', 'active')
+                ->orderBy('id')
+                ->get();
+        });
+    }
+
+    public function getWhyChooseUs()
+    {
+        return Cache::remember('why_choose_us', 3600, function () {
+            return WhyChooseUs::first();
+        });
     }
 }

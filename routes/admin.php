@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\Reciever\RecieverController;
 use App\Http\Controllers\Admin\UserSettings\UserController;
 use App\Http\Controllers\Admin\UserSettings\AdminController;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
+use App\Http\Controllers\Admin\WebSiteSettings\FaqController;
 use App\Http\Controllers\Admin\WebSiteSettings\RoleController;
 use App\Http\Controllers\Admin\WebSiteSettings\TermsController;
 use App\Http\Controllers\Admin\Shipping\AdminShippingController;
@@ -20,6 +21,7 @@ use App\Http\Controllers\Admin\Transaction\TransactionController;
 use App\Http\Controllers\Admin\FrontSetting\About\AboutController;
 use App\Http\Controllers\Admin\WebSiteSettings\SettingsController;
 use App\Http\Controllers\Admin\FrontSettings\Slider\SliderController;
+use App\Http\Controllers\Admin\WebSiteSettings\WhyChooseUsController;
 use App\Http\Controllers\Admin\WebSiteSettings\AdminSettingsController;
 use App\Http\Controllers\Admin\AllowedCompanies\AllowedCompaniesController;
 use App\Http\Controllers\Admin\UserShippingPrice\UserShippingPriceController;
@@ -45,7 +47,7 @@ Route::middleware(['web'])->group(function () {
             Route::get('/login', 'loginForm')
                 ->name('auth.loginForm')
                 ->middleware('guest.admin');
-            Route::post('/login', 'login')
+            Route::post('/login-admin', 'login')
                 ->name('auth.login');
             Route::post('/logout', 'logout')
                 ->name('auth.logout')
@@ -269,7 +271,7 @@ Route::middleware(['web'])->group(function () {
                 Route::post('/about/update-about/{about}', 'updateAbout')
                     ->name('about.update')
                     ->middleware('has.permission:about.update');
-                Route::post('/about/update-item/{aboutItem}', 'updateAboutItem')
+                Route::post('/about/update-item', 'updateAboutItem')
                     ->name('about.update-item')
                     ->middleware('has.permission:about-items.update');
             });
@@ -498,6 +500,42 @@ Route::middleware(['web'])->group(function () {
                 Route::get('/users/{user}/shippings', 'index')
                     ->name('users.shippings')
                     ->middleware('has.permission:shippings.view');
+            });
+
+
+        Route::controller(FaqController::class)
+            ->group(function () {
+                Route::get('/faqs', 'index')
+                    ->name('faqs.index')
+                    ->middleware('has.permission:faqs.view');
+                Route::get('/faqs/create', 'create')
+                    ->name('faqs.create')
+                    ->middleware('has.permission:faqs.create');
+                Route::post('/faqs/store', 'store')
+                    ->name('faqs.store')
+                    ->middleware('has.permission:faqs.create');
+                Route::get('/faqs/edit/{faq}', 'edit')
+                    ->name('faqs.edit')
+                    ->middleware('has.permission:faqs.update');
+                Route::post('/faqs/update/{faq}', 'update')
+                    ->name('faqs.update')
+                    ->middleware('has.permission:faqs.update');
+                Route::post('/faqs/update-status/{faq}', 'updateStatus')
+                    ->name('faqs.updateStatus')
+                    ->middleware('has.permission:faqs.update');
+                Route::delete('/faqs/delete/{faq}', 'delete')
+                    ->name('faqs.delete')
+                    ->middleware('has.permission:faqs.delete');
+            });
+
+        Route::controller(WhyChooseUsController::class)
+            ->group(function () {
+                Route::get('/why-choose-us', 'index')
+                    ->name('why-choose-us.index')
+                    ->middleware('has.permission:why_choose_us.update');
+                Route::post('/why-choose-us/update', 'update')
+                    ->name('why-choose-us.update')
+                    ->middleware('has.permission:why_choose_us.update');
             });
     });
 });

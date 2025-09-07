@@ -618,4 +618,7 @@ return [
     'delete_all' => 'Delete all',
     'weight_summary' => 'Weight summary',
     'creating_shipment' => 'Creating Shipment...',
+    'question' => 'Question',
+    'answer' => 'Answer',
+    'why_choose_us' => 'Why Choose Us',
 ];

@@ -349,6 +349,13 @@ return [
         'date_from' => 'Date From',
         'date_to' => 'Date To',
         'trans_type' => 'Transaction Type',
+        'items' => 'Items',
+        'items.*.id' => 'Item ID',
+        'items.*.title' => 'Title',
+        'items.*.description' => 'Description',
+        'subtitle' => 'Subtitle',
+        'button_text' => 'Button Text',
+        'button_url' => 'Button URL',
     ],
 
     /*

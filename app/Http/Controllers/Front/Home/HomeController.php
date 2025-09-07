@@ -21,8 +21,10 @@ class HomeController extends Controller
         $services = $this->homeService->getActiveServices();
         $testimonials = $this->homeService->getActiveTestimonials();
         $statistics = $this->homeService->getStatistics();
+        $faqs = $this->homeService->getFaqs();
+        $whyChooseUs = $this->homeService->getWhyChooseUs();
 
-        return view('front.pages.home.index', compact('sliders', 'about', 'aboutItems', 'partners', 'services', 'testimonials', 'statistics'));
+        return view('front.pages.home.index', compact('sliders', 'about', 'aboutItems', 'partners', 'services', 'testimonials', 'statistics', 'faqs', 'whyChooseUs'));
     }
 
     public function contact(StoreContactRequest $request)

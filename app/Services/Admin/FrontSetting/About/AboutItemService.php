@@ -15,9 +15,12 @@ class AboutItemService
         return AboutItem::orderBy('id')->get();
     }
 
-    function updateAboutItem($request, $aboutItem)
+    function updateAboutItem($request)
     {
         $data = $request->validated();
-        $aboutItem->update($data);
+        foreach ($data['items'] as $item) {
+            AboutItem::where('id', $item['id'])
+                ->update($item);
+        }
     }
 }

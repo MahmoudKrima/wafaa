@@ -16,7 +16,8 @@
     @else
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap"
+            rel="stylesheet">
     @endif
 
     <link href="{{ asset('assets_' . assetLang()) }}/bootstrap/css/bootstrap.min.css" rel="stylesheet"
@@ -33,45 +34,44 @@
 
 <body class="form">
 
-<div class="header-container fixed-top">
-    <header class="header navbar navbar-expand-sm" style="background-color: #eeebeb59 !important; border:none !important;display:flex;justify-content: flex-start;">
-        <div> {{__('admin.choose_lang')}} </div>
-        <ul class="navbar-item flex-row navbar-dropdown" style="list-style:none; margin:0; padding:0;">
-            <li class="nav-item dropdown language-dropdown more-dropdown">
-                <div class="dropdown custom-dropdown-icon">
-                    <a class="dropdown-toggle btn" href="#" role="button" id="customDropdown" data-toggle="dropdown"
-                       aria-haspopup="true" aria-expanded="false"
-                       style="display:flex; align-items:center; gap:6px; padding:4px 8px;">
-                        <img src="{{ asset('assets_' . assetLang()) }}/assets/img/{{ app()->getLocale() }}.png"
-                             alt="flag"
-                             style="width:24px; height:auto; object-fit:cover; border-radius:3px;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                             stroke-linecap="round" stroke-linejoin="round"
-                             style="margin-{{ App::getLocale()==='ar' ? 'right' : 'left' }}:4px;">
-                            <polyline points="6 9 12 15 18 9"></polyline>
-                        </svg>
-                    </a>
+    <div class="header-container fixed-top">
+        <header class="header navbar navbar-expand-sm"
+            style="background-color: #eeebeb59 !important; border:none !important;display:flex;justify-content: flex-start;">
+            <div> {{__('admin.choose_lang')}} </div>
+            <ul class="navbar-item flex-row navbar-dropdown" style="list-style:none; margin:0; padding:0;">
+                <li class="nav-item dropdown language-dropdown more-dropdown">
+                    <div class="dropdown custom-dropdown-icon">
+                        <a class="dropdown-toggle btn" href="#" role="button" id="customDropdown" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="false"
+                            style="display:flex; align-items:center; gap:6px; padding:4px 8px;">
+                            <img src="{{ asset('assets_' . assetLang()) }}/assets/img/{{ app()->getLocale() }}.png"
+                                alt="flag" style="width:24px; height:auto; object-fit:cover; border-radius:3px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round"
+                                style="margin-{{ App::getLocale() === 'ar' ? 'right' : 'left' }}:4px;">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </a>
 
-                    <div class="dropdown-menu {{ App::getLocale()==='ar' ? 'dropdown-menu-left' : 'dropdown-menu-right' }} animated fadeInUp"
-                         aria-labelledby="customDropdown" style="min-width:130px; padding:4px 0;">
-                        @foreach (LaravelLocalization::getSupportedLocales() as $localeCode => $properties)
-                            @if ($localeCode == app()->getLocale()) @continue @endif
-                            <a class="dropdown-item d-flex align-items-center"
-                               href="{{ LaravelLocalization::getLocalizedURL($localeCode, null, [], true) }}"
-                               style="gap:6px; padding:6px 10px;">
-                                <img src="{{ asset('assets_' . assetLang()) }}/assets/img/{{ $localeCode }}.png"
-                                     alt="flag"
-                                     style="width:20px; height:auto; object-fit:cover; border-radius:3px;">
-                                <span dir="auto">{{ $properties['native'] }}</span>
-                            </a>
-                        @endforeach
+                        <div class="dropdown-menu {{ App::getLocale() === 'ar' ? 'dropdown-menu-left' : 'dropdown-menu-right' }} animated fadeInUp"
+                            aria-labelledby="customDropdown" style="min-width:130px; padding:4px 0;">
+                            @foreach (LaravelLocalization::getSupportedLocales() as $localeCode => $properties)
+                                @if ($localeCode == app()->getLocale()) @continue @endif
+                                <a class="dropdown-item d-flex align-items-center"
+                                    href="{{ LaravelLocalization::getLocalizedURL($localeCode, null, [], true) }}"
+                                    style="gap:6px; padding:6px 10px;">
+                                    <img src="{{ asset('assets_' . assetLang()) }}/assets/img/{{ $localeCode }}.png"
+                                        alt="flag" style="width:20px; height:auto; object-fit:cover; border-radius:3px;">
+                                    <span dir="auto">{{ $properties['native'] }}</span>
+                                </a>
+                            @endforeach
+                        </div>
                     </div>
-                </div>
-            </li>
-        </ul>
-    </header>
-</div>
+                </li>
+            </ul>
+        </header>
+    </div>
     <div class="form-container">
         <div class="form-form">
             <div class="form-form-wrap">
@@ -80,7 +80,7 @@
 
                         <h1 class="">{{ __('admin.reset_password') }}</h1>
                         <p class="signup-link">{{ __('admin.Enter your New Password') }}</p>
-                        <form class="text-left" method="POST" action="{{ route('admin.auth.resetPasswordSubmit') }}">
+                        <form class="text-left" method="POST" action="{{ route('user.auth.resetPasswordSubmit') }}">
                             @csrf
                             <div class="form">
                                 <input type="hidden" name="data" value="{{ request()->get('data') }}">

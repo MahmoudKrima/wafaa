@@ -144,6 +144,8 @@
                                 'services.view',
                                 'testimonials.view',
                                 'contacts.view',
+                                'faqs.view',
+                                'why_choose_us.update',
                             ])
                         )
                         <li class="menu {{ isRoute([
@@ -171,6 +173,10 @@
                     'admin.testimonials.create',
                     'admin.testimonials.edit',
                     'admin.contacts.index',
+                    'admin.faqs.index',
+                    'admin.faqs.create',
+                    'admin.faqs.edit',
+                    'admin.why-choose-us.index',
                 ]) ? 'active' : '' }}">
                             <a href="#settings" data-active="{{ isRoute([
                     'admin.settings.index',
@@ -197,6 +203,10 @@
                     'admin.testimonials.create',
                     'admin.testimonials.edit',
                     'admin.contacts.index',
+                    'admin.faqs.index',
+                    'admin.faqs.create',
+                    'admin.faqs.edit',
+                    'admin.why-choose-us.index',
                 ]) ? 'true' : 'false' }}" class="menu-toggle">
                                 <div class="base-menu">
                                     <div class="base-icons">
@@ -299,6 +309,8 @@
                     'services.view',
                     'testimonials.view',
                     'contacts.view',
+                    'faqs.view',
+                    'why_choose_us.update',
                 ])
             )
             <div class="submenu" id="settings">
@@ -390,6 +402,22 @@
                         <a href="{{ route('admin.contacts.index') }}">
                             <i class="fa fa-envelope" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
                             {{ __('admin.contacts') }} </a>
+                    </li>
+                    @endhaspermission
+
+                    @haspermission('faqs.view', 'admin')
+                    <li class="{{ isRoute(['admin.faqs.index', 'admin.faqs.edit', 'admin.faqs.create']) ? 'active' : '' }}">
+                        <a href="{{ route('admin.faqs.index') }}">
+                            <i class="fa fa-question-circle" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
+                            {{ __('admin.faqs') }} </a>
+                    </li>
+                    @endhaspermission
+
+                    @haspermission('why_choose_us.update', 'admin')
+                    <li class="{{ isRoute(['admin.why-choose-us.index']) ? 'active' : '' }}">
+                        <a href="{{ route('admin.why-choose-us.index') }}">
+                            <i class="fa fa-check" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
+                            {{ __('admin.why_choose_us') }} </a>
                     </li>
                     @endhaspermission
                 </ul>

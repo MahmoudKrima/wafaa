@@ -28,7 +28,12 @@ class LoginRequest extends FormRequest
                 'regex:/^(05|5|9665|96605|009665|\+9665)[0-9]{8}$/',
                 Rule::exists('users', 'phone'),
             ],
-            'password' => ['required']
+            'password' => [
+                'required',
+                'string',
+                'min:8',
+                'max:50'
+            ]
         ];
     }
 }

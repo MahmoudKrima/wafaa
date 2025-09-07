@@ -14,12 +14,14 @@ use App\Models\AllowedCompany;
 use App\Traits\TranslateTrait;
 use App\Filters\DateFromFilter;
 use App\Filters\NameJsonFilter;
+use App\Mail\WelcomeNewUserMail;
 use Illuminate\Http\Client\Pool;
 use Illuminate\Pipeline\Pipeline;
 use App\Enum\NotificationTypeEnum;
 use App\Filters\TransActionFilter;
 use App\Filters\WalletLogTypeFilter;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Mail;
 use App\Filters\ActivationStatusFilter;
 
 
@@ -74,7 +76,7 @@ class UserService
         }
 
         $headers = [
-            'accept'    => '*/*',
+            'accept' => '*/*',
             'x-api-key' => env('GHAYA_API_KEY', 'xwqn5mb5mpgf5u3vpro09i8pmw9fhkuu'),
         ];
         $responses = Http::pool(function (Pool $pool) use ($ids, $headers) {
@@ -86,7 +88,7 @@ class UserService
         });
 
         $outList = [];
-        $outMap  = [];
+        $outMap = [];
 
         foreach ($responses as $i => $response) {
             $id = $ids[$i];
@@ -126,6 +128,7 @@ class UserService
         $data['created_by'] = getAdminIdOrCreatedBy();
         $data['name'] = $this->translate($data['name_ar'], $data['name_en']);
         $data['added_by'] = auth('admin')->id();
+        $plainPassword = $data['password'];
         $user = User::create($data);
         foreach ($data['shipping_prices'] as $shippingPrice) {
             $user->shippingPrices()->create([
@@ -148,11 +151,11 @@ class UserService
                 'description' => [
                     'ar' => __('admin.deposit_balance', [
                         'previous' => 0,
-                        'current'  => $data['balance']
+                        'current' => $data['balance']
                     ], 'ar'),
                     'en' => __('admin.deposit_balance', [
                         'previous' => 0,
-                        'current'  => $data['balance']
+                        'current' => $data['balance']
                     ], 'en'),
                 ],
             ]);
@@ -163,12 +166,16 @@ class UserService
             ];
 
             auth('admin')->user()->notifications()->create([
-                'id'               => (string) Str::uuid(),
-                'type'             => NotificationTypeEnum::BALANCEDEPOSITED->value,
-                'data'             => $message,
+                'id' => (string) Str::uuid(),
+                'type' => NotificationTypeEnum::BALANCEDEPOSITED->value,
+                'data' => $message,
                 'reciverable_type' => User::class,
-                'reciverable_id'   => $user->id,
+                'reciverable_id' => $user->id,
             ]);
+        }
+        if (env('SEND_MAIL', false)) {
+            Mail::to($user->email)
+                ->send(new WelcomeNewUserMail($user, $plainPassword));
         }
         return $user;
     }
@@ -199,11 +206,11 @@ class UserService
                 'description' => [
                     'ar' => __('admin.deposit_balance', [
                         'previous' => $oldBalance,
-                        'current'  => $data['balance']
+                        'current' => $data['balance']
                     ], 'ar'),
                     'en' => __('admin.deposit_balance', [
                         'previous' => $oldBalance,
-                        'current'  => $data['balance']
+                        'current' => $data['balance']
                     ], 'en'),
                 ],
             ]);
@@ -215,11 +222,11 @@ class UserService
                 ];
 
                 auth('admin')->user()->notifications()->create([
-                    'id'               => (string) Str::uuid(),
-                    'type'             => NotificationTypeEnum::BALANCEDEPOSITED->value,
-                    'data'             => $message,
+                    'id' => (string) Str::uuid(),
+                    'type' => NotificationTypeEnum::BALANCEDEPOSITED->value,
+                    'data' => $message,
                     'reciverable_type' => User::class,
-                    'reciverable_id'   => $user->id,
+                    'reciverable_id' => $user->id,
                 ]);
             } else {
                 $message = [
@@ -229,11 +236,11 @@ class UserService
                 ];
 
                 auth('admin')->user()->notifications()->create([
-                    'id'               => (string) Str::uuid(),
-                    'type'             => NotificationTypeEnum::BALANCEDEDUCTION->value,
-                    'data'             => $message,
+                    'id' => (string) Str::uuid(),
+                    'type' => NotificationTypeEnum::BALANCEDEDUCTION->value,
+                    'data' => $message,
                     'reciverable_type' => User::class,
-                    'reciverable_id'   => $user->id,
+                    'reciverable_id' => $user->id,
                 ]);
             }
         }
@@ -251,9 +258,9 @@ class UserService
             $seen[] = $companyId;
 
             $attrs = [
-                'company_name'         => $row['name'] ?? null,
-                'local_price'          => isset($row['localprice']) && $row['localprice'] !== '' ? $row['localprice'] : null,
-                'international_price'  => isset($row['internationalprice']) && $row['internationalprice'] !== '' ? $row['internationalprice'] : null,
+                'company_name' => $row['name'] ?? null,
+                'local_price' => isset($row['localprice']) && $row['localprice'] !== '' ? $row['localprice'] : null,
+                'international_price' => isset($row['internationalprice']) && $row['internationalprice'] !== '' ? $row['internationalprice'] : null,
             ];
 
             $user->shippingPrices()->updateOrCreate(

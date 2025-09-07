@@ -15,13 +15,14 @@ class AboutController extends Controller
     public function __construct(
         private AboutService $aboutService,
         private AboutItemService $aboutItemService
-    ) {}
+    ) {
+    }
 
     public function index()
     {
         $about = $this->aboutService->getAbout();
         $aboutItems = $this->aboutItemService->getAll();
-        
+
         return view('dashboard.pages.website_setting.about.index', compact('about', 'aboutItems'));
     }
 
@@ -29,7 +30,7 @@ class AboutController extends Controller
     {
         $about = $this->aboutService->getAbout();
         $aboutItems = $this->aboutItemService->getAll();
-        
+
         return view('dashboard.pages.website_setting.about.edit', compact('about', 'aboutItems'));
     }
 
@@ -39,9 +40,10 @@ class AboutController extends Controller
         return back()->with("Success", __('admin.updated_successfully'));
     }
 
-    public function updateAboutItem(UpdateAboutItemRequest $request, AboutItem $aboutItem)
+    public function updateAboutItem(UpdateAboutItemRequest $request)
     {
-        $this->aboutItemService->updateAboutItem($request, $aboutItem);
-        return back()->with("Success", __('admin.updated_successfully'));
+        $this->aboutItemService->updateAboutItem($request);
+        return back()
+            ->with("Success", __('admin.updated_successfully'));
     }
 }

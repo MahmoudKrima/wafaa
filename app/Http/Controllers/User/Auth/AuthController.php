@@ -2,22 +2,18 @@
 
 namespace App\Http\Controllers\User\Auth;
 
-use Throwable;
-use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\Auth\ForgetPasswordRequest;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\UserResetPasswordMail;
 use App\Http\Requests\User\Auth\LoginRequest;
 use App\Http\Requests\User\Auth\ResetPasswordRequest;
+use App\Http\Requests\User\Auth\ResetPasswordSubmitRequest;
 use App\Services\User\Auth\AuthService;
 
 class AuthController extends Controller
 {
-    public function __construct(private AuthService $authService) {}
+    public function __construct(private AuthService $authService)
+    {
+    }
 
     public function loginForm()
     {
@@ -49,25 +45,53 @@ class AuthController extends Controller
 
     public function forgetPassword(ForgetPasswordRequest $request)
     {
-        $data = $request->validated();
-        return $this->authService->sendResetPasswordLink($data);
-    }
-
-    public function resetPasswordForm($token, $email)
-    {
-        return $this->authService->resetPasswordForm($token, $email);
+        $res = $this->authService->forgetPassword($request);
+        if ($res == 'wrong credentials') {
+            return back()
+                ->with('Error', __('admin.credentials_invalid'));
+        } elseif ($res == 'reset link sent') {
+            return back()
+                ->with('Success', __('admin.reset_link_sent'));
+        } elseif ($res == 'error sending email') {
+            return back()
+                ->with('Error', __('admin.error_sending_email'));
+        } else {
+            return back()
+                ->with('Error', __('admin.server_error'));
+        }
     }
 
     public function resetPassword(ResetPasswordRequest $request)
     {
-        $data = $request->validated();
-        return $this->authService->resetPassword($data);
+        $isValid = $this->authService->validateResetToken($request);
+        if (!$isValid) {
+            return redirect()
+                ->route('user.auth.forgetPassword')
+                ->with('Error', __('admin.wrong_token'));
+        }
+        return view('user.pages.auth.reset_password');
+    }
+
+    public function resetPasswordSubmit(ResetPasswordSubmitRequest $request)
+    {
+        $response = $this->authService->resetPasswordSubmit($request);
+        if ($request == 'invalid token') {
+            return back()
+                ->with('Error', __('admin.wrong_token'));
+        } elseif ($response == 'server error') {
+            return back()
+                ->with('Error', __('admin.server_error'));
+        } else {
+            return redirect()
+                ->route('user.auth.loginForm')
+                ->with('Success', __('admin.password_restored_successfully'));
+        }
     }
 
     public function logout()
     {
-        auth('web')->logout();
+        $this->authService->logout();
         return redirect()
-            ->to(route('user.auth.loginForm'));
+            ->route('user.auth.loginForm');
     }
 }

@@ -42,18 +42,24 @@ class AuthService
         if (app()->getLocale() == 'ar') {
             $subject = 'استعادة كلمة المرور';
             $encryptedData = Crypt::encryptString($email . '|' . $token);
-            $resetLink = url('/reset-password?data=' . urlencode($encryptedData));
+            $resetLink = url(app()->getLocale() . '/admin/reset-password?data=' . urlencode($encryptedData));
             $body = "<p>قم بالضغط على الرابط لاستعادة كلمة المرور</p>
             <a href=\"$resetLink\">استعادة كلمة المرور</a>";
         } else {
             $subject = 'Reset Password';
             $encryptedData = Crypt::encryptString($email . '|' . $token);
-            $resetLink = url('/reset-password?data=' . urlencode($encryptedData));
+            $resetLink = url(app()->getLocale() . '/admin/reset-password?data=' . urlencode($encryptedData));
             $body = "<p>Click the following link to reset your password:</p>
             <a href=\"$resetLink\">Reset Password</a>";
         }
         Mail::to($admin)
             ->send(new ForgetPasswordMail($subject, $body));
+    }
+
+    private function getAdminByEmail($email)
+    {
+        return Admin::where('email', $email)
+            ->first();
     }
 
     public function forgetPassword($request)

@@ -23,9 +23,7 @@ class ResetPasswordRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'token' => ['required', 'string', Rule::exists('Users', 'token')->where('email', request()->input('email'))->where('status', 'active')],
-            'email' => ['required', 'email', Rule::exists('Users', 'email')->where('token', request()->input('token'))->where('status', 'active')],
-            'new_password' => ['required', 'min:8', 'max:30', 'confirmed'],
+            'data' => ['required', 'string'],
         ];
     }
 }

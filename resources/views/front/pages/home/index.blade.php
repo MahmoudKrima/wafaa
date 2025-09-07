@@ -227,7 +227,8 @@
                     <div class="col-xl-5 col-lg-5">
                         <div class="section-title">
                             <h2 class="text-white wow fadeInDown animated" data-wow-delay="400ms">
-                                {{ __('admin.contact_us_now') }}</h2>
+                                {{ __('admin.contact_us_now') }}
+                            </h2>
                         </div>
                         <p class="text-white wow fadeInUp animated" data-wow-delay="200ms"
                             style="color:#1c1d1e !important;">
@@ -295,57 +296,30 @@
             <div class="row justify-content-center">
                 <div class="col-xl-8 col-lg-8 text-center">
                     <div class="section-title wow fadeInUp animated" data-wow-delay="200ms">
-                        <h2><span>الأسئلة الشائعة</span></h2>
+                        <h2><span>{{ __('admin.faqs') }}</span></h2>
                     </div>
                     <div class="faq-wrap">
                         <div class="cp-custom-accordion mt-60">
                             <div class="accordions" id="accordionExample">
-                                <div class="accordion-items">
-                                    <h2 class="accordion-header" id="headingOne">
-                                        <button class="accordion-buttons" type="button" data-bs-toggle="collapse"
-                                            data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                            <span>01</span>ما هي شركة دبليو إم للشحن ؟.
-                                        </button>
-                                    </h2>
-                                    <div id="collapseOne" class="accordion-collapse collapse show"
-                                        aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                                        <div class="accordion-body">
-                                            هي شركة تربط شركات الشحن بالتجار والشركات والمؤسسات عن طريق توفير بوليصات الشحن
-                                            بأسعار منافسة ومميزات حصرية
+                                @foreach($faqs as $i => $faq)
+                                    <div class="accordion-items">
+                                        <h2 class="accordion-header" id="headingOne{{ $faq->id }}">
+                                            <button class="accordion-buttons {{ $i == 0 ? '' : 'collapsed' }}" type="button"
+                                                data-bs-toggle="collapse" data-bs-target="#collapseOne{{ $faq->id }}"
+                                                aria-expanded="{{$i == 0 ? 'true' : 'false'}}"
+                                                aria-controls="collapseOne{{ $faq->id }}">
+                                                <span>{{ $i < 10 ? '0' . ($i + 1) : ($i + 1) }}</span>{{ $faq->question }}
+                                            </button>
+                                        </h2>
+                                        <div id="collapseOne{{ $faq->id }}"
+                                            class="accordion-collapse collapse {{ $i == 0 ? 'show' : '' }}"
+                                            aria-labelledby="headingOne{{ $faq->id }}" data-bs-parent="#accordionExample">
+                                            <div class="accordion-body">
+                                                {{ $faq->answer }}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="accordion-items">
-                                    <h2 class="accordion-header" id="headingTwo">
-                                        <button class="accordion-buttons collapsed" type="button" data-bs-toggle="collapse"
-                                            data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                            <span>02</span>What does the category encompass?
-                                        </button>
-                                    </h2>
-                                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
-                                        data-bs-parent="#accordionExample">
-                                        <div class="accordion-body">
-                                            It is a long established fact t a reader will be distracted by the mabn readable
-                                            content of ajlijkl page when looking at its layout. Lorem Ipsum is simpl
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="accordion-items">
-                                    <h2 class="accordion-header" id="headingThree">
-                                        <button class="accordion-buttons collapsed" type="button" data-bs-toggle="collapse"
-                                            data-bs-target="#collapseThree" aria-expanded="false"
-                                            aria-controls="collapseThree">
-                                            <span>03</span>Is mental health support logistics category?
-                                        </button>
-                                    </h2>
-                                    <div id="collapseThree" class="accordion-collapse collapse"
-                                        aria-labelledby="headingThree" data-bs-parent="#accordionExample">
-                                        <div class="accordion-body">
-                                            It is a long established fact t a reader will be distracted by the mabn readable
-                                            content of ajlijkl page when looking at its layout. Lorem Ipsum is simpl
-                                        </div>
-                                    </div>
-                                </div>
+                                @endforeach
                             </div>
                         </div>
                     </div>
@@ -362,21 +336,19 @@
             <div class="row align-items-center">
                 <div class="col-xl-6 col-lg-6 wow fadeInLeft animated" data-wow-delay="200ms">
                     <div class="about-img-wrap">
-                        <img src="{{ asset('front/assets/img/about/about-1.png') }}" alt="">
+                        <img src="{{ displayImage($whyChooseUs->image) }}" alt="">
                     </div>
                 </div>
                 <div class="col-xl-6 col-lg-6 wow fadeInUp animated" data-wow-delay="300ms">
                     <div class="about-content-wrap">
                         <div class="section-title">
-                            <h2>ليه تختار منصة دبليو إم اكسبريس ؟</h2>
+                            <h2>{{ $whyChooseUs->title }}</h2>
                         </div>
-                        <p> نجمع بين الأسعار التنافسية والشراكات القوية، مع شبكة شحن واسعة النطاق تغطي كافة البلدان، وخدمة
-                            عملاء استثنائية لتتبع شحنتك بدقة وتقدم خيارات دفع متعددة وآمنة، كل هذا متاح على مدار الساعة
-                            لتلبية احتياجاتك.</p>
+                        {{$whyChooseUs->description}}
                     </div>
                     @if(!auth()->guard('web')->check() && !auth()->guard('admin')->check())
                         <a href="{{ route('user.auth.loginForm') }}" class="bordered-btn mt-40">
-                            تسجيل الدخول <i class="fa-solid fa-arrow-left"></i>
+                            {{__('admin.login')}} <i class="fa-solid fa-arrow-left"></i>
                         </a>
                     @endif
                 </div>
