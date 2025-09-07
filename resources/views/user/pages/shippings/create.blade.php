@@ -460,8 +460,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!----receivers and shipment details--->
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="card mb-4" style="border-radius:15px;">
@@ -493,18 +491,14 @@
                                         </div>
                                         <div class="row">
                                             <div class="col-md-12">
-                                                <div class="mt-3">
-                                                    <p><strong>{{ __('admin.package_description') . ': ' }}</strong></p>
-                                                    <p id="package_description" class="text-muted">{{ __('admin.no_special_notes') }}</p>
-                                                </div>
+                                                <p><strong class="mb-1">{{ __('admin.package_description') }}</strong></p>
+                                                <div id="package-description-preview" class="text-muted"></div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-                        <!----shipment price and cost details--->
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="card mb-4" style="border-radius:15px;">

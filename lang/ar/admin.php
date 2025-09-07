@@ -627,4 +627,5 @@ return [
     'answer' => 'الجواب',
     'why_choose_us' => 'لماذا نحن',
     'extra_fees_weight' => 'تكلفة الوزن الإضافي',
+    'something_wrong' => 'هناك خطأ ما. يرجى المحاولة مرة أخرى.',
 ];

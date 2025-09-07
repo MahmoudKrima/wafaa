@@ -380,6 +380,7 @@
             const el = document.getElementById(id);
             if (el) el.textContent = (val ?? "").toString();
         };
+
         const pkgType = _textOfSelect("package_type") || _val("package_type");
         const pkgCount = _val("package_number") || "1";
         const weight = _val("weight") || "0";
@@ -388,6 +389,10 @@
         const height = _val("height") || "0";
         const notes =
             _val("package_notes") || t("no_special_notes", "No special notes");
+        const desc =
+            _val("package_description") ||
+            t("no_description", "No description");
+
         set(
             "package-type-preview",
             pkgType || t("package_type", "Package Type")
@@ -400,12 +405,15 @@
         set("package-length-preview", length || t("length_cm", "Length (cm)"));
         set("package-width-preview", width || t("width_cm", "Width (cm)"));
         set("package-height-preview", height || t("height_cm", "Height (cm)"));
+        set("package-description-preview", desc);
+
         const notesEl = document.getElementById("package-notes-preview");
         if (notesEl)
             notesEl.textContent = notes.trim()
                 ? notes
                 : t("no_special_notes", "No special notes");
     }
+
     function ensureCodAmountRow() {
         const codFeesEl = document.getElementById(
             "cod-fee-per-one-receiver-preview"
