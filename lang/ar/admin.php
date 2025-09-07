@@ -242,6 +242,7 @@ return [
     'edit_about' => 'تعديل بيانات من نحن',
     'edit_about_items' => 'تعديل المعلومات الفرعية',
     'item' => 'عنصر',
+    'added_at' => 'تاريخ الإضافة',
     'add_new_service' => 'إضافة خدمة جديدة',
     'shippings' => 'الشحنات',
     'create_shipping' => 'إنشاء شحنة',

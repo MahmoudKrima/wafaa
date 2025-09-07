@@ -115,6 +115,8 @@
                                     <th scope="col">{{ __('admin.attachment') }}</th>
                                     <th scope="col">{{ __('admin.edited_by') }}</th>
                                     <th scope="col">{{ __('admin.status') }}</th>
+                                    <th scope="col">{{ __('admin.added_at') }}</th>
+                                    <th scope="col">{{ __('admin.updated_at') }}</th>
                                     @if (auth('admin')->user()->hasAnyPermission(['transactions.update', 'transactions.delete', 'plan_transaction.view']))
                                     <th class="text-center" scope="col">{{ trans('admin.actions') }}</th>
                                     @endif
@@ -165,6 +167,12 @@
                                         @else
                                         <span class="{{ $transaction->status->badge() }}">{{ $transaction->status->lang() }}</span>
                                         @endif
+                                    </td>
+                                    <td>
+                                        <p class="mb-0">{{ $transaction->created_at }}</p>
+                                    </td>
+                                    <td>
+                                        <p class="mb-0">{{ $transaction->updated_at }}</p>
                                     </td>
                                     @if (auth('admin')->user()->hasAnyPermission(['transactions.update', 'transactions.delete', 'plan_transaction.view']))
                                     <td class="text-center">
