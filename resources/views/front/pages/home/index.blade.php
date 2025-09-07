@@ -227,7 +227,8 @@
                     <div class="col-xl-5 col-lg-5">
                         <div class="section-title">
                             <h2 class="text-white wow fadeInDown animated" data-wow-delay="400ms">
-                                {{ __('admin.contact_us_now') }}</h2>
+                                {{ __('admin.contact_us_now') }}
+                            </h2>
                         </div>
                         <p class="text-white wow fadeInUp animated" data-wow-delay="200ms"
                             style="color:#1c1d1e !important;">
