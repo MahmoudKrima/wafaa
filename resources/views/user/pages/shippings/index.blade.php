@@ -122,14 +122,14 @@
                                                     <div class="col-md-3 mb-3">
                                                         <label for="dateFrom">{{ __('admin.dateFrom') }}</label>
                                                         <input type="date" value="{{ request()->get('dateFrom') }}"
-                                                               name="dateFrom" id="dateFrom" class="form-control"
-                                                               placeholder="{{ __('admin.dateFrom') }}">
+                                                            name="dateFrom" id="dateFrom" class="form-control"
+                                                            placeholder="{{ __('admin.dateFrom') }}">
                                                     </div>
                                                     <div class="col-md-3 mb-3">
                                                         <label for="dateTo">{{ __('admin.dateTo') }}</label>
                                                         <input type="date" value="{{ request()->get('dateTo') }}"
-                                                               name="dateTo" id="dateTo" class="form-control"
-                                                               placeholder="{{ __('admin.dateTo') }}">
+                                                            name="dateTo" id="dateTo" class="form-control"
+                                                            placeholder="{{ __('admin.dateTo') }}">
                                                     </div>
 
                                                 </div>
@@ -197,7 +197,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        {{ \Carbon\Carbon::parse($shipment['createdAt'])->timezone('Asia/Riyadh')->format('d/m/Y H:i') }}
+                                        {{ \Carbon\Carbon::parse($shipment['createdAt'])->format('d/m/Y H:i') }}
                                     </td>
                                     <td>
                                         @php
