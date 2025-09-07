@@ -2,6 +2,7 @@
 
 namespace App\Services\Front;
 
+use App\Models\Reciever;
 use App\Models\Term;
 use App\Models\User;
 use App\Models\About;
@@ -96,7 +97,7 @@ class HomeService
 
     public function getStatistics()
     {
-        $totalUsers = User::count();
+        $totalUsers = User::count() + Reciever::count();
         $totalAdmins = Admin::count();
         $totalShippingCompanies = $this->getTotalShippingCompanies();
         $totalShippments = $this->getTotalShipments();

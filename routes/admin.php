@@ -269,7 +269,7 @@ Route::middleware(['web'])->group(function () {
                 Route::post('/about/update-about/{about}', 'updateAbout')
                     ->name('about.update')
                     ->middleware('has.permission:about.update');
-                Route::post('/about/update-item/{aboutItem}', 'updateAboutItem')
+                Route::post('/about/update-item', 'updateAboutItem')
                     ->name('about.update-item')
                     ->middleware('has.permission:about-items.update');
             });
