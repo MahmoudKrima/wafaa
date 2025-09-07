@@ -1,576 +1,505 @@
 @extends('dashboard.layouts.app')
 @section('title', __('admin.dashboard'))
+
 @push('css')
     <link href="{{ asset('assets_' . assetLang()) }}/plugins/apex/apexcharts.css" rel="stylesheet" type="text/css">
     <link href="{{ asset('assets_' . assetLang()) }}/assets/css/dashboard/dash_1.css" rel="stylesheet" type="text/css"
         class="dashboard-analytics" />
+
+    <style>
+        /* ===== Metric cards ===== */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 576px) {
+            .metrics-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+        }
+
+        @media (min-width: 576px) and (max-width: 768px) {
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 768px) and (max-width: 992px) {
+            .metrics-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (min-width: 992px) {
+            .metrics-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .metrics-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (min-width: 1920px) {
+            .metrics-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .navbar .language-dropdown .custom-dropdown-icon a.dropdown-toggle:before,
+        .navbar .navbar-item .nav-item.user-profile-dropdown .nav-link.user:before {
+            top: 17px !important;
+        }
+
+        .metric-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            min-height: 100px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .metric-card .meta {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .metric-card .label {
+            color: #6b7280;
+            font-size: 14px;
+            font-weight: 500;
+            margin: 0 0 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .metric-card .value {
+            margin: 0;
+            font-weight: 700;
+            font-size: 50px;
+            color: #1b6aab;
+            line-height: 1.2;
+            word-break: break-word;
+        }
+
+        .metric-card .icon {
+            flex: 0 0 auto;
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--icon-bg, #f3f4f6);
+            color: var(--icon-fg, #374151);
+            position: relative;
+        }
+
+        .metric-card .icon::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--icon-bg, #f3f4f6) 0%, rgba(255, 255, 255, 0.8) 100%);
+            z-index: -1;
+        }
+
+        .metric-card .icon i {
+            font-size: 24px;
+            z-index: 1;
+        }
+
+        /* Color variants */
+        .is-primary {
+            --icon-bg: #dbeafe;
+            --icon-fg: #1d4ed8;
+        }
+
+        .is-success {
+            --icon-bg: #dcfce7;
+            --icon-fg: #16a34a;
+        }
+
+        .is-warning {
+            --icon-bg: #fef3c7;
+            --icon-fg: #d97706;
+        }
+
+        .is-danger {
+            --icon-bg: #fee2e2;
+            --icon-fg: #dc2626;
+        }
+
+        .is-info {
+            --icon-bg: #dbeafe;
+            --icon-fg: #2563eb;
+        }
+
+        .is-secondary {
+            --icon-bg: #f3f4f6;
+            --icon-fg: #6b7280;
+        }
+
+        .is-purple {
+            --icon-bg: #e9d5ff;
+            --icon-fg: #9333ea;
+        }
+
+        .is-orange {
+            --icon-bg: #fed7aa;
+            --icon-fg: #ea580c;
+        }
+
+        .is-slate {
+            --icon-bg: #f1f5f9;
+            --icon-fg: #475569;
+        }
+
+        /* RTL Support */
+        [dir="rtl"] .metric-card {
+            direction: rtl;
+        }
+
+        [dir="rtl"] .metric-card .meta {
+            text-align: right;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 576px) {
+            .metric-card {
+                padding: 20px;
+                min-height: 90px;
+            }
+
+            .metric-card .value {
+                font-size: 24px;
+            }
+
+            .metric-card .icon {
+                width: 50px;
+                height: 50px;
+            }
+
+            .metric-card .icon i {
+                font-size: 20px;
+            }
+        }
+    </style>
 @endpush
+
 @section('content')
-    <div class="layout-px-spacing">
+    @php
+        $rtl = app()->getLocale() === 'ar' ? 'rtl' : 'ltr';
+        $st = $stats['status'] ?? [];
+        $localCount = data_get($stats, 'methods.local', 0);
+        $intlCount = data_get($stats, 'methods.international', 0);
+        $totalCount = (int) ($stats['total'] ?? 0);
+    @endphp
 
-        <div class="row layout-top-spacing">
+    <div class="layout-px-spacing" dir="{{ $rtl }}">
 
-            <div class="col-xl-5 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing">
-                <div class="widget widget-one">
-                    <div class="widget-heading">
-                        <h6 class="">Statistics</h6>
-                    </div>
-                    <div class="w-chart">
-                        <div class="w-chart-section">
-                            <div class="w-detail">
-                                <p class="w-title">Total Visits</p>
-                                <p class="w-stats">423,964</p>
-                            </div>
-                            <div class="w-chart-render-one">
-                                <div id="total-users"></div>
-                            </div>
-                        </div>
 
-                        <div class="w-chart-section">
-                            <div class="w-detail">
-                                <p class="w-title">Paid Visits</p>
-                                <p class="w-stats">7,929</p>
-                            </div>
-                            <div class="w-chart-render-one">
-                                <div id="paid-visits"></div>
-                            </div>
-                        </div>
-                    </div>
+        <div class="alert alert-info mt-2" role="alert">
+            <strong> {{__('admin.shippments_statistics')}}</strong>
+        </div>
+
+        {{-- ===== Metrics as separate cards ===== --}}
+        <div class="metrics-grid">
+
+            {{-- Receivers --}}
+
+            {{-- Total Shipments --}}
+            <div class="metric-card is-info">
+                <div class="meta">
+                    <p class="label">{{ __('admin.shipments_total') }}</p>
+                    <p class="value">{{ number_format($totalCount) }}</p>
                 </div>
+                <div class="icon"><i class="fa fa-shipping-fast"></i></div>
             </div>
 
-            <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-12 layout-spacing">
-                <div class="widget widget-account-invoice-two">
-                    <div class="widget-content">
-                        <div class="account-box">
-                            <div class="info">
-                                <h5 class="">Pro Plan</h5>
-                                <p class="inv-balance">$10,344</p>
-                            </div>
-                            <div class="acc-action">
-                                <div class="">
-                                    <a href="javascript:void(0);"><svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                            height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                            class="feather feather-plus">
-                                            <line x1="12" y1="5" x2="12" y2="19">
-                                            </line>
-                                            <line x1="5" y1="12" x2="19" y2="12">
-                                            </line>
-                                        </svg></a>
-                                    <a href="javascript:void(0);"><svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                            height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                            class="feather feather-credit-card">
-                                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2">
-                                            </rect>
-                                            <line x1="1" y1="10" x2="23" y2="10">
-                                            </line>
-                                        </svg></a>
-                                </div>
-                                <a href="javascript:void(0);">Upgrade</a>
-                            </div>
-                        </div>
-                    </div>
+            {{-- Local Shipments --}}
+            <div class="metric-card is-info">
+                <div class="meta">
+                    <p class="label">{{ __('admin.local_shipments') }}</p>
+                    <p class="value">{{ number_format($localCount) }}</p>
                 </div>
+                <div class="icon"><i class="fa fa-truck-arrow-right"></i></div>
             </div>
 
-            <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 col-12 layout-spacing">
-                <div class="widget widget-card-four">
-                    <div class="widget-content">
-                        <div class="w-content">
-                            <div class="w-info">
-                                <h6 class="value">$ 45,141</h6>
-                                <p class="">Expenses</p>
-                            </div>
-                            <div class="">
-                                <div class="w-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round" class="feather feather-home">
-                                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                                        <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="progress">
-                            <div class="progress-bar bg-gradient-secondary" role="progressbar" style="width: 57%"
-                                aria-valuenow="57" aria-valuemin="0" aria-valuemax="100">
-                            </div>
-                        </div>
-                    </div>
+            {{-- International Shipments --}}
+            <div class="metric-card is-primary">
+                <div class="meta">
+                    <p class="label">{{ __('admin.international_shipments') }}</p>
+                    <p class="value">{{ number_format($intlCount) }}</p>
                 </div>
+                <div class="icon"><i class="fa fa-globe-europe"></i></div>
             </div>
 
-            <div class="col-xl-9 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing">
-                <div class="widget widget-chart-three">
-                    <div class="widget-heading">
-                        <div class="">
-                            <h5 class="">Unique Visitors</h5>
-                        </div>
-
-                        <div class="dropdown  custom-dropdown">
-                            <a class="dropdown-toggle" href="#" role="button" id="uniqueVisitors"
-                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round"
-                                    class="feather feather-more-horizontal">
-                                    <circle cx="12" cy="12" r="1"></circle>
-                                    <circle cx="19" cy="12" r="1"></circle>
-                                    <circle cx="5" cy="12" r="1"></circle>
-                                </svg>
-                            </a>
-
-                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="uniqueVisitors">
-                                <a class="dropdown-item" href="javascript:void(0);">View</a>
-                                <a class="dropdown-item" href="javascript:void(0);">Update</a>
-                                <a class="dropdown-item" href="javascript:void(0);">Download</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="widget-content">
-                        <div id="uniqueVisits"></div>
-                    </div>
+            {{-- Status: Pending --}}
+            <div class="metric-card is-warning">
+                <div class="meta">
+                    <p class="label">{{ __('admin.pending_shipments') }}</p>
+                    <p class="value">{{ number_format($st['pending'] ?? 0) }}</p>
                 </div>
+                <div class="icon"><i class="fa fa-list-check"></i></div>
             </div>
 
-            <div class="col-xl-3 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
-                <div class="widget widget-activity-three">
-
-                    <div class="widget-heading">
-                        <h5 class="">Notifications</h5>
-                    </div>
-
-                    <div class="widget-content">
-
-                        <div class="mt-container mx-auto">
-                            <div class="timeline-line">
-
-                                <div class="item-timeline timeline-new">
-                                    <div class="t-dot">
-                                        <div class="t-primary"><svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                                height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                class="feather feather-check">
-                                                <polyline points="20 6 9 17 4 12"></polyline>
-                                            </svg></div>
-                                    </div>
-                                    <div class="t-content">
-                                        <div class="t-uppercontent">
-                                            <h5>Logs</h5>
-                                            <span class="">27 Feb, 2020</span>
-                                        </div>
-                                        <p><span>Updated</span> Server Logs</p>
-                                        <div class="tags">
-                                            <div class="badge badge-primary">Logs</div>
-                                            <div class="badge badge-success">CPanel</div>
-                                            <div class="badge badge-warning">Update</div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="item-timeline timeline-new">
-                                    <div class="t-dot">
-                                        <div class="t-success"><svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                                height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                class="feather feather-mail">
-                                                <path
-                                                    d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z">
-                                                </path>
-                                                <polyline points="22,6 12,13 2,6"></polyline>
-                                            </svg></div>
-                                    </div>
-                                    <div class="t-content">
-                                        <div class="t-uppercontent">
-                                            <h5>Mail</h5>
-                                            <span class="">28 Feb, 2020</span>
-                                        </div>
-                                        <p>Send Mail to <a href="javascript:void(0);">HR</a> and <a
-                                                href="javascript:void(0);">Admin</a></p>
-                                        <div class="tags">
-                                            <div class="badge badge-primary">Admin</div>
-                                            <div class="badge badge-success">HR</div>
-                                            <div class="badge badge-warning">Mail</div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="item-timeline timeline-new">
-                                    <div class="t-dot">
-                                        <div class="t-danger"><svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                                height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                class="feather feather-check">
-                                                <polyline points="20 6 9 17 4 12"></polyline>
-                                            </svg></div>
-                                    </div>
-                                    <div class="t-content">
-                                        <div class="t-uppercontent">
-                                            <h5>Task Completed</h5>
-                                            <span class="">01 Mar, 2020</span>
-                                        </div>
-                                        <p>Backup <span>Files EOD</span></p>
-                                        <div class="tags">
-                                            <div class="badge badge-primary">Backup</div>
-                                            <div class="badge badge-success">EOD</div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="item-timeline timeline-new">
-                                    <div class="t-dot">
-                                        <div class="t-warning"><svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                                height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                class="feather feather-file">
-                                                <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z">
-                                                </path>
-                                                <polyline points="13 2 13 9 20 9"></polyline>
-                                            </svg></div>
-                                    </div>
-                                    <div class="t-content">
-                                        <div class="t-uppercontent">
-                                            <h5>Collect Docs</h5>
-                                            <span class="">10 Mar, 2020</span>
-                                        </div>
-                                        <p>Collected documents from <a href="javascript:void(0);">Sara</a></p>
-                                        <div class="tags">
-                                            <div class="badge badge-success">Collect</div>
-                                            <div class="badge badge-warning">Docs</div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="item-timeline timeline-new">
-                                    <div class="t-dot">
-                                        <div class="t-dark"><svg xmlns="http://www.w3.org/2000/svg" width="24"
-                                                height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                class="feather feather-server">
-                                                <rect x="2" y="2" width="20" height="8" rx="2"
-                                                    ry="2"></rect>
-                                                <rect x="2" y="14" width="20" height="8" rx="2"
-                                                    ry="2"></rect>
-                                                <line x1="6" y1="6" x2="6" y2="6">
-                                                </line>
-                                                <line x1="6" y1="18" x2="6" y2="18">
-                                                </line>
-                                            </svg></div>
-                                    </div>
-                                    <div class="t-content">
-                                        <div class="t-uppercontent">
-                                            <h5>Reboot</h5>
-                                            <span class="">06 Apr, 2020</span>
-                                        </div>
-                                        <p>Server rebooted successfully</p>
-                                        <div class="tags">
-                                            <div class="badge badge-warning">Reboot</div>
-                                            <div class="badge badge-primary">Server</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            {{-- Status: Processing --}}
+            <div class="metric-card is-success">
+                <div class="meta">
+                    <p class="label">{{ __('admin.processing_shipments') }}</p>
+                    <p class="value">{{ number_format($st['processing'] ?? 0) }}</p>
                 </div>
+                <div class="icon"><i class="fa fa-refresh"></i></div>
             </div>
 
-            <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
-                <div class="widget-four">
-                    <div class="widget-heading">
-                        <h5 class="">Visitors by Browser</h5>
-                    </div>
-                    <div class="widget-content">
-                        <div class="vistorsBrowser">
-                            <div class="browser-list">
-                                <div class="w-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round" class="feather feather-chrome">
-                                        <circle cx="12" cy="12" r="10"></circle>
-                                        <circle cx="12" cy="12" r="4"></circle>
-                                        <line x1="21.17" y1="8" x2="12" y2="8">
-                                        </line>
-                                        <line x1="3.95" y1="6.06" x2="8.54" y2="14">
-                                        </line>
-                                        <line x1="10.88" y1="21.94" x2="15.46" y2="14">
-                                        </line>
-                                    </svg>
-                                </div>
-                                <div class="w-browser-details">
-                                    <div class="w-browser-info">
-                                        <h6>Chrome</h6>
-                                        <p class="browser-count">65%</p>
-                                    </div>
-                                    <div class="w-browser-stats">
-                                        <div class="progress">
-                                            <div class="progress-bar bg-gradient-primary" role="progressbar"
-                                                style="width: 65%" aria-valuenow="90" aria-valuemin="0"
-                                                aria-valuemax="100">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="browser-list">
-                                <div class="w-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round" class="feather feather-compass">
-                                        <circle cx="12" cy="12" r="10"></circle>
-                                        <polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76">
-                                        </polygon>
-                                    </svg>
-                                </div>
-                                <div class="w-browser-details">
-
-                                    <div class="w-browser-info">
-                                        <h6>Safari</h6>
-                                        <p class="browser-count">25%</p>
-                                    </div>
-
-                                    <div class="w-browser-stats">
-                                        <div class="progress">
-                                            <div class="progress-bar bg-gradient-danger" role="progressbar"
-                                                style="width: 35%" aria-valuenow="65" aria-valuemin="0"
-                                                aria-valuemax="100">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                            <div class="browser-list">
-                                <div class="w-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round" class="feather feather-globe">
-                                        <circle cx="12" cy="12" r="10"></circle>
-                                        <line x1="2" y1="12" x2="22" y2="12">
-                                        </line>
-                                        <path
-                                            d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
-                                        </path>
-                                    </svg>
-                                </div>
-                                <div class="w-browser-details">
-
-                                    <div class="w-browser-info">
-                                        <h6>Others</h6>
-                                        <p class="browser-count">15%</p>
-                                    </div>
-
-                                    <div class="w-browser-stats">
-                                        <div class="progress">
-                                            <div class="progress-bar bg-gradient-warning" role="progressbar"
-                                                style="width: 15%" aria-valuenow="15" aria-valuemin="0"
-                                                aria-valuemax="100">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
+            {{-- Status: delivered --}}
+            <div class="metric-card is-success">
+                <div class="meta">
+                    <p class="label">{{ __('admin.delivered_shipments') }}</p>
+                    <p class="value">{{ number_format($st['delivered'] ?? 0) }}</p>
                 </div>
+                <div class="icon"><i class="fa fa-check-circle"></i></div>
             </div>
 
-            <div class="col-xl-8 col-lg-12 col-md-12 col-sm-12 col-12 layout-spacing">
-                <div class="row widget-statistic">
-                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
-                        <div class="widget widget-one_hybrid widget-followers">
-                            <div class="widget-heading">
-                                <div class="w-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round" class="feather feather-users">
-                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                        <circle cx="9" cy="7" r="4"></circle>
-                                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                                    </svg>
-                                </div>
-                                <p class="w-value">31.6K</p>
-                                <h5 class="">Followers</h5>
-                            </div>
-                            <div class="widget-content">
-                                <div class="w-chart">
-                                    <div id="hybrid_followers"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
-                        <div class="widget widget-one_hybrid widget-referral">
-                            <div class="widget-heading">
-                                <div class="w-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round" class="feather feather-link">
-                                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71">
-                                        </path>
-                                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71">
-                                        </path>
-                                    </svg>
-                                </div>
-                                <p class="w-value">1,900</p>
-                                <h5 class="">Referral</h5>
-                            </div>
-                            <div class="widget-content">
-                                <div class="w-chart">
-                                    <div id="hybrid_followers1"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-4 col-lg-4 col-md-4 col-sm-4 col-12">
-                        <div class="widget widget-one_hybrid widget-engagement">
-                            <div class="widget-heading">
-                                <div class="w-icon">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                        stroke-linecap="round" stroke-linejoin="round"
-                                        class="feather feather-message-circle">
-                                        <path
-                                            d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z">
-                                        </path>
-                                    </svg>
-                                </div>
-                                <p class="w-value">18.2%</p>
-                                <h5 class="">Engagement</h5>
-                            </div>
-                            <div class="widget-content">
-                                <div class="w-chart">
-                                    <div id="hybrid_followers3"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+            {{-- Status: returned --}}
+            <div class="metric-card is-warning">
+                <div class="meta">
+                    <p class="label">{{ __('admin.returned_shipments') }}</p>
+                    <p class="value">{{ number_format($st['returned'] ?? 0) }}</p>
                 </div>
+                <div class="icon"><i class="fa fa-retweet"></i></div>
             </div>
 
-            <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 col-12 layout-spacing">
-                <div class="widget widget-card-one">
-                    <div class="widget-content">
-
-                        <div class="media">
-                            <div class="w-img">
-                                <img src="{{ asset('assets_' . assetLang()) }}/assets/img/90x90.jpg" alt="avatar">
-                            </div>
-                            <div class="media-body">
-                                <h6>Jimmy Turner</h6>
-                                <p class="meta-date-time">Monday, Nov 18</p>
-                            </div>
-                        </div>
-
-                        <p>"Duis aute irure dolor" in reprehenderit in voluptate velit esse cillum "dolore eu
-                            fugiat" nulla pariatur. Excepteur sint occaecat cupidatat non proident.</p>
-
-                        <div class="w-action">
-                            <div class="card-like">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                    stroke-linecap="round" stroke-linejoin="round" class="feather feather-thumbs-up">
-                                    <path
-                                        d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3">
-                                    </path>
-                                </svg>
-                                <span>551 Likes</span>
-                            </div>
-                        </div>
-                    </div>
+            {{-- Status: Failed --}}
+            <div class="metric-card is-danger">
+                <div class="meta">
+                    <p class="label">{{ __('admin.failed_shipments') }}</p>
+                    <p class="value">{{ number_format($st['failed'] ?? 0) }}</p>
                 </div>
-
+                <div class="icon"><i class="fa fa-window-close"></i></div>
             </div>
 
-            <div class="col-xl-4 col-lg-6 col-md-6 col-sm-6 col-12 layout-spacing">
-                <div class="widget widget-five">
-                    <div class="widget-content">
-
-                        <div class="header">
-                            <div class="header-body">
-                                <h6>Pending Tasks</h6>
-                                <p class="meta-date">Nov 2019</p>
-                            </div>
-                            <div class="task-action">
-                                <div class="dropdown  custom-dropdown">
-                                    <a class="dropdown-toggle" href="#" role="button" id="pendingTask"
-                                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                            stroke-linecap="round" stroke-linejoin="round"
-                                            class="feather feather-more-horizontal">
-                                            <circle cx="12" cy="12" r="1"></circle>
-                                            <circle cx="19" cy="12" r="1"></circle>
-                                            <circle cx="5" cy="12" r="1"></circle>
-                                        </svg>
-                                    </a>
-
-                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="pendingTask">
-                                        <a class="dropdown-item" href="javascript:void(0);">Add</a>
-                                        <a class="dropdown-item" href="javascript:void(0);">View</a>
-                                        <a class="dropdown-item" href="javascript:void(0);">Update</a>
-                                        <a class="dropdown-item" href="javascript:void(0);">Clear All</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="w-content">
-                            <div class="">
-                                <p class="task-left">8</p>
-                                <p class="task-completed"><span>12 Done</span></p>
-                                <p class="task-hight-priority"><span>3 Task</span> with High priotity</p>
-                            </div>
-                        </div>
-                    </div>
+            {{-- Status: Cancel Request --}}
+            <div class="metric-card is-danger">
+                <div class="meta">
+                    <p class="label">{{ __('admin.cancel_request_shipments') }}</p>
+                    <p class="value">{{ number_format($st['cancelRequest'] ?? 0) }}</p>
                 </div>
-
+                <div class="icon"><i class="fa fa-cancel"></i></div>
             </div>
 
-            <div class="col-xl-4 col-lg-6 col-md-6 col-sm-12 col-12 layout-spacing">
-                <div class="widget widget-card-two">
-                    <div class="widget-content">
-
-                        <div class="media">
-                            <div class="w-img">
-                                <img src="{{ asset('assets_' . assetLang()) }}/assets/img/90x90.jpg" alt="avatar">
-                            </div>
-                            <div class="media-body">
-                                <h6>Dev Summit - New York</h6>
-                                <p class="meta-date-time">Bronx, NY</p>
-                            </div>
-                        </div>
-
-                        <div class="card-bottom-section">
-                            <h5>4 Members Going</h5>
-                            <div class="img-group">
-                                <img src="{{ asset('assets_' . assetLang()) }}/assets/img/90x90.jpg" alt="avatar">
-                                <img src="{{ asset('assets_' . assetLang()) }}/assets/img/90x90.jpg" alt="avatar">
-                                <img src="{{ asset('assets_' . assetLang()) }}/assets/img/90x90.jpg" alt="avatar">
-                                <img src="{{ asset('assets_' . assetLang()) }}/assets/img/90x90.jpg" alt="avatar">
-                            </div>
-                            <a href="javascript:void(0);" class="btn">View Details</a>
-                        </div>
-                    </div>
+            {{-- Status: Canceled --}}
+            <div class="metric-card is-danger">
+                <div class="meta">
+                    <p class="label">{{ __('admin.canceled_shipments') }}</p>
+                    <p class="value">{{ number_format($st['canceled'] ?? 0) }}</p>
                 </div>
+                <div class="icon"><i class="fa fa-window-close"></i></div>
             </div>
 
         </div>
+        {{-- ===== /Metrics grid ===== --}}
+
+        <div class="alert alert-info mt-2" role="alert">
+            <strong> {{__('admin.users_statistics')}}</strong>
+        </div>
+
+        {{-- ===== Metrics as separate cards ===== --}}
+        <div class="metrics-grid">
+
+            {{-- Total Users --}}
+            <div class="metric-card is-info">
+                <div class="meta">
+                    <p class="label">{{ __('admin.total_users') }}</p>
+                    <p class="value">{{ number_format($usersStatistics['usersCount']) }}</p>
+                </div>
+                <div class="icon"><i class="fa fa-user"></i></div>
+            </div>
+
+            {{-- Local Shipments --}}
+            <div class="metric-card is-success">
+                <div class="meta">
+                    <p class="label">{{ __('admin.active_users') }}</p>
+                    <p class="value">{{ number_format($usersStatistics['activeUsersCount']) }}</p>
+                </div>
+                <div class="icon"><i class="fa fa-user-check"></i></div>
+            </div>
+
+            {{-- International Shipments --}}
+            <div class="metric-card is-danger">
+                <div class="meta">
+                    <p class="label">{{ __('admin.inactive_users') }}</p>
+                    <p class="value">{{ number_format($usersStatistics['inactiveUsersCount']) }}</p>
+                </div>
+                <div class="icon"><i class="fa fa-user-times"></i></div>
+            </div>
+
+        </div>
+        {{-- ===== /Metrics grid ===== --}}
+
+        <div class="alert alert-info mt-2" role="alert">
+            <strong> {{__('admin.transactions_statistics')}}</strong>
+        </div>
+
+        {{-- ===== Metrics as separate cards ===== --}}
+        <div class="metrics-grid">
+
+            {{-- Total Transactions --}}
+            <div class="metric-card is-info">
+                <div class="meta">
+                    <p class="label">{{ __('admin.total_transactions') }}</p>
+                    <p class="value">{{ number_format($transactionsStatistics['transactionsCount']) }}</p>
+                </div>
+                <div class="icon"><i class="fa fa-bank"></i></div>
+            </div>
+
+            {{-- Pending Transactions --}}
+            <div class="metric-card is-warning">
+                <div class="meta">
+                    <p class="label">{{ __('admin.pending_transactions') }}</p>
+                    <p class="value">{{ number_format($transactionsStatistics['pendingTransactionsCount']) }}</p>
+                </div>
+                <div class="icon"><i class="fa fa-list-check"></i></div>
+            </div>
+
+            {{-- Accepted Transactions --}}
+            <div class="metric-card is-success">
+                <div class="meta">
+                    <p class="label">{{ __('admin.accepted_transactions') }}</p>
+                    <p class="value">{{ number_format($transactionsStatistics['acceptedTransactionsCount']) }}</p>
+                </div>
+                <div class="icon"><i class="fa fa-check-circle"></i></div>
+            </div>
+
+            {{-- Rejected Transactions --}}
+            <div class="metric-card is-danger">
+                <div class="meta">
+                    <p class="label">{{ __('admin.rejected_transactions') }}</p>
+                    <p class="value">{{ number_format($transactionsStatistics['rejectedTransactionsCount']) }}</p>
+                </div>
+                <div class="icon"><i class="fa fa-window-close"></i></div>
+            </div>
+
+        </div>
+        {{-- ===== /Metrics grid ===== --}}
+
+        <div class="alert alert-info mt-2" role="alert">
+            <strong> {{__('admin.messages_statistics')}}</strong>
+        </div>
+
+        {{-- ===== Metrics as separate cards ===== --}}
+        <div class="metrics-grid">
+
+            {{-- Total Messages --}}
+            <div class="metric-card is-info">
+                <div class="meta">
+                    <p class="label">{{ __('admin.total_messages') }}</p>
+                    <p class="value">{{ number_format($messagesStatistics['messagesCount']) }}</p>
+                </div>
+                <div class="icon"><i class="fa fa-envelope"></i></div>
+            </div>
+
+            {{-- Pending Messages --}}
+            <div class="metric-card is-warning">
+                <div class="meta">
+                    <p class="label">{{ __('admin.pending_messages') }}</p>
+                    <p class="value">{{ number_format($messagesStatistics['pendingMessagesCount']) }}</p>
+                </div>
+                <div class="icon"><i class="fa fa-list-check"></i></div>
+            </div>
+
+            {{-- Replied Messages --}}
+            <div class="metric-card is-success">
+                <div class="meta">
+                    <p class="label">{{ __('admin.replied_messages') }}</p>
+                    <p class="value">{{ number_format($messagesStatistics['repliedMessagesCount']) }}</p>
+                </div>
+                <div class="icon"><i class="fa fa-check-circle"></i></div>
+            </div>
+
+        </div>
+        {{-- ===== /Metrics grid ===== --}}
+
+        <div class="alert alert-info mt-2" role="alert">
+            <strong> {{__('admin.global_statistics')}}</strong>
+        </div>
+
+        {{-- ===== Metrics as separate cards ===== --}}
+        <div class="metrics-grid">
+
+            {{-- Total Sliders --}}
+            <div class="metric-card is-info">
+                <div class="meta">
+                    <p class="label">{{ __('admin.total_sliders') }}</p>
+                    <p class="value">{{ number_format($globalStatistics['slidersCount']) }}</p>
+                </div>
+                <div class="icon"><i class="fa fa-sliders"></i></div>
+            </div>
+
+            {{-- Total Partners --}}
+            <div class="metric-card is-success">
+                <div class="meta">
+                    <p class="label">{{ __('admin.total_partners') }}</p>
+                    <p class="value">{{ number_format($globalStatistics['partnersCount']) }}</p>
+                </div>
+                <div class="icon"><i class="fa fa-users"></i></div>
+            </div>
+
+            {{-- Total Services --}}
+            <div class="metric-card is-danger">
+                <div class="meta">
+                    <p class="label">{{ __('admin.total_services') }}</p>
+                    <p class="value">{{ number_format($globalStatistics['servicesCount']) }}</p>
+                </div>
+                <div class="icon"><i class="fa fa-cogs"></i></div>
+            </div>
+
+            {{-- Total Testimonials --}}
+            <div class="metric-card is-warning">
+                <div class="meta">
+                    <p class="label">{{ __('admin.total_testimonials') }}</p>
+                    <p class="value">{{ number_format($globalStatistics['testimonialsCount']) }}</p>
+                </div>
+                <div class="icon"><i class="fa fa-comments"></i></div>
+            </div>
+        </div>
+
     </div>
+
 @endsection
+
 @push('js')
     <script src="{{ asset('assets_' . assetLang()) }}/plugins/apex/apexcharts.min.js"></script>
     <script src="{{ asset('assets_' . assetLang()) }}/assets/js/dashboard/dash_1.js"></script>
 @endpush
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("contactData").style.display = "block";
+    });
+</script>
+<div class="floating-button-menu-close"></div>
