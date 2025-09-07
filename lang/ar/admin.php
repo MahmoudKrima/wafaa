@@ -600,4 +600,6 @@ return [
     'transaction_status_label' => 'الحالة',
     'transaction_created_at_label' => 'تاريخ الإنشاء',
     'view_transaction_button' => 'عرض المعاملة',
+    'delete_all' => 'حذف الكل',
+    'creating_shipment' => 'جاري إنشاء الشحنة...',
 ];

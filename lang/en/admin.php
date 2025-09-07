@@ -596,4 +596,7 @@ return [
     'transaction_status_label' => 'Status',
     'transaction_created_at_label' => 'Created At',
     'view_transaction_button' => 'View Transaction',
+    'delete_all' => 'Delete all',
+    'weight_summary' => 'Weight summary',
+    'creating_shipment' => 'Creating Shipment...',
 ];
