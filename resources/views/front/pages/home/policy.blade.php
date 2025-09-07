@@ -2,7 +2,7 @@
 @php
 app()->setLocale('ar');
 @endphp
-@section('title', __('admin.terms'))
+@section('title', __('admin.policy'))
 
 @section('content')
 
@@ -12,7 +12,7 @@ app()->setLocale('ar');
                 <div class="col-xl-8 col-lg-8 text-center">
                     <div class="hero-content">
                         <h1 class="text-white mb-4 wow fadeInUp animated" data-wow-delay="200ms">
-                            <i class="fa-solid fa-file-contract me-3"></i>{{ __('admin.terms') }}
+                            <i class="fa-solid fa-file-contract me-3"></i>{{ __('admin.policy') }}
                         </h1>
                     </div>
                 </div>
@@ -25,15 +25,15 @@ app()->setLocale('ar');
             <div class="row justify-content-center">
                 <div class="col-xl-12 col-lg-12 col-md-12">
                     <div class="terms-content-wrap">
-                        @if($term && $term->term_description)
+                        @if($policy && $policy->policy_description)
                             <div>
                                 <div class="terms-text">
-                                    {!! nl2br(e($term->getTranslation('term_description', app()->getLocale()))) !!}
+                                    {!! nl2br(e($policy->getTranslation('policy_description', app()->getLocale()))) !!}
                                 </div>
                                 <div>
                                     <h3 class="mb-2"></h3>
                                     <p class="mb-0 opacity-75">
-                                        {{ __('admin.last_updated') ?? 'آخر تحديث' }}: {{ $term->updated_at ? $term->updated_at->format('Y-m-d') : 'غير محدد' }}
+                                        {{ __('admin.last_updated') ?? 'آخر تحديث' }}: {{ $policy->updated_at ? $policy->updated_at->format('Y-m-d') : 'غير محدد' }}
                                     </p>
                                 </div>
                             </div>
@@ -42,8 +42,8 @@ app()->setLocale('ar');
                                 <div class="no-terms-icon mb-4">
                                     <i class="fa-solid fa-file-circle-exclamation fa-4x text-muted"></i>
                                 </div>
-                                <h4 class="text-muted mb-3">{{ __('admin.no_terms_available') ?? 'لا توجد شروط وأحكام متاحة حالياً' }}</h4>
-                                <p class="text-muted mb-4">{{ __('admin.terms_coming_soon') ?? 'سيتم إضافة الشروط والأحكام قريباً' }}</p>
+                                <h4 class="text-muted mb-3">{{ __('admin.no_policy_available') ?? 'لا توجد سياسة خصوصية متاحة حالياً' }}</h4>
+                                <p class="text-muted mb-4">{{ __('admin.policy_coming_soon') ?? 'سيتم إضافة سياسة الخصوصية قريباً' }}</p>
                                 <a href="{{ route('front.home') }}" class="btn btn-primary btn-sm">{{ __('admin.back_to_home') ?? 'العودة للصفحة الرئيسية' }}
                                 </a>
                             </div>
@@ -163,6 +163,7 @@ app()->setLocale('ar');
             }
         }
     </style>
+
 @endsection
 
 

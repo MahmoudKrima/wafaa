@@ -90,13 +90,13 @@ app()->setLocale('ar');
                 </div>
 
                 <!-- Clients Section  -->
-                <div class="client-section section-padding pt-4" style="direction:ltr;">
+                <div class="client-section section-padding pt-4" style="direction:ltr;margin-top:35px;">
                     <div class="container">
                         <div class="row">
                             <div class="client-wrapper owl-carousel">
                                 @foreach($partners as $partner)
                                     <div class="single-client-item">
-                                        <img src="{{ displayImage($partner->image) }}" alt="partner">
+                                        <img src="{{ displayImage($partner->image) }}" alt="partner" style="width:100px;height:90px;">
                                     </div>
                                 @endforeach
                             </div>
@@ -120,7 +120,7 @@ app()->setLocale('ar');
                         <h2> <span>{{__('admin.services_provided')}}</span></h2>
                     </div>
 
-                    <p class="text-white wow fadeInDown animated mt-3" data-wow-delay="400ms">
+                    <p class="text-white wow fadeInDown animated mt-3" data-wow-delay="400ms" style="color:#1c1d1e !important;">
                         {{__('admin.services_description')}}
                     </p>
 
@@ -133,7 +133,7 @@ app()->setLocale('ar');
                     <div class="col-xl-4 col-lg-4 col-md-6 wow fadeInUp animated" data-wow-delay="200ms">
                         <div class="single-service-wrap">
                             <div class="service-icon">
-                                <img src="{{ displayImage($service->image) }}" alt="">
+                                <img src="{{ displayImage($service->image) }}" alt="" style="height:55px;width:55px;">
                             </div>
                             <h4>{{ $service->title }}</h4>
                             <p>{{ $service->description }}</p>
@@ -154,7 +154,7 @@ app()->setLocale('ar');
                     <div class="section-title">
                         <h2><span>{{ __('admin.testimonials') }}</span></h2>
                     </div>
-                    <p class="pr-85">
+                    <p class="pr-85" style="line-height:1.8">
                         {{ __('admin.testimonials_description') }}
                     </p>
                 </div>
@@ -185,37 +185,25 @@ app()->setLocale('ar');
             <div class="row justify-content-center mt-5" style="padding-top:23px;">
                 <div class="col-xl-3 col-lg-3 col-md-3 text-center">
                     <div class="single-funfact-wrap">
-                        <div class="funfact-icon">
-                            <img src="{{ asset('front/assets/img/funfacts/1.png') }}" alt="">
-                        </div>
-                        <h2><span style="direction: ltr !important;" class="odometer" data-count="{{ $statistics['totalAdmins'] }}">000</span>+</h2>
+                        <h2><span style="direction: ltr !important;" class="odometer" data-count="{{ $statistics['totalAdmins'] }}">000</span></h2>
                         <p>{{ __('admin.team_member') }}</p>
                     </div>
                 </div>
                 <div class="col-xl-3 col-lg-3 col-md-3 text-center">
                     <div class="single-funfact-wrap">
-                        <div class="funfact-icon">
-                            <img src="{{ asset('front/assets/img/funfacts/2.png') }}" alt="">
-                        </div>
-                        <h2><span style="direction: ltr !important;" class="odometer" data-count="{{$statistics['totalShippingCompanies']}}">000</span>+</h2>
+                        <h2><span style="direction: ltr !important;" class="odometer" data-count="{{$statistics['totalShippingCompanies']}}">000</span></h2>
                         <p>{{ __('admin.shipping_companies') }}</p>
                     </div>
                 </div>
                 <div class="col-xl-3 col-lg-3 col-md-3 text-center">
                     <div class="single-funfact-wrap">
-                        <div class="funfact-icon">
-                            <img src="{{ asset('front/assets/img/funfacts/3.png') }}" alt="">
-                        </div>
-                        <h2><span style="direction: ltr !important;" class="odometer" data-count="{{$statistics['totalShippments']}}">000</span>+</h2>
+                        <h2><span style="direction: ltr !important;" class="odometer" data-count="{{$statistics['totalShippments']}}">000</span></h2>
                         <p>{{ __('admin.shippments') }}</p>
                     </div>
                 </div>
                 <div class="col-xl-3 col-lg-3 col-md-3 text-center">
                     <div class="single-funfact-wrap">
-                        <div class="funfact-icon">
-                            <img src="{{ asset('front/assets/img/funfacts/4.png') }}" alt="">
-                        </div>
-                        <h2><span style="direction: ltr !important;" class="odometer" data-count="{{$statistics['totalUsers']}}">000</span>+</h2>
+                        <h2><span style="direction: ltr !important;" class="odometer" data-count="{{$statistics['totalUsers']}}">000</span></h2>
                         <p>{{ __('admin.clients') }}</p>
                     </div>
                 </div>
@@ -234,23 +222,23 @@ app()->setLocale('ar');
                         <div class="section-title">
                             <h2 class="text-white wow fadeInDown animated" data-wow-delay="400ms">{{ __('admin.contact_us_now') }}</h2>
                         </div>
-                        <p class="text-white wow fadeInUp animated" data-wow-delay="200ms">
+                        <p class="text-white wow fadeInUp animated" data-wow-delay="200ms" style="color:#1c1d1e !important;">
                             {{ __('admin.contact_us_description') }} </p>
                         <div class="contact-wrap">
                             <div class="icon">
-                                <i class="fa-solid fa-phone"></i>
+                                <i class="fa fa-phone"></i>
                             </div>
                             <div class="contact-details">
-                                <h6>رقم الجوال</h6>
-                                <p>01016202064</p>
+                                <h6>{{__('admin.phone')}}</h6>
+                                <p>{{app('settings')['phone']}}</p>
                             </div>
 
                             <div class="icon">
-                                <i class="fa-solid fa-phone"></i>
+                                <i class="fa-brands fa-whatsapp"></i>
                             </div>
                             <div class="contact-details">
-                                <h6>رقم الجوال</h6>
-                                <p>01016202064</p>
+                                <h6>{{__('admin.whatsapp_number')}}</h6>
+                                <p>{{app('settings')['whatsapp']}}</p>
                             </div>
 
                         </div>
@@ -259,7 +247,6 @@ app()->setLocale('ar');
                     </div>
                     <div class="col-xl-7 col-lg-7 wow fadeInDown animated" data-wow-delay="400ms">
                         <div class="apppointment-form-wrap white-bg">
-                            <h2>طلب المساعدة</h2>
                             <form method="post" action="{{ route('front.contact.store') }}">
                                 @csrf
                                 <div class="row">

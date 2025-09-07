@@ -1,6 +1,6 @@
 <div class="footer-area theme_right" data-background="{{ asset('front/assets/img/footer-bg.jpg') }}">
         <div class="container">
-          
+
             <div class="footer-bottom row">
                 <div class="col-lg-6 col-md-5">
                     <span>© WM EXPRESS 2025 | جميع الحقوق محفوظة</span>
@@ -8,7 +8,7 @@
                 <div class="col-lg-6 col-md-7 text-md-end">
                     <ul>
                         <li><a href="{{ route('front.terms') }}">{{__('admin.terms_description')}}</a></li>
-                        <li><a href="{{ route('front.privacy') }}">{{__('admin.privacy_description')}}</a></li>
+                        <li><a href="{{ route('front.policy') }}">{{__('admin.privacy_description')}}</a></li>
                     </ul>
                 </div>
 
@@ -26,7 +26,7 @@
                     <a class="navbar-brand" href="{{ route('front.home') }}"><img src="{{ displayImage(app('settings')['logo']) }}" alt=""></a>
                 </div>
                 <button class="close-search"><span class="la la-times"></span></button>
-            
+
             </div>
         </div>
     </div>

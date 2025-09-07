@@ -39,19 +39,36 @@
                 <div class="main-menu d-none d-lg-inline-block">
                     <ul>
 
-                        <li><a href="#home">{{__('admin.home')}}</a></li>
+                        @if(isRoute(['front.terms','front.policy']))
+                            <li><a href={{ route('front.home') }}"#home">{{__('admin.home')}}</a></li>
 
-                        <li><a href="#about">{{__('admin.about_us')}}</a></li>
+                            <li><a href="{{ route('front.home') }}#about">{{__('admin.about_us')}}</a></li>
 
-                        <li><a href="#clients">{{__('admin.our_clients')}}</a></li>
+                            <li><a href="{{ route('front.home') }}#clients">{{__('admin.our_clients')}}</a></li>
 
-                        <li><a href="#services">{{__('admin.services')}}</a></li>
+                            <li><a href="{{ route('front.home') }}#services">{{__('admin.services')}}</a></li>
 
-                        <li><a href="#opinions">{{__('admin.opinions')}}</a></li>
+                            <li><a href="{{ route('front.home') }}#opinions">{{__('admin.opinions')}}</a></li>
 
-                        <li><a href="#contact">{{__('admin.contact')}}</a></li>
+                            <li><a href="{{ route('front.home') }}#contact">{{__('admin.contact')}}</a></li>
 
-                        <li><a href="#faqs">{{__('admin.faqs')}}</a></li>
+                            <li><a href="{{ route('front.home') }}#faqs">{{__('admin.faqs')}}</a></li>
+                        @else
+                            <li><a href="#home">{{__('admin.home')}}</a></li>
+
+                            <li><a href="#about">{{__('admin.about_us')}}</a></li>
+
+                            <li><a href="#clients">{{__('admin.our_clients')}}</a></li>
+
+                            <li><a href="#services">{{__('admin.services')}}</a></li>
+
+                            <li><a href="#opinions">{{__('admin.opinions')}}</a></li>
+
+                            <li><a href="#contact">{{__('admin.contact')}}</a></li>
+
+                            <li><a href="#faqs">{{__('admin.faqs')}}</a></li>
+                        @endif
+
                     </ul>
                 </div>
 
@@ -67,19 +84,35 @@
                             <nav class="sidebar-nav">
                                 <ul class="metismenu" id="mobile-menu">
 
-                                    <li><a href="#home">{{__('admin.home')}}</a></li>
+                                    @if(isRoute(['front.terms','front.policy']))
+                                        <li><a href="{{ route('front.home') }}#home">{{__('admin.home')}}</a></li>
 
-                                    <li><a href="#about">{{__('admin.about')}}</a></li>
+                                        <li><a href="{{ route('front.home') }}#about">{{__('admin.about_us')}}</a></li>
 
-                                    <li><a href="#clients">{{__('admin.clients')}}</a></li>
+                                        <li><a href="{{ route('front.home') }}#clients">{{__('admin.our_clients')}}</a></li>
 
-                                    <li><a href="#services">{{__('admin.services')}}</a></li>
+                                        <li><a href="{{ route('front.home') }}#services">{{__('admin.services')}}</a></li>
 
-                                    <li><a href="#opinions">{{__('admin.opinions')}}</a></li>
+                                        <li><a href="{{ route('front.home') }}#opinions">{{__('admin.opinions')}}</a></li>
 
-                                    <li><a href="#contact">{{__('admin.contact')}}</a></li>
+                                        <li><a href="{{ route('front.home') }}#contact">{{__('admin.contact')}}</a></li>
 
-                                    <li><a href="#faqs">{{__('admin.faqs')}}</a></li>
+                                        <li><a href="{{ route('front.home') }}#faqs">{{__('admin.faqs')}}</a></li>
+                                    @else
+                                        <li><a href="#home">{{__('admin.home')}}</a></li>
+
+                                        <li><a href="#about">{{__('admin.about_us')}}</a></li>
+
+                                        <li><a href="#clients">{{__('admin.our_clients')}}</a></li>
+
+                                        <li><a href="#services">{{__('admin.services')}}</a></li>
+
+                                        <li><a href="#opinions">{{__('admin.opinions')}}</a></li>
+
+                                        <li><a href="#contact">{{__('admin.contact')}}</a></li>
+
+                                        <li><a href="#faqs">{{__('admin.faqs')}}</a></li>
+                                    @endif
 
                                 </ul>
                             </nav>
@@ -88,7 +121,7 @@
                 </div>
                 <div class="header-right d-none d-lg-block">
                     <div class="contact-icon-wrap">
-                        <img src="{{ asset('front/assets/img/chat.png') }}" alt="">
+                        <i class="fa-brands fa-whatsapp" style="font-size:30px;"></i>
                         <div class="contact-info">
                             <p>{{__('admin.whatsapp')}}</p>
                             <p><b>{{app('settings')['whatsapp']}}</b></p>

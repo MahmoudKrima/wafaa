@@ -118,4 +118,10 @@ class HomeController extends Controller
         $term = Term::select('id', 'term_description')->first();
         return view('front.pages.home.terms', compact('term'));
     }
+
+    public function policy()
+    {
+        $policy = Term::select('id', 'policy_description')->first();
+        return view('front.pages.home.policy', compact('policy'));
+    }
 }

@@ -5,7 +5,7 @@ use App\Http\Controllers\Front\Home\HomeController;
 
 Route::get('/', [HomeController::class, 'index'])->name('front.home');
 Route::get('/terms', [HomeController::class, 'terms'])->name('front.terms');
-Route::get('/privacy', [HomeController::class, 'privacy'])->name('front.privacy');
+Route::get('/policy', [HomeController::class, 'policy'])->name('front.policy');
 Route::post('/contact', [HomeController::class, 'contact'])->name('front.contact.store');
 
 
