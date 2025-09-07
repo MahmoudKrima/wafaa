@@ -61,39 +61,47 @@ class ShippingService
         return $json['results'] ?? $json ?? [];
     }
 
-    public function show(string $id): array
+
+    private function getShipmentById(string $id): array
     {
-        $page     = 0;
-        $pageSize = 50;
-        $shipment = null;
-        $authUser = auth()->user();
-        do {
-            $chunk   = $this->getUserListShipments(['page' => $page, 'pageSize' => $pageSize]);
-            $results = (array) data_get($chunk, 'results', []);
-            $total   = (int) data_get($chunk, 'total', count($results));
+        $query = [
+            'externalAppId' => (string) auth()->id(),
+        ];
 
-            foreach ($results as $row) {
-                if ((string) data_get($row, 'id') === (string) $id) {
-                    $shipment = $row;
-                    break 2;
-                }
-            }
-            $page++;
-            $fetched = $page * $pageSize;
-        } while ($shipment === null && $fetched < $total && !empty($results));
+        $res = $this->ghayaRequest()->get($this->ghayaUrl("shipments/{$id}"), $query);
 
-        if (!$shipment) {
+        if ($res->status() === 404) {
             abort(404, 'Shipment not found');
         }
+        $res->throw();
+        $payload = (array) $res->json();
+        $shipment = (array) (
+            data_get($payload, 'result') ??
+            data_get($payload, 'data') ??
+            $payload
+        );
+
+        if (empty($shipment)) {
+            abort(404, 'Shipment not found');
+        }
+
+        return $shipment;
+    }
+
+    public function show(string $id): array
+    {
+        $authUser = auth()->user();
+        $shipment = $this->getShipmentById($id);
+        dd($shipment);
         $company  = (array) data_get($shipment, 'shippingCompany', []);
         $receiver = (array) data_get($shipment, 'receiver', []);
         $details  = (array) data_get($shipment, 'shipmentDetails', []);
-
         $user         = (array) data_get($shipment, 'user', []);
         $senderName   = trim(trim((string) data_get($user, 'firstName', '')) . ' ' . trim((string) data_get($user, 'lastName', '')));
         if ($senderName === '') {
             $senderName = (string) data_get($user, 'companyName', '') ?: (string) data_get($details, 'senderName', '—');
         }
+
         $senderPhone        = (string) (data_get($user, 'phone') ?: data_get($details, 'senderPhone', '—'));
         $senderAddress      = (string) (data_get($user, 'address.street') ?: data_get($details, 'senderStreet', '—'));
         $senderCountryName  = (string) data_get($details, 'senderCountryName', '—');
@@ -108,25 +116,32 @@ class ShippingService
         $weight        = (float) data_get($details, 'weight', 0);
         $packagesCount = (int) data_get($details, 'packagesCount', 1);
         $pkgDescription = (string) data_get($details, 'description', '');
+        $companyId = (string) data_get($shipment, 'shippingCompanyId', '');
         $shipPrice = $authUser->shippingPrices()
-            ->where('company_id', (string) $shipment['shippingCompanyId'])
+            ->where('company_id', $companyId)
             ->first();
-        $shippingFee            = $shipment['method'] == 'local' ? $shipPrice->local_price : $shipPrice->international_price;
-        $companyWeight = $shipment['shippingCompany']['maxWeight'];
-        $adminSetting = AdminSetting::where('admin_id', $authUser->created_by)
-            ->first();
-        if ($weight > $companyWeight) {
-            $extraWeight = $shipPrice->extra_weight_price;
-            $extraWeightPer = $extraWeight * $adminSetting->extra_weight_price;
-        } else {
-            $extraWeightPer = 0;
-        }
-        $isCod                  = (bool)  data_get($shipment, 'isCod', false);
-        $codPerReceiver         = $isCod ? $adminSetting->cash_on_delivery_price : 0.0;
-        $codFee                 = $adminSetting->cash_on_delivery_price;
-        $extraWeightPerReceiver = (float) $extraWeightPer;
-        $total                  = (float) ($shippingFee + $codFee) ?: 0;
 
+        $shippingFee = 0.0;
+        if ($shipPrice) {
+            $shippingFee = data_get($shipment, 'method') === 'local'
+                ? (float) $shipPrice->local_price
+                : (float) $shipPrice->international_price;
+        }
+
+        $companyWeight = (float) data_get($shipment, 'shippingCompany.maxWeight', 0);
+
+        $adminSetting = AdminSetting::where('admin_id', $authUser->created_by)->first();
+        $extraWeightPer = 0.0;
+
+        if ($adminSetting && $shipPrice && $companyWeight > 0 && $weight > $companyWeight) {
+            $extraWeight = (float) $shipPrice->extra_weight_price;
+            $extraWeightPer = $extraWeight * (float) $adminSetting->extra_weight_price;
+        }
+
+        $isCod          = (bool) data_get($shipment, 'isCod', false);
+        $codPerReceiver = ($adminSetting && $isCod) ? (float) $adminSetting->cash_on_delivery_price : 0.0;
+        $codFee         = $adminSetting ? (float) $adminSetting->cash_on_delivery_price : 0.0;
+        $total = (float) ($shippingFee + $codFee) ?: 0.0;
         $receiverCount    = !empty($receiver) ? 1 : 0;
         $perReceiverTotal = $receiverCount > 0 ? ($total / $receiverCount) : 0.0;
 
@@ -144,8 +159,8 @@ class ShippingService
             'receiverCount'          => $receiverCount,
             'shippingFee'            => $shippingFee,
             'codFee'                 => $codFee,
-            'extraWeightPerReceiver' => $extraWeightPerReceiver,
-            'codPerReceiver'         => $codPerReceiver,
+            'extraWeightPerReceiver' => (float) $extraWeightPer,
+            'codPerReceiver'         => (float) $codPerReceiver,
             'total'                  => $total,
             'perReceiverTotal'       => $perReceiverTotal,
             'length'                 => $length,
@@ -156,6 +171,7 @@ class ShippingService
             'packageDescription'     => $pkgDescription,
         ];
     }
+
 
 
     public function export($request): StreamedResponse
