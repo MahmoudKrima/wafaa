@@ -10,14 +10,15 @@
             <div class="col-xl-8 col-lg-8">
                 <span><i class="fa-solid fa-envelope"></i>{{app('settings')['email']}}</span>
                 <span><i class="fa-solid fa-location-dot"></i>{{app('settings')['address_' . assetLang()]}}</span>
-                <span><i class="fa-solid fa-clock"></i>{{__('admin.working_hours')}}</span>
+                {{--<span><i class="fa-solid fa-clock"></i>{{__('admin.working_hours')}}</span>--}}
             </div>
             <div class="col-xl-4 col-lg-4 text-start">
                 <div class="social-area">
                     <a href="{{app('settings')['facebook']}}"><i class="fa-brands fa-facebook-f"></i></a>
                     <a href="{{app('settings')['instagram']}}"><i class="fa-brands fa-instagram"></i></a>
                     <a href="{{app('settings')['twitter']}}"><i class="fa-brands fa-twitter"></i></a>
-                    <a href="{{app('settings')['tiktok']}}"><i class="fa-brands fa-linkedin"></i></a>
+                    <a href="{{app('settings')['tiktok']}}"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="{{app('settings')['snapchat']}}"><i class="fa-brands fa-snapchat"></i></a>
                 </div>
             </div>
         </div>
@@ -32,7 +33,7 @@
             <div class="header-inner-box">
 
                 <div class="logo">
-                    <a href="{{ route('front.home') }}"><img src="{{ displayImage(app('settings')['logo']) }}" alt=""></a>
+                    <a href="{{ route('front.home') }}"><img src="{{ displayImage(app('settings')['logo']) }}" style="width:90px;height:90px;"></a>
                 </div>
 
                 <div class="main-menu d-none d-lg-inline-block">
@@ -40,9 +41,9 @@
 
                         <li><a href="#home">{{__('admin.home')}}</a></li>
 
-                        <li><a href="#about">{{__('admin.about')}}</a></li>
+                        <li><a href="#about">{{__('admin.about_us')}}</a></li>
 
-                        <li><a href="#clients">{{__('admin.clients')}}</a></li>
+                        <li><a href="#clients">{{__('admin.our_clients')}}</a></li>
 
                         <li><a href="#services">{{__('admin.services')}}</a></li>
 

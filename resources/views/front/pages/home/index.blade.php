@@ -5,6 +5,7 @@ app()->setLocale('ar');
 @section('title', __('admin.home'))
 
 @section('content')
+
     <div id="home-3" class="homepage-slides owl-carousel">
         @foreach($sliders as $slider)
             <div class="single-slide-item d-flex align-items-center" data-background="{{ displayImage($slider->image)}}">
