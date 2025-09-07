@@ -8,7 +8,11 @@
 
         /* circle shape, size and position */
         position: absolute;
+        @if (App::getLocale() === 'ar')
         left: 1.5rem;
+        @else
+        right: 1.5rem;
+        @endif
         top: 1.6rem;
         min-width: 1.8em; /* or width, explained below. */
         height: 1.8em;
