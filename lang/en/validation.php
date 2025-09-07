@@ -353,6 +353,9 @@ return [
         'items.*.id' => 'Item ID',
         'items.*.title' => 'Title',
         'items.*.description' => 'Description',
+        'subtitle' => 'Subtitle',
+        'button_text' => 'Button Text',
+        'button_url' => 'Button URL',
     ],
 
     /*

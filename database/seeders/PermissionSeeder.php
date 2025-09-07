@@ -21,6 +21,7 @@ use App\Models\Service;
 use App\Models\Testimonial;
 use App\Models\Contact;
 use App\Models\Term;
+use App\Models\Faq;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 
@@ -61,6 +62,7 @@ class PermissionSeeder extends Seeder
             ...Contact::$permissions,
             ...AllowedCompany::$permissions,
             ...Term::$permissions,
+            ...Faq::$permissions,
             ...$rolePermission,
         ];
 

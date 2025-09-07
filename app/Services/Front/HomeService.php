@@ -2,7 +2,7 @@
 
 namespace App\Services\Front;
 
-use App\Models\Reciever;
+use App\Models\Faq;
 use App\Models\Term;
 use App\Models\User;
 use App\Models\About;
@@ -11,6 +11,7 @@ use App\Models\Slider;
 use App\Models\Contact;
 use App\Models\Partner;
 use App\Models\Service;
+use App\Models\Reciever;
 use App\Models\AboutItem;
 use App\Models\Testimonial;
 use Illuminate\Support\Facades\Http;
@@ -171,5 +172,14 @@ class HomeService
     {
         return Term::select('id', 'policy_description', 'updated_at')
             ->first();
+    }
+
+    public function getFaqs()
+    {
+        return Cache::remember('faqs', 3600, function () {
+            return Faq::where('status', 'active')
+                ->orderBy('id')
+                ->get();
+        });
     }
 }

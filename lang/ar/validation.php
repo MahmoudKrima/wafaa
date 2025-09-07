@@ -395,6 +395,11 @@ return [
         'canceled' => 'ملغي',
         'returned' => 'مرتجع',
         'delivered' => 'تم التسليم',
+        'subtitle' => 'العنوان الفرعي',
+        'button_text' => 'نص الزر',
+        'button_url' => 'رابط الزر',
+        'description' => 'الوصف',
+        'title' => 'العنوان',
     ],
 
 ];

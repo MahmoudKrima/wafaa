@@ -144,6 +144,7 @@
                                 'services.view',
                                 'testimonials.view',
                                 'contacts.view',
+                                'faqs.view',
                             ])
                         )
                         <li class="menu {{ isRoute([
@@ -171,6 +172,9 @@
                     'admin.testimonials.create',
                     'admin.testimonials.edit',
                     'admin.contacts.index',
+                    'admin.faqs.index',
+                    'admin.faqs.create',
+                    'admin.faqs.edit',
                 ]) ? 'active' : '' }}">
                             <a href="#settings" data-active="{{ isRoute([
                     'admin.settings.index',
@@ -197,6 +201,9 @@
                     'admin.testimonials.create',
                     'admin.testimonials.edit',
                     'admin.contacts.index',
+                    'admin.faqs.index',
+                    'admin.faqs.create',
+                    'admin.faqs.edit',
                 ]) ? 'true' : 'false' }}" class="menu-toggle">
                                 <div class="base-menu">
                                     <div class="base-icons">
@@ -299,6 +306,7 @@
                     'services.view',
                     'testimonials.view',
                     'contacts.view',
+                    'faqs.view',
                 ])
             )
             <div class="submenu" id="settings">
@@ -390,6 +398,14 @@
                         <a href="{{ route('admin.contacts.index') }}">
                             <i class="fa fa-envelope" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
                             {{ __('admin.contacts') }} </a>
+                    </li>
+                    @endhaspermission
+
+                    @haspermission('faqs.view', 'admin')
+                    <li class="{{ isRoute(['admin.faqs.index', 'admin.faqs.edit', 'admin.faqs.create']) ? 'active' : '' }}">
+                        <a href="{{ route('admin.faqs.index') }}">
+                            <i class="fa fa-question-circle" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
+                            {{ __('admin.faqs') }} </a>
                     </li>
                     @endhaspermission
                 </ul>

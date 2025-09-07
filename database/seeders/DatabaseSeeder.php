@@ -20,6 +20,7 @@ use Database\Seeders\AllowedCompaniesSeeder;
 use Illuminate\Support\Facades\Artisan;
 use Database\Seeders\AdminSettingSeeder;
 use App\Models\Testimonial;
+use App\Models\Faq;
 
 class DatabaseSeeder extends Seeder
 {
@@ -47,5 +48,6 @@ class DatabaseSeeder extends Seeder
         Service::factory(10)->create();
         Testimonial::factory(10)->create();
         Contact::factory(10)->create();
+        Faq::factory(10)->create();
     }
 }
