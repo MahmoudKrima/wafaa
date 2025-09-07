@@ -178,7 +178,7 @@ Route::middleware(['web'])->group(function () {
 
         Route::controller(TermsController::class)
             ->group(function () {
-                Route::get('/site_policies', 'index')
+                Route::get('/site-policies', 'index')
                     ->name('terms.index')
                     ->middleware('has.permission:terms.update');
                 Route::post('/terms-update', 'update')

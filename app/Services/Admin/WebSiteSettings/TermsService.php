@@ -15,9 +15,10 @@ class TermsService
         return Term::first();
     }
 
-    function updateSettings($request, $term)
+    function updateSettings($request)
     {
         $data = $request->validated();
+        $term = Term::first();
         $data['term_description'] = $this->translate($data['term_description_ar'], $data['term_description_en']);
         $data['policy_description'] = $this->translate($data['policy_description_ar'], $data['policy_description_en']);
         $term->update($data);

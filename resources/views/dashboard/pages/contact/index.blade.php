@@ -10,8 +10,8 @@
                             <div class="card">
                                 <div class="card-header" id="headingOne">
                                     <h5 class="mb-0">
-                                        <button class="btn" data-toggle="collapse" data-target="#collapseOne"
-                                            aria-expanded="true" aria-controls="collapseOne">
+                                        <button class="btn" type="button" data-toggle="collapse" data-target="#collapseOne"
+                                            aria-expanded="false" aria-controls="collapseOne">
                                             {{ __('admin.Filter Options') }}
                                         </button>
                                     </h5>
@@ -22,8 +22,7 @@
                                     <div class="card-body">
                                         <div class="table-responsive mb-2">
                                             <div class="col-12 mx-auto border">
-                                                <form action="{{ route('admin.contacts.index') }}" method="GET"
-                                                    class="p-3">
+                                                <form action="{{ route('admin.contacts.index') }}" method="GET" class="p-3">
                                                     <div class="row mt-2">
                                                         <div class="col-md-4 mb-3">
                                                             <label for="name">{{ __('admin.name') }}</label>
@@ -53,7 +52,8 @@
 
                                                     <div class="row mt-2">
                                                         <div class="col-md-3 mb-3">
-                                                            <button type="submit" class="bg-success form-control btn-block">
+                                                            <button type="submit"
+                                                                class="bg-success form-control btn btn-success btn-block">
                                                                 {{ __('admin.search') }}
                                                             </button>
                                                         </div>
@@ -75,7 +75,7 @@
                         <div class="widget-header">
                             <div class="row">
                                 <div class="col-xl-12 col-md-12 col-sm-12 col-12">
-                                    <h4 style="padding: 30px 0px 15px 0px;">{{ __('admin.contacts') }}</h4>
+                                    <h4 class="py-3">{{ __('admin.contacts') }}</h4>
                                 </div>
                             </div>
                         </div>
@@ -103,7 +103,12 @@
                                             <td>{{ $contact->last_name }}</td>
                                             <td>{{ $contact->email }}</td>
                                             <td>{{ $contact->phone }}</td>
-                                            <td>{{ $contact->message }}</td>
+                                            <td>
+                                                <button type="button" class="btn btn-info btn-sm" data-toggle="modal"
+                                                    data-target="#messageModal" data-message="{{ $contact->message }}">
+                                                    {{ __('admin.message') }}
+                                                </button>
+                                            </td>
                                             <td>
                                                 @if (auth('admin')->user()->hasAnyPermission(['contacts.reply']))
                                                     @if ($contact->status->value == 'pending')
@@ -135,7 +140,8 @@
                                                                 style="border: none; background:transparent;padding:7px;margin:0 5px;"
                                                                 type="submit" title="{{ __('admin.delete') }}"
                                                                 class="action-btn btn-dlt bs-tooltip badge rounded-pill bg-danger"
-                                                                data-toggle="tooltip" data-placement="top" aria-label="Delete"
+                                                                data-toggle="tooltip" data-placement="top"
+                                                                aria-label="{{ __('admin.delete') }}"
                                                                 data-bs-original-title="Delete">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17"
                                                                     viewBox="0 0 24 24" fill="none" stroke="currentColor"
@@ -167,12 +173,13 @@
         </div>
     </div>
 
-    <div class="modal fade" id="replyModal" tabindex="-1" role="dialog" aria-labelledby="replyModalLabel" aria-hidden="true">
+    <div class="modal fade" id="replyModal" tabindex="-1" role="dialog" aria-labelledby="replyModalLabel"
+        aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="replyModalLabel">{{__("admin.reply")}}</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <h5 class="modal-title" id="replyModalLabel">{{ __('admin.reply') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="{{ __('admin.close') }}">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -181,15 +188,37 @@
                     <div class="modal-body">
                         <input type="hidden" name="contact" id="contact_id" value="">
                         <div class="form-group">
-                            <label for="message">{{ __('admin.message') }}</label>
-                            <textarea name="message" id="message" class="form-control" rows="5">{{ old('message') }}</textarea>
+                            <label for="reply_message">{{ __('admin.message') }}</label>
+                            <textarea name="message" id="reply_message" class="form-control"
+                                rows="5">{{ old('message') }}</textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__('admin.close')}}</button>
-                        <button type="submit" class="btn btn-primary">{{__('admin.send')}}</button>
+                        <button type="button" class="btn btn-secondary"
+                            data-dismiss="modal">{{ __('admin.close') }}</button>
+                        <button type="submit" class="btn btn-info">{{ __('admin.send') }}</button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="messageModal" tabindex="-1" role="dialog" aria-labelledby="messageModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="messageModalLabel">{{ __('admin.message') }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="{{ __('admin.close') }}">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="messageModalBody" class="mb-0"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('admin.close') }}</button>
+                </div>
             </div>
         </div>
     </div>
@@ -197,16 +226,27 @@
 
 @push('js')
     <script>
-        $('#replyModal').on('show.bs.modal', function (event) {
-            var button = $(event.relatedTarget);
-            var contactId = button.data('contact-id');
-            var modal = $(this);
-            modal.find('#contact_id').val(contactId);
-        });
-        
-        $('#replyModal').on('hidden.bs.modal', function () {
-            $(this).find('form')[0].reset();
-            $(this).find('#contact_id').val('');
-        });
+        (function ($) {
+            'use strict';
+
+            $('#replyModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget);
+                var contactId = button.data('contact-id');
+                $(this).find('#contact_id').val(contactId);
+            });
+
+            $('#replyModal').on('hidden.bs.modal', function () {
+                var $form = $(this).find('form')[0];
+                if ($form) $form.reset();
+                $(this).find('#contact_id').val('');
+                $(this).find('#reply_message').val('');
+            });
+
+            $('#messageModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget);
+                var message = button.data('message') || '';
+                $(this).find('#messageModalBody').text(message);
+            });
+        })(jQuery);
     </script>
 @endpush

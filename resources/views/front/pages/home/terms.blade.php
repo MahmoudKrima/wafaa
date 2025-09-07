@@ -1,12 +1,13 @@
 @extends('front.layouts.app')
 @php
-app()->setLocale('ar');
+    app()->setLocale('ar');
 @endphp
 @section('title', __('admin.terms'))
 
 @section('content')
 
-    <div class="hero-section section-padding" style="background: linear-gradient(135deg, #1362a9 0%, #1364a8 100%); padding-top: 60px; padding-bottom: 60px;">
+    <div class="hero-section section-padding"
+        style="background: linear-gradient(135deg, #1362a9 0%, #1364a8 100%); padding-top: 60px; padding-bottom: 60px;">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-xl-8 col-lg-8 text-center">
@@ -28,12 +29,13 @@ app()->setLocale('ar');
                         @if($term && $term->term_description)
                             <div>
                                 <div class="terms-text">
-                                    {!! nl2br(e($term->getTranslation('term_description', app()->getLocale()))) !!}
+                                    {!! $term->getTranslation('term_description', app()->getLocale()) !!}
                                 </div>
                                 <div>
                                     <h3 class="mb-2"></h3>
                                     <p class="mb-0 opacity-75">
-                                        {{ __('admin.last_updated') ?? 'آخر تحديث' }}: {{ $term->updated_at ? $term->updated_at->format('Y-m-d') : 'غير محدد' }}
+                                        {{ __('admin.last_updated') ?? 'آخر تحديث' }}:
+                                        {{ $term->updated_at ? $term->updated_at->format('Y-m-d') : 'غير محدد' }}
                                     </p>
                                 </div>
                             </div>
@@ -42,9 +44,12 @@ app()->setLocale('ar');
                                 <div class="no-terms-icon mb-4">
                                     <i class="fa-solid fa-file-circle-exclamation fa-4x text-muted"></i>
                                 </div>
-                                <h4 class="text-muted mb-3">{{ __('admin.no_terms_available') ?? 'لا توجد شروط وأحكام متاحة حالياً' }}</h4>
-                                <p class="text-muted mb-4">{{ __('admin.terms_coming_soon') ?? 'سيتم إضافة الشروط والأحكام قريباً' }}</p>
-                                <a href="{{ route('front.home') }}" class="btn btn-primary btn-sm">{{ __('admin.back_to_home') ?? 'العودة للصفحة الرئيسية' }}
+                                <h4 class="text-muted mb-3">
+                                    {{ __('admin.no_terms_available') ?? 'لا توجد شروط وأحكام متاحة حالياً' }}</h4>
+                                <p class="text-muted mb-4">
+                                    {{ __('admin.terms_coming_soon') ?? 'سيتم إضافة الشروط والأحكام قريباً' }}</p>
+                                <a href="{{ route('front.home') }}"
+                                    class="btn btn-primary btn-sm">{{ __('admin.back_to_home') ?? 'العودة للصفحة الرئيسية' }}
                                 </a>
                             </div>
 
@@ -63,13 +68,13 @@ app()->setLocale('ar');
 
     <style>
         .terms-section .card {
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1) !important;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1) !important;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .terms-section .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.15) !important;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15) !important;
         }
 
         .terms-text {
@@ -79,13 +84,20 @@ app()->setLocale('ar');
             text-align: justify;
         }
 
-        .terms-text h1, .terms-text h2, .terms-text h3, .terms-text h4, .terms-text h5, .terms-text h6 {
+        .terms-text h1,
+        .terms-text h2,
+        .terms-text h3,
+        .terms-text h4,
+        .terms-text h5,
+        .terms-text h6 {
             color: #2c3e50;
             margin-top: 30px;
             margin-bottom: 15px;
         }
 
-        .terms-text h1:first-child, .terms-text h2:first-child, .terms-text h3:first-child {
+        .terms-text h1:first-child,
+        .terms-text h2:first-child,
+        .terms-text h3:first-child {
             margin-top: 0;
         }
 
@@ -93,7 +105,8 @@ app()->setLocale('ar');
             margin-bottom: 15px;
         }
 
-        .terms-text ul, .terms-text ol {
+        .terms-text ul,
+        .terms-text ol {
             margin-bottom: 15px;
             padding-right: 20px;
         }
@@ -123,7 +136,7 @@ app()->setLocale('ar');
         }
 
         .terms-icon {
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 50%;
             width: 80px;
             height: 80px;
@@ -145,7 +158,7 @@ app()->setLocale('ar');
 
         .contact-buttons .btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
         }
 
         @media (max-width: 768px) {
@@ -164,5 +177,3 @@ app()->setLocale('ar');
         }
     </style>
 @endsection
-
-

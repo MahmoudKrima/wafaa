@@ -49,8 +49,10 @@
                                                 <label for="statusInput" class="text-dark">{{ __('admin.status') }}</label>
                                                 <select name="status" class="form-control" id="statusInput">
                                                     @foreach ($status as $stat)
-                                                        <option @selected($stat->value == old('status', $admin->status->value)) value="{{ $stat->value }}">
-                                                            {{ $stat->lang() }}</option>
+                                                        <option @selected($stat->value == old('status', $admin->status->value))
+                                                            value="{{ $stat->value }}">
+                                                            {{ $stat->lang() }}
+                                                        </option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -59,8 +61,10 @@
                                                 <select name="role" id="roleInput" class="form-control">
                                                     <option disabled selected>{{ __('admin.choose_role') }}</option>
                                                     @foreach ($roles as $role)
-                                                        <option @selected(old('role', optional($admin->roles->first())->id) == $role->id) value="{{ $role->id }}">
-                                                            {{ $role->name }}</option>
+                                                        <option @selected(old('role', optional($admin->roles->first())->id) == $role->id)
+                                                            value="{{ $role->id }}">
+                                                            {{ $role->name }}
+                                                        </option>
                                                     @endforeach
                                                 </select>
                                             </div>
@@ -80,8 +84,10 @@
                                             </div>
 
                                             <div class="col-md-6 mb-3 d-flex align-items-center">
-                                                <img width="200px" height="200px" src="{{ displayImage($admin->image) }}"
-                                                    alt="{{ $admin->name }}">
+                                                @if ($admin->image)
+                                                    <img width="200px" height="200px" src="{{ displayImage($admin->image) }}"
+                                                        alt="{{ $admin->name }}">
+                                                @endif
                                             </div>
 
                                         </div>
