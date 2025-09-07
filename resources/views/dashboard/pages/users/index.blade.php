@@ -147,7 +147,7 @@
                                         <div class="action-btns d-flex justify-content-center">
                                             @haspermission('shippings.view', 'admin')
                                             <a href="{{ route('admin.users.shippings', $user->id) }}"
-                                                class="action-btn btn-edit bs-tooltip me-2 badge rounded-pill bg-info"
+                                                class="action-btn btn-edit bs-tooltip me-2 badge rounded-pill bg-primary"
                                                 style="padding:7px;margin:0 5px;" title="{{ __('admin.shippings') }}"
                                                 data-toggle="tooltip" data-placement="top" aria-label="Edit"
                                                 data-bs-original-title="Edit">
@@ -165,7 +165,7 @@
                                             @endhaspermission
                                             @haspermission('user_shipping_prices.view', 'admin')
                                             <a href="{{ route('admin.user-shipping-prices.index', $user->id) }}"
-                                                class="action-btn btn-edit bs-tooltip me-2 badge rounded-pill bg-info"
+                                                class="action-btn btn-edit bs-tooltip me-2 badge rounded-pill bg-dark"
                                                 style="padding:7px;margin:0 5px;" title="{{ __('admin.user_shipping_prices') }}"
                                                 data-toggle="tooltip" data-placement="top" aria-label="Edit"
                                                 data-bs-original-title="Edit">

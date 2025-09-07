@@ -99,6 +99,8 @@
                                                         <label for="status">{{ __('admin.status') }}</label>
                                                         <select name="status" class="form-control" id="status">
                                                             <option value="" selected>{{ __('admin.choose_status') }}</option>
+                                                            <option value="delivered" @selected(request()->get('status') == 'delivered')>{{ __('admin.delivered') }}</option>
+                                                            <option value="returned" @selected(request()->get('status') == 'returned')>{{ __('admin.returned') }}</option>
                                                             <option value="pending" @selected(request()->get('status') == 'pending')>{{ __('admin.pending') }}</option>
                                                             <option value="processing" @selected(request()->get('status') == 'processing')>{{ __('admin.processing') }}</option>
                                                             <option value="failed" @selected(request()->get('status') == 'failed')>{{ __('admin.failed') }}</option>
@@ -235,18 +237,22 @@
                                     </td>
                                     <td>
                                         @php
-                                        switch ($shipment['status']) {
-                                        case 'pending':
-                                        $class = 'badge bg-warning text-white'; $label = __('admin.pending'); break;
-                                        case 'processing':
-                                        $class = 'badge bg-success text-white'; $label = __('admin.processing'); break;
-                                        case 'failed':
-                                        $class = 'badge bg-danger white'; $label = __('admin.failed'); break;
-                                        case 'canceled':
-                                        $class = 'badge bg-danger white'; $label = __('admin.canceled'); break;
-                                        default:
-                                        $class = 'badge bg-success white'; $label = __('admin.' . strtolower($shipment['status'])); break;
-                                        }
+                                            switch ($shipment['status']) {
+                                            case 'pending':
+                                            $class = 'badge bg-warning text-white'; $label = __('admin.pending'); break;
+                                            case 'processing':
+                                            $class = 'badge bg-info text-white'; $label = __('admin.processing'); break;
+                                            case 'failed':
+                                            $class = 'badge bg-danger white'; $label = __('admin.failed'); break;
+                                            case 'canceled':
+                                            $class = 'badge bg-danger white'; $label = __('admin.canceled'); break;
+                                            case 'delivered':
+                                            $class = 'badge bg-success white'; $label = __('admin.delivered'); break;
+                                            case 'returned':
+                                            $class = 'badge bg-dark white'; $label = __('admin.returned'); break;
+                                            default:
+                                            $class = 'badge bg-success white'; $label = __('admin.' . strtolower($shipment['status'])); break;
+                                            }
                                         @endphp
                                         <span class="{{ $class }}">{{ $label }}</span>
                                     </td>
