@@ -539,8 +539,8 @@
 
                                         <div class="row">
                                             <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                                <strong class="mb-3 text-black">{{__('admin.cod_fee') }}: </strong>
-                                                <div class="mb-0 text-muted" id="cod-fees-preview"></div>
+                                                <strong class="mb-3 text-black">{{__('admin.cod_fee_per_one_receiver') }}: </strong>
+                                                <div class="mb-0 text-muted" id="cod-fee-per-one-receiver-preview"></div>
                                             </div>
                                         </div>
 
@@ -564,11 +564,15 @@
 
                                         <div class="row">
                                             <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                                <strong class="mb-1 text-black">{{__('admin.extra_fees') }}: </strong>
+                                                <strong class="mb-1 text-black">{{__('admin.extra_fees_weight') }}: </strong>
                                                 <div class="mb-0 text-primary" id="extra-fees-preview"></div>
                                             </div>
-                                            <div class="col-md-12">
-                                                <div class="small mb-3 text-muted mt-0">{{__('admin.extra_fess_desc') }}</div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-md-12" style="display:flex;justify-content:space-between;">
+                                                <strong class="mb-3 text-black">{{__('admin.cod_fee') }}: </strong>
+                                                <div class="mb-0 text-muted" id="cod-fees-preview"></div>
                                             </div>
                                         </div>
 

@@ -621,4 +621,5 @@ return [
     'question' => 'Question',
     'answer' => 'Answer',
     'why_choose_us' => 'Why Choose Us',
+    'extra_fees_weight' => 'Extra Fees Weight',
 ];
