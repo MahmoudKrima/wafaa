@@ -1,6 +1,6 @@
 @extends('front.layouts.app')
 @php
-app()->setLocale('ar');
+    app()->setLocale('ar');
 @endphp
 @section('title', __('admin.home'))
 
@@ -96,7 +96,8 @@ app()->setLocale('ar');
                             <div class="client-wrapper owl-carousel">
                                 @foreach($partners as $partner)
                                     <div class="single-client-item">
-                                        <img src="{{ displayImage($partner->image) }}" alt="partner" style="width:100px;height:90px;">
+                                        <img src="{{ displayImage($partner->image) }}" alt="partner"
+                                            style="width:100px;height:90px;">
                                     </div>
                                 @endforeach
                             </div>
@@ -120,7 +121,8 @@ app()->setLocale('ar');
                         <h2> <span>{{__('admin.services_provided')}}</span></h2>
                     </div>
 
-                    <p class="text-white wow fadeInDown animated mt-3" data-wow-delay="400ms" style="color:#1c1d1e !important;">
+                    <p class="text-white wow fadeInDown animated mt-3" data-wow-delay="400ms"
+                        style="color:#1c1d1e !important;">
                         {{__('admin.services_description')}}
                     </p>
 
@@ -185,25 +187,29 @@ app()->setLocale('ar');
             <div class="row justify-content-center mt-5" style="padding-top:23px;">
                 <div class="col-xl-3 col-lg-3 col-md-3 text-center">
                     <div class="single-funfact-wrap">
-                        <h2><span style="direction: ltr !important;" class="odometer" data-count="{{ $statistics['totalAdmins'] }}">000</span></h2>
+                        <h2><span style="direction: ltr !important;" class="odometer"
+                                data-count="{{ $statistics['totalAdmins'] }}">000</span></h2>
                         <p>{{ __('admin.team_member') }}</p>
                     </div>
                 </div>
                 <div class="col-xl-3 col-lg-3 col-md-3 text-center">
                     <div class="single-funfact-wrap">
-                        <h2><span style="direction: ltr !important;" class="odometer" data-count="{{$statistics['totalShippingCompanies']}}">000</span></h2>
+                        <h2><span style="direction: ltr !important;" class="odometer"
+                                data-count="{{$statistics['totalShippingCompanies']}}">000</span></h2>
                         <p>{{ __('admin.shipping_companies') }}</p>
                     </div>
                 </div>
                 <div class="col-xl-3 col-lg-3 col-md-3 text-center">
                     <div class="single-funfact-wrap">
-                        <h2><span style="direction: ltr !important;" class="odometer" data-count="{{$statistics['totalShippments']}}">000</span></h2>
+                        <h2><span style="direction: ltr !important;" class="odometer"
+                                data-count="{{$statistics['totalShippments']}}">000</span></h2>
                         <p>{{ __('admin.shippments') }}</p>
                     </div>
                 </div>
                 <div class="col-xl-3 col-lg-3 col-md-3 text-center">
                     <div class="single-funfact-wrap">
-                        <h2><span style="direction: ltr !important;" class="odometer" data-count="{{$statistics['totalUsers']}}">000</span></h2>
+                        <h2><span style="direction: ltr !important;" class="odometer"
+                                data-count="{{$statistics['totalUsers']}}">000</span></h2>
                         <p>{{ __('admin.clients') }}</p>
                     </div>
                 </div>
@@ -220,10 +226,13 @@ app()->setLocale('ar');
                 <div class="row">
                     <div class="col-xl-5 col-lg-5">
                         <div class="section-title">
-                            <h2 class="text-white wow fadeInDown animated" data-wow-delay="400ms">{{ __('admin.contact_us_now') }}</h2>
+                            <h2 class="text-white wow fadeInDown animated" data-wow-delay="400ms">
+                                {{ __('admin.contact_us_now') }}</h2>
                         </div>
-                        <p class="text-white wow fadeInUp animated" data-wow-delay="200ms" style="color:#1c1d1e !important;">
-                            {{ __('admin.contact_us_description') }} </p>
+                        <p class="text-white wow fadeInUp animated" data-wow-delay="200ms"
+                            style="color:#1c1d1e !important;">
+                            {{ __('admin.contact_us_description') }}
+                        </p>
                         <div class="contact-wrap">
                             <div class="icon">
                                 <i class="fa fa-phone"></i>
@@ -365,7 +374,11 @@ app()->setLocale('ar');
                             عملاء استثنائية لتتبع شحنتك بدقة وتقدم خيارات دفع متعددة وآمنة، كل هذا متاح على مدار الساعة
                             لتلبية احتياجاتك.</p>
                     </div>
-                    <a href="about.html" class="bordered-btn mt-40">تسجيل الدخول<i class="fa-solid fa-arrow-left"></i></a>
+                    @if(!auth()->guard('web')->check() && !auth()->guard('admin')->check())
+                        <a href="{{ route('user.auth.loginForm') }}" class="bordered-btn mt-40">
+                            تسجيل الدخول <i class="fa-solid fa-arrow-left"></i>
+                        </a>
+                    @endif
                 </div>
             </div>
         </div>
