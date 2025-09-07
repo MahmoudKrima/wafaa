@@ -169,10 +169,10 @@
                                         @endif
                                     </td>
                                     <td>
-                                        <p class="mb-0">{{ $transaction->created_at }}</p>
+                                        <p class="mb-0">{{ $transaction->created_at->format('Y-m-d H:i:s') }}</p>
                                     </td>
                                     <td>
-                                        <p class="mb-0">{{ $transaction->updated_at }}</p>
+                                        <p class="mb-0">{{ $transaction->updated_at->format('Y-m-d H:i:s') }}</p>
                                     </td>
                                     @if (auth('admin')->user()->hasAnyPermission(['transactions.update', 'transactions.delete', 'plan_transaction.view']))
                                     <td class="text-center">

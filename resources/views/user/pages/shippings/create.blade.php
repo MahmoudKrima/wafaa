@@ -605,7 +605,7 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="d-flex gap-2">
                                 <button type="submit" class="btn btn-success btn-lg" id="btn-confirm-shipping" disabled>
-                                    <i class="fas fa-check me-2"></i>{{ __('admin.confirm_shipment') }}
+                                    <i class="fas fa-check me-2" style="margin:0 5px;"></i> {{ __('admin.confirm_shipment') }}
                                 </button>
                             </div>
                         </div>

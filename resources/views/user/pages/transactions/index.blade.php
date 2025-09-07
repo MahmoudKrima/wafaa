@@ -130,7 +130,8 @@
                                     <th scope="col">{{ __('admin.amount') }}</th>
                                     <th scope="col">{{ __('admin.status') }}</th>
                                     <th scope="col">{{ __('admin.attachment') }}</th>
-                                    <th scope="col">{{ __('admin.created_at') }}</th>
+                                    <th scope="col">{{ __('admin.added_at') }}</th>
+                                    <th scope="col">{{ __('admin.updated_at') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -156,7 +157,10 @@
                                         </a>
                                     </td>
                                     <td>
-                                        {{ $transation->created_at->format('Y-m-d H:i:s') }}
+                                        <p class="mb-0">{{ $transation->created_at->format('Y-m-d H:i:s') }}</p>
+                                    </td>
+                                    <td>
+                                        <p class="mb-0">{{ $transation->updated_at->format('Y-m-d H:i:s') }}</p>
                                     </td>
                                 </tr>
                                 @endforeach
