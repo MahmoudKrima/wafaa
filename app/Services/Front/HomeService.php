@@ -80,10 +80,6 @@ class HomeService
             foreach ($base as $k => $v) {
                 $parts[] = urlencode($k) . '=' . urlencode((string) $v);
             }
-            foreach ($chunk as $id) {
-                $parts[] = 'externalAppId=' . urlencode($id);
-            }
-
             $url = $this->ghayaUrl('shipments') . '?' . implode('&', $parts);
 
             try {
@@ -170,7 +166,8 @@ class HomeService
             ->first();
     }
 
-    public function policy() {
+    public function policy()
+    {
         return Term::select('id', 'policy_description', 'updated_at')
             ->first();
     }
