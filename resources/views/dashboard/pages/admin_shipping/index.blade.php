@@ -219,7 +219,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        {{ \Carbon\Carbon::parse($shipment['createdAt'])->timezone('Asia/Riyadh')->format('d/m/Y H:i') }}
+                                        {{ \Carbon\Carbon::parse($shipment['createdAt'])->format('d/m/Y H:i') }}
                                     </td>
                                     <td>
                                         @php
@@ -237,22 +237,22 @@
                                     </td>
                                     <td>
                                         @php
-                                            switch ($shipment['status']) {
-                                            case 'pending':
-                                            $class = 'badge bg-warning text-white'; $label = __('admin.pending'); break;
-                                            case 'processing':
-                                            $class = 'badge bg-info text-white'; $label = __('admin.processing'); break;
-                                            case 'failed':
-                                            $class = 'badge bg-danger white'; $label = __('admin.failed'); break;
-                                            case 'canceled':
-                                            $class = 'badge bg-danger white'; $label = __('admin.canceled'); break;
-                                            case 'delivered':
-                                            $class = 'badge bg-success white'; $label = __('admin.delivered'); break;
-                                            case 'returned':
-                                            $class = 'badge bg-dark white'; $label = __('admin.returned'); break;
-                                            default:
-                                            $class = 'badge bg-success white'; $label = __('admin.' . strtolower($shipment['status'])); break;
-                                            }
+                                        switch ($shipment['status']) {
+                                        case 'pending':
+                                        $class = 'badge bg-warning text-white'; $label = __('admin.pending'); break;
+                                        case 'processing':
+                                        $class = 'badge bg-info text-white'; $label = __('admin.processing'); break;
+                                        case 'failed':
+                                        $class = 'badge bg-danger white'; $label = __('admin.failed'); break;
+                                        case 'canceled':
+                                        $class = 'badge bg-danger white'; $label = __('admin.canceled'); break;
+                                        case 'delivered':
+                                        $class = 'badge bg-success white'; $label = __('admin.delivered'); break;
+                                        case 'returned':
+                                        $class = 'badge bg-dark white'; $label = __('admin.returned'); break;
+                                        default:
+                                        $class = 'badge bg-success white'; $label = __('admin.' . strtolower($shipment['status'])); break;
+                                        }
                                         @endphp
                                         <span class="{{ $class }}">{{ $label }}</span>
                                     </td>
@@ -296,9 +296,10 @@
 
                         </table>
                     </div>
-                    @if ($shipments->count())
-                    {{ $shipments->links() }}
+                    @if ($shipments->hasPages())
+                    {{ $shipments->appends(request()->query())->links() }}
                     @endif
+
                 </div>
             </div>
         </div>

@@ -21,8 +21,9 @@
         }
     }
 
-    .navbar .language-dropdown .custom-dropdown-icon a.dropdown-toggle:before, .navbar .navbar-item .nav-item.user-profile-dropdown .nav-link.user:before{
-        top:17px !important;
+    .navbar .language-dropdown .custom-dropdown-icon a.dropdown-toggle:before,
+    .navbar .navbar-item .nav-item.user-profile-dropdown .nav-link.user:before {
+        top: 17px !important;
     }
 
     /*For Responsive purpose*/
@@ -72,11 +73,12 @@
                                             @endswitch
                                         </span>
 
-                                        </div>
-                                        @if($i<7)
-                                            <div class="step-line d-none d-sm-block mx-3" style="width:40px;height:2px;background:#e9ecef;"></div>
-                                       @endif
-                                    @endfor
+                                </div>
+                                @if($i<7)
+                                    <div class="step-line d-none d-sm-block mx-3" style="width:40px;height:2px;background:#e9ecef;">
+                            </div>
+                            @endif
+                            @endfor
 
                             <!-- Navigation Buttons -->
                             <div class="prev_next_btn mb-2 mb-sm-0">
@@ -537,13 +539,6 @@
 
                                         <div class="row">
                                             <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                                <strong class="mb-3 text-black">{{__('admin.cod_fee_per_receiver') }}: </strong>
-                                                <div class="mb-0 text-muted" id="price-cod-per-receiver"></div>
-                                            </div>
-                                        </div>
-
-                                        <div class="row">
-                                            <div class="col-md-12" style="display:flex;justify-content:space-between;">
                                                 <strong class="mb-3 text-black">{{__('admin.cod_fee') }}: </strong>
                                                 <div class="mb-0 text-muted" id="cod-fees-preview"></div>
                                             </div>
@@ -811,6 +806,8 @@
         normal_shipment: '{{ __("admin.normal_shipment") }}',
         cash_on_delivery_shippment: '{{ __("admin.cash_on_delivery_shippment") }}',
         loading_countries: '{{ __("admin.loading_countries") }}',
+        weight_summary: '{{ __("admin.weight_summary") }}',
+        creating_shipment: '{{ __("admin.creating_shipment") }}',
     };
 
     const API_ENDPOINTS = {

@@ -10,9 +10,7 @@ class DateFromFilter
     public function handle($query, Closure $next)
     {
         if (request()->filled('date_from') && request()->input('date_from') != null) {
-            $start = Carbon::parse(request('date_from'), 'Asia/Riyadh')
-                ->startOfDay();
-                //->utc();
+            $start = Carbon::parse(request('date_from'))->startOfDay();
             $query->where('created_at', '>=', $start);
         }
         return $next($query);
