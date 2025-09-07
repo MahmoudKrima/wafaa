@@ -17,6 +17,10 @@ class UpdateAboutRequest extends FormRequest
             "title" => ["required", 'max:255', 'string'],
             "subtitle" => ["required", 'max:255', 'string'],
             'image' => ['nullable', 'image', 'mimetypes:image/jpeg,image/png,image/webp,image/gif', 'mimes:jpg,jpeg,jfif,png,gif,webp'],
+            'items' => ['required', 'array'],
+            'items.*.id' => ['required', 'integer', 'exists:about_items,id'],
+            'items.*.title' => ['required', 'string', 'max:255'],
+            'items.*.description' => ['required', 'string'],
         ];
     }
 }
