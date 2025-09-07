@@ -576,6 +576,7 @@ return [
     'our_clients' => 'Our Clients',
     'last_updated' => 'Last update date',
     'faqs' => 'FAQs',
+    'add_new_service' => 'Add New Service',
     'whatsapp_number' => 'Whatsapp',
     'terms_coming_soon' => 'Terms and conditions coming soon',
     'no_terms_available' => 'No terms and conditions available',

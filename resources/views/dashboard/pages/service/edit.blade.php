@@ -21,28 +21,34 @@
                                 @csrf
                                 <div class="form-group">
                                     <div class="row">
+
+
                                         <div class="col-md-6 mb-3">
                                             <label for="title" class="text-dark">{{ __('admin.title') }}</label>
                                             <input type="text" name="title" id="title" class="form-control"
                                                 value="{{ old('title', $service->getTranslation('title', 'ar')) }}">
                                         </div>
+
                                         <div class="col-md-6 mb-3">
+                                            <label for="statusInput" class="text-dark">{{ __('admin.status') }}</label>
+                                            <select name="status" class="form-control" id="statusInput">
+                                                @foreach ($status as $stat)
+                                                    <option @selected($stat->value == old('status', $service->status->value))
+                                                            value="{{ $stat->value }}">
+                                                        {{ $stat->lang() }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-12 mb-3">
                                             <label for="description"
                                                 class="text-dark">{{ __('admin.description') }}</label>
                                             <textarea name="description" id="description" class="form-control"
                                                 rows="3">{{ old('description', $service->getTranslation('description', 'ar')) }}</textarea>
                                         </div>
-                                        <div class="col-md-12 mb-3">
-                                            <label for="statusInput" class="text-dark">{{ __('admin.status') }}</label>
-                                            <select name="status" class="form-control" id="statusInput">
-                                                @foreach ($status as $stat)
-                                                <option @selected($stat->value == old('status', $service->status->value))
-                                                    value="{{ $stat->value }}">
-                                                    {{ $stat->lang() }}
-                                                </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
+
+
                                         <div class="col-md-6 mb-3 custom-file-container" data-upload-id="myFirstImage">
                                             <label>{{ __('admin.image') }}<a href="javascript:void(0)"
                                                     class="custom-file-container__image-clear"

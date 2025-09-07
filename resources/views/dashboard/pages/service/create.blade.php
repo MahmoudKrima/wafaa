@@ -1,5 +1,5 @@
 @extends('dashboard.layouts.app')
-@section('title', __('admin.create'))
+@section('title', __('admin.add_new_service'))
 @section('content')
 <div class="layout-px-spacing">
     <div class="row layout-top-spacing">
@@ -8,7 +8,7 @@
                 <div class="widget-header">
                     <div class="row mb-4">
                         <div class="col-12 d-flex justify-content-between align-items-center">
-                            <h4 class="">{{ __('admin.create') }}</h4>
+                            <h4 class="">{{ __('admin.add_new_service') }}</h4>
                             <x-back-button route="{{ route('admin.services.index') }}" />
                         </div>
                     </div>
@@ -28,22 +28,24 @@
                                                 value="{{ old('title') }}">
                                         </div>
                                         <div class="col-6 mb-3">
+                                            <label for="statusInput" class="text-dark">{{ __('admin.status') }}</label>
+                                            <select name="status" id="statusInput" class="form-control">
+                                                @foreach ($status as $stat)
+                                                    <option @selected($stat->value == old('status'))
+                                                            value="{{ $stat->value }}">
+                                                        {{ $stat->lang() }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="col-12 mb-3">
                                             <label for="description"
                                                 class="text-dark">{{ __('admin.description') }}</label>
                                             <textarea name="description" id="description" class="form-control"
                                                 rows="3">{{ old('description') }}</textarea>
                                         </div>
-                                        <div class="col-12 mb-3">
-                                            <label for="statusInput" class="text-dark">{{ __('admin.status') }}</label>
-                                            <select name="status" id="statusInput" class="form-control">
-                                                @foreach ($status as $stat)
-                                                <option @selected($stat->value == old('status'))
-                                                    value="{{ $stat->value }}">
-                                                    {{ $stat->lang() }}
-                                                </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
+
+
                                         <div class="col-lg-12 col-md-12 mb-3 custom-file-container"
                                             data-upload-id="myFirstImage">
                                             <label>{{ __('admin.image') }}<a href="javascript:void(0)"

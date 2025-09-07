@@ -1,15 +1,15 @@
-@if($transactionsCount > 0)
+@if($transactionsInsideCount > 0)
 
-    <div class="notification" role="status">{{$transactionsCount}}</div>
+    <div class="notification_inside" role="status">{{$transactionsInsideCount}}</div>
 @endif
 
 <style>
-    .notification {
+    .notification_inside {
 
         /* circle shape, size and position */
         position: absolute;
         left: 1.5rem;
-        top: 1.6rem;
+        margin-top: 0.6rem;
         min-width: 1.8em; /* or width, explained below. */
         height: 1.8em;
         border-radius: 0.8em; /* or 50%, explained below. */

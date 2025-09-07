@@ -93,6 +93,7 @@
             color: #2c3e50;
             margin-top: 30px;
             margin-bottom: 15px;
+            font-size: 19px;
         }
 
         .terms-text h1:first-child,

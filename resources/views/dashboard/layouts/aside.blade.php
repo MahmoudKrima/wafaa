@@ -280,6 +280,9 @@
                 @endhaspermission
                 @haspermission('transactions.view', 'admin')
                 <li class="{{ isRoute(['admin.transactions.index', 'admin.transactions.search']) ? 'active' : '' }}">
+                    @if (auth('admin')->user()->hasPermissionTo('transactions.view'))
+                        <x-transaction-alert-inside-component />
+                    @endif
                     <a href="{{ route('admin.transactions.index') }}">
                         <i class="fa fa-money-bill-trend-up" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
                         {{ __('admin.recharge_requests') }} </a>
@@ -344,6 +347,14 @@
                 </li>
                 @endhaspermission
 
+                @haspermission('contacts.view', 'admin')
+                <li class="{{ isRoute(['admin.contacts.index']) ? 'active' : '' }}">
+                    <a href="{{ route('admin.contacts.index') }}">
+                        <i class="fa fa-envelope" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
+                        {{ __('admin.contacts') }} </a>
+                </li>
+                @endhaspermission
+
                 @haspermission('terms.update', 'admin')
                 <li class="{{ isRoute(['admin.terms.index']) ? 'active' : '' }}">
                     <a href="{{ route('admin.terms.index') }}">
@@ -366,7 +377,7 @@
                     class="{{ isRoute([ 'admin.about.edit', 'admin.about.update-item']) ? 'active' : '' }}">
                     <a href="{{ route('admin.about.edit') }}">
                         <i class="fa fa-info" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
-                        {{ __('admin.about') }} </a>
+                        {{ __('admin.about_us') }} </a>
                 </li>
                 @endhaspermission
 
@@ -394,14 +405,6 @@
                     <a href="{{ route('admin.testimonials.index') }}">
                         <i class="fa fa-star" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
                         {{ __('admin.testimonials') }} </a>
-                </li>
-                @endhaspermission
-
-                @haspermission('contacts.view', 'admin')
-                <li class="{{ isRoute(['admin.contacts.index']) ? 'active' : '' }}">
-                    <a href="{{ route('admin.contacts.index') }}">
-                        <i class="fa fa-envelope" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
-                        {{ __('admin.contacts') }} </a>
                 </li>
                 @endhaspermission
 

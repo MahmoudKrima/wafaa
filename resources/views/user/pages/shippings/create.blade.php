@@ -564,7 +564,7 @@
 
                                         <div class="row">
                                             <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                                <strong class="mb-1 text-black">{{__('admin.extra_fees_weight') }}: </strong>
+                                                <strong class="mb-3 text-black">{{__('admin.extra_fees_weight') }}: </strong>
                                                 <div class="mb-0 text-primary" id="extra-fees-preview"></div>
                                             </div>
                                         </div>
@@ -572,7 +572,7 @@
                                         <div class="row">
                                             <div class="col-md-12" style="display:flex;justify-content:space-between;">
                                                 <strong class="mb-3 text-black">{{__('admin.cod_fee') }}: </strong>
-                                                <div class="mb-0 text-muted" id="cod-fees-preview"></div>
+                                                <div class="mb-0 text-primary" id="cod-fees-preview"></div>
                                             </div>
                                         </div>
 
@@ -587,11 +587,11 @@
                                             </div>
                                         </div>
 
-
+                                        <hr>
                                         <div class="row">
                                             <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                                <strong class="mb-1 text-primary">{{__('admin.total_amount_you_pay') }}: </strong>
-                                                <div class="h6 mb-0 text-primary" id="total-amount-preview"></div>
+                                                <strong class="mb-1 text-success">{{__('admin.total_amount_you_pay') }}: </strong>
+                                                <div class="h6 mb-0 text-success" id="total-amount-preview"></div>
                                             </div>
                                             <div class="col-md-12">
                                                 <span class="small mb-3 text-muted mt-0" id="receivers-count-display"></span> {{__('admin.receivers') }} ×

@@ -39,7 +39,7 @@
                 <div class="col-xl-6 col-lg-6 wow fadeInUp animated" data-wow-delay="200ms">
                     <div class="section-title">
                         <h6>{{ $about->subtitle}}</h6>
-                        <h2>{{ $about->title}} <span>{{ app('settings')['app_name_' . assetLang()] }}</span></h2>
+                        <h2>{{ $about->title}} <span></span></h2>
                     </div>
                     <div class="faq-wrap mt-0">
                         <div class="cp-custom-accordion mt-60">

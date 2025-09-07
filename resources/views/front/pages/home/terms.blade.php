@@ -78,7 +78,7 @@
         }
 
         .terms-text {
-            font-size: 18px;
+            font-size: 14px;
             line-height: 1.8;
             color: #333;
             text-align: justify;
@@ -93,6 +93,7 @@
             color: #2c3e50;
             margin-top: 30px;
             margin-bottom: 15px;
+            font-size: 19px;
         }
 
         .terms-text h1:first-child,
@@ -172,7 +173,7 @@
             }
 
             .terms-text {
-                font-size: 18px;
+                font-size: 14px;
             }
         }
     </style>
