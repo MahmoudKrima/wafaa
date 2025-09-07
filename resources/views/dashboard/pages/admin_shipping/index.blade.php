@@ -296,9 +296,10 @@
 
                         </table>
                     </div>
-                    @if ($shipments->count())
-                    {{ $shipments->links() }}
+                    @if ($shipments->hasPages())
+                    {{ $shipments->appends(request()->query())->links() }}
                     @endif
+
                 </div>
             </div>
         </div>

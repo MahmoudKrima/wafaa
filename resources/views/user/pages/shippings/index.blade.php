@@ -275,7 +275,7 @@
                         </table>
                     </div>
                     @if ($shipments->count())
-                    {{ $shipments->links() }}
+                    {{ $shipments->appends(request()->query())->links() }}
                     @endif
                 </div>
             </div>

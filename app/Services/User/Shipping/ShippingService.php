@@ -905,36 +905,24 @@ class ShippingService
 
             $adminId = $user->created_by;
 
+            $extraWeightPricePerKg = 0;
+            $codFeePerReceiver     = 0;
             if ($adminId) {
                 $adminSettings = AdminSetting::where('admin_id', $adminId)->first();
-                $extraWeightPricePerKg = $adminSettings?->extra_weight_price;
-                $codFeePerReceiver     = $adminSettings?->cash_on_delivery_price;
-            } else {
-                $extraWeightPricePerKg = 0;
-                $codFeePerReceiver     = 0;
+                $extraWeightPricePerKg = (float) ($adminSettings?->extra_weight_price ?? 0);
+                $codFeePerReceiver     = (float) ($adminSettings?->cash_on_delivery_price ?? 0);
             }
 
             $resp = $this->ghayaRequest()->get($this->ghayaUrl('shipping-companies'), [
-                'page'           => 0,
-                'pageSize'       => 50,
-                'orderColumn'    => 'createdAt',
+                'page' => 0,
+                'pageSize' => 50,
+                'orderColumn' => 'createdAt',
                 'orderDirection' => 'desc',
             ]);
-
             if (!$resp->successful()) {
                 return ['results' => []];
             }
-
             $apiCompanies = (array) data_get($resp->json(), 'results', []);
-
-            $allowedIds = [];
-            if ($adminId) {
-                $allowedIds = AllowedCompany::where('admin_id', $adminId)
-                    ->where('status', 'active')
-                    ->pluck('company_id')
-                    ->map(fn($v) => (string) $v)
-                    ->all();
-            }
 
             $userShippingPrices = $user->shippingPrices()
                 ->select('company_id', 'company_name', 'local_price', 'international_price')
@@ -945,7 +933,7 @@ class ShippingService
                     'results' => [],
                     'admin_settings' => [
                         'extra_weight_price_per_kg' => $extraWeightPricePerKg,
-                        'cod_fee_per_receiver'      => $codFeePerReceiver,
+                        'cod_fee_per_receiver' => $codFeePerReceiver,
                     ],
                 ];
             }
@@ -953,37 +941,63 @@ class ShippingService
             $userCompanyIds = $userShippingPrices->pluck('company_id')->map(fn($v) => (string) $v)->all();
             $userPriceMap   = $userShippingPrices->keyBy(fn($row) => (string) $row->company_id);
 
-            $targetIds = !empty($allowedIds)
-                ? array_values(array_intersect($userCompanyIds, $allowedIds))
+            $enforceAllowed = false;
+            $activeAllowedIds = [];
+            if ($adminId) {
+                $hasAnyAllowed = AllowedCompany::where('admin_id', $adminId)->exists();
+                if ($hasAnyAllowed) {
+                    $enforceAllowed = true;
+                    $activeAllowedIds = AllowedCompany::where('admin_id', $adminId)
+                        ->where('status', 'active') // use 1 if your column is boolean
+                        ->pluck('company_id')
+                        ->map(fn($v) => (string) $v)
+                        ->all();
+                }
+            }
+
+            $targetIds = $enforceAllowed
+                ? array_values(array_intersect($userCompanyIds, $activeAllowedIds))
                 : $userCompanyIds;
+
+            if (empty($targetIds)) {
+                return [
+                    'results' => [],
+                    'admin_settings' => [
+                        'extra_weight_price_per_kg' => $extraWeightPricePerKg,
+                        'cod_fee_per_receiver' => $codFeePerReceiver,
+                    ],
+                ];
+            }
 
             $results = collect($apiCompanies)
                 ->filter(function ($company) use ($targetIds) {
                     $id = (string) data_get($company, 'id', '');
-                    $isActive = (bool) data_get($company, 'isActive', false);
+                    $isActive = (bool) data_get($company, 'isActive', true);
                     return $isActive && in_array($id, $targetIds, true);
                 })
                 ->map(function ($company) use ($userPriceMap, $extraWeightPricePerKg, $codFeePerReceiver) {
                     $id      = (string) data_get($company, 'id', '');
                     $methods = (array) data_get($company, 'shippingMethods', []);
-                    $userPrice = $userPriceMap->get($id);
-                    if (!$userPrice) {
-                        return null;
-                    }
 
-                    $company['userLocalPrice']         = $userPrice->local_price;
-                    $company['userInternationalPrice'] = $userPrice->international_price;
-                    $company['adminExtraWeightPrice']  = $extraWeightPricePerKg;
-                    $company['adminCodFee']            = $codFeePerReceiver;
+                    $price = $userPriceMap->get($id);
+                    if (!$price) return null;
+
+                    $company['userLocalPrice']         = (float) $price->local_price;
+                    $company['userInternationalPrice'] = (float) $price->international_price;
+                    $company['adminExtraWeightPrice']  = (float) $extraWeightPricePerKg;
+                    $company['adminCodFee']            = (float) $codFeePerReceiver;
 
                     if (in_array('local', $methods, true)) {
-                        $company['effectiveLocalPrice'] = $userPrice->local_price;
+                        $company['effectiveLocalPrice'] = (float) $price->local_price;
                     }
                     if (in_array('international', $methods, true)) {
-                        $company['effectiveInternationalPrice'] = $userPrice->international_price;
+                        $company['effectiveInternationalPrice'] = (float) $price->international_price;
                     }
 
-                    $company['hasCod'] = in_array('cashOnDelivery', $methods, true);
+                    $company['hasCod'] = in_array('cashOnDelivery', $methods, true)
+                        || data_get($company, 'cash_on_delivery.enabled') === true
+                        || data_get($company, 'cod.enabled') === true;
+
                     return $company;
                 })
                 ->filter()
@@ -994,13 +1008,15 @@ class ShippingService
                 'results' => $results,
                 'admin_settings' => [
                     'extra_weight_price_per_kg' => $extraWeightPricePerKg,
-                    'cod_fee_per_receiver'      => $codFeePerReceiver,
+                    'cod_fee_per_receiver' => $codFeePerReceiver,
                 ],
             ];
         } catch (\Throwable $e) {
             return ['results' => []];
         }
     }
+
+
 
     public function getStates()
     {
