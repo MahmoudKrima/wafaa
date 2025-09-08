@@ -12,7 +12,9 @@ use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
-    public function __construct(private RoleService $roleService) {}
+    public function __construct(private RoleService $roleService)
+    {
+    }
 
     public function index()
     {
@@ -41,7 +43,7 @@ class RoleController extends Controller
 
     public function edit(Role $role)
     {
-        if ($role && $role->id == 1) {
+        if ($role && ($role->id == 1 || $role->admin_id != getAdminIdOrCreatedBy())) {
             return back()
                 ->with('Error', __('admin.not_found_data'));
         }
@@ -51,7 +53,7 @@ class RoleController extends Controller
 
     public function update(UpdateRoleRequest $request, Role $role)
     {
-        if ($role && $role->id == 1) {
+        if ($role && ($role->id == 1 || $role->admin_id != getAdminIdOrCreatedBy())) {
             return back()
                 ->with('Error', __('admin.not_found_data'));
         }
@@ -62,7 +64,7 @@ class RoleController extends Controller
 
     public function delete(Role $role)
     {
-        if ($role && $role->id == 1) {
+        if ($role && ($role->id == 1 || $role->admin_id != getAdminIdOrCreatedBy())) {
             return back()
                 ->with('Error', __('admin.not_found_data'));
         }

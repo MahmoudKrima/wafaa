@@ -21,6 +21,7 @@ class RoleService
         $request->validated();
         return Role::where('name', 'LIKE', '%' . $request->input('name') . '%')
             ->where('id', '!=', 1)
+            ->where('admin_id', getAdminIdOrCreatedBy())
             ->orderBy('id', 'desc')
             ->paginate()
             ->withQueryString();
