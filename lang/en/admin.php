@@ -625,4 +625,12 @@ return [
     'why_choose_us' => 'Why Choose Us',
     'extra_fees_weight' => 'Extra Fees Weight',
     'something_wrong' => 'Something went wrong. Please try again later.',
+    'user_not_found' => 'User not found',
+    'package_type_required' => 'Please select a package type (Boxes or Documents).',
+    'package_number_invalid' => 'Please enter a valid number of packages (minimum 1).',
+    'weight_invalid' => 'Please enter a valid weight in kg.',
+    'dimensions_missing' => 'Dimension fields are missing.',
+    'dimensions_required' => 'Please enter dimensions (length, width, height) for the boxes.',
+    'dimensions_invalid' => 'Dimensions must be valid numbers greater than 0.',
+    'accept_terms_required' => 'Please accept the terms and conditions to continue.',
 ];

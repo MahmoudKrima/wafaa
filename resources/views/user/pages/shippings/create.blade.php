@@ -806,6 +806,13 @@
         loading_countries: '{{ __("admin.loading_countries") }}',
         weight_summary: '{{ __("admin.weight_summary") }}',
         creating_shipment: '{{ __("admin.creating_shipment") }}',
+        package_type_required: '{{ __("admin.package_type_required") }}',
+        package_number_invalid: '{{ __("admin.package_number_invalid") }}',
+        weight_invalid: '{{ __("admin.weight_invalid") }}',
+        dimensions_missing: '{{ __("admin.dimensions_missing") }}',
+        dimensions_required: '{{ __("admin.dimensions_required") }}',
+        dimensions_invalid: '{{ __("admin.dimensions_invalid") }}',
+        accept_terms_required: '{{ __("admin.accept_terms_required") }}',
     };
 
     const API_ENDPOINTS = {
