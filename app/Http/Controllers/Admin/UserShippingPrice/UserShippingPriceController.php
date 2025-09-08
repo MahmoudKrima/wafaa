@@ -21,6 +21,10 @@ class UserShippingPriceController extends Controller
 
     public function index(User $user)
     {
+        if (!$user || $user->created_by != getAdminIdOrCreatedBy()) {
+            return back()
+                ->with('Error', __('admin.not_found_data'));
+        }
         $userShippingPrices = $this->userShippingPriceService->getAll($user);
 
         return view('dashboard.pages.shipping_prices.index', compact('user', 'userShippingPrices'));
@@ -41,11 +45,19 @@ class UserShippingPriceController extends Controller
 
     public function edit(User $user, UserShippingPrice $userShippingPrice)
     {
+        if (!$user || $user->created_by != getAdminIdOrCreatedBy()) {
+            return back()
+                ->with('Error', __('admin.not_found_data'));
+        }
         return view('dashboard.pages.shipping_prices.edit', compact('user', 'userShippingPrice'));
     }
 
     public function update(UpdateUserShippingPriceRequest $request, User $user, UserShippingPrice $userShippingPrice)
     {
+        if (!$user || $user->created_by != getAdminIdOrCreatedBy()) {
+            return back()
+                ->with('Error', __('admin.not_found_data'));
+        }
         $this->userShippingPriceService->updateUserShippingPrice($request, $userShippingPrice);
 
         return redirect()->route('admin.user-shipping-prices.index', $user->id)
@@ -54,6 +66,10 @@ class UserShippingPriceController extends Controller
 
     public function delete(UserShippingPrice $userShippingPrice)
     {
+        if (!$userShippingPrice || $userShippingPrice->user->created_by != getAdminIdOrCreatedBy()) {
+            return back()
+                ->with('Error', __('admin.not_found_data'));
+        }
         $this->userShippingPriceService->deleteUserShippingPrice($userShippingPrice);
         return redirect()->route('admin.user-shipping-prices.index', $userShippingPrice->user->id)
             ->with('Success', __('admin.deleted_successfully'));

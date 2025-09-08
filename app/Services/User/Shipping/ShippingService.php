@@ -92,7 +92,6 @@ class ShippingService
     {
         $authUser = auth()->user();
         $shipment = $this->getShipmentById($id);
-        dd($shipment);
         $company  = (array) data_get($shipment, 'shippingCompany', []);
         $receiver = (array) data_get($shipment, 'receiver', []);
         $details  = (array) data_get($shipment, 'shipmentDetails', []);

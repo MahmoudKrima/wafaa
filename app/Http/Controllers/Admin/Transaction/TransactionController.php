@@ -10,7 +10,9 @@ use App\Http\Requests\Admin\Transaction\SearchTransactionRequest;
 
 class TransactionController extends Controller
 {
-    public function __construct(private TransactionService $transactionService) {}
+    public function __construct(private TransactionService $transactionService)
+    {
+    }
 
     public function index()
     {
@@ -34,11 +36,16 @@ class TransactionController extends Controller
     public function updateStatus(Transaction $transaction)
     {
         $status = request('status');
-        
+
         if (!in_array($status, TransactionStatusEnum::vals())) {
             return back()->with('Error', __('admin.invalid_status'));
         }
-        
+
+        if (!$transaction || $transaction?->user?->created_by != getAdminIdOrCreatedBy()) {
+            return back()
+                ->with('Error', __('admin.not_found_data'));
+        }
+
         $this->transactionService->updateStatus($transaction, $status);
         return back()
             ->with("Success", __('admin.updated_successfully'));
@@ -46,6 +53,10 @@ class TransactionController extends Controller
 
     public function delete(Transaction $transaction)
     {
+        if (!$transaction || $transaction?->user?->created_by != getAdminIdOrCreatedBy()) {
+            return back()
+                ->with('Error', __('admin.not_found_data'));
+        }
         $this->transactionService->delete($transaction);
         return back()
             ->with("Success", __('admin.deleted_successfully'));
