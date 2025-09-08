@@ -15,6 +15,10 @@ class AdminShippingController extends Controller
 
     public function index(SearchShippingRequest $request, ?User $user = null)
     {
+        if (!$user || $user->created_by != getAdminIdOrCreatedBy()) {
+            return back()
+                ->with('Error', __('admin.not_found_data'));
+        }
         $page    = max(1, (int) $request->input('page', 1));
         $perPage = (int) $request->input('pageSize', 10);
 

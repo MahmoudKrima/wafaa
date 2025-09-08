@@ -13,7 +13,9 @@ use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
-    public function __construct(private AdminService $adminService) {}
+    public function __construct(private AdminService $adminService)
+    {
+    }
 
     public function index()
     {
@@ -33,6 +35,10 @@ class AdminController extends Controller
 
     public function edit(Admin $admin)
     {
+        if (!$admin || $admin->created_by != getAdminIdOrCreatedBy()) {
+            return back()
+                ->with('Error', __('admin.not_found_data'));
+        }
         $roles = $this->adminService->getRoles();
         $status = ActivationStatusEnum::cases();
         return view('dashboard.pages.admins.edit', compact('roles', 'admin', 'status'));
@@ -40,6 +46,10 @@ class AdminController extends Controller
 
     public function update(UpdateAdminRequest $request, Admin $admin)
     {
+        if (!$admin || $admin->created_by != getAdminIdOrCreatedBy()) {
+            return back()
+                ->with('Error', __('admin.not_found_data'));
+        }
         try {
             $this->adminService->udpateAdmin($request, $admin);
             return back()
@@ -52,6 +62,10 @@ class AdminController extends Controller
 
     public function updateStatus(Admin $admin)
     {
+        if (!$admin || $admin->created_by != getAdminIdOrCreatedBy()) {
+            return back()
+                ->with('Error', __('admin.not_found_data'));
+        }
         $this->adminService->updateAdminStatus($admin);
         return back()
             ->with("Success", __('admin.updated_successfully'));
@@ -77,6 +91,10 @@ class AdminController extends Controller
 
     public function delete(Admin $admin)
     {
+        if (!$admin || $admin->created_by != getAdminIdOrCreatedBy()) {
+            return back()
+                ->with('Error', __('admin.not_found_data'));
+        }
         $this->adminService->deleteAdmin($admin);
         return back()
             ->with("Success", __('admin.deleted_successfully'));

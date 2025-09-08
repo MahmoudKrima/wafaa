@@ -17,7 +17,8 @@ class UserController extends Controller
 {
     public function __construct(
         private UserService $userService,
-    ) {}
+    ) {
+    }
 
     public function index()
     {
@@ -50,6 +51,10 @@ class UserController extends Controller
 
     public function edit(User $user)
     {
+        if (!$user || $user->created_by != getAdminIdOrCreatedBy()) {
+            return back()
+                ->with('Error', __('admin.not_found_data'));
+        }
         $allowedCompanies = $this->userService->allowedCompanies();
         $userShippingMap = $user->shippingPrices()
             ->get(['company_id', 'company_name', 'local_price', 'international_price'])
@@ -60,6 +65,10 @@ class UserController extends Controller
 
     public function update(UpdateUserRequest $request, User $user)
     {
+        if (!$user || $user->created_by != getAdminIdOrCreatedBy()) {
+            return back()
+                ->with('Error', __('admin.not_found_data'));
+        }
         $this->userService->update($request, $user);
         return redirect()
             ->route('admin.users.index')
@@ -68,6 +77,10 @@ class UserController extends Controller
 
     public function updateStatus(User $user)
     {
+        if (!$user || $user->created_by != getAdminIdOrCreatedBy()) {
+            return back()
+                ->with('Error', __('admin.not_found_data'));
+        }
         $this->userService->updateUserStatus($user);
         return back()
             ->with("Success", __('admin.updated_successfully'));
@@ -76,6 +89,10 @@ class UserController extends Controller
 
     public function delete(User $user)
     {
+        if (!$user || $user->created_by != getAdminIdOrCreatedBy()) {
+            return back()
+                ->with('Error', __('admin.not_found_data'));
+        }
         $this->userService->delete($user);
         return redirect()
             ->route('admin.users.index')
@@ -84,6 +101,10 @@ class UserController extends Controller
 
     public function walletLogs(SearchWalletLogsRequest $request, User $user)
     {
+        if (!$user || $user->created_by != getAdminIdOrCreatedBy()) {
+            return back()
+                ->with('Error', __('admin.not_found_data'));
+        }
         $walletLogs = $this->userService->walletLogs($request, $user);
         $types = TransactionTypeEnum::cases();
         $trans_types = WalletLogTypeEnum::cases();
