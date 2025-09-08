@@ -10,7 +10,7 @@
 
         <ul class="menu-categories">
 
-            <li class=" {{ isRoute(['user.dashboard.index']) ? 'menu active' : '' }}">
+            <li class="{{ isRoute(['user.dashboard.index']) ? 'active' : '' }}">
                 <a href="{{ route('user.dashboard.index') }}" class="menu-toggle">
                     <div class="base-icons">
                         <i class="fa fa-dashboard" style="color:#1b6aab;font-size:35px;margin-bottom:10px;"></i>
@@ -20,7 +20,7 @@
             </li>
 
 
-            <li class=" {{ isRoute(['user.shippings.create']) ? 'menu active' : '' }}">
+            <li class="{{ isRoute(['user.shippings.create']) ? 'active' : '' }}">
                 <a href="{{ route('user.shippings.create') }}"
                     data-active="{{ isRoute(['user.shippings.create']) ? 'true' : 'false' }}" class="menu-toggle">
                     <div class="base-icons">
@@ -30,7 +30,7 @@
                 </a>
             </li>
 
-            <li class=" {{ isRoute(['user.shippings.index']) ? 'menu active' : '' }}">
+            <li class="{{ isRoute(['user.shippings.index']) ? 'active' : '' }}">
                 <a href="{{ route('user.shippings.index') }}"
                    data-active="{{ isRoute(['user.shippings.index']) ? 'true' : 'false' }}" class="menu-toggle">
                     <div class="base-icons">
@@ -40,7 +40,7 @@
                 </a>
             </li>
 
-            <li class=" {{ isRoute(['user.recievers.index','user.recievers.create','user.recievers.edit','user.recievers.search']) ? 'menu active' : '' }}">
+            <li class="{{ isRoute(['user.recievers.index','user.recievers.create','user.recievers.edit','user.recievers.search']) ? 'active' : '' }}">
                 <a href="{{ route('user.recievers.index') }}"
                     data-active="{{ isRoute(['user.recievers.index','user.recievers.create','user.recievers.edit','user.recievers.search']) ? 'true' : 'false' }}" class="menu-toggle">
                     <div class="base-icons">

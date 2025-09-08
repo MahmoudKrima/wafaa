@@ -222,7 +222,7 @@ var App = function() {
                 inBuiltfunctionality.mainCatActivateScroll();
             }
         },
-        
+
         onResize: function() {
             $(window).on('resize', function(event) {
                 event.preventDefault();
@@ -234,7 +234,7 @@ var App = function() {
                 }
             });
         }
-        
+
     }
 
     var _desktopResolution = {
@@ -244,7 +244,7 @@ var App = function() {
                 toggleFunction.sidebar(true);
             }
         },
-        
+
         onResize: function() {
             $(window).on('resize', function(event) {
                 event.preventDefault();
@@ -253,7 +253,7 @@ var App = function() {
                 }
             });
         }
-        
+
     }
 
     function sidebarFunctionality() {
@@ -322,7 +322,7 @@ var App = function() {
             _desktopResolution.onRefresh();
             _desktopResolution.onResize();
 
-            _mobileResolution.onRefresh();            
+            _mobileResolution.onRefresh();
             _mobileResolution.onResize();
 
             sidebarFunctionality();

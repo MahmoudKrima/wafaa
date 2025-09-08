@@ -346,11 +346,11 @@
                         </div>
                         {{$whyChooseUs->description}}
                     </div>
-                    @if(!auth()->guard('web')->check() && !auth()->guard('admin')->check())
-                        <a href="{{ route('user.auth.loginForm') }}" class="bordered-btn mt-40">
-                            {{__('admin.login')}} <i class="fa-solid fa-arrow-left"></i>
-                        </a>
-                    @endif
+
+                    <a href="{{ route('user.auth.loginForm') }}" class="bordered-btn mt-40">
+                        {{__('admin.login')}} <i class="fa-solid fa-arrow-left"></i>
+                    </a>
+
                 </div>
             </div>
         </div>

@@ -1819,6 +1819,12 @@ code {
     }
 }
 
+.sidebar-wrapper #compactSidebar .menu-categories li.active a.menu-toggle, .sidebar-wrapper #compactSidebar{
+    background-color: rgb(255 255 255);
+    box-shadow: 0px 4px 10px 1px rgba(0, 0, 0, 0.19);
+}
+
+
 @media (max-height: 600px) {
     .sidebar-wrapper #compactSidebar .menu-categories {
         display: block;

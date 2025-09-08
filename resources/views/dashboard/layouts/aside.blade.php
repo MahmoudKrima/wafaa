@@ -11,18 +11,20 @@
         <ul class="menu-categories">
 
 
-            <li class=" {{ isRoute(['admin.dashboard.index']) ? 'menu active' : '' }}">
+            <li class="{{ isRoute(['admin.dashboard.index']) ? 'active' : '' }}">
                 <a href="{{ route('admin.dashboard.index') }}"
                     data-active="{{ isRoute(['admin.dashboard.index']) ? 'true' : 'false' }}" class="menu-toggle">
-                    <div class="base-icons">
-                        <i class="fa fa-dashboard" style="color:#1b6aab;font-size:35px;margin-bottom:10px;"></i>
-                        <p class="side_links_theme">{{__('admin.dashboard')}}</p>
+                    <div class="base-menu">
+                        <div class="base-icons">
+                            <i class="fa fa-dashboard" style="color:#1b6aab;font-size:35px;margin-bottom:10px;"></i>
+                            <p class="side_links_theme">{{__('admin.dashboard')}}</p>
+                        </div>
                     </div>
                 </a>
             </li>
 
             <li
-                class=" {{ isRoute(['admin.shippings.index', 'admin.users.shippings', 'admin.shippings.export', 'admin.shippings.show']) ? 'menu active' : '' }}">
+                class=" {{ isRoute(['admin.shippings.index', 'admin.users.shippings', 'admin.shippings.export', 'admin.shippings.show']) ? 'active' : '' }}">
                 <a href="{{ route('admin.shippings.index') }}"
                     data-active="{{ isRoute(['admin.shippings.index', 'admin.shippings.export', 'admin.shippings.show']) ? 'true' : 'false' }}"
                     class="menu-toggle">
