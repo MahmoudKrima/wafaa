@@ -1,12 +1,11 @@
-// ---------- STEP 5: Package details ----------
-
 (function () {
-    // internal flag: only show errors when user is actually trying to proceed
     let _submittingStep5 = false;
 
-    // convenience: safe error display (toast/toastr/inline) but only when submitting
+    // Pull the translations object (fallback to empty object so code doesn't crash)
+    const t = window.step5Translations || window.translations || {};
+
     function showErrorStep5(message) {
-        if (!_submittingStep5) return; // stay silent during passive validation
+        if (!_submittingStep5) return;
         if (typeof toastr !== "undefined") {
             toastr.error(message);
             return;
@@ -25,19 +24,14 @@
         }
     }
 
-    // keep Next button state in sync while typing/selecting
     function syncNextBtnStep5() {
         if (typeof window.hardEnableNext === "function") {
             window.hardEnableNext(window.validatePackageDetails());
         }
     }
 
-    // called by your step router when step 5 is shown
     window.populateShippingFormFields = function populateShippingFormFields() {
-        // set up the package type show/hide rules & input bindings
         setupPackageTypeHandling();
-
-        // Bind inputs to re-validate and update Next button as user edits
         const ids = [
             "package_type",
             "package_number",
@@ -56,25 +50,21 @@
             }
         });
 
-        // Ensure we capture clicks on Next BEFORE the app handler, so we can show errors only then
         const btnNext = document.getElementById("btn-next");
         if (btnNext && !btnNext.dataset.boundStep5Submit) {
             btnNext.addEventListener(
                 "click",
                 () => {
-                    // mark an attempted submission for this click cycle
                     _submittingStep5 = true;
-                    // after the current tick, reset so passive validations stay silent
                     setTimeout(() => {
                         _submittingStep5 = false;
                     }, 0);
                 },
-                true // capture so it runs before the main click handler
+                true
             );
             btnNext.dataset.boundStep5Submit = "1";
         }
 
-        // Do an initial passive validation to set Next button correctly (no errors shown)
         syncNextBtnStep5();
     };
 
@@ -82,7 +72,6 @@
         const packageTypeSelect = document.getElementById("package_type");
         if (!packageTypeSelect) return;
 
-        // initialize dimensions section based on current value
         if (packageTypeSelect.value === "box") {
             showDimensionsSection();
         } else {
@@ -116,7 +105,6 @@
         if (heightField) heightField.required = true;
     }
 
-    // clearValues=true will also wipe any old values when hiding
     function hideDimensionsSection(clearValues = false) {
         const section = document.getElementById("dimensions_section");
         if (!section) return;
@@ -151,33 +139,30 @@
 
         // type required
         if (!packageType.value) {
-            showErrorStep5("Please select a package type (Boxes or Documents)");
+            showErrorStep5(t.package_type_required);
             return false;
         }
 
         // number required (>=1)
         const num = Number(packageNumber.value);
         if (!packageNumber.value || isNaN(num) || num < 1) {
-            showErrorStep5(
-                "Please enter a valid number of packages (minimum 1)"
-            );
+            showErrorStep5(t.package_number_invalid);
             return false;
         }
 
         const w = Number(weight.value);
         if (!weight.value || isNaN(w) || w <= 0) {
-            showErrorStep5("Please enter a valid weight in kg");
+            showErrorStep5(t.weight_invalid);
             return false;
         }
 
-        // dimensions only when boxes
         if (packageType.value === "box") {
             const length = document.getElementById("length");
             const width = document.getElementById("width");
             const height = document.getElementById("height");
 
             if (!length || !width || !height) {
-                showErrorStep5("Dimension fields are missing");
+                showErrorStep5(t.dimensions_missing);
                 return false;
             }
 
@@ -186,9 +171,7 @@
             const H = Number(height.value);
 
             if (!length.value || !width.value || !height.value) {
-                showErrorStep5(
-                    "Please enter dimensions (length, width, height) for the boxes"
-                );
+                showErrorStep5(t.dimensions_required);
                 return false;
             }
             if (
@@ -199,18 +182,12 @@
                 W <= 0 ||
                 H <= 0
             ) {
-                showErrorStep5(
-                    "Dimensions must be valid numbers greater than 0"
-                );
+                showErrorStep5(t.dimensions_invalid);
                 return false;
             }
         }
-
-        // terms
         if (!acceptTerms.checked) {
-            showErrorStep5(
-                "Please accept the terms and conditions to continue"
-            );
+            showErrorStep5(t.accept_terms_required);
             return false;
         }
         return true;

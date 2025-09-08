@@ -25,6 +25,12 @@ class AdminShippingController extends Controller
         }
 
         if ($user) {
+            $check = User::where('created_by', getAdminIdOrCreatedBy())
+                ->where('id', $user->id)
+                ->first();
+            if (!$check) {
+                return back()->with('Error', __('admin.user_not_found'));
+            }
             $users = [(string) $user->id];
             unset($filters['userId']);
         } elseif (!empty($filters['userId'])) {
@@ -108,7 +114,6 @@ class AdminShippingController extends Controller
         $companies    = $this->adminShippingService->getShippingCompanies();
         $allUsers     = User::where('created_by', getAdminIdOrCreatedBy())->get();
         $forcedUserId = $user?->id;
-
         return view('dashboard.pages.admin_shipping.index', compact(
             'shipments',
             'companies',
