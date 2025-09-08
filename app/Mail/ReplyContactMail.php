@@ -26,7 +26,7 @@ class ReplyContactMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Reply Email',
+            subject: __('admin.new_reply'),
         );
     }
 

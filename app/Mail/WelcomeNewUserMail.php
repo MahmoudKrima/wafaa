@@ -30,7 +30,7 @@ class WelcomeNewUserMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Your New Account Details',
+            subject: __('admin.new_account_details'),
         );
     }
 

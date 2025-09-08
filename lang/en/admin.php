@@ -576,6 +576,8 @@ return [
     'our_clients' => 'Our Clients',
     'last_updated' => 'Last update date',
     'faqs' => 'FAQs',
+    'new_reply' => 'New Reply',
+    'new_account_details' => 'Your Account Created',
     'added_at' => 'Created At',
     'add_new_service' => 'Add New Service',
     'whatsapp_number' => 'Whatsapp',
