@@ -228,6 +228,8 @@
                                         $class = 'badge bg-success white'; $label = __('admin.delivered'); break;
                                         case 'returned':
                                         $class = 'badge bg-dark white'; $label = __('admin.returned'); break;
+                                        case 'cancelRequest':
+                                        $class = 'badge bg-warning white'; $label = __('admin.cancelrequest'); break;
                                         default:
                                         $class = 'badge bg-success white'; $label = __('admin.' . strtolower($shipment['status'])); break;
                                         }
