@@ -622,4 +622,5 @@ return [
     'answer' => 'Answer',
     'why_choose_us' => 'Why Choose Us',
     'extra_fees_weight' => 'Extra Fees Weight',
+    'something_wrong' => 'Something went wrong. Please try again later.',
 ];
