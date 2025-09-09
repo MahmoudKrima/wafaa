@@ -40,7 +40,7 @@ class WelcomeNewUserMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'user.mail.welcome',
+            markdown: 'user.mail.new_user_mail',
         );
     }
 }
