@@ -15,6 +15,12 @@
 <script src="{{ asset('vendor/toastr/build/toastr.min.js') }}"></script>
 <script src="{{ asset('assets_' . app()->getLocale()) }}/assets/js/scrollspyNav.js"></script>
 <script src="{{ asset('assets_' . app()->getLocale()) }}/plugins/file-upload/file-upload-with-preview.min.js"></script>
+
+<style>
+    #toast-container > .toast {
+        opacity: 1 !important;
+    }
+</style>
 <!-- END GLOBAL MANDATORY SCRIPTS -->
 <script>
     $(document).ready(function() {
@@ -32,13 +38,13 @@
         "debug": false,
         "newestOnTop": false,
         "progressBar": true,
-        "positionClass": "toast-top-right",
+        "positionClass": "toast-top-left",
         "preventDuplicates": false,
         "onclick": null,
-        "showDuration": "5000",
-        "hideDuration": "600",
-        "timeOut": "10000",
-        "extendedTimeOut": "5000",
+        "showDuration": "300",
+        "hideDuration": "1000",
+        "timeOut": "9000",
+        "extendedTimeOut": "3000",
         "showEasing": "swing",
         "hideEasing": "linear",
         "showMethod": "fadeIn",
