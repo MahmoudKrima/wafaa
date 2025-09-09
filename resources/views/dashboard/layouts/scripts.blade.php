@@ -39,7 +39,7 @@
         "newestOnTop": false,
         "progressBar": true,
         "positionClass": "toast-top-left",
-        "preventDuplicates": false,
+        "preventDuplicates": true,
         "onclick": null,
         "showDuration": "300",
         "hideDuration": "1000",

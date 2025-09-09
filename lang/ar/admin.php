@@ -637,7 +637,7 @@ return [
     'extra_fees_weight' => 'تكلفة الوزن الإضافي',
     'something_wrong' => 'هناك خطأ ما. يرجى المحاولة مرة أخرى.',
     'user_not_found' => 'المستخدم غير موجود',
-    'package_type_required' => 'يرجى اختيار نوع الطرد (صناديق أو مستندات).',
+    'package_type_required' => 'يرجى اختيار نوع الشحنة (صناديق أو مستندات).',
     'package_number_invalid' => 'يرجى إدخال عدد صالح للطرود (الحد الأدنى 1).',
     'weight_invalid' => 'يرجى إدخال وزن صالح بالكيلوغرام.',
     'dimensions_missing' => 'حقول الأبعاد مفقودة.',
