@@ -570,6 +570,7 @@ return [
     'height_summary' => 'Height',
     'working_hours' => 'Saturday : Thursday',
     'opinions' => 'Opinions',
+    'forget_password_request' => 'Forget Password Request',
     'contact' => 'Contact',
     'policy' => 'Privacy Policy',
     'about_us' => 'About Us',

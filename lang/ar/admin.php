@@ -15,6 +15,7 @@ return [
     'password' => 'كلمة المرور',
     'password_confirmation' => 'تأكيد كلمة المرور',
     'forget_password' => 'هل نسيت كلمة المرور ؟',
+    'forget_password_request' => 'إستعادة كلمة المرور',
     'email' => 'البريد الالكترونى',
     'otp' => 'كود التحقق',
     'view' => 'عرض',

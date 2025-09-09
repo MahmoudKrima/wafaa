@@ -44,14 +44,19 @@ class AuthService
             $subject = 'استعادة كلمة المرور';
             $encryptedData = Crypt::encryptString($email . '|' . $token);
             $resetLink = url(app()->getLocale() . '/user/reset-password?data=' . urlencode($encryptedData));
-            $body = "<p>قم بالضغط على الرابط لاستعادة كلمة المرور</p>
-            <a href=\"$resetLink\">استعادة كلمة المرور</a>";
+            $body = "<p style='color:#545657;font-size:15px;'><span> : مرحبا </span> $user->name </p>";
+            $body .= "<p style='color:#545657;font-size:15px;'>لقد قمت بطلب تغيير كلمة المرور </p>";
+            $body .= "<p style='color:#545657;font-size:15px;margin-bottom:30px;'>قم بالضغط على الرابط التالي لاستعادة كلمة المرور</p>";
+            $body .= "<a style='background:#1b6aab;color:#fff;border-radius:5px;padding:10px;text-decoration:none;' href=\"$resetLink\">استعادة كلمة المرور</a>";
+
         } else {
             $subject = 'Reset Password';
             $encryptedData = Crypt::encryptString($email . '|' . $token);
             $resetLink = url(app()->getLocale() . '/user/reset-password?data=' . urlencode($encryptedData));
-            $body = "<p>Click the following link to reset your password:</p>
-            <a href=\"$resetLink\">Reset Password</a>";
+            $body = "<p style='color:#545657;font-size:15px;'> Welcome $user->name </p>";
+            $body .= "<p style='color:#545657;font-size:15px;'> You are requesting to reset your password </p>";
+            $body .= "<p style='color:#545657;font-size:15px;margin-bottom:30px;'> Click the following link to reset your password:</p>";
+            $body .= "<a style='background:#1b6aab;color:#fff;border-radius:5px;padding:10px;text-decoration:none;' href=\"$resetLink\">Reset Password</a>";
         }
         Mail::to($user)
             ->send(new ForgetPasswordMail($subject, $body));
