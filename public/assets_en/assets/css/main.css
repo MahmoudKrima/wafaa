@@ -1780,6 +1780,17 @@ table .badge-success, table .badge-primary, table .badge-warning, table .badge-d
     color: #fff;
 }
 
+.bg-document {
+    background-color: #16339a !important;
+    border-color: #16339a;
+    color: #fff; }
+
+
+.bg-box {
+    background-color: #16339a !important;
+    border-color: #16339a;
+    color: #fff; }
+
 .bg-dark {
     background-color: #fff;
     border-color: #3b3f5c;

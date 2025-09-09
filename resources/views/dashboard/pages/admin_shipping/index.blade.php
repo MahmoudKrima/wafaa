@@ -212,15 +212,15 @@
                                     <td>{{ optional($shipment['shipmentDetails'])['weight'] .' '. __('admin.kg') ?? __('admin.n/a') }}</td>
                                     <td>
                                         @if($shipment['method'] === 'local')
-                                        <span class="badge bg-info">{{ __('admin.local') }}</span>
+                                        <span class="badge bg-box">{{ __('admin.local') }}</span>
                                         @elseif($shipment['method'] === 'international')
-                                        <span class="badge bg-secondary">{{ __('admin.international') }}</span>
+                                        <span class="badge bg-box">{{ __('admin.international') }}</span>
                                         @endif
 
                                         @if($shipment['type'] === 'box')
-                                        <span class="badge bg-warning text-white">{{ __('admin.boxes') }}</span>
+                                        <span class="badge bg-box text-white">{{ __('admin.boxes') }}</span>
                                         @elseif($shipment['type'] === 'document')
-                                        <span class="badge bg-success text-white">{{ __('admin.documents') }}</span>
+                                        <span class="badge bg-document text-white">{{ __('admin.documents') }}</span>
                                         @endif
                                     </td>
                                     <td>
@@ -246,13 +246,13 @@
                                         case 'pending':
                                         $class = 'badge bg-warning text-white'; $label = __('admin.pending'); break;
                                         case 'processing':
-                                        $class = 'badge bg-info text-white'; $label = __('admin.processing'); break;
+                                        $class = 'badge bg-success text-white'; $label = __('admin.processing'); break;
                                         case 'failed':
                                         $class = 'badge bg-danger white'; $label = __('admin.failed'); break;
                                         case 'canceled':
                                         $class = 'badge bg-danger white'; $label = __('admin.canceled'); break;
                                         case 'delivered':
-                                        $class = 'badge bg-success white'; $label = __('admin.delivered'); break;
+                                        $class = 'badge bg-info white'; $label = __('admin.delivered'); break;
                                         case 'returned':
                                         $class = 'badge bg-dark white'; $label = __('admin.returned'); break;
                                         case 'cancelRequest':
