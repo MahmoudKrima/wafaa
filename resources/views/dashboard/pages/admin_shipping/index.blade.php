@@ -46,7 +46,7 @@
                                             <form action="{{ !empty($forcedUserId) ? route('admin.users.shippings', $forcedUserId) : route('admin.shippings.index') }}" method="GET"
                                                 class="p-3">
                                                 <div class="row">
-                                                    <div class="col-md-4 mb-3">
+                                                    <div class="col-md-3 mb-3">
                                                         <label for="isCod">{{ __('admin.isCod') }}</label>
                                                         @php $isCod = request()->get('isCod'); @endphp
                                                         <select name="isCod" class="form-control" id="isCod">
@@ -55,7 +55,7 @@
                                                             <option value="false" @selected($isCod==='false' )>{{ __('admin.no') }}</option>
                                                         </select>
                                                     </div>
-                                                    <div class="col-md-4 mb-3">
+                                                    <div class="col-md-3 mb-3">
                                                         <label for="shippingCompanyId">{{ __('admin.shippingCompanyId') }}</label>
                                                         <select name="shippingCompanyId" class="form-control" id="shippingCompanyId">
                                                             <option value="" selected>{{ __('admin.choose_shipping_company') }}</option>
@@ -67,7 +67,7 @@
                                                             @endforeach
                                                         </select>
                                                     </div>
-                                                    <div class="col-md-4 mb-3">
+                                                    <div class="col-md-3 mb-3">
                                                         <label for="method">{{ __('admin.choose_shipping_method') }}</label>
                                                         <select name="method" class="form-control" id="method">
                                                             <option value="" selected>{{ __('admin.choose_shipping_method') }}</option>
@@ -75,7 +75,7 @@
                                                             <option value="international" @selected(request()->get('method') == 'international')>{{ __('admin.international') }}</option>
                                                         </select>
                                                     </div>
-                                                    <div class="col-md-4 mb-3">
+                                                    <div class="col-md-3 mb-3">
                                                         <label for="type">{{ __('admin.shipment_type') }}</label>
                                                         <select name="type" class="form-control" id="type">
                                                             <option value="" selected>{{ __('admin.choose_shipment_type') }}</option>
@@ -83,19 +83,8 @@
                                                             <option value="document" @selected(request()->get('type') == 'documents')>{{ __('admin.documents') }}</option>
                                                         </select>
                                                     </div>
-                                                    <div class="col-md-4 mb-3">
-                                                        <label for="dateFrom">{{ __('admin.dateFrom') }}</label>
-                                                        <input type="date" value="{{ request()->get('dateFrom') }}"
-                                                            name="dateFrom" id="dateFrom" class="form-control"
-                                                            placeholder="{{ __('admin.dateFrom') }}">
-                                                    </div>
-                                                    <div class="col-md-4 mb-3">
-                                                        <label for="dateTo">{{ __('admin.dateTo') }}</label>
-                                                        <input type="date" value="{{ request()->get('dateTo') }}"
-                                                            name="dateTo" id="dateTo" class="form-control"
-                                                            placeholder="{{ __('admin.dateTo') }}">
-                                                    </div>
-                                                    <div class="col-md-4 mb-3">
+
+                                                    <div class="col-md-3 mb-3">
                                                         <label for="status">{{ __('admin.status') }}</label>
                                                         <select name="status" class="form-control" id="status">
                                                             <option value="" selected>{{ __('admin.choose_status') }}</option>
@@ -108,24 +97,40 @@
                                                             <option value="cancelRequest" @selected(request()->get('status') == 'cancelRequest')>{{ __('admin.cancelrequest') }}</option>
                                                         </select>
                                                     </div>
-                                                    <div class="col-md-4 mb-3">
+                                                    <div class="col-md-3 mb-3">
                                                         <label for=trackingNumber>{{ __('admin.tracking_number') }}</label>
                                                         <input type="input" value="{{ request()->get('search') }}"
-                                                            name="search" id="trackingNumber" class="form-control"
-                                                            placeholder="{{ __('admin.tracking_number') }}">
+                                                               name="search" id="trackingNumber" class="form-control"
+                                                               placeholder="{{ __('admin.tracking_number') }}">
                                                     </div>
-                                                    <div class="col-md-4 mb-3">
+
+                                                    <div class="col-md-3 mb-3">
                                                         <label for="receiverName">{{ __('admin.receiver_name') }}</label>
                                                         <input type="text" value="{{ request()->get('receiverName') }}"
-                                                            name="receiverName" id="receiverName" class="form-control"
-                                                            placeholder="{{ __('admin.receiver_name') }}">
+                                                               name="receiverName" id="receiverName" class="form-control"
+                                                               placeholder="{{ __('admin.receiver_name') }}">
                                                     </div>
-                                                    <div class="col-md-4 mb-3">
+                                                    <div class="col-md-3 mb-3">
                                                         <label for="receiverPhone">{{ __('admin.receiver_phone') }}</label>
                                                         <input type="text" value="{{ request()->get('receiverPhone') }}"
-                                                            name="receiverPhone" id="receiverPhone" class="form-control"
-                                                            placeholder="{{ __('admin.receiver_phone') }}">
+                                                               name="receiverPhone" id="receiverPhone" class="form-control"
+                                                               placeholder="{{ __('admin.receiver_phone') }}">
                                                     </div>
+
+                                                    <div class="col-md-3 mb-3">
+                                                        <label for="dateFrom">{{ __('admin.dateFrom') }}</label>
+                                                        <input type="date" value="{{ request()->get('dateFrom') }}"
+                                                            name="dateFrom" id="dateFrom" class="form-control"
+                                                            placeholder="{{ __('admin.dateFrom') }}">
+                                                    </div>
+                                                    <div class="col-md-3 mb-3">
+                                                        <label for="dateTo">{{ __('admin.dateTo') }}</label>
+                                                        <input type="date" value="{{ request()->get('dateTo') }}"
+                                                            name="dateTo" id="dateTo" class="form-control"
+                                                            placeholder="{{ __('admin.dateTo') }}">
+                                                    </div>
+
+
                                                     @php
                                                     $selectedUserIds = array_map('strval', (array) request()->input('userId', []));
                                                     if (!empty($forcedUserId)) {
@@ -135,7 +140,7 @@
                                                     @if(!empty($forcedUserId))
                                                     <input type="hidden" name="userId[]" value="{{ $forcedUserId }}">
                                                     @else
-                                                    <div class="col-md-4 mb-3">
+                                                    <div class="col-md-3 mb-3">
                                                         <label for="userId">{{ __('admin.choose_user') }}</label>
                                                         <select class="js-example-basic-multiple"
                                                             name="userId[]"

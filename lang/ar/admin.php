@@ -537,7 +537,7 @@ return [
     'isCod' => 'دفع عند الاستلام',
     'choose_isCod' => 'اختر',
     'recharge_requests' => 'طلبات شحن الرصيد',
-    'shippingCompanyId' => 'معرف شركة الشحن',
+    'shippingCompanyId' => ' شركة الشحن',
     'box' => 'صندوق',
     'document' => 'مستند',
     'date_from' => 'من تاريخ',
