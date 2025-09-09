@@ -670,10 +670,12 @@ code {
 /* User Profile Dropdown*/
 .navbar .navbar-item .nav-item.user-profile-dropdown {
     margin-right: 30px;
-    margin-left: 16px; }
+    margin-left: 30px;
+}
 .navbar .navbar-item .nav-item.user-profile-dropdown .nav-link.user {
     padding: 6px 0;
-    font-size: 25px; }
+    font-size: 20px;
+}
 
 .navbar .navbar-item .nav-item.dropdown.user-profile-dropdown .nav-link:after {
     display: none; }
@@ -1390,8 +1392,9 @@ code {
     .navbar .navbar-item .nav-item.dropdown.message-dropdown, .navbar .navbar-item .nav-item.dropdown.notification-dropdown {
         margin-right: 16px; }
     .navbar .navbar-item .nav-item.user-profile-dropdown {
-        margin-right: 16px;
-        margin-left: 5px; }
+        margin-right: 15px;
+        margin-left: 15px;
+    }
     .navbar .language-dropdown .custom-dropdown-icon a.dropdown-toggle img {
         width: 20px;
         height: 20px; }

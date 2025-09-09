@@ -188,7 +188,7 @@
                                                             @csrf
                                                             @method('DELETE')
                                                             <button type="submit"
-                                                                class="action-btn btn-alert bs-tooltip mb-2 badge rounded-circle bg-danger p-2"
+                                                                class="action-btn btn-dlt bs-tooltip mb-2 badge rounded-circle bg-danger p-2"
                                                                 data-toggle="tooltip" data-placement="top"
                                                                 title="{{ __('admin.delete') }}" aria-label="Delete Service"
                                                                 data-bs-original-title="Delete Service"

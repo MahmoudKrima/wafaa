@@ -26,6 +26,15 @@
         </ul>
 
         <ul class="navbar-item flex-row navbar-dropdown">
+
+            <li class="nav-item  user-profile-dropdown">
+                <a href="{{ route('user.notifications.index') }}" class="nav-link user">
+                    <i class="fa fa-bell" style="font-size:18px;"></i>
+                </a>
+            </li>
+
+
+
             <li class="nav-item dropdown language-dropdown more-dropdown">
                 <div class="dropdown  custom-dropdown-icon">
                     <a class="dropdown-toggle btn" href="#" role="button" id="customDropdown" data-toggle="dropdown"
