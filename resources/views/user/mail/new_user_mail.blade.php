@@ -52,7 +52,7 @@
                             <tr>
                                 <td
                                     style="padding:14px 16px; background:#f9fafb; font-family:{{$fontFamily}}; font-size:14px; color:#111827; text-align:{{ $align }};">
-                                    <strong>{{ __('admin.account_created_desc') }}</strong>
+                                    <strong style="font-family:{{$fontFamily}};">{{ __('admin.account_created_desc') }}</strong>
                                 </td>
                             </tr>
                             <tr>
@@ -62,7 +62,7 @@
                                            style="border-collapse:collapse;">
                                         <tr>
                                             <td style="padding:6px 0; width:40%; text-align:{{ $align }};font-family:{{$fontFamily}};">
-                                                <strong>{{ __('admin.name') }}</strong>
+                                                <strong style="font-family:{{$fontFamily}};">{{ __('admin.name') }}</strong>
                                             </td>
                                             <td style="padding:6px 0; text-align:{{ $oppAlign }};font-family:{{$fontFamily}};">
                                                 {{ $user->name }}
@@ -70,7 +70,7 @@
                                         </tr>
                                         <tr>
                                             <td style="padding:6px 0; width:40%; text-align:{{ $align }};font-family:{{$fontFamily}};">
-                                                <strong>{{ __('admin.email') }}</strong>
+                                                <strong style="font-family:{{$fontFamily}};">{{ __('admin.email') }}</strong>
                                             </td>
                                             <td style="padding:6px 0; text-align:{{ $oppAlign }};font-family:{{$fontFamily}};">
                                                 {{ $user->email }}
@@ -78,7 +78,7 @@
                                         </tr>
                                         <tr>
                                             <td style="padding:6px 0; width:40%; text-align:{{ $align }};font-family:{{$fontFamily}};">
-                                                <strong>{{ __('admin.phone') }}</strong>
+                                                <strong style="font-family:{{$fontFamily}};">{{ __('admin.phone') }}</strong>
                                             </td>
                                             <td style="padding:6px 0; text-align:{{ $oppAlign }};font-family:{{$fontFamily}};">
                                                 {{ $user->phone }}
@@ -86,7 +86,7 @@
                                         </tr>
                                         <tr>
                                             <td style="padding:6px 0; width:40%; text-align:{{ $align }};font-family:{{$fontFamily}};">
-                                                <strong>{{ __('admin.password') }}</strong>
+                                                <strong style="font-family:{{$fontFamily}};">{{ __('admin.password') }}</strong>
                                             </td>
                                             <td style="padding:6px 0; text-align:{{ $oppAlign }};font-family:{{$fontFamily}};">
                                                 {{ $plainPassword }}
@@ -96,10 +96,10 @@
                                         <tr style="margin:20px 0;">
 
                                             <td style="padding:15px 0; width:40%; text-align:{{ $align }};font-family:{{$fontFamily}};">
-                                                <strong>{{ __('admin.login_url') }}</strong>
+                                                <strong style="font-family:{{$fontFamily}};">{{ __('admin.login_url') }}</strong>
                                             </td>
                                             <td style="padding:15px 0; text-align:{{ $oppAlign }};font-family:{{$fontFamily}};">
-                                                <a style="background:#1b6aab;color:#fff;border-radius:5px;padding:10px;text-decoration:none;"
+                                                <a style="background:#1b6aab;color:#fff;font-family:{{$fontFamily}};border-radius:5px;padding:10px;text-decoration:none;"
                                                    href="{{route('user.auth.loginForm')}}">{{ __('admin.login_now') }}</a>
                                             </td>
                                         </tr>
@@ -110,7 +110,7 @@
                             <tr>
                                 <td
                                     style="padding:14px 16px; background:#f9fafb; font-family:{{$fontFamily}}; font-size:14px; color:#111827; text-align:{{ $align }};">
-                                    ⚠️ <strong>{{ __('admin.account_created_note') }}</strong>
+                                    ⚠️ <strong style="font-family:{{$fontFamily}};">{{ __('admin.account_created_note') }}</strong>
                                 </td>
                             </tr>
                         </table>
