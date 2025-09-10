@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
 use App\Models\AdminSetting;
 use App\Models\AllowedCompany;
 use App\Traits\TranslateTrait;
+use App\Models\UserShippingPrice;
 use App\Enum\NotificationTypeEnum;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -37,17 +38,22 @@ class ShippingService
     {
         $base = [
             'page'           => 0,
-            'pageSize'       => 15,
+            'pageSize'       => 10,
             'orderColumn'    => 'createdAt',
             'orderDirection' => 'desc',
             'externalAppId'  => (string) auth()->id(),
         ];
+
         $clean = array_filter($filters, fn($v) => !is_null($v) && $v !== '');
         $query = array_merge($base, $clean);
         unset($query['receiverName'], $query['receiverPhone']);
-        $res = $this->ghayaRequest()->get($this->ghayaUrl('shipments'), $query);
+        $res = $this->ghayaRequest()
+            ->get($this->ghayaUrl('shipments'), $query);
+
         return $res->json();
     }
+
+
 
     public function getShippingCompanies()
     {
@@ -116,33 +122,46 @@ class ShippingService
         $packagesCount = (int) data_get($details, 'packagesCount', 1);
         $pkgDescription = (string) data_get($details, 'description', '');
         $companyId = (string) data_get($shipment, 'shippingCompanyId', '');
+        $codFee         = (float) data_get($shipment, 'shipmentCod.codPrice', '');
+
         $shipPrice = $authUser->shippingPrices()
             ->where('company_id', $companyId)
             ->first();
 
         $shippingFee = 0.0;
+        $internationalShippingFee = $shipPrice->international_price ?? 0.0;
+        $localShippingFee = $shipPrice->local_price ?? 0.0;
         if ($shipPrice) {
             $shippingFee = data_get($shipment, 'method') === 'local'
-                ? (float) $shipPrice->local_price
-                : (float) $shipPrice->international_price;
+                ? (float) $localShippingFee
+                : (float) $internationalShippingFee;
         }
 
         $companyWeight = (float) data_get($shipment, 'shippingCompany.maxWeight', 0);
-
         $adminSetting = AdminSetting::where('admin_id', $authUser->created_by)->first();
         $extraWeightPer = 0.0;
 
-        if ($adminSetting && $shipPrice && $companyWeight > 0 && $weight > $companyWeight) {
-            $extraWeight = (float) $shipPrice->extra_weight_price;
+        if ($weight > $companyWeight) {
+            $extraWeight = (float) $weight - $companyWeight;
             $extraWeightPer = $extraWeight * (float) $adminSetting->extra_weight_price;
         }
 
         $isCod          = (bool) data_get($shipment, 'isCod', false);
         $codPerReceiver = ($adminSetting && $isCod) ? (float) $adminSetting->cash_on_delivery_price : 0.0;
-        $codFee         = $adminSetting ? (float) $adminSetting->cash_on_delivery_price : 0.0;
-        $total = (float) ($shippingFee + $codFee) ?: 0.0;
+
         $receiverCount    = !empty($receiver) ? 1 : 0;
+        $extraWeightfee = $extraWeightPer * $receiverCount;
+        if ($isCod) {
+            $finalTotalCod = $codPerReceiver * $receiverCount;
+            $finalWeightFee = $extraWeightPer * $receiverCount ?? 0.0;
+            $finalShippingFee = $shippingFee * $receiverCount ?? 0.0;
+            $total = (float) ($finalShippingFee + $finalTotalCod + $finalWeightFee) ?: 0.0;
+        } else {
+            $total = (float) ($shippingFee + $extraWeightfee) ?: 0.0;
+        }
+
         $perReceiverTotal = $receiverCount > 0 ? ($total / $receiverCount) : 0.0;
+        $extraWeightFee = $adminSetting->extra_weight_price;
 
         return [
             'shipment'               => $shipment,
@@ -168,6 +187,9 @@ class ShippingService
             'weight'                 => $weight,
             'packagesCount'          => $packagesCount,
             'packageDescription'     => $pkgDescription,
+            'extraWeightfee'         => $extraWeightfee,
+            'companyWeight'          => $companyWeight,
+            'extraWeightFee'         => $extraWeightFee,
         ];
     }
 
@@ -461,7 +483,6 @@ class ShippingService
             ];
 
             $this->deductAndLog($user, $requestData, $companyPrice);
-            $user->unsetRelation('wallet');
             $user->load('wallet');
         }
 
@@ -1147,4 +1168,6 @@ class ShippingService
             return [];
         }
     }
+
+    public function delete(string $id) {}
 }

@@ -141,8 +141,7 @@
                                                     @endphp
                                                     <div class="card mb-2">
                                                         <div class="card-body">
-                                                            <div
-                                                                class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                                                            <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
                                                                 <div>
                                                                     <p class="mb-1">
                                                                         <strong>{{ __('admin.receiver') }}#{{ $idx + 1 }} : </strong>
@@ -169,8 +168,7 @@
                                                         </div>
                                                     </div>
                                                     @empty
-                                                    <div
-                                                        class="text-muted">{{ __('admin.no_receivers_found') }}</div>
+                                                    <div class="text-muted">{{ __('admin.no_receivers_found') }}</div>
                                                     @endforelse
                                                 </div>
                                             </div>
@@ -188,24 +186,30 @@
                                                 <div class="row">
                                                     <div class="col-md-6">
                                                         <p>
-                                                            <strong>{{ __('admin.package_type') . ': ' }}</strong><span id="package-type-preview">{{ __('admin.' . ($shipment['type'] ?? 'box')) }}</span>
+                                                            <strong>{{ __('admin.package_type') . ': ' }}</strong>
+                                                            <span id="package-type-preview">{{ __('admin.' . ($shipment['type'] ?? 'box')) }}</span>
                                                         </p>
                                                         <p>
-                                                            <strong>{{ __('admin.package_count') . ': ' }}</strong><span id="package-count-preview">{{ $packagesCount }}</span>
+                                                            <strong>{{ __('admin.package_count') . ': ' }}</strong>
+                                                            <span id="package-count-preview">{{ $packagesCount }}</span>
                                                         </p>
                                                         <p>
-                                                            <strong>{{ __('admin.weight_kg') . ': ' }}</strong><span id="package-weight-preview">{{ number_format($weight, 2) }}</span> {{ __('admin.kg') }}
+                                                            <strong>{{ __('admin.weight_kg') . ': ' }}</strong>
+                                                            <span id="package-weight-preview">{{ number_format($weight, 2) }}</span> {{ __('admin.kg') }}
                                                         </p>
                                                     </div>
                                                     <div class="col-md-6">
                                                         <p>
-                                                            <strong>{{ __('admin.length_summary') . ': ' }}</strong><span id="package-length-preview">{{ $length }}</span> {{ __('admin.cm') }}
+                                                            <strong>{{ __('admin.length_summary') . ': ' }}</strong>
+                                                            <span id="package-length-preview">{{ $length }}</span> {{ __('admin.cm') }}
                                                         </p>
                                                         <p>
-                                                            <strong>{{ __('admin.width_summary') . ': ' }}</strong><span id="package-width-preview">{{ $width }}</span> {{ __('admin.cm') }}
+                                                            <strong>{{ __('admin.width_summary') . ': ' }}</strong>
+                                                            <span id="package-width-preview">{{ $width }}</span> {{ __('admin.cm') }}
                                                         </p>
                                                         <p>
-                                                            <strong>{{ __('admin.height_summary') . ': ' }}</strong><span id="package-height-preview">{{ $height }}</span> {{ __('admin.cm') }}
+                                                            <strong>{{ __('admin.height_summary') . ': ' }}</strong>
+                                                            <span id="package-height-preview">{{ $height }}</span> {{ __('admin.cm') }}
                                                         </p>
                                                     </div>
                                                 </div>
@@ -226,26 +230,41 @@
                                     </div>
                                 </div>
 
-                                <!----shipment price and cost details--->
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="card mb-4" style="border-radius:15px;">
                                             <div class="card-header bg-primary text-white" style="border-top-left-radius:15px;border-top-right-radius:15px;">
-                                                <h5 class="mb-0" style="color:#fff;"><i class="fa fa-info-circle" style="margin:0 5px;"></i>{{ __('admin.shipment_price_details') }}</h5>
+                                                <h5 class="mb-0" style="color:#fff;">
+                                                    <i class="fa fa-info-circle" style="margin:0 5px;"></i>{{ __('admin.shipment_price_details') }}
+                                                </h5>
                                             </div>
                                             <div class="card-body">
                                                 <div class="row">
-                                                    <div class="col-md-12" style="display:flex;justify-content:space-between;">
+                                                    <div class="col-md-12 d-flex justify-content-between align-items-start">
                                                         <strong class="mb-3 text-black">{{ __('admin.shipping_price_per_receiver') }}:</strong>
-                                                        <div class="text-muted" id="price-base-per-receiver">{{ number_format($shippingFee, 2) }} {{ __('admin.currency_symbol') }}</div>
+                                                        <div class="text-muted" id="price-base-per-receiver">
+                                                            {{ number_format($shippingFee, 2) }} {{ __('admin.currency_symbol') }}
+                                                        </div>
                                                     </div>
                                                 </div>
 
+                                                @if(($extraWeightfee ?? 0) > 0)
                                                 <div class="row">
-                                                    <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                                        <strong class="mb-1 text-black">{{ __('admin.extra_weight_per_receiver') }}:</strong>
-                                                        <div class="text-muted" id="price-extra-per-receiver">
-                                                            {{ number_format($extraWeightPerReceiver, 2) }} {{ __('admin.currency_symbol') }}
+                                                    <div class="col-md-12 d-flex justify-content-between align-items-start">
+                                                        <strong class="mb-1 text-black">
+                                                            {{ __('admin.extra_weight_per_receiver') }}:
+                                                            <small class="text-muted d-block">
+                                                                {{ __('admin.company_weight') .': ' . $companyWeight . __('admin.kg') . ' , ' . __('admin.entered_weight') .': ' . $weight . __('admin.kg') . ' , ' . __('admin.extra_weight') .': ' . max(0, $weight - $companyWeight) . __('admin.kg') }}
+                                                            </small>
+                                                            <small class="text-muted d-block">
+                                                                {{ __('admin.extra_weight_price') .': ' . $extraWeightFee . __('admin.sar') }}
+                                                            </small>
+                                                        </strong>
+
+                                                        <div class="text-end">
+                                                            <div class="text-muted" id="price-extra-per-receiver">
+                                                                {{ number_format($extraWeightPerReceiver, 2) }} {{ __('admin.currency_symbol') }}
+                                                            </div>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-12">
@@ -254,12 +273,23 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                @endif
 
                                                 <div class="row">
                                                     <div class="col-md-12" style="display:flex;justify-content:space-between;">
                                                         <strong class="mb-3 text-black">{{ __('admin.shippment_type') }}:</strong>
                                                         <div class="mb-0 text-muted" id="payment-method-preview">
-                                                            {{ $shipment['isCod']  ? __('admin.cash_on_delivery_shippment') : __('admin.normal_shipment') }}
+                                                            {{ ($shipment['isCod'] ?? false) ? __('admin.cash_on_delivery_shippment') : __('admin.normal_shipment') }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                @if(($shipment['isCod'] ?? false))
+                                                <div class="row">
+                                                    <div class="col-md-12" style="display:flex;justify-content:space-between;">
+                                                        <strong class="mb-3 text-black">{{ __('admin.amount_due') }}:</strong>
+                                                        <div class="mb-0 text-primary" id="cod-fees-preview">
+                                                            {{ number_format($codFee, 2) }} {{ __('admin.currency_symbol') }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -272,6 +302,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                @endif
 
                                             </div>
                                         </div>
@@ -280,43 +311,56 @@
                                     <div class="col-md-6">
                                         <div class="card mb-4" style="border-radius:15px;">
                                             <div class="card-header bg-primary text-white" style="border-top-left-radius:15px;border-top-right-radius:15px;">
-                                                <h5 class="mb-0" style="color:#fff;"><i class="fa fa-money-bill" style="margin:0 5px;"></i>{{ __('admin.payment_details') }}</h5>
+                                                <h5 class="mb-0" style="color:#fff;">
+                                                    <i class="fa fa-money-bill" style="margin:0 5px;"></i>{{ __('admin.payment_details') }}
+                                                </h5>
                                             </div>
                                             <div class="card-body">
 
                                                 <div class="row">
                                                     <div class="col-md-12" style="display:flex;justify-content:space-between;">
                                                         <strong class="mb-3 text-black">{{ __('admin.shipping_fee') }}:</strong>
-                                                        <div class="mb-0 text-primary" id="shipping-fee-preview">{{ number_format($shippingFee, 2) }} {{ __('admin.currency_symbol') }}</div>
+                                                        <div class="mb-0 text-primary" id="shipping-fee-preview">
+                                                            {{ number_format($shippingFee, 2) }} {{ __('admin.currency_symbol') }}
+                                                        </div>
                                                     </div>
                                                 </div>
 
+                                                @if(($extraWeightfee ?? 0) > 0)
                                                 <div class="row">
                                                     <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                                        <strong class="mb-1 text-black">{{ __('admin.extra_fees') }}:</strong>
-                                                        <div class="mb-0 text-primary" id="extra-fees-preview">{{ number_format($shippingFee, 2) }} {{ __('admin.currency_symbol') }}</div>
-                                                    </div>
-                                                    <div class="col-md-12">
-                                                        <div class="small mb-3 text-muted mt-0">{{__('admin.extra_fess_desc') }}</div>
+                                                        <strong class="mb-1 text-black">{{ __('admin.extra_weight_fee') }}:</strong>
+                                                        <div class="mb-0 text-primary" id="extra-fees-preview">
+                                                            {{ number_format($extraWeightfee, 2) }} {{ __('admin.currency_symbol') }}
+                                                        </div>
                                                     </div>
                                                 </div>
+                                                @endif
+
+                                                @if(($shipment['isCod'] ?? false))
 
                                                 <div class="row">
-                                                    <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                                        <strong class="mb-3 text-black">{{ __('admin.cod_fee') }}:</strong>
-                                                        <div class="mb-0 text-primary" id="cod-fees-preview">{{ number_format($codFee, 2) }} {{ __('admin.currency_symbol') }}</div>
+                                                    <div class="col-md-12 mt-2 mb-2" style="display:flex;justify-content:space-between;">
+                                                        <strong class="mb-1 text-black">{{ __('admin.total_cod_fee') }}:</strong>
+                                                        <div class="mb-0 text-primary" id="price-cod-per-receiver">
+                                                            {{ number_format($codPerReceiver, 2) * $rcCount }} {{ __('admin.currency_symbol') }}
+                                                        </div>
                                                     </div>
                                                 </div>
+                                                @endif
 
                                                 @php
                                                 $displayCount = $rcCount;
                                                 $displayPerReceiver = $displayCount > 0 ? ($total / $displayCount) : 0;
                                                 @endphp
 
+                                                {{-- Grand total + per receiver --}}
                                                 <div class="row">
                                                     <div class="col-md-12" style="display:flex;justify-content:space-between;">
                                                         <strong class="mb-1 text-primary">{{ __('admin.total_amount') }}:</strong>
-                                                        <div class="h6 mb-0 text-primary" id="total-amount-preview">{{ number_format($total, 2) }} {{ __('admin.currency_symbol') }}</div>
+                                                        <div class="h6 mb-0 text-primary" id="total-amount-preview">
+                                                            {{ number_format($total, 2) }} {{ __('admin.currency_symbol') }}
+                                                        </div>
                                                     </div>
                                                     <div class="col-md-12">
                                                         <span class="small mb-3 text-muted mt-0" id="receivers-count-display">{{ $displayCount }}</span> {{ __('admin.receivers') }}
