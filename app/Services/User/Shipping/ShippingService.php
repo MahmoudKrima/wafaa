@@ -121,6 +121,10 @@ class ShippingService
         $receiverStreet = (string) data_get($details, 'receiverStreet', '—');
         $receiverCountryName = (string) data_get($details, 'receiverCountryName', '—');
         $receiverCityName    = (string) data_get($details, 'receiverCityName', '—');
+        $labelUrl    = (string) data_get($shipment, 'labelUrl', '—');
+        $status    = (string) data_get($shipment, 'status', '—');
+        $createdAtRaw    = (string) data_get($details, 'createdAt', '—');
+        $created_at = \Carbon\Carbon::parse($createdAtRaw)->format('Y-m-d H:i');
 
         $shipPrice = $authUser->shippingPrices()
             ->where('company_id', $companyId)
@@ -192,6 +196,9 @@ class ShippingService
             'receiverPhone1'         => $receiverPhone1,
             'receiverStreet'         => $receiverStreet,
             'trackingNumber'         => $trackingNumber,
+            'labelUrl'               => $labelUrl,
+            'status'                 => $status,
+            'created_at'             => $created_at,
         ];
     }
 
