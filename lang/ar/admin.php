@@ -78,7 +78,7 @@ return [
     'n/a' => 'لا يوجد',
     'otp_send_successfully' => 'تم ارسال كود التحقق',
     'Enter_your_email_and_instructions_will_sent_to_you' => 'ادخل بريدك الالكترونى و سوف ترسل لك التعليمات',
-    'login_to' => 'تسجيل دخول الى',
+    'login_to' => 'تسجيل الدخول',
     'show_password' => 'عرض كلمة المرور',
     'Enter your email and instructions will sent to you!' => 'قم بادخال كلمة المرور و ستصلك التعليمات!',
     'Password Recovery' => 'استعادة كلمة المرور',

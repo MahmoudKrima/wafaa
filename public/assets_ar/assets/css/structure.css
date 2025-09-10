@@ -31,12 +31,12 @@ h1, h2, h3, h4, h5, h6 {
 
 ::-moz-selection {
     /* Code for Firefox */
-    color: #F6950D;
-    background: transparent; }
+    color: #ffffff;
+    background: #0299ff; }
 
 ::selection {
-    color: #F6950D;
-    background: transparent; }
+    color: #ffffff;
+    background: #0299ff; }
 
 p {
     margin-top: 0;

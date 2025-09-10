@@ -29,56 +29,66 @@
     <link rel="stylesheet" href="{{ asset('vendor/toastr/build/toastr.min.css') }}">
 </head>
 
+
 <body class="form">
 
-<div class="header-container fixed-top">
-    <header class="header navbar navbar-expand-sm" style="background-color: #eeebeb59 !important; border:none !important;display:flex;justify-content: flex-start;">
-        <div> {{__('admin.choose_lang')}} </div>
-        <ul class="navbar-item flex-row navbar-dropdown" style="list-style:none; margin:0; padding:0;">
-            <li class="nav-item dropdown language-dropdown more-dropdown">
 
-                <div class="dropdown custom-dropdown-icon">
-                    <a class="dropdown-toggle btn" href="#" role="button" id="customDropdown" data-toggle="dropdown"
-                       aria-haspopup="true" aria-expanded="false"
-                       style="display:flex; align-items:center; gap:6px; padding:4px 8px;">
-                        <img src="{{ asset('assets_' . assetLang()) }}/assets/img/{{ app()->getLocale() }}.png"
-                             alt="flag"
-                             style="width:24px; height:auto; object-fit:cover; border-radius:3px;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                             stroke-linecap="round" stroke-linejoin="round"
-                             style="margin-{{ App::getLocale()==='ar' ? 'right' : 'left' }}:4px;">
-                            <polyline points="6 9 12 15 18 9"></polyline>
-                        </svg>
-                    </a>
-
-                    <div class="dropdown-menu {{ App::getLocale()==='ar' ? 'dropdown-menu-left' : 'dropdown-menu-right' }} animated fadeInUp"
-                         aria-labelledby="customDropdown" style="min-width:130px; padding:4px 0;">
-                        @foreach (LaravelLocalization::getSupportedLocales() as $localeCode => $properties)
-                            @if ($localeCode == app()->getLocale()) @continue @endif
-                            <a class="dropdown-item d-flex align-items-center"
-                               href="{{ LaravelLocalization::getLocalizedURL($localeCode, null, [], true) }}"
-                               style="gap:6px; padding:6px 10px;">
-                                <img src="{{ asset('assets_' . assetLang()) }}/assets/img/{{ $localeCode }}.png"
-                                     alt="flag"
-                                     style="width:20px; height:auto; object-fit:cover; border-radius:3px;">
-                                <span dir="auto">{{ $properties['native'] }}</span>
-                            </a>
-                        @endforeach
-                    </div>
-                </div>
-            </li>
-        </ul>
-    </header>
-</div>
-    <div class="form-container">
+<div class="form-container">
         <div class="form-form">
+
+            <div class="header-container">
+                <header style="background-color:#eeebeb59 !important;border:none !important;display:flex;justify-content:flex-start;align-items:center;padding:10px 25px; !important;">
+                    <div> {{__('admin.choose_lang')}} </div>
+                    <ul class="navbar-item flex-row navbar-dropdown" style="list-style:none; margin:0; padding:0;">
+                        <li class="nav-item dropdown language-dropdown more-dropdown">
+
+                            <div class="dropdown custom-dropdown-icon">
+                                <a class="dropdown-toggle btn" href="#" role="button" id="customDropdown" data-toggle="dropdown"
+                                   aria-haspopup="true" aria-expanded="false"
+                                   style="display:flex; align-items:center; gap:6px; padding:4px 8px;">
+                                    <img src="{{ asset('assets_' . assetLang()) }}/assets/img/{{ app()->getLocale() }}.png"
+                                         alt="flag"
+                                         style="width:24px; height:auto; object-fit:cover; border-radius:3px;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                         viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                         stroke-linecap="round" stroke-linejoin="round"
+                                         style="margin-{{ App::getLocale()==='ar' ? 'right' : 'left' }}:4px;">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </a>
+
+                                <div class="dropdown-menu {{ App::getLocale()==='ar' ? 'dropdown-menu-left' : 'dropdown-menu-right' }} animated fadeInUp"
+                                     aria-labelledby="customDropdown" style="min-width:130px; padding:4px 0;">
+                                    @foreach (LaravelLocalization::getSupportedLocales() as $localeCode => $properties)
+                                        @if ($localeCode == app()->getLocale()) @continue @endif
+                                        <a class="dropdown-item d-flex align-items-center"
+                                           href="{{ LaravelLocalization::getLocalizedURL($localeCode, null, [], true) }}"
+                                           style="gap:6px; padding:6px 10px;">
+                                            <img src="{{ asset('assets_' . assetLang()) }}/assets/img/{{ $localeCode }}.png"
+                                                 alt="flag"
+                                                 style="width:20px; height:auto; object-fit:cover; border-radius:3px;">
+                                            <span dir="auto">{{ $properties['native'] }}</span>
+                                        </a>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </header>
+            </div>
+
+            <div style="text-align:center;">
+                <img src="{{ displayImage(app('settings')['logo']) }}" style="height:120px;width:120px;">
+            </div>
+
             <div class="form-form-wrap">
-                <div class="form-container">
+                <div class="form-container" style="min-height:auto !important;">
                     <div class="form-content">
 
-                        <h1 class="">{{ __('admin.login_to') . " " }}<span
-                                class="brand-name">{{ app('settings')['app_name_' . assetLang()] }}</span></h1>
+                        <h1 class="">{{ __('admin.login_to') . " " }}
+                            <br>
+                            <span class="brand-name">{{ app('settings')['app_name_' . assetLang()] }}</span>
+                        </h1>
                         <form class="text-left" method="POST" action="{{ route('user.auth.login') }}">
                             @csrf
                             <div class="form">
