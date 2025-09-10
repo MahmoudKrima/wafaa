@@ -99,22 +99,14 @@ class ShippingService
         $authUser = auth()->user();
         $shipment = $this->getShipmentById($id);
         $company  = (array) data_get($shipment, 'shippingCompany', []);
-        $receiver = (array) data_get($shipment, 'receiver', []);
         $details  = (array) data_get($shipment, 'shipmentDetails', []);
-        $user         = (array) data_get($shipment, 'user', []);
-        $senderName   = trim(trim((string) data_get($user, 'firstName', '')) . ' ' . trim((string) data_get($user, 'lastName', '')));
-        if ($senderName === '') {
-            $senderName = (string) data_get($user, 'companyName', '') ?: (string) data_get($details, 'senderName', '—');
-        }
-
-        $senderPhone        = (string) (data_get($user, 'phone') ?: data_get($details, 'senderPhone', '—'));
-        $senderAddress      = (string) (data_get($user, 'address.street') ?: data_get($details, 'senderStreet', '—'));
-        $senderCountryName  = (string) data_get($details, 'senderCountryName', '—');
-        $senderCityName     = (string) data_get($details, 'senderCityName', '—');
-
-        $receiverCountryName = (string) data_get($details, 'receiverCountryName', '—');
-        $receiverCityName    = (string) data_get($details, 'receiverCityName', '—');
-
+        $trackingNumber  = (string) data_get($shipment, 'trackingNumber', '—');
+        $senderName   =  (string) (data_get($details, 'senderName'));
+        $senderPhone        = (string) (data_get($details, 'senderPhone'));
+        $senderPhone1        = (string) (data_get($details, 'senderPhone1'));
+        $senderAddress      = (string) (data_get($details, 'senderStreet'));
+        $senderCountryName  = (string) data_get($details, 'senderCountryName');
+        $senderCityName     = (string) data_get($details, 'senderCityName');
         $length        = (int) data_get($details, 'length', 0);
         $width         = (int) data_get($details, 'width', 0);
         $height        = (int) data_get($details, 'height', 0);
@@ -123,6 +115,12 @@ class ShippingService
         $pkgDescription = (string) data_get($details, 'description', '');
         $companyId = (string) data_get($shipment, 'shippingCompanyId', '');
         $codFee         = (float) data_get($shipment, 'shipmentCod.codPrice', '');
+        $receiverName = (string) data_get($details, 'receiverName', '—');
+        $receiverPhone = (string) data_get($details, 'receiverPhone', '—');
+        $receiverPhone1 = (string) data_get($details, 'receiverPhone1', '—');
+        $receiverStreet = (string) data_get($details, 'receiverStreet', '—');
+        $receiverCountryName = (string) data_get($details, 'receiverCountryName', '—');
+        $receiverCityName    = (string) data_get($details, 'receiverCityName', '—');
 
         $shipPrice = $authUser->shippingPrices()
             ->where('company_id', $companyId)
@@ -149,32 +147,31 @@ class ShippingService
         $isCod          = (bool) data_get($shipment, 'isCod', false);
         $codPerReceiver = ($adminSetting && $isCod) ? (float) $adminSetting->cash_on_delivery_price : 0.0;
 
-        $receiverCount    = !empty($receiver) ? 1 : 0;
-        $extraWeightfee = $extraWeightPer * $receiverCount;
+        $extraWeightfee = $extraWeightPer;
         if ($isCod) {
-            $finalTotalCod = $codPerReceiver * $receiverCount;
-            $finalWeightFee = $extraWeightPer * $receiverCount ?? 0.0;
-            $finalShippingFee = $shippingFee * $receiverCount ?? 0.0;
+            $finalTotalCod = $codPerReceiver;
+            $finalWeightFee = $extraWeightPer;
+            $finalShippingFee = $shippingFee;
             $total = (float) ($finalShippingFee + $finalTotalCod + $finalWeightFee) ?: 0.0;
         } else {
             $total = (float) ($shippingFee + $extraWeightfee) ?: 0.0;
         }
 
-        $perReceiverTotal = $receiverCount > 0 ? ($total / $receiverCount) : 0.0;
+        $perReceiverTotal = $total;
         $extraWeightFee = $adminSetting->extra_weight_price;
 
         return [
             'shipment'               => $shipment,
             'senderName'             => $senderName,
             'senderPhone'            => $senderPhone,
+            'senderPhone1'           => $senderPhone1,
             'senderAddress'          => $senderAddress,
             'senderCity'             => $senderCityName,
             'senderCountryName'      => $senderCountryName,
-            'receiver'               => $receiver,
             'receiverCityName'       => $receiverCityName,
             'receiverCountryName'    => $receiverCountryName,
             'company'                => $company,
-            'receiverCount'          => $receiverCount,
+            'receiverCount'          => 1,
             'shippingFee'            => $shippingFee,
             'codFee'                 => $codFee,
             'extraWeightPerReceiver' => (float) $extraWeightPer,
@@ -190,6 +187,11 @@ class ShippingService
             'extraWeightfee'         => $extraWeightfee,
             'companyWeight'          => $companyWeight,
             'extraWeightFee'         => $extraWeightFee,
+            'receiverName'           => $receiverName,
+            'receiverPhone'          => $receiverPhone,
+            'receiverPhone1'         => $receiverPhone1,
+            'receiverStreet'         => $receiverStreet,
+            'trackingNumber'         => $trackingNumber,
         ];
     }
 
@@ -472,7 +474,7 @@ class ShippingService
                     'response_json' => $resp->json(),
                     'response_text' => $resp->body(),
                 ];
-                continue;
+                break;
             }
 
             $results['success'][] = [
@@ -481,7 +483,6 @@ class ShippingService
                 'body_sent'     => $body,
                 'response_json' => $resp->json(),
             ];
-
             $this->deductAndLog($user, $requestData, $companyPrice);
             $user->load('wallet');
         }
@@ -493,17 +494,20 @@ class ShippingService
     private function deductAndLog($user, array $data, $companyPrice): float
     {
         $amount         = 0.0;
-        $isCod          = (bool) Arr::get($data, 'payment_method');
+        $isCod          = (string) Arr::get($data, 'payment_method');
         $extraKg        = (float) Arr::get($data, 'extra_kg', 0);
         $shippingMethod = (string) Arr::get($data, 'shipping_method', 'local');
         $adminSetting   = AdminSetting::where('admin_id', $user->created_by)->first();
+
         if ($isCod == 'cod') {
             $amount += (float) ($adminSetting->cash_on_delivery_price ?? 0);
         }
+
         if ($extraKg > 0) {
             $amount += (float) ($adminSetting->extra_weight_price ?? 0) * $extraKg;
         }
-        $amount += (float) ($shippingMethod === 'local'
+
+        $amount += (float) ($shippingMethod == 'local'
             ? ($companyPrice->local_price ?? 0)
             : ($companyPrice->international_price ?? 0));
 
