@@ -633,4 +633,7 @@ return [
     'dimensions_required' => 'Please enter dimensions (length, width, height) for the boxes.',
     'dimensions_invalid' => 'Dimensions must be valid numbers greater than 0.',
     'accept_terms_required' => 'Please accept the terms and conditions to continue.',
+    'company_weight' => 'Company Weight',
+    'extra_weight' => 'Extra Weight',
+    'total_cod_fee' => 'Total COD Fee',
 ];

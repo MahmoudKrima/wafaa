@@ -102,6 +102,8 @@ Route::middleware(['web'])->group(function () {
                     ->name('shippings.companies');
                 Route::get('/shippings/{id}', 'show')
                     ->name('shippings.show');
+                Route::get('/shippings/delete/{id}', 'delete')
+                    ->name('shippings.delete');
             });
 
         Route::controller(WalletLogsController::class)

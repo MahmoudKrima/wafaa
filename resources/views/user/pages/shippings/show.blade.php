@@ -34,8 +34,6 @@
                         <div class="row">
                             <div class="col-12">
                                 <div id="step7-errors" class="mb-3"></div>
-
-                                <!----Sender and company details--->
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="card mb-4" style="border-radius:15px;">
@@ -243,11 +241,24 @@
                                                     </div>
                                                 </div>
 
+                                                @if($extraWeightfee > 0)
                                                 <div class="row">
-                                                    <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                                        <strong class="mb-1 text-black">{{ __('admin.extra_weight_per_receiver') }}:</strong>
-                                                        <div class="text-muted" id="price-extra-per-receiver">
-                                                            {{ number_format($extraWeightPerReceiver, 2) }} {{ __('admin.currency_symbol') }}
+                                                    <div class="col-md-12 d-flex justify-content-between align-items-start">
+                                                        <strong class="mb-1 text-black">
+                                                            {{ __('admin.extra_weight_per_receiver') }}:
+                                                            <small class="text-muted d-block">
+                                                                {{ __('admin.company_weight') .': ' . $companyWeight .__('admin.kg') . ' , ' . __('admin.entered_weight') .': ' . $weight .__('admin.kg') . ' , ' . __('admin.extra_weight') .': ' . $weight - $companyWeight .__('admin.kg') }}
+                                                            </small>
+                                                            <small class="text-muted d-block">
+                                                                {{ __('admin.extra_weight_price') .': ' . $extraWeightFee .__('admin.sar') }}
+                                                            </small>
+                                                        </strong>
+
+                                                        <div class="text-end">
+                                                            <div class="text-muted" id="price-extra-per-receiver">
+                                                                {{ number_format($extraWeightPerReceiver, 2) }} {{ __('admin.currency_symbol') }}
+                                                            </div>
+
                                                         </div>
                                                     </div>
                                                     <div class="col-md-12">
@@ -256,6 +267,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                @endif
 
                                                 <div class="row">
                                                     <div class="col-md-12" style="display:flex;justify-content:space-between;">
@@ -265,7 +277,13 @@
                                                         </div>
                                                     </div>
                                                 </div>
-
+                                                @if($shipment['isCod'])
+                                                <div class="row">
+                                                    <div class="col-md-12" style="display:flex;justify-content:space-between;">
+                                                        <strong class="mb-3 text-black">{{ __('admin.amount_due') }}:</strong>
+                                                        <div class="mb-0 text-primary" id="cod-fees-preview">{{ number_format($codFee, 2) }} {{ __('admin.currency_symbol') }}</div>
+                                                    </div>
+                                                </div>
                                                 <div class="row">
                                                     <div class="col-md-12" style="display:flex;justify-content:space-between;">
                                                         <strong class="mb-1 text-black">{{ __('admin.cod_fee_per_receiver') }}:</strong>
@@ -274,6 +292,8 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                @endif
+
 
                                             </div>
                                         </div>
@@ -293,22 +313,27 @@
                                                     </div>
                                                 </div>
 
+                                                @if($extraWeightfee > 0)
                                                 <div class="row">
                                                     <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                                        <strong class="mb-1 text-black">{{ __('admin.extra_fees') }}:</strong>
-                                                        <div class="mb-0 text-primary" id="extra-fees-preview">{{ number_format($shippingFee, 2) }} {{ __('admin.currency_symbol') }}</div>
-                                                    </div>
-                                                    <div class="col-md-12">
-                                                        <div class="small mb-3 text-muted mt-0">{{__('admin.extra_fess_desc') }}</div>
+                                                        <strong class="mb-1 text-black">{{ __('admin.extra_weight_fee') }}:</strong>
+                                                        <div class="mb-0 text-primary" id="extra-fees-preview">{{ number_format($extraWeightfee, 2) }} {{ __('admin.currency_symbol') }}</div>
                                                     </div>
                                                 </div>
+                                                @endif
+
+                                                @if($shipment['isCod'])
 
                                                 <div class="row">
-                                                    <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                                        <strong class="mb-3 text-black">{{ __('admin.cod_fee') }}:</strong>
-                                                        <div class="mb-0 text-primary" id="cod-fees-preview">{{ number_format($codFee, 2) }} {{ __('admin.currency_symbol') }}</div>
+                                                    <div class="col-md-12 mt-2 mb-2" style="display:flex;justify-content:space-between;">
+                                                        <strong class="mb-1 text-black">{{ __('admin.total_cod_fee') }}:</strong>
+                                                        <div class="mb-0 text-primary" id="price-cod-per-receiver">
+                                                            {{ number_format($codPerReceiver, 2) * $rcCount }} {{ __('admin.currency_symbol') }}
+                                                        </div>
                                                     </div>
                                                 </div>
+                                                @endif
+
 
                                                 @php
                                                 $displayCount = $rcCount;

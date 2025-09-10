@@ -176,10 +176,11 @@ class AdminShippingService extends ShippingService
         $page = 0;
         $pageSize = 50;
         $shipment = null;
+
         do {
-            $chunk = $this->getUserListShipments(['page' => $page, 'pageSize' => $pageSize]);
+            $chunk   = $this->getUserListShipments(['page' => $page, 'pageSize' => $pageSize]);
             $results = (array) data_get($chunk, 'results', []);
-            $total = (int) data_get($chunk, 'total', count($results));
+            $total   = (int) data_get($chunk, 'total', count($results));
 
             foreach ($results as $row) {
                 if ((string) data_get($row, 'id') === (string) $id) {
@@ -187,6 +188,7 @@ class AdminShippingService extends ShippingService
                     break 2;
                 }
             }
+
             $page++;
             $fetched = $page * $pageSize;
         } while ($shipment === null && $fetched < $total && !empty($results));
@@ -194,82 +196,108 @@ class AdminShippingService extends ShippingService
         if (!$shipment) {
             abort(404, 'Shipment not found');
         }
-        $authUser = User::find($shipment['externalAppId'])
+        $externalAppId = (string) data_get($shipment, 'externalAppId', '');
+        $authUser = User::where('id', $externalAppId)
             ->where('created_by', getAdminIdOrCreatedBy())
             ->first();
+
         if (!$authUser) {
             abort(404, 'User not found');
         }
-
-        $company = (array) data_get($shipment, 'shippingCompany', []);
+        $company  = (array) data_get($shipment, 'shippingCompany', []);
         $receiver = (array) data_get($shipment, 'receiver', []);
-        $details = (array) data_get($shipment, 'shipmentDetails', []);
+        $details  = (array) data_get($shipment, 'shipmentDetails', []);
+        $user     = (array) data_get($shipment, 'user', []);
 
-        $user = (array) data_get($shipment, 'user', []);
         $senderName = trim(trim((string) data_get($user, 'firstName', '')) . ' ' . trim((string) data_get($user, 'lastName', '')));
         if ($senderName === '') {
             $senderName = (string) data_get($user, 'companyName', '') ?: (string) data_get($details, 'senderName', '—');
         }
-        $senderPhone = (string) (data_get($user, 'phone') ?: data_get($details, 'senderPhone', '—'));
-        $senderAddress = (string) (data_get($user, 'address.street') ?: data_get($details, 'senderStreet', '—'));
-        $senderCountryName = (string) data_get($details, 'senderCountryName', '—');
-        $senderCityName = (string) data_get($details, 'senderCityName', '—');
+
+        $senderPhone        = (string) (data_get($user, 'phone') ?: data_get($details, 'senderPhone', '—'));
+        $senderAddress      = (string) (data_get($user, 'address.street') ?: data_get($details, 'senderStreet', '—'));
+        $senderCountryName  = (string) data_get($details, 'senderCountryName', '—');
+        $senderCityName     = (string) data_get($details, 'senderCityName', '—');
 
         $receiverCountryName = (string) data_get($details, 'receiverCountryName', '—');
-        $receiverCityName = (string) data_get($details, 'receiverCityName', '—');
+        $receiverCityName    = (string) data_get($details, 'receiverCityName', '—');
 
-        $length = (int) data_get($details, 'length', 0);
-        $width = (int) data_get($details, 'width', 0);
-        $height = (int) data_get($details, 'height', 0);
-        $weight = (float) data_get($details, 'weight', 0);
-        $packagesCount = (int) data_get($details, 'packagesCount', 1);
+        $length        = (int)   data_get($details, 'length', 0);
+        $width         = (int)   data_get($details, 'width', 0);
+        $height        = (int)   data_get($details, 'height', 0);
+        $weight        = (float) data_get($details, 'weight', 0);
+        $packagesCount = (int)   data_get($details, 'packagesCount', 1);
         $pkgDescription = (string) data_get($details, 'description', '');
-        $shipPrice = $authUser->shippingPrices()
-            ->where('company_id', (string) $shipment['shippingCompanyId'])
-            ->first();
-        $shippingFee = $shipment['method'] == 'local' ? $shipPrice->local_price : $shipPrice->international_price;
-        $companyWeight = $shipment['shippingCompany']['maxWeight'];
-        $adminSetting = AdminSetting::where('admin_id', getAdminIdOrCreatedBy())
-            ->first();
-        if ($weight > $companyWeight) {
-            $extraWeight = $shipPrice->extra_weight_price;
-            $extraWeightPer = $extraWeight * $adminSetting->extra_weight_price;
-        } else {
-            $extraWeightPer = 0;
-        }
-        $isCod = (bool) data_get($shipment, 'isCod', false);
-        $codPerReceiver = $isCod ? $adminSetting->cash_on_delivery_price : 0.0;
-        $codFee = $adminSetting->cash_on_delivery_price;
-        $extraWeightPerReceiver = (float) $extraWeightPer;
-        $total = (float) ($shippingFee + $codFee) ?: 0;
 
-        $receiverCount = !empty($receiver) ? 1 : 0;
+        $companyId = (string) data_get($shipment, 'shippingCompanyId', '');
+        $codFee    = (float) data_get($shipment, 'shipmentCod.codPrice', '');
+        $shipPrice = $authUser->shippingPrices()
+            ->where('company_id', $companyId)
+            ->first();
+
+        $shippingFee = 0.0;
+        $internationalShippingFee = $shipPrice->international_price ?? 0.0;
+        $localShippingFee         = $shipPrice->local_price ?? 0.0;
+
+        if ($shipPrice) {
+            $shippingFee = data_get($shipment, 'method') === 'local'
+                ? (float) $localShippingFee
+                : (float) $internationalShippingFee;
+        }
+        $companyWeight = (float) data_get($shipment, 'shippingCompany.maxWeight', 0);
+        $adminSetting  = AdminSetting::where('admin_id', getAdminIdOrCreatedBy())->first();
+        $extraWeightPer = 0.0;
+
+        if ($weight > $companyWeight) {
+            $extraWeight    = (float) $weight - $companyWeight;
+            $extraWeightPer = $extraWeight * (float) ($adminSetting->extra_weight_price ?? 0.0);
+        }
+
+        $isCod          = (bool) data_get($shipment, 'isCod', false);
+        $codPerReceiver = ($adminSetting && $isCod) ? (float) $adminSetting->cash_on_delivery_price : 0.0;
+
+        $receiverCount   = !empty($receiver) ? 1 : 0;
+        $extraWeightfee  = $extraWeightPer * $receiverCount;
+
+        if ($isCod) {
+            $finalTotalCod    = $codPerReceiver * $receiverCount;
+            $finalWeightFee   = $extraWeightPer * $receiverCount;
+            $finalShippingFee = $shippingFee   * $receiverCount;
+            $total = (float) ($finalShippingFee + $finalTotalCod + $finalWeightFee) ?: 0.0;
+        } else {
+            $total = (float) ($shippingFee + $extraWeightfee) ?: 0.0;
+        }
+
         $perReceiverTotal = $receiverCount > 0 ? ($total / $receiverCount) : 0.0;
+        $extraWeightFee   = (float) ($adminSetting->extra_weight_price ?? 0.0);
 
         return [
-            'shipment' => $shipment,
-            'senderName' => $senderName,
-            'senderPhone' => $senderPhone,
-            'senderAddress' => $senderAddress,
-            'senderCity' => $senderCityName,
-            'senderCountryName' => $senderCountryName,
-            'receiver' => $receiver,
-            'receiverCityName' => $receiverCityName,
-            'receiverCountryName' => $receiverCountryName,
-            'company' => $company,
-            'receiverCount' => $receiverCount,
-            'shippingFee' => $shippingFee,
-            'codFee' => $codFee,
-            'extraWeightPerReceiver' => $extraWeightPerReceiver,
-            'codPerReceiver' => $codPerReceiver,
-            'total' => $total,
-            'perReceiverTotal' => $perReceiverTotal,
-            'length' => $length,
-            'width' => $width,
-            'height' => $height,
-            'weight' => $weight,
-            'packagesCount' => $packagesCount,
-            'packageDescription' => $pkgDescription,
+            'shipment'               => $shipment,
+            'senderName'             => $senderName,
+            'senderPhone'            => $senderPhone,
+            'senderAddress'          => $senderAddress,
+            'senderCity'             => $senderCityName,
+            'senderCountryName'      => $senderCountryName,
+            'receiver'               => $receiver,
+            'receiverCityName'       => $receiverCityName,
+            'receiverCountryName'    => $receiverCountryName,
+            'company'                => $company,
+            'receiverCount'          => $receiverCount,
+            'shippingFee'            => $shippingFee,
+            'codFee'                 => $codFee,
+            'extraWeightPerReceiver' => (float) $extraWeightPer,
+            'codPerReceiver'         => (float) $codPerReceiver,
+            'total'                  => $total,
+            'perReceiverTotal'       => $perReceiverTotal,
+            'length'                 => $length,
+            'width'                  => $width,
+            'height'                 => $height,
+            'weight'                 => $weight,
+            'packagesCount'          => $packagesCount,
+            'packageDescription'     => $pkgDescription,
+            'extraWeightfee'         => $extraWeightfee,
+            'companyWeight'          => $companyWeight,
+            'extraWeightFee'         => $extraWeightFee,
         ];
     }
 }
