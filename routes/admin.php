@@ -500,6 +500,9 @@ Route::middleware(['web'])->group(function () {
                 Route::get('/users/{user}/shippings', 'index')
                     ->name('users.shippings')
                     ->middleware('has.permission:shippings.view');
+                Route::get('/shippings/delete/{id}/{externalAppId?}', 'delete')
+                    ->name('shippings.delete')
+                    ->middleware('has.permission:shippings.view');
             });
 
 

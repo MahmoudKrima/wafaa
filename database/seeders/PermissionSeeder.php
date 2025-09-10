@@ -41,6 +41,7 @@ class PermissionSeeder extends Seeder
             'shippings.view',
             'shippings.export',
             'shippings.show',
+            'shippings.delete',
         ];
 
         $permissions = [

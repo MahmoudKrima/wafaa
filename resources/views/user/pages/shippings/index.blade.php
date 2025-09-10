@@ -257,10 +257,11 @@
                                         @else
                                         <span class="badge bg-dark text-white">{{ __('admin.n/a') }}</span>
                                         @endif
-
+                                        @if($shipment['status'] == 'processing')
                                         <a href="{{ route('user.shippings.delete', $shipment['id']) }}" class="badge bg-danger text-white">
                                             {{ __('admin.cancel') }}
                                         </a>
+                                        @endif
                                     </td>
 
                                 </tr>
