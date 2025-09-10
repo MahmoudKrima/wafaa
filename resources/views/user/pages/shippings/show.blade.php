@@ -20,6 +20,9 @@
                             <h4 class="mb-0" style="text-wrap-mode:nowrap !important;">
                                 <i class="fas fa-check-circle text-primary me-2" style="margin:0 5px;"></i>{{ __('admin.package_details') }}
                             </h4>
+                            <h4 class="mb-0" style="text-wrap-mode:nowrap !important;">
+                                <i class="fas fa-check-circle text-primary me-2" style="margin:0 5px;"></i>{{ __('admin.tracking_number') . ' : ' . $trackingNumber }}
+                            </h4>
                         </div>
                         <div style="margin: 25px 15px 0 20px;" id="hide-when-print" class="no-print">
                             <button onclick="window.print()" class="btn btn-outline-dark">
@@ -52,6 +55,12 @@
                                                     <strong>{{ __('admin.phone') . ' : ' }}</strong>
                                                     <span id="sender-phone-preview">{{ $senderPhone }}</span>
                                                 </p>
+                                                @if($senderPhone1)
+                                                <p>
+                                                    <strong>{{ __('admin.additional_phone') . ' : ' }}</strong>
+                                                    <span id="sender-phone-preview">{{ $senderPhone1 }}</span>
+                                                </p>
+                                                @endif
                                                 <p>
                                                     <strong>{{ __('admin.city') . ' : ' }}</strong>
                                                     <span id="sender-city-preview">{{ $senderCity }}</span>
@@ -105,73 +114,54 @@
                                     </div>
                                 </div>
 
-                                @php
-                                $receiversList = (array) data_get($shipment, 'receivers', []);
-                                if (empty($receiversList) && !empty($receiver)) {
-                                $receiversList = [$receiver];
-                                }
-                                $rcCount = is_countable($receiversList) ? count($receiversList) : 0;
-                                @endphp
 
-                                <!----receivers and shipment details--->
                                 <div class="row">
                                     <div class="col-md-6">
                                         <div class="card mb-4" style="border-radius:15px;">
                                             <div class="card-header bg-primary text-white"
                                                 style="border-top-left-radius:15px;border-top-right-radius:15px;">
                                                 <h5 class="mb-0" style="color:#fff;"><i class="fa fa-user-friends" style="margin:0 5px;"></i>{{ __('admin.receivers_info') }}
-                                                    (<span id="receivers-count-preview">{{ $rcCount }}</span>)
+                                                    (<span id="receivers-count-preview">{{ 1 }}</span>)
                                                 </h5>
                                             </div>
                                             <div class="card-body">
                                                 <div id="receivers-summary-container">
-                                                    @forelse($receiversList as $idx => $rcv)
-                                                    @php
-                                                    $rName = data_get($rcv, 'fullName', '—');
-                                                    $rPhone = data_get($rcv, 'phone', '—');
-                                                    $rPhone1 = data_get($rcv, 'phone1', '—');
-                                                    $rStreet = data_get($rcv, 'address.street', data_get($rcv, 'street', '—'));
-                                                    $rCity = data_get($rcv, 'address.cityName') ??
-                                                    data_get($rcv, 'city_name') ??
-                                                    ($receiverCityName ?? '—');
 
-                                                    $rCountry = data_get($rcv, 'address.countryName') ??
-                                                    data_get($rcv, 'country_name') ??
-                                                    ($receiverCountryName ?? '—');
-                                                    @endphp
                                                     <div class="card mb-2">
                                                         <div class="card-body">
                                                             <div
                                                                 class="d-flex justify-content-between align-items-start flex-wrap gap-2">
                                                                 <div>
                                                                     <p class="mb-1">
-                                                                        <strong>{{ __('admin.receiver') }}#{{ $idx + 1 }} : </strong>
-                                                                        <span class="text-muted">{{ $rName }}</span>
+                                                                        <strong>{{ __('admin.receiver') }}#{{ 1 }} : </strong>
+                                                                        <span class="text-muted">{{ $receiverName }}</span>
                                                                     </p>
                                                                     <p>
                                                                         <strong>{{ __('admin.phone') }} : </strong>
-                                                                        <span class="text-muted">{{ $rPhone }}</span>
+                                                                        <span class="text-muted">{{ $receiverPhone }}</span>
                                                                     </p>
+                                                                    @if($receiverPhone1)
+                                                                    <p>
+                                                                        <strong>{{ __('admin.additional_phone') }} : </strong>
+                                                                        <span class="text-muted">{{ $receiverPhone1 }}</span>
+                                                                    </p>
+                                                                    @endif
                                                                     <p>
                                                                         <strong>{{ __('admin.country') }} : </strong>
-                                                                        <span class="text-muted">{{ $rCountry }}</span>
+                                                                        <span class="text-muted">{{ $senderCountryName }}</span>
                                                                     </p>
                                                                     <p>
                                                                         <strong>{{ __('admin.city') }} : </strong>
-                                                                        <span class="text-muted">{{ $rCity }}</span>
+                                                                        <span class="text-muted">{{ $receiverCityName }}</span>
                                                                     </p>
                                                                     <p>
                                                                         <strong>{{ __('admin.address') }} : </strong>
-                                                                        <span class="text-muted">{{ $rStreet }}</span>
+                                                                        <span class="text-muted">{{$receiverStreet }}</span>
                                                                     </p>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    @empty
-                                                    <div
-                                                        class="text-muted">{{ __('admin.no_receivers_found') }}</div>
-                                                    @endforelse
                                                 </div>
                                             </div>
                                         </div>
@@ -328,7 +318,7 @@
                                                     <div class="col-md-12 mt-2 mb-2" style="display:flex;justify-content:space-between;">
                                                         <strong class="mb-1 text-black">{{ __('admin.total_cod_fee') }}:</strong>
                                                         <div class="mb-0 text-primary" id="price-cod-per-receiver">
-                                                            {{ number_format($codPerReceiver, 2) * $rcCount }} {{ __('admin.currency_symbol') }}
+                                                            {{ number_format($codPerReceiver, 2) * 1 }} {{ __('admin.currency_symbol') }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -336,7 +326,7 @@
 
 
                                                 @php
-                                                $displayCount = $rcCount;
+                                                $displayCount = $receiverCount;
                                                 $displayPerReceiver = $displayCount > 0 ? ($total / $displayCount) : 0;
                                                 @endphp
 
