@@ -644,4 +644,6 @@ return [
     'company_weight' => 'Company Weight',
     'extra_weight' => 'Extra Weight',
     'total_cod_fee' => 'Total COD Fee',
+    'canceled_successfully' => 'Shipment canceled successfully',
+    'canceled_failed' => 'Shipment cancel failed',
 ];

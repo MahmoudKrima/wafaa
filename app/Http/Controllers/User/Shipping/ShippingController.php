@@ -110,7 +110,13 @@ class ShippingController extends Controller
     public function delete(string $id)
     {
         $data = $this->shippingService->delete($id);
-        return view('user.pages.shippings.show', $data);
+        if ($data == 'canceled') {
+            return back()
+                ->with('Success', __('admin.canceled_successfully'));
+        } else {
+            return back()
+                ->with('Error', __('admin.canceled_failed'));
+        }
     }
 
 
