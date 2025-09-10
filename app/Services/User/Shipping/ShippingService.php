@@ -8,6 +8,7 @@ use App\Traits\ImageTrait;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use App\Models\AdminSetting;
+use App\Models\CancelRequest;
 use App\Models\AllowedCompany;
 use App\Traits\TranslateTrait;
 use App\Models\UserShippingPrice;
@@ -1180,5 +1181,27 @@ class ShippingService
         }
     }
 
-    public function delete(string $id) {}
+    public function delete(string $id)
+    {
+
+        $payload = [
+            'type' => 'cancelShipment',
+            'shipmentId' => $id,
+        ];
+
+        $response = $this->ghayaRequest()
+            ->asJson()
+            ->post($this->ghayaUrl('requests'), $payload);
+
+
+        if ($response->successful()) {
+            CancelRequest::create([
+                'user_id' => auth()->id(),
+                'shipment_id' => $id,
+                'status' => 'pending',
+            ]);
+            return 'canceled';
+        }
+        return 'failed';
+    }
 }

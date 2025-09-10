@@ -651,4 +651,6 @@ return [
     'company_weight' => 'الوزن الأقصى للشركة',
     'extra_weight' => 'الوزن الإضافي',
     'total_cod_fee' => 'إجمالي تكلفة الدفع عند الاستلام',
+    'canceled_successfully' => 'تم الغاء الشحنة بنجاح',
+    'canceled_failed' => 'فشل الغاء الشحنة',
 ];

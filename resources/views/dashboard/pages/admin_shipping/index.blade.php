@@ -100,21 +100,21 @@
                                                     <div class="col-md-3 mb-3">
                                                         <label for=trackingNumber>{{ __('admin.tracking_number') }}</label>
                                                         <input type="input" value="{{ request()->get('search') }}"
-                                                               name="search" id="trackingNumber" class="form-control"
-                                                               placeholder="{{ __('admin.tracking_number') }}">
+                                                            name="search" id="trackingNumber" class="form-control"
+                                                            placeholder="{{ __('admin.tracking_number') }}">
                                                     </div>
 
                                                     <div class="col-md-3 mb-3">
                                                         <label for="receiverName">{{ __('admin.receiver_name') }}</label>
                                                         <input type="text" value="{{ request()->get('receiverName') }}"
-                                                               name="receiverName" id="receiverName" class="form-control"
-                                                               placeholder="{{ __('admin.receiver_name') }}">
+                                                            name="receiverName" id="receiverName" class="form-control"
+                                                            placeholder="{{ __('admin.receiver_name') }}">
                                                     </div>
                                                     <div class="col-md-3 mb-3">
                                                         <label for="receiverPhone">{{ __('admin.receiver_phone') }}</label>
                                                         <input type="text" value="{{ request()->get('receiverPhone') }}"
-                                                               name="receiverPhone" id="receiverPhone" class="form-control"
-                                                               placeholder="{{ __('admin.receiver_phone') }}">
+                                                            name="receiverPhone" id="receiverPhone" class="form-control"
+                                                            placeholder="{{ __('admin.receiver_phone') }}">
                                                     </div>
 
                                                     <div class="col-md-3 mb-3">
@@ -283,6 +283,11 @@
                                         </a>
                                         @else
                                         <span class="badge bg-dark text-white">{{ __('admin.n/a') }}</span>
+                                        @endif
+                                        @if($shipment['status'] == 'processing')
+                                        <a href="{{ route('admin.shippings.delete', [$shipment['id'],$shipment['externalAppId']]) }}" class="badge bg-danger text-white">
+                                            {{ __('admin.cancel') }}
+                                        </a>
                                         @endif
                                     </td>
 

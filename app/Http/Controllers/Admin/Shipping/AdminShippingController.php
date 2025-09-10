@@ -132,4 +132,17 @@ class AdminShippingController extends Controller
         $data = $this->adminShippingService->show($id);
         return view('dashboard.pages.admin_shipping.show', $data);
     }
+
+    public function delete(string $id,$externalAppId)
+    {
+        $data = $this->adminShippingService->delete($id, $externalAppId);
+        if ($data == 'canceled') {
+            return back()
+                ->with('Success', __('admin.canceled_successfully'));
+        } else {
+            return back()
+                ->with('Error', __('admin.canceled_failed'));
+        }
+    }
+
 }

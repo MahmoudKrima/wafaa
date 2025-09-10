@@ -6,6 +6,7 @@ namespace App\Services\Admin\Shipping;
 use App\Models\User;
 use App\Traits\ImageTrait;
 use App\Models\AdminSetting;
+use App\Models\CancelRequest;
 use App\Traits\TranslateTrait;
 use Illuminate\Support\Facades\Http;
 use App\Services\User\Shipping\ShippingService;
@@ -305,5 +306,28 @@ class AdminShippingService extends ShippingService
         }
 
         return $shipment;
+    }
+
+    public function delete(string $id, $externalAppId = null)
+    {
+        $payload = [
+            'type' => 'cancelShipment',
+            'shipmentId' => $id,
+        ];
+
+        $response = $this->ghayaRequest()
+            ->asJson()
+            ->post($this->ghayaUrl('requests'), $payload);
+
+
+        if ($response->successful()) {
+            CancelRequest::create([
+                'user_id' => $externalAppId,
+                'shipment_id' => $id,
+                'status' => 'pending',
+            ]);
+            return 'canceled';
+        }
+        return 'failed';
     }
 }
