@@ -1,7 +1,5 @@
 (function () {
     let _submittingStep5 = false;
-
-    // Pull the translations object (fallback to empty object so code doesn't crash)
     const t = window.step5Translations || window.translations || {};
 
     function showErrorStep5(message) {
@@ -72,6 +70,8 @@
         const packageTypeSelect = document.getElementById("package_type");
         if (!packageTypeSelect) return;
 
+        packageTypeSelect.required = true;
+
         if (packageTypeSelect.value === "box") {
             showDimensionsSection();
         } else {
@@ -137,13 +137,11 @@
             return false;
         }
 
-        // type required
         if (!packageType.value) {
             showErrorStep5(t.package_type_required);
             return false;
         }
 
-        // number required (>=1)
         const num = Number(packageNumber.value);
         if (!packageNumber.value || isNaN(num) || num < 1) {
             showErrorStep5(t.package_number_invalid);
@@ -156,36 +154,27 @@
             return false;
         }
 
-        if (packageType.value === "box") {
-            const length = document.getElementById("length");
-            const width = document.getElementById("width");
-            const height = document.getElementById("height");
-
-            if (!length || !width || !height) {
-                showErrorStep5(t.dimensions_missing);
-                return false;
-            }
-
-            const L = Number(length.value);
-            const W = Number(width.value);
-            const H = Number(height.value);
-
-            if (!length.value || !width.value || !height.value) {
-                showErrorStep5(t.dimensions_required);
-                return false;
-            }
-            if (
-                isNaN(L) ||
-                isNaN(W) ||
-                isNaN(H) ||
-                L <= 0 ||
-                W <= 0 ||
-                H <= 0
-            ) {
-                showErrorStep5(t.dimensions_invalid);
-                return false;
-            }
+        const length = document.getElementById("length");
+        const width = document.getElementById("width");
+        const height = document.getElementById("height");
+        if (!length || !width || !height) {
+            showErrorStep5(t.dimensions_missing);
+            return false;
         }
+
+        const L = Number(length.value);
+        const W = Number(width.value);
+        const H = Number(height.value);
+
+        if (!length.value || !width.value || !height.value) {
+            showErrorStep5(t.dimensions_required);
+            return false;
+        }
+        if (isNaN(L) || isNaN(W) || isNaN(H) || L <= 0 || W <= 0 || H <= 0) {
+            showErrorStep5(t.dimensions_invalid);
+            return false;
+        }
+
         if (!acceptTerms.checked) {
             showErrorStep5(t.accept_terms_required);
             return false;

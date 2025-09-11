@@ -649,4 +649,6 @@ return [
     'total_cod_fee' => 'إجمالي تكلفة الدفع عند الاستلام',
     'canceled_successfully' => 'تم الغاء الشحنة بنجاح',
     'canceled_failed' => 'فشل الغاء الشحنة',
+    'cancel_shippment_status_updated' => 'تم إلغاء الشحنة بنجاح وتم استرجاع رصيدك. الرصيد السابق :previous ريال، الرصيد الحالي :current ريال',
+
 ];
