@@ -15,21 +15,48 @@
         <div id="basic" class="col-12 layout-spacing">
             <div class="statbox widget box box-shadow">
                 <div class="widget-header">
-                    <div style="display:flex;flex-direction: row;justify-content: space-between;">
-                        <div style="margin: 15px 15px 0 15px;">
-                            <h4 class="mb-0" style="text-wrap-mode:nowrap !important;">
-                                <i class="fas fa-check-circle text-primary me-2" style="margin:0 5px;"></i>{{ __('admin.package_details') }}
-                            </h4>
-                            <h4 class="mb-0" style="text-wrap-mode:nowrap !important;">
-                                <i class="fas fa-check-circle text-primary me-2" style="margin:0 5px;"></i>{{ __('admin.tracking_number') . ' : ' . $trackingNumber }}
+                    <div style="display:flex;flex-direction: row;justify-content:space-between;align-items:flex-end">
+                        <div>
+                            <h4 class="mb-0">
+                                <i class="fas fa-check-circle text-primary me-2" style="margin:0 5px;"></i>{{ __('admin.shipment')}}
                             </h4>
                         </div>
-                        <div style="margin: 25px 15px 0 20px;" id="hide-when-print" class="no-print">
-                            <button onclick="window.print()" class="btn btn-outline-dark">
-                                <i class="fa fa-print"></i> {{ __('admin.print_file') }}
-                            </button>
+                        <div style="margin:0 10px;">
+                            <a href="{{ $labelUrl }}" target="_blank" class="badge bg-box text-white" style="padding:10px;margin-bottom:5px;">
+                                <i class="fa fa-print"></i> {{ __('admin.print_waybill') }}
+                            </a>
+                            @if($status == 'processing')
+                                <a href="{{ route('user.shippings.delete', $shipment['id']) }}" class="badge bg-danger text-white" style="padding:10px;">
+                                    <i class="fa fa-print"></i> {{ __('admin.cancel') }}
+                                </a>
+                            @endif
                         </div>
                     </div>
+                    @php
+                        switch ($status) {
+                        case 'pending':
+                        $class = 'badge bg-warning text-white'; $label = __('admin.pending'); break;
+                        case 'processing':
+                        $class = 'badge bg-success text-white'; $label = __('admin.processing'); break;
+                        case 'failed':
+                        $class = 'badge bg-danger white'; $label = __('admin.failed'); break;
+                        case 'canceled':
+                        $class = 'badge bg-danger white'; $label = __('admin.canceled'); break;
+                        case 'delivered':
+                        $class = 'badge bg-info white'; $label = __('admin.delivered'); break;
+                        case 'returned':
+                        $class = 'badge bg-dark white'; $label = __('admin.returned'); break;
+                        case 'cancelRequest':
+                        $class = 'badge bg-warning white'; $label = __('admin.cancelrequest'); break;
+                        default:
+                        $class = 'badge bg-success white'; $label = __('admin.' . strtolower($status)); break;
+                        }
+                    @endphp
+                    <p style="margin:5px 40px;">{{$trackingNumber}} <span class="{{ $class }}">{{ $label }}</span></p>
+                    <p class="text-muted" style="margin:0 40px;">
+                        {{ __('admin.from')}} <span>{{ $senderName }}</span> - {{ __('admin.to')}} <span>{{ $receiverName }}</span>
+                        &nbsp; {{ __('admin.at')}} : <span>{{ $created_at }}</span>
+                    </p>
 
                 </div>
                 <div class="widget-content widget-content-area">
