@@ -332,7 +332,7 @@ class AdminShippingService extends ShippingService
             CancelRequest::create([
                 'user_id' => $externalAppId,
                 'shipment_id' => $id,
-                'status' => 'pending',
+                'status' => 'cancelShipment',
             ]);
             return 'canceled';
         }

@@ -1198,7 +1198,7 @@ class ShippingService
             CancelRequest::create([
                 'user_id' => auth()->id(),
                 'shipment_id' => $id,
-                'status' => 'pending',
+                'status' => 'cancelShipment',
             ]);
             return 'canceled';
         }

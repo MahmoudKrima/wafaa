@@ -8,6 +8,7 @@ enum NotificationTypeEnum: string
     case TRANSACTION_REJECTED = 'transaction_rejected';
     case TRANSACTION_ACCEPTED = 'transaction_accepted';
     case NEWSHIPMENT = 'newshipment';
+    case CANCELSHIPMENT = 'cancel_shipment';
     case BALANCEDEPOSITED = 'balance_deposited';
     case BALANCEDEDUCTION = 'balance_deduction';
 
@@ -18,6 +19,7 @@ enum NotificationTypeEnum: string
             self::TRANSACTION_REJECTED => __("admin.transaction_rejected"),
             self::TRANSACTION_ACCEPTED => __("admin.transaction_accepted"),
             self::NEWSHIPMENT => __("admin.newshipment"),
+            self::CANCELSHIPMENT => __("admin.cancel_shipment"),
             self::BALANCEDEPOSITED => __("admin.balance_deposited"),
             self::BALANCEDEDUCTION => __("admin.balance_deduction"),
         };
@@ -30,6 +32,7 @@ enum NotificationTypeEnum: string
             self::TRANSACTION_REJECTED => 'badge bg-danger btn-sm text-center',
             self::TRANSACTION_ACCEPTED => 'badge bg-success btn-sm text-center',
             self::NEWSHIPMENT => 'badge bg-primary btn-sm text-center',
+            self::CANCELSHIPMENT => 'badge bg-danger btn-sm text-center',
             self::BALANCEDEPOSITED => 'badge bg-success btn-sm text-center',
             self::BALANCEDEDUCTION => 'badge bg-danger btn-sm text-center',
         };
@@ -42,6 +45,7 @@ enum NotificationTypeEnum: string
             self::TRANSACTION_REJECTED->value,
             self::TRANSACTION_ACCEPTED->value,
             self::NEWSHIPMENT->value,
+            self::CANCELSHIPMENT->value,
             self::BALANCEDEPOSITED->value,
             self::BALANCEDEDUCTION->value,
         ];
