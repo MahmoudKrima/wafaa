@@ -219,6 +219,7 @@ return [
     'choose_bank' => 'اختر البنك',
     'transaction_status_updated' => 'تم تحديث حالة الحوالة الى :status. الرصيد السابق :previous ريال، الرصيد الحالي :current ريال',
     'shipment' => 'الشحنة',
+    'cancel_shipment' => 'شحنة ملغاه',
     'other' => 'أخرى',
     'wallet_logs' => 'العمليات المالية',
     'transaction' => 'تحويل',
@@ -653,6 +654,6 @@ return [
     'total_cod_fee' => 'إجمالي تكلفة الدفع عند الاستلام',
     'canceled_successfully' => 'تم الغاء الشحنة بنجاح',
     'canceled_failed' => 'فشل الغاء الشحنة',
-    'cancel_shippment_status_updated' => 'تم إلغاء الشحنة بنجاح وتم استرجاع رصيدك. الرصيد السابق :previous ريال، الرصيد الحالي :current ريال',
+    'cancel_shippment_status_updated' => 'تم إلغاء الشحنة رقم :tracking_number بنجاح وتم استرجاع رصيدك. الرصيد السابق :previous ريال، الرصيد الحالي :current ريال',
 
 ];

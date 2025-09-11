@@ -207,6 +207,7 @@ return [
     'choose_user' => 'Choose User',
     'transaction_status_updated' => 'Transaction status updated to :status. Previous balance: :previous SAR, Current balance: :current SAR',
     'shipment' => 'Shipment',
+    'cancel_shipment' => 'Cancelled Shipment',
     'other' => 'Other',
     'wallet_logs' => 'Financial Logs',
     'bank_transfer_transactions' => 'Transfer Transactions',
@@ -650,5 +651,5 @@ return [
     'total_cod_fee' => 'Total COD Fee',
     'canceled_successfully' => 'Shipment canceled successfully',
     'canceled_failed' => 'Shipment cancel failed',
-    'cancel_shippment_status_updated' => 'Shipment canceled successfully and your balance has been refunded. Previous balance: :previous SAR, Current balance: :current SAR',
+    'cancel_shippment_status_updated' => 'Shipment No :tracking_number canceled successfully and your balance has been refunded. Previous balance: :previous SAR, Current balance: :current SAR',
 ];

@@ -1,20 +1,39 @@
 <?php
 
-namespace App\Http\Controllers\General;
+namespace App\Console\Commands;
 
-use App\Models\User;
-use App\Models\WalletLog;
-use Illuminate\Support\Str;
+use App\Enum\NotificationTypeEnum;
+use App\Http\Controllers\General\CronJobController;
 use App\Models\AdminSetting;
 use App\Models\CancelRequest;
-use App\Enum\NotificationTypeEnum;
-use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Models\WalletLog;
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
-class CronJobController extends Controller
+class CancelShipmentCommand extends Command
 {
-    public function confirmCancel()
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'shipment:cancel';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Command description';
+
+    /**
+     * Execute the console command.
+     */
+    public function handle()
     {
+
         $shipments = CancelRequest::where('status', 'cancelShipment')->get();
         if ($shipments) {
             foreach ($shipments as $shipment) {
@@ -23,16 +42,43 @@ class CronJobController extends Controller
                     $data['method'] = $shipmentt['method'];
                     $data['userId'] = $shipmentt['externalAppId'];
                     $data['companyId'] = $shipmentt['shippingCompanyId'];
-                    $data['extraWeight'] = $shipmentt['shipmentPrice']['extraWeight'];
+                    $data['extraWeight'] = $shipmentt['shipmentPrice']['extraWeight'] ?? 0;
                     $data['isCod'] = $shipmentt['isCod'];
+                    $data['trackingNumber'] = $shipmentt['trackingNumber'];
+                    $this->userCancelShipment($data);
+                    $shipment->delete();
+                }
+            }
+        }
+
+        $this->info('Shipment cancel job executed.');
+    }
+
+    //function confirmCancel used as main function in handler function -- so this function has no usage you can delete it
+    public function confirmCancel()
+    {
+        $shipments = CancelRequest::where('status', 'cancelShipment')->get();
+        if ($shipments) {
+            foreach ($shipments as $shipment) {
+                $shipment = $this->getShipmentById($shipment->shipment_id);
+                if ($shipment['status'] == 'canceled') {
+                    $data['method'] = $shipment['method'];
+                    $data['userId'] = $shipment['externalAppId'];
+                    $data['companyId'] = $shipment['shippingCompanyId'];
+                    $data['extraWeight'] = $shipment['shipmentPrice']['extraWeight'];
+                    $data['isCod'] = $shipment['isCod'];
+                    $data['trackingNumber'] = $shipment['trackingNumber'];
                     $this->userCancelShipment($data);
                     $shipment->delete();
                 }
             }
         }
     }
+    //end
 
-    private function userCancelShipment($data)
+
+
+    public function userCancelShipment($data)
     {
         $user = User::find($data['userId']);
         $shippingPrice = $user->shippingPrices()->where('company_id', $data['companyId'])->first();
@@ -57,20 +103,22 @@ class CronJobController extends Controller
         WalletLog::create([
             'user_id'    => $user->id,
             'amount'     => $amount,
+            'trans_type' => 'cancel_shipment',
             'type'       => 'deposit',
-            'trans_type' => 'shippment',
-            'admin_id'   => auth('admin')->user()->id,
+            //'admin_id'   => auth('admin')->user()->id,
             'description' => [
                 'ar' => __('admin.cancel_shippment_status_updated', [
                     'status'   => __("admin.canceled", [], 'ar'),
                     'previous' => number_format($oldBalance, 2),
                     'current'  => number_format($newBalance, 2),
+                    'tracking_number'  => $data['trackingNumber'],
                 ], 'ar'),
 
                 'en' => __('admin.cancel_shippment_status_updated', [
                     'status'   => __("admin.canceled", [], 'en'),
                     'previous' => number_format($oldBalance, 2),
                     'current'  => number_format($newBalance, 2),
+                    'tracking_number'  => $data['trackingNumber'],
                 ], 'en'),
             ],
         ]);
@@ -84,10 +132,12 @@ class CronJobController extends Controller
             'id'               => (string) Str::uuid(),
             'type'             => NotificationTypeEnum::CANCELSHIPMENT->value,
             'data'             => $message,
+            'reciverable_type' => null,
+            'reciverable_id'   => null,
         ]);
     }
 
-    private function getShipmentById(string $id): array
+    public function getShipmentById(string $id): array
     {
         $response = $this->ghayaRequest()->get($this->ghayaUrl("shipments/{$id}"));
 
@@ -98,7 +148,7 @@ class CronJobController extends Controller
         return $response->json();
     }
 
-    private function ghayaRequest()
+    public function ghayaRequest()
     {
         return Http::withHeaders([
             'accept' => '*/*',
@@ -106,7 +156,7 @@ class CronJobController extends Controller
         ]);
     }
 
-    private function ghayaUrl(string $endpoint): string
+    public function ghayaUrl(string $endpoint): string
     {
         return rtrim(config('services.ghaya.base_url'), '/') . '/' . ltrim($endpoint, '/');
     }

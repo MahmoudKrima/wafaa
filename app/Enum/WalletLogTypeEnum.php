@@ -5,6 +5,8 @@ namespace App\Enum;
 enum WalletLogTypeEnum: string
 {
     case SHIPPMENT = 'shippment';
+
+    case CANCELLEDSHIPMENT = 'cancel_shipment';
     case TRANSACTION = 'transaction';
     case EDITBALANCE = 'edit_balance';
     case OTHER = 'other';
@@ -13,6 +15,7 @@ enum WalletLogTypeEnum: string
     {
         return match ($this) {
             self::SHIPPMENT => __("admin.issue_shippment"),
+            self::CANCELLEDSHIPMENT => __("admin.cancel_shipment"),
             self::TRANSACTION => __("admin.balace_transfer"),
             self::EDITBALANCE => __("admin.edit_balance"),
             self::OTHER => __("admin.other"),
@@ -23,6 +26,7 @@ enum WalletLogTypeEnum: string
     {
         return match ($this) {
             self::SHIPPMENT => 'badge bg-success text-center',
+            self::CANCELLEDSHIPMENT => 'badge bg-danger text-center',
             self::TRANSACTION => 'badge bg-warning text-center',
             self::EDITBALANCE => 'badge bg-info text-center',
             self::OTHER => 'badge bg-secondary text-center',
@@ -33,6 +37,7 @@ enum WalletLogTypeEnum: string
     {
         return [
             self::SHIPPMENT->value,
+            self::CANCELLEDSHIPMENT->value,
             self::TRANSACTION->value,
             self::EDITBALANCE->value,
             self::OTHER->value,
