@@ -68,11 +68,15 @@ class TransactionService
         $message = [
             'en' => __('admin.transaction_created_notification', [
                 'code' => $transaction->code,
+                'amount' => number_format($transaction->amount, 2),
+                'bank' => $transaction->bank->name,
                 'status' => __("admin.{$transaction->status->value}", [], 'en'),
             ], 'en'),
 
             'ar' => __('admin.transaction_created_notification', [
                 'code' => $transaction->code,
+                'amount' => number_format($transaction->amount, 2),
+                'bank' => $transaction->bank->name,
                 'status' => __("admin.{$transaction->status->value}", [], 'ar'),
             ], 'ar'),
         ];

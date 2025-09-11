@@ -85,19 +85,29 @@ class TransactionService
                         'status'   => __("admin.{$transaction->status->value}", [], 'ar'),
                         'previous' => number_format($oldBalance, 2),
                         'current'  => number_format($newBalance, 2),
+                        'amount'  => number_format($transaction->amount, 2),
+                        'bank'  => $transaction->bank->name,
                     ], 'ar'),
 
                     'en' => __('admin.transaction_status_updated', [
                         'status'   => __("admin.{$transaction->status->value}", [], 'en'),
                         'previous' => number_format($oldBalance, 2),
                         'current'  => number_format($newBalance, 2),
+                        'amount'  => number_format($transaction->amount, 2),
+                        'bank'  => $transaction->bank->name,
                     ], 'en'),
                 ],
             ]);
             $message = [
-                'en' => __('admin.balance_deposited_notification', [], 'en'),
+                'en' => __('admin.balance_deposited_notification', [
+                    'amount' => number_format($transaction->amount, 2),
+                    'bank' => $transaction->bank->name,
+                ], 'en'),
 
-                'ar' => __('admin.balance_deposited_notification', [], 'ar'),
+                'ar' => __('admin.balance_deposited_notification', [
+                    'amount' => number_format($transaction->amount, 2),
+                    'bank' => $transaction->bank->name,
+                ], 'ar'),
             ];
 
             auth('admin')->user()->notifications()->create([
@@ -113,9 +123,16 @@ class TransactionService
                 'accepted_by' => auth('admin')->user()->id,
             ]);
             $message = [
-                'en' => __('admin.balance_deposite_rejected_notification', [], 'en'),
+                'en' => __('admin.balance_deposite_rejected_notification', [
+                    'amount' => number_format($transaction->amount, 2),
+                    'bank' => $transaction->bank->name,
 
-                'ar' => __('admin.balance_deposite_rejected_notification', [], 'ar'),
+                ], 'en'),
+
+                'ar' => __('admin.balance_deposite_rejected_notification', [
+                    'amount' => number_format($transaction->amount, 2),
+                    'bank' => $transaction->bank->name,
+                ], 'ar'),
             ];
 
             auth('admin')->user()->notifications()->create([
