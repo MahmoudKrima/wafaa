@@ -135,7 +135,7 @@
                                         <p class="mb-0">{{ $transaction->bank->name }}</p>
                                     </td>
                                     <td>
-                                        <p class="mb-0">{{ $transaction->amount }}</p>
+                                        <p class="mb-0">{{ $transaction->amount }} {{ __('admin.currency_symbol') }}</p>
                                     </td>
                                     <td>
                                         <a href="{{ displayImage($transaction->attachment) }}"

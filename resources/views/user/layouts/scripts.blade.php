@@ -106,6 +106,7 @@
             }
         });
     });
+
 </script>
 <!-- BEGIN PAGE LEVEL PLUGINS/CUSTOM SCRIPTS -->
 @stack('js')

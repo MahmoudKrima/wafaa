@@ -160,9 +160,15 @@ class UserService
                 ],
             ]);
             $message = [
-                'en' => __('admin.balance_deposited_notification', [], 'en'),
+                'en' => __('admin.balance_edited_admin_notification', [
+                    'previous' => 0,
+                    'current' => $data['balance']
+                ], 'en'),
 
-                'ar' => __('admin.balance_deposited_notification', [], 'ar'),
+                'ar' => __('admin.balance_edited_admin_notification', [
+                    'previous' => 0,
+                    'current' => $data['balance']
+                ], 'ar'),
             ];
 
             auth('admin')->user()->notifications()->create([
@@ -216,9 +222,15 @@ class UserService
             ]);
             if ($data['balance'] > $oldBalance) {
                 $message = [
-                    'en' => __('admin.balance_deposited_notification', [], 'en'),
+                    'en' => __('admin.balance_edited_admin_notification', [
+                        'previous' => $oldBalance,
+                        'current' => $data['balance']
+                    ], 'en'),
 
-                    'ar' => __('admin.balance_deposited_notification', [], 'ar'),
+                    'ar' => __('admin.balance_edited_admin_notification', [
+                        'previous' => $oldBalance,
+                        'current' => $data['balance']
+                    ], 'ar'),
                 ];
 
                 auth('admin')->user()->notifications()->create([
@@ -230,9 +242,15 @@ class UserService
                 ]);
             } else {
                 $message = [
-                    'en' => __('admin.balance_deducted_notification', [], 'en'),
+                    'en' => __('admin.balance_deducted_notification', [
+                        'previous' => $oldBalance,
+                        'current' => $data['balance']
+                    ], 'en'),
 
-                    'ar' => __('admin.balance_deducted_notification', [], 'ar'),
+                    'ar' => __('admin.balance_deducted_notification', [
+                        'previous' => $oldBalance,
+                        'current' => $data['balance']
+                    ], 'ar'),
                 ];
 
                 auth('admin')->user()->notifications()->create([
