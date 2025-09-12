@@ -123,9 +123,19 @@ class CancelShipmentCommand extends Command
             ],
         ]);
         $message = [
-            'en' => __('admin.balance_deposited_notification', [], 'en'),
+            'en' => __('admin.cancel_shippment_status_updated', [
+                'status'   => __("admin.canceled", [], 'en'),
+                'previous' => number_format($oldBalance, 2),
+                'current'  => number_format($newBalance, 2),
+                'tracking_number'  => $data['trackingNumber'],
+            ], 'en'),
 
-            'ar' => __('admin.balance_deposited_notification', [], 'ar'),
+            'ar' => __('admin.cancel_shippment_status_updated', [
+                'status'   => __("admin.canceled", [], 'en'),
+                'previous' => number_format($oldBalance, 2),
+                'current'  => number_format($newBalance, 2),
+                'tracking_number'  => $data['trackingNumber'],
+            ], 'ar'),
         ];
 
         $user->notifications()->create([

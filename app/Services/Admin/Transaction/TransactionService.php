@@ -102,11 +102,13 @@ class TransactionService
                 'en' => __('admin.balance_deposited_notification', [
                     'amount' => number_format($transaction->amount, 2),
                     'bank' => $transaction->bank->name,
+                    'code' => $transaction->code,
                 ], 'en'),
 
                 'ar' => __('admin.balance_deposited_notification', [
                     'amount' => number_format($transaction->amount, 2),
                     'bank' => $transaction->bank->name,
+                    'code' => $transaction->code,
                 ], 'ar'),
             ];
 
@@ -126,12 +128,14 @@ class TransactionService
                 'en' => __('admin.balance_deposite_rejected_notification', [
                     'amount' => number_format($transaction->amount, 2),
                     'bank' => $transaction->bank->name,
+                    'code' => $transaction->code,
 
                 ], 'en'),
 
                 'ar' => __('admin.balance_deposite_rejected_notification', [
                     'amount' => number_format($transaction->amount, 2),
                     'bank' => $transaction->bank->name,
+                    'code' => $transaction->code,
                 ], 'ar'),
             ];
 
