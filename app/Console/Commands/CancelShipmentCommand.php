@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Enum\NotificationTypeEnum;
-use App\Http\Controllers\General\CronJobController;
 use App\Models\AdminSetting;
 use App\Models\CancelRequest;
 use App\Models\User;
