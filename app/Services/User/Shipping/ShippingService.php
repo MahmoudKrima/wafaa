@@ -44,15 +44,23 @@ class ShippingService
             'orderDirection' => 'desc',
             'externalAppId'  => (string) auth()->id(),
         ];
+        $localOnly = ['receiverName', 'receiverPhone'];
+        foreach ($localOnly as $l) {
+            unset($filters[$l]);
+        }
+        $clean = array_filter(
+            $filters,
+            fn($v) => !is_null($v) && !(is_string($v) && $v === '')
+        );
 
-        $clean = array_filter($filters, fn($v) => !is_null($v) && $v !== '');
         $query = array_merge($base, $clean);
-        unset($query['receiverName'], $query['receiverPhone']);
+
         $res = $this->ghayaRequest()
             ->get($this->ghayaUrl('shipments'), $query);
 
         return $res->json();
     }
+
 
 
 

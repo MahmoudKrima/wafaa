@@ -8,22 +8,40 @@ use App\Services\User\Shipping\ShippingService;
 use App\Http\Requests\User\Shipping\StoreShippingRequest;
 use App\Http\Requests\User\Shipping\SearchShippingRequest;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Str;
 
 class ShippingController extends Controller
 {
     public function __construct(private ShippingService $shippingService) {}
-
-
     public function index(SearchShippingRequest $request)
     {
         $page    = max(1, (int) $request->input('page', 1));
-        $perPage = (int) $request->input('pageSize', 10);
-
+        $perPage = max(1, (int) $request->input('pageSize', 10));
         $filters = $request->validated();
-        if ($request->has('isCod')) {
-            $bool = filter_var($request->input('isCod'), FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
-            $bool = $bool === null ? false : $bool;
-            $filters['isCod'] = $bool ? 'true' : 'false';
+        foreach ($filters as $k => $v) {
+            if (is_string($v)) {
+                $filters[$k] = trim($v);
+            }
+        }
+
+        $isCodRaw = $request->query('isCod', null);
+        if ($request->filled('isCod')) {
+            $isCodBool = filter_var($isCodRaw, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+            if ($isCodBool === true) {
+                $filters['isCod'] = 'true';
+            } elseif ($isCodBool === false) {
+                $filters['isCod'] = 'false';
+            } else {
+                unset($filters['isCod']);
+            }
+        } else {
+            unset($filters['isCod']);
+        }
+
+        foreach (['shippingCompanyId', 'method', 'type', 'status', 'search', 'receiverName', 'receiverPhone', 'dateFrom', 'dateTo'] as $key) {
+            if (array_key_exists($key, $filters) && ($filters[$key] === '' || $filters[$key] === null)) {
+                unset($filters[$key]);
+            }
         }
 
         $hasReceiverFilters = filled($filters['receiverName'] ?? null) || filled($filters['receiverPhone'] ?? null);
@@ -36,26 +54,41 @@ class ShippingController extends Controller
             $filters['pageSize'] = $perPage;
         }
 
+        $filters['orderColumn']    = $filters['orderColumn']    ?? 'createdAt';
+        $filters['orderDirection'] = $filters['orderDirection'] ?? 'desc';
         $data = $this->shippingService->getUserListShipments($filters);
-
         if ($hasReceiverFilters) {
             $results = collect($data['results'] ?? []);
 
-            $receiverName  = $request->input('receiverName');
-            $receiverPhone = $request->input('receiverPhone');
+            $receiverName  = $filters['receiverName']  ?? null;
+            $receiverPhone = $filters['receiverPhone'] ?? null;
 
             if ($receiverName || $receiverPhone) {
                 $results = $results->filter(function ($shipment) use ($receiverName, $receiverPhone) {
                     $details = data_get($shipment, 'shipmentDetails', []);
-                    $name  = (string) data_get($details, 'receiverName', '');
-                    $phone = (string) data_get($details, 'receiverPhone', '');
+                    $name      = (string) data_get($details, 'receiverName', '');
+                    $phoneA    = (string) data_get($details, 'receiverPhone', '');
+                    $phoneB    = (string) data_get($details, 'receiverPhone1', '');
+                    $targetNum = $receiverPhone ? preg_replace('/\D+/', '', $receiverPhone) : null;
+                    $numA      = preg_replace('/\D+/', '', $phoneA);
+                    $numB      = preg_replace('/\D+/', '', $phoneB);
+
                     $ok = true;
+
                     if ($receiverName) {
                         $ok = $ok && (mb_stripos($name, $receiverName) !== false);
                     }
+
                     if ($receiverPhone) {
-                        $ok = $ok && ($phone === $receiverPhone);
+                        $ok = $ok && (
+                            ($targetNum !== '') &&
+                            (
+                                Str::contains($numA, $targetNum) ||
+                                Str::contains($numB, $targetNum)
+                            )
+                        );
                     }
+
                     return $ok;
                 })->values();
             }
@@ -84,6 +117,7 @@ class ShippingController extends Controller
 
         return view('user.pages.shippings.index', compact('shipments', 'companies'));
     }
+
 
 
     public function export(SearchShippingRequest $request)

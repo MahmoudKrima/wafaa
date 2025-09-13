@@ -224,7 +224,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        {{ \Carbon\Carbon::parse($shipment['createdAt'])->format('d/m/Y H:i') }}
+                                        {{ \Carbon\Carbon::parse($shipment['createdAt'], 'UTC')->tz('Africa/Cairo')->format('d/m/Y H:i') }}
                                     </td>
                                     <td>
                                         @php
