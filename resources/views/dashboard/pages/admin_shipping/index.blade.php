@@ -20,9 +20,11 @@
                 <div class="widget-header">
                     <div style="display:flex;flex-direction: row;justify-content: space-between;">
                         <div style="margin: 15px 15px 0 15px;">
+                            @haspermission('shippings.export', 'admin')
                             <a href="{{ route('admin.shippings.export', request()->query()) }}" class="btn btn-outline-dark">
                                 <i class="fa fa-file-excel"></i> {{ __('admin.export_excel') }}
                             </a>
+                            @endhaspermission
                         </div>
                     </div>
 
@@ -164,6 +166,7 @@
                                                         </button>
                                                     </div>
                                                     <div class="col-md-3 mb-3">
+
                                                         <a role="button" class="btn btn-danger form-control btn-block"
                                                             href="{{ !empty($forcedUserId) ? route('admin.users.shippings', $forcedUserId) : route('admin.shippings.index') }}">
                                                             {{ __('admin.cancel') }}
@@ -272,11 +275,11 @@
                                         <span class="badge bg-primary text-white">{{ __('admin.n/a') }}</span>
                                         @endif
 
-
+                                        @haspermission('shippings.show', 'admin')
                                         <a href="{{ route('admin.shippings.show', $shipment['id']) }}" class="badge bg-info text-white">
                                             {{ __('admin.show') }}
                                         </a>
-
+                                        @endhaspermission
                                         @if(!empty($shipment['trackingUrl']))
                                         <a href="{{ $shipment['trackingUrl'] }}" target="_blank" class="badge bg-dark text-white">
                                             {{ __('admin.track_shipment') }}
@@ -284,11 +287,13 @@
                                         @else
                                         <span class="badge bg-dark text-white">{{ __('admin.n/a') }}</span>
                                         @endif
+                                        @haspermission('shippings.cancel', 'admin')
                                         @if($shipment['status'] == 'processing')
                                         <a href="{{ route('admin.shippings.delete', [$shipment['id'],$shipment['externalAppId']]) }}" class="badge bg-danger text-white">
                                             {{ __('admin.cancel') }}
                                         </a>
                                         @endif
+                                        @endhaspermission
                                     </td>
 
                                 </tr>

@@ -20,7 +20,7 @@ class HomeService
 
     public function dashboardStats(array $filters = []): array
     {
-        $adminId = Auth::id();
+        $adminId = getAdminIdOrCreatedBy();
 
         $userIds = User::query()
             ->where(function ($q) use ($adminId) {
