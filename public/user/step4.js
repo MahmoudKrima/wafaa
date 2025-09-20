@@ -17,26 +17,32 @@
     let fetchedOnce = false;
 
     const API_KEY =
-        document.querySelector('meta[name="ghaya-api-key"]')?.content ||
-        (window.GHAYA_API_KEY ?? "xwqn5mb5mpgf5u3vpro09i8pmw9fhkuu");
+    document.querySelector('meta[name="ghaya-api-key"]')?.content ||
+    (window.GHAYA_API_KEY ?? "xwqn5mb5mpgf5u3vpro09i8pmw9fhkuu");
 
-    const API = {
-        countries:
-            window.API_ENDPOINTS?.countries ||
-            "https://ghaya-express-staging-af597af07557.herokuapp.com/api/countries?page=0&pageSize=500",
-        states: (countryId, companyId) =>
-            window.API_ENDPOINTS?.states?.(countryId, companyId) ||
-            `https://ghaya-express-staging-af597af07557.herokuapp.com/api/states?pageSize=500&page=0&countryId=${encodeURIComponent(
-                countryId
-            )}&shippingCompanyId=${encodeURIComponent(companyId)}`,
-        cities: (countryId, stateId, companyId) =>
-            window.API_ENDPOINTS?.cities?.(countryId, stateId, companyId) ||
-            `https://ghaya-express-staging-af597af07557.herokuapp.com/api/cities?pageSize=500&page=0&countryId=${encodeURIComponent(
-                countryId
-            )}&stateId=${encodeURIComponent(
-                stateId
-            )}&shippingCompanyId=${encodeURIComponent(companyId)}`,
-    };
+  const API_BASE =
+    document.querySelector('meta[name="ghaya-api-base"]')?.content ||
+    (window.GHAYA_API_BASE ?? "https://ghaya-express-staging-af597af07557.herokuapp.com/api");
+
+  const API = {
+    countries:
+      window.API_ENDPOINTS?.countries ||
+      `${API_BASE}/countries?page=0&pageSize=500`,
+
+    states: (countryId, companyId) =>
+      window.API_ENDPOINTS?.states?.(countryId, companyId) ||
+      `${API_BASE}/states?pageSize=500&page=0&countryId=${encodeURIComponent(
+        countryId
+      )}&shippingCompanyId=${encodeURIComponent(companyId)}`,
+
+    cities: (countryId, stateId, companyId) =>
+      window.API_ENDPOINTS?.cities?.(countryId, stateId, companyId) ||
+      `${API_BASE}/cities?pageSize=500&page=0&countryId=${encodeURIComponent(
+        countryId
+      )}&stateId=${encodeURIComponent(
+        stateId
+      )}&shippingCompanyId=${encodeURIComponent(companyId)}`,
+  };
 
     const $country = () => document.getElementById("country");
     const $state = () => document.getElementById("state");

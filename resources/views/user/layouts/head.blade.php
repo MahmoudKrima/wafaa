@@ -7,9 +7,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     @php
-    $ghayaApiKey = app(\App\Services\User\Shipping\ShippingService::class)->resolveGhayaApiKey();
+    $svc = app(\App\Services\User\Shipping\ShippingService::class);
+    $ghayaApiKey = $svc->resolveGhayaApiKey();
+    $ghayaApiBase = $svc->ghayaBaseUrl();
     @endphp
+
     <meta name="ghaya-api-key" content="{{ $ghayaApiKey }}">
+    <meta name="ghaya-api-base" content="{{ $ghayaApiBase }}">
 
     <title>{{ app('settings')['app_name_' . assetLang()]  }} | @yield('title')</title>
     <link rel="icon" type="image/x-icon" href="{{ displayImage(app('settings')['fav_icon']) }}" />

@@ -6,22 +6,32 @@
     const API_KEY =
         document.querySelector('meta[name="ghaya-api-key"]')?.content ||
         (window.GHAYA_API_KEY ?? "xwqn5mb5mpgf5u3vpro09i8pmw9fhkuu");
+
+    const API_BASE =
+        document.querySelector('meta[name="ghaya-api-base"]')?.content ||
+        (window.GHAYA_API_BASE ??
+            "https://ghaya-express-staging-af597af07557.herokuapp.com/api");
+
     const API = {
         countries:
-            window.API_ENDPOINTS?.countries ||
-            "https://ghaya-express-staging-af597af07557.herokuapp.com/api/countries?page=0&pageSize=500",
+            (window.API_ENDPOINTS && window.API_ENDPOINTS.countries) ||
+            `${API_BASE}/countries?page=0&pageSize=500`,
+
         states: (countryId, shippingCompanyId) =>
-            window.API_ENDPOINTS?.states?.(countryId, shippingCompanyId) ||
-            `https://ghaya-express-staging-af597af07557.herokuapp.com/api/states?pageSize=500&page=0&countryId=${encodeURIComponent(
+            (window.API_ENDPOINTS &&
+                window.API_ENDPOINTS.states?.(countryId, shippingCompanyId)) ||
+            `${API_BASE}/states?pageSize=500&page=0&countryId=${encodeURIComponent(
                 countryId
             )}&shippingCompanyId=${encodeURIComponent(shippingCompanyId)}`,
+
         cities: (countryId, stateId, shippingCompanyId) =>
-            window.API_ENDPOINTS?.cities?.(
-                countryId,
-                stateId,
-                shippingCompanyId
-            ) ||
-            `https://ghaya-express-staging-af597af07557.herokuapp.com/api/cities?pageSize=500&page=0&countryId=${encodeURIComponent(
+            (window.API_ENDPOINTS &&
+                window.API_ENDPOINTS.cities?.(
+                    countryId,
+                    stateId,
+                    shippingCompanyId
+                )) ||
+            `${API_BASE}/cities?pageSize=500&page=0&countryId=${encodeURIComponent(
                 countryId
             )}&stateId=${encodeURIComponent(
                 stateId
