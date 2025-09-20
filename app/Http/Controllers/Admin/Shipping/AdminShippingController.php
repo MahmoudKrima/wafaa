@@ -13,7 +13,6 @@ class AdminShippingController extends Controller
 {
     public function __construct(private AdminShippingService $adminShippingService) {}
 
-    // Controller
     public function index(SearchShippingRequest $request, ?User $user = null)
     {
         $page    = max(1, (int) $request->input('page', 1));
@@ -25,8 +24,6 @@ class AdminShippingController extends Controller
             $filters['isCod'] = $request->input('isCod') === 'true' ? 'true' : 'false';
         }
 
-        // Build user filter: only when explicitly specified (no default to all users)
-        $users = [];
         if ($user) {
             $check = User::where('created_by', getAdminIdOrCreatedBy())
                 ->where('id', $user->id)
@@ -40,8 +37,10 @@ class AdminShippingController extends Controller
             $ids   = is_array($filters['userId']) ? $filters['userId'] : [$filters['userId']];
             $users = array_values(array_map('strval', $ids));
             unset($filters['userId']);
+        } else {
+            $users = User::where('created_by', getAdminIdOrCreatedBy())
+                ->pluck('id')->map(fn($id) => (string) $id)->values()->all();
         }
-        // else: leave $users empty → do NOT send externalAppId; GHAYA key separation handles scope
 
         $hasReceiverFilters = filled($filters['receiverName'] ?? null) || filled($filters['receiverPhone'] ?? null);
 
@@ -122,7 +121,6 @@ class AdminShippingController extends Controller
             'forcedUserId'
         ));
     }
-
 
     public function export(SearchShippingRequest $request)
     {

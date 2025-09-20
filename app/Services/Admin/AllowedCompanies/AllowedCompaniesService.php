@@ -12,11 +12,19 @@ class AllowedCompaniesService
 {
     use ImageTrait, TranslateTrait;
 
+    private function resolveGhayaApiKey(): string
+    {
+        $ownerId = getAdminIdOrCreatedBy();
+        return (string) ((string)$ownerId === '1'
+            ? config('services.ghaya.key')
+            : config('services.ghaya.key_two'));
+    }
+
     private function ghayaRequest()
     {
         return Http::withHeaders([
             'accept'    => '*/*',
-            'x-api-key' => config('services.ghaya.key'),
+            'x-api-key' => $this->resolveGhayaApiKey(),
         ]);
     }
 

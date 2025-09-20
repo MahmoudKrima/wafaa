@@ -74,7 +74,6 @@ class AdminShippingService extends ShippingService
         return $res->json();
     }
 
-
     public function getShippingCompanies()
     {
         $res = $this->ghayaRequest()

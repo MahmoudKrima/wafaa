@@ -6,14 +6,13 @@
     const API_KEY =
         document.querySelector('meta[name="ghaya-api-key"]')?.content ||
         (window.GHAYA_API_KEY ?? "xwqn5mb5mpgf5u3vpro09i8pmw9fhkuu");
-
     const API = {
         countries:
             window.API_ENDPOINTS?.countries ||
-            "https://ghaya-express-staging-af597af07557.herokuapp.com/v1/countries?page=0&pageSize=500",
+            "https://ghaya-express-staging-af597af07557.herokuapp.com/api/countries?page=0&pageSize=500",
         states: (countryId, shippingCompanyId) =>
             window.API_ENDPOINTS?.states?.(countryId, shippingCompanyId) ||
-            `https://ghaya-express-staging-af597af07557.herokuapp.com/v1/states?pageSize=500&page=0&countryId=${encodeURIComponent(
+            `https://ghaya-express-staging-af597af07557.herokuapp.com/api/states?pageSize=500&page=0&countryId=${encodeURIComponent(
                 countryId
             )}&shippingCompanyId=${encodeURIComponent(shippingCompanyId)}`,
         cities: (countryId, stateId, shippingCompanyId) =>
@@ -22,7 +21,7 @@
                 stateId,
                 shippingCompanyId
             ) ||
-            `https://ghaya-express-staging-af597af07557.herokuapp.com/v1/cities?pageSize=500&page=0&countryId=${encodeURIComponent(
+            `https://ghaya-express-staging-af597af07557.herokuapp.com/api/cities?pageSize=500&page=0&countryId=${encodeURIComponent(
                 countryId
             )}&stateId=${encodeURIComponent(
                 stateId
@@ -125,12 +124,14 @@
         const el = $country();
         if (!el) return;
         el.required = true;
-    
+
         fillSelect(el, [], {
-            placeholder: window.translations?.loading_countries || "Loading countries..."
+            placeholder:
+                window.translations?.loading_countries ||
+                "Loading countries...",
         });
         el.disabled = true;
-    
+
         try {
             const data = await getJSON(API.countries);
             const items = Array.isArray(data?.results)
@@ -141,7 +142,7 @@
             fillSelect(el, items, {
                 placeholder: window.translations?.select_country,
             });
-    
+
             if (method() === "local") {
                 const ksaId = findKSAId(items);
                 if ([...el.options].some((o) => o.value === ksaId)) {
@@ -151,13 +152,14 @@
             }
         } catch {
             fillSelect(el, [], {
-                placeholder: window.translations?.no_countries_found || "No countries",
+                placeholder:
+                    window.translations?.no_countries_found || "No countries",
             });
         } finally {
             el.disabled = false;
         }
     }
-    
+
     async function loadStates() {
         const el = $state(),
             countryEl = $country();

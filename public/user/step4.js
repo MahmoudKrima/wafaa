@@ -23,15 +23,15 @@
     const API = {
         countries:
             window.API_ENDPOINTS?.countries ||
-            "https://ghaya-express-staging-af597af07557.herokuapp.com/v1/countries?page=0&pageSize=500",
+            "https://ghaya-express-staging-af597af07557.herokuapp.com/api/countries?page=0&pageSize=500",
         states: (countryId, companyId) =>
             window.API_ENDPOINTS?.states?.(countryId, companyId) ||
-            `https://ghaya-express-staging-af597af07557.herokuapp.com/v1/states?pageSize=500&page=0&countryId=${encodeURIComponent(
+            `https://ghaya-express-staging-af597af07557.herokuapp.com/api/states?pageSize=500&page=0&countryId=${encodeURIComponent(
                 countryId
             )}&shippingCompanyId=${encodeURIComponent(companyId)}`,
         cities: (countryId, stateId, companyId) =>
             window.API_ENDPOINTS?.cities?.(countryId, stateId, companyId) ||
-            `https://ghaya-express-staging-af597af07557.herokuapp.com/v1/cities?pageSize=500&page=0&countryId=${encodeURIComponent(
+            `https://ghaya-express-staging-af597af07557.herokuapp.com/api/cities?pageSize=500&page=0&countryId=${encodeURIComponent(
                 countryId
             )}&stateId=${encodeURIComponent(
                 stateId
