@@ -11,7 +11,6 @@ use App\Models\AdminSetting;
 use App\Models\CancelRequest;
 use App\Models\AllowedCompany;
 use App\Traits\TranslateTrait;
-use App\Models\UserShippingPrice;
 use App\Enum\NotificationTypeEnum;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -22,11 +21,19 @@ class ShippingService
 {
     use ImageTrait, TranslateTrait;
 
+    private function resolveGhayaApiKey(): string
+    {
+        $ownerId = auth()->user()->created_by;
+        return (string) ((string)$ownerId == '1'
+            ? config('services.ghaya.key')
+            : config('services.ghaya.key_two'));
+    }
+
     private function ghayaRequest()
     {
         return Http::withHeaders([
             'accept'    => '*/*',
-            'x-api-key' => config('services.ghaya.key'),
+            'x-api-key' => $this->resolveGhayaApiKey(),
         ]);
     }
 
@@ -60,9 +67,6 @@ class ShippingService
 
         return $res->json();
     }
-
-
-
 
     public function getShippingCompanies()
     {
@@ -210,8 +214,6 @@ class ShippingService
             'created_at'             => $created_at,
         ];
     }
-
-
 
     public function export($request): StreamedResponse
     {

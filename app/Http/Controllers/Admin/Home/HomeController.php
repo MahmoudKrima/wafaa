@@ -15,6 +15,7 @@ class HomeController extends Controller
 
     public function index()
     {
+        $ownerId = getAdminIdOrCreatedBy();
         $stats = $this->homeService->dashboardStats();
         $usersStatistics = $this->homeService->usersStatistics();
         $transactionsStatistics = $this->homeService->transactionsStatistics();

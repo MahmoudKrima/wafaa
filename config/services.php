@@ -38,6 +38,7 @@ return [
     'ghaya' => [
         'base_url' => env('GHAYA_API_BASE', 'https://ghaya-express-staging-af597af07557.herokuapp.com/api'),
         'key'      => env('GHAYA_API_KEY', ''),
+        'key_two'      => env('GHAYA_API_KEY_TWO', ''),
     ],
 
 ];
