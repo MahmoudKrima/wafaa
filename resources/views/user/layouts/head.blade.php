@@ -6,6 +6,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, shrink-to-fit=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    @php
+    $ghayaApiKey = app(\App\Services\User\Shipping\ShippingService::class)->resolveGhayaApiKey();
+    @endphp
+    <meta name="ghaya-api-key" content="{{ $ghayaApiKey }}">
+
     <title>{{ app('settings')['app_name_' . assetLang()]  }} | @yield('title')</title>
     <link rel="icon" type="image/x-icon" href="{{ displayImage(app('settings')['fav_icon']) }}" />
     <link href="{{ asset('assets_' . assetLang()) }}/assets/css/loader.css" rel="stylesheet" type="text/css" />
@@ -13,13 +18,13 @@
 
     <!-- BEGIN GLOBAL MANDATORY STYLES -->
     @if (App::getLocale() === 'ar')
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&display=swap" rel="stylesheet">
     @else
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     @endif
 
     <link href="{{ asset('assets_' . assetLang()) }}/assets/css/floating_contact.css" rel="stylesheet" type="text/css" />

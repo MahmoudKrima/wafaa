@@ -21,7 +21,7 @@ class ShippingService
 {
     use ImageTrait, TranslateTrait;
 
-    private function resolveGhayaApiKey(): string
+    public function resolveGhayaApiKey()
     {
         $ownerId = auth()->user()->created_by;
         return (string) ((string)$ownerId == '1'

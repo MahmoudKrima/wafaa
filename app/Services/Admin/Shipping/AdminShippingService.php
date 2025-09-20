@@ -17,7 +17,7 @@ class AdminShippingService extends ShippingService
 {
     use ImageTrait, TranslateTrait;
 
-    private function resolveGhayaApiKey(): string
+    public function resolveGhayaApiKey()
     {
         $ownerId = getAdminIdOrCreatedBy();
         return (string) ((string)$ownerId === '1'
@@ -73,7 +73,6 @@ class AdminShippingService extends ShippingService
 
         return $res->json();
     }
-
 
     public function getShippingCompanies()
     {
