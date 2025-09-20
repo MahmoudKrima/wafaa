@@ -18,6 +18,7 @@ return [
     'phone' => 'Phone',
     'shipment_price_details' => 'Shipment Price Details',
     'new_shipment' => 'New',
+    'printing' => 'Printing Waybills...',
     'delivered' => 'Delivered',
     'returned' => 'Returned',
     'password' => 'Password',

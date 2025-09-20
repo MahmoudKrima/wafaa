@@ -494,6 +494,9 @@ Route::middleware(['web'])->group(function () {
                 Route::get('/shippings-export', 'export')
                     ->name('shippings.export')
                     ->middleware('has.permission:shippings.view');
+                Route::post('/shippings-printWaybill', 'printWaybills')
+                    ->name('shippings.printWaybills')
+                    ->middleware('has.permission:shippings.view');
                 Route::get('/shippings/{id}', 'show')
                     ->name('shippings.show')
                     ->middleware('has.permission:shippings.view');

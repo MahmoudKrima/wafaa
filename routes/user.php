@@ -94,6 +94,8 @@ Route::middleware(['web'])->group(function () {
                     ->name('shippings.index');
                 Route::get('/shippings-export', 'export')
                     ->name('shippings.export');
+                Route::post('/shippings-print', 'printWaybills')
+                    ->name('shippings.printWaybill');
                 Route::get('/create-shipping', 'create')
                     ->name('shippings.create');
                 Route::post('/create-shipping', 'store')

@@ -1,13 +1,14 @@
 <?php
 
 namespace App\Http\Controllers\Admin\Shipping;
-
+use Illuminate\Http\Request;
 use App\Models\User;
 use App\Http\Controllers\Controller;
 use Illuminate\Pagination\LengthAwarePaginator;
 use App\Services\Admin\Shipping\AdminShippingService;
 use App\Http\Requests\Admin\Shipping\SearchShippingRequest;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Http;
 
 class AdminShippingController extends Controller
 {
@@ -143,5 +144,45 @@ class AdminShippingController extends Controller
             return back()
                 ->with('Error', __('admin.canceled_failed'));
         }
+    }
+
+    public function printWaybills(Request $request)
+    {
+        $urls = $request->input('pdf_urls', []); 
+
+        if (empty($urls)) {
+            return back()->with('error', 'من فضلك اختر على الأقل بوليصة واحدة');
+        }
+
+        $localFiles = [];
+
+        foreach ($urls as $key => $url) {
+            $pdfContent = Http::get($url)->body();
+            $path = storage_path("app/temp_pdf_$key.pdf");
+            file_put_contents($path, $pdfContent);
+            $localFiles[] = escapeshellarg($path); 
+        }
+
+        $outputPath = storage_path('app/merged_labels.pdf');
+
+        // secure the final path
+        $outputPathEscaped = escapeshellarg($outputPath);
+
+        //  Ghostscript command
+        $cmd = "gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile={$outputPathEscaped} " . implode(" ", $localFiles);
+
+        exec($cmd . " 2>&1", $output, $returnCode);
+
+        if ($returnCode !== 0 || !file_exists($outputPath)) {
+            return response()->json([
+                'error' => 'فشل في دمج بوليصات الشحن',
+                'cmd' => $cmd,
+                'output' => $output,
+                'returnCode' => $returnCode
+            ], 500);
+        }
+
+        return response()->download($outputPath, 'waybills.pdf')->deleteFileAfterSend(true);
+
     }
 }

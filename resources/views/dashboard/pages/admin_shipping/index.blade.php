@@ -187,10 +187,17 @@
                             </div>
                         </div>
                     </div>
-                    <div class="table-responsive">
+                    <form action="{{ route('admin.shippings.printWaybills')}}" method="post" id="printForm">
+                        @csrf
+                        <button type="submit" id="print-btn" class="btn btn-success" style="display:none;margin-bottom:10px;"><i class="fa fa-print"></i> {{ __('admin.print_file') }}</button>
+
+                            <div class="table-responsive">
+                        
+
                         <table class="table table-striped table-vcenter">
                             <thead>
                                 <tr>
+                                    <th scope="col"><input type="checkbox" id="select-all"></th>
                                     <th scope="col">{{ __('admin.company_image') }}</th>
                                     <th scope="col">{{ __('admin.tracking_number') }}</th>
                                     <th scope="col">{{ __('admin.sender') }}</th>
@@ -206,6 +213,9 @@
                             <tbody>
                                 @forelse ($shipments as $shipment)
                                 <tr>
+                                    <td>
+                                        <input type="checkbox" name="pdf_urls[]" value="{{ $shipment['labelUrl']}}" class="row-checkbox">
+                                    </td>
                                     <td>
                                         <img src="{{ $shipment['shippingCompany']['logoUrl'] }}" style="width:70px;height:auto;">
                                     </td>
@@ -312,6 +322,7 @@
                             </tbody>
 
                         </table>
+                    </form>
                     </div>
                     @if ($shipments->hasPages())
                     {{ $shipments->appends(request()->query())->links() }}
@@ -323,11 +334,47 @@
     </div>
 </div>
 @endsection
+
 @push('js')
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 <script>
     $(document).ready(function() {
         $('.js-example-basic-multiple').select2();
     });
+</script>
+<script>
+    const selectAll = document.getElementById('select-all');
+const checkboxes = document.querySelectorAll('.row-checkbox');
+const printBtn = document.getElementById('print-btn');
+const printForm = document.getElementById("printForm");
+
+function togglePrintButton() {
+    let anyChecked = document.querySelectorAll('.row-checkbox:checked').length > 0;
+    printBtn.style.display = anyChecked ? 'inline-block' : 'none';
+}
+
+selectAll.addEventListener('change', function () {
+    checkboxes.forEach(cb => cb.checked = this.checked);
+    togglePrintButton();
+});
+
+checkboxes.forEach(cb => {
+    cb.addEventListener('change', function () {
+        selectAll.checked = document.querySelectorAll('.row-checkbox:checked').length === checkboxes.length;
+        togglePrintButton();
+    });
+});
+
+function toggleButton() {
+        const anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+        printBtn.style.display = anyChecked ? "inline-block" : "none";
+    }
+
+    printForm.addEventListener("submit", function () {
+        printBtn.disabled = true;
+        printBtn.innerText = "{{ __('admin.printing') }}";
+    });
+    
 </script>
 @endpush

@@ -178,6 +178,7 @@ return [
     'banks_settings' => 'الإعدادات المالية',
     'iban_number' => 'رقم الحساب الدولى',
     'balance' => 'الرصيد',
+    'printing' => 'جاري الطباعة ...',
     'local_shipments' => 'الشحنات المحلية',
     'international_shipments' => 'الشحنات الدولية',
     'failed_shipments' => 'الشحنات الفاشلة',
