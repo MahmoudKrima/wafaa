@@ -29,6 +29,11 @@ class ShippingService
             : config('services.ghaya.key_two'));
     }
 
+    public function ghayaBaseUrl(): string
+    {
+        return rtrim((string) config('services.ghaya.base_url'), '/');
+    }
+
     private function ghayaRequest()
     {
         return Http::withHeaders([
