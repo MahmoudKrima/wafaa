@@ -184,7 +184,7 @@
 
 
             <!-- Funfacts Section  -->
-            <div class="row justify-content-center mt-5" style="padding-top:23px;">
+            {{--<div class="row justify-content-center mt-5" style="padding-top:23px;">
                 <div class="col-xl-3 col-lg-3 col-md-3 text-center">
                     <div class="single-funfact-wrap">
                         <h2><span style="direction: ltr !important;" class="odometer"
@@ -213,7 +213,7 @@
                         <p>{{ __('admin.clients') }}</p>
                     </div>
                 </div>
-            </div>
+            </div>--}}
             <!-- Funfacts Section  -->
 
         </div>

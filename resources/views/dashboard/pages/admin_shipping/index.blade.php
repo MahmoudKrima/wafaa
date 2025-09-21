@@ -375,6 +375,11 @@ function toggleButton() {
         printBtn.disabled = true;
         printBtn.innerText = "{{ __('admin.printing') }}";
     });
+
+    setTimeout(() => {
+            printBtn.disabled = false;
+            printBtn.innerText = "{{ __('admin.print_file') }}";
+        }, 9000); 
     
 </script>
 @endpush
