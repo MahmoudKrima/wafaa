@@ -184,7 +184,7 @@
                                 @forelse ($shipments as $shipment)
                                 <tr>
                                     <td>
-                                        <input type="checkbox" name="pdf_urls[]" value="{{ $shipment['labelUrl']}}" class="row-checkbox">
+                                        <input type="checkbox" name="pdf_urls[]" value="{{ $shipment['labelUrl'] ?? '' }}" class="row-checkbox">
                                     </td>
                                     <td>
                                         <img src="{{ $shipment['shippingCompany']['logoUrl'] }}" style="width:70px;height:auto;">
@@ -252,7 +252,9 @@
                                             {{ __('admin.shipment_file') }}
                                         </a>
                                         @else
-                                        <span class="badge bg-primary text-white">{{ __('admin.n/a') }}</span>
+                                        <span class="badge bg-primary text-white bs-tooltip" title="{{ __('admin.shipment_file') }}"
+                                        data-toggle="tooltip" data-placement="top" aria-label="{{ __('admin.shipment_file') }}"
+                                        data-bs-original-title="{{ __('admin.shipment_file') }}">{{ __('admin.n/a') }}</span>
                                         @endif
 
 
@@ -265,7 +267,9 @@
                                             {{ __('admin.track_shipment') }}
                                         </a>
                                         @else
-                                        <span class="badge bg-dark text-white">{{ __('admin.n/a') }}</span>
+                                        <span class="badge bg-dark text-white bs-tooltip" title="{{ __('admin.track_shipment') }}"
+                                        data-toggle="tooltip" data-placement="top" aria-label="{{ __('admin.track_shipment') }}"
+                                        data-bs-original-title="{{ __('admin.track_shipment') }}">{{ __('admin.n/a') }}</span>
                                         @endif
                                         @if($shipment['status'] == 'processing')
                                         <a href="{{ route('user.shippings.delete', $shipment['id']) }}" class="badge bg-danger text-white">
