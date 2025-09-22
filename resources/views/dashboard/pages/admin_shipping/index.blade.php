@@ -214,7 +214,7 @@
                                 @forelse ($shipments as $shipment)
                                 <tr>
                                     <td>
-                                        <input type="checkbox" name="pdf_urls[]" value="{{ $shipment['labelUrl']}}" class="row-checkbox">
+                                        <input type="checkbox" name="pdf_urls[]" value="{{ $shipment['labelUrl'] ?? ''}}" class="row-checkbox">
                                     </td>
                                     <td>
                                         <img src="{{ $shipment['shippingCompany']['logoUrl'] }}" style="width:70px;height:auto;">
