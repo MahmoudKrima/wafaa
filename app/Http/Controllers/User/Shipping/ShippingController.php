@@ -202,10 +202,16 @@ class ShippingController extends Controller
     {
         $urls = $request->input('pdf_urls', []); 
 
+        // filter empty urls
+        $urls = array_filter($urls, function ($url) {
+            return !empty($url) && filter_var($url, FILTER_VALIDATE_URL);
+        });
+        
         if (empty($urls)) {
-            return back()->with('error', 'من فضلك اختر على الأقل بوليصة واحدة');
+            return back()->with('Error', ' لا تتوفر بوليصات لهذه الشحنات');
         }
-
+        
+        
         $localFiles = [];
 
         foreach ($urls as $key => $url) {
