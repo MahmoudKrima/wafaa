@@ -148,7 +148,7 @@
 
 
     <!-- Testimonial Section  -->
-    <div id="opinions" id="testimonial-2" class="testimonial-section-two gray-bg section-padding theme_right"
+    {{--<div id="opinions" id="testimonial-2" class="testimonial-section-two gray-bg section-padding theme_right"
         style="padding-top:30px;">
         <div class="container">
             <div class="row align-items-center">
@@ -183,8 +183,8 @@
             </div>
 
 
-            <!-- Funfacts Section  -->
-            {{--<div class="row justify-content-center mt-5" style="padding-top:23px;">
+           
+            <div class="row justify-content-center mt-5" style="padding-top:23px;">
                 <div class="col-xl-3 col-lg-3 col-md-3 text-center">
                     <div class="single-funfact-wrap">
                         <h2><span style="direction: ltr !important;" class="odometer"
@@ -213,11 +213,11 @@
                         <p>{{ __('admin.clients') }}</p>
                     </div>
                 </div>
-            </div>--}}
-            <!-- Funfacts Section  -->
+            </div>
+           
 
         </div>
-    </div>
+    </div>--}}
 
     <!-- contact Section  -->
     <div id="contact" class="appointment-section section-padding theme_right" style="padding-top:200px;">

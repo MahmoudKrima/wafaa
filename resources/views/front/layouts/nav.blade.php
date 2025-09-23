@@ -119,15 +119,18 @@
                         </div>
                     </div>
                 </div>
+
                 <div class="header-right d-none d-lg-block">
                     <div class="contact-icon-wrap">
-                        <i class="fa-brands fa-whatsapp" style="font-size:30px;"></i>
+                        {{--<i class="fa-brands fa-whatsapp" style="font-size:30px;"></i>
                         <div class="contact-info">
                             <p>{{__('admin.whatsapp')}}</p>
                             <p><b>{{app('settings')['whatsapp']}}</b></p>
-                        </div>
+                        </div>--}}
                     </div>
                 </div>
+
+                
             </div>
         </div>
     </div>
