@@ -48,7 +48,7 @@
 
                             <li><a href="{{ route('front.home') }}#services">{{__('admin.services')}}</a></li>
 
-                            <li><a href="{{ route('front.home') }}#opinions">{{__('admin.opinions')}}</a></li>
+                            {{--<li><a href="{{ route('front.home') }}#opinions">{{__('admin.opinions')}}</a></li>--}}
 
                             <li><a href="{{ route('front.home') }}#contact">{{__('admin.contact')}}</a></li>
 
@@ -62,7 +62,7 @@
 
                             <li><a href="#services">{{__('admin.services')}}</a></li>
 
-                            <li><a href="#opinions">{{__('admin.opinions')}}</a></li>
+                            {{--<li><a href="#opinions">{{__('admin.opinions')}}</a></li>--}}
 
                             <li><a href="#contact">{{__('admin.contact')}}</a></li>
 
@@ -93,7 +93,7 @@
 
                                         <li><a href="{{ route('front.home') }}#services">{{__('admin.services')}}</a></li>
 
-                                        <li><a href="{{ route('front.home') }}#opinions">{{__('admin.opinions')}}</a></li>
+                                        {{--<li><a href="{{ route('front.home') }}#opinions">{{__('admin.opinions')}}</a></li>--}}
 
                                         <li><a href="{{ route('front.home') }}#contact">{{__('admin.contact')}}</a></li>
 
@@ -107,7 +107,7 @@
 
                                         <li><a href="#services">{{__('admin.services')}}</a></li>
 
-                                        <li><a href="#opinions">{{__('admin.opinions')}}</a></li>
+                                        {{--<li><a href="#opinions">{{__('admin.opinions')}}</a></li>--}}
 
                                         <li><a href="#contact">{{__('admin.contact')}}</a></li>
 
