@@ -657,5 +657,6 @@ return [
     'canceled_successfully' => 'تم ارسال طلب الغاء الشحنة بنجاح',
     'canceled_failed' => 'فشل الغاء الشحنة',
     'cancel_shippment_status_updated' => 'تم إلغاء الشحنة رقم :tracking_number بنجاح وتم استرجاع قيمة الشحنة لحسابك. الرصيد السابق :previous ريال، الرصيد الحالي :current ريال',
-
+    'shipping_settings' => 'إعدادات الشحن',
+    'senders' => 'المرسلين',
 ];

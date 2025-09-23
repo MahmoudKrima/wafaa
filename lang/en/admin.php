@@ -654,4 +654,6 @@ return [
     'canceled_successfully' => 'Shipment cancel request sent successfully',
     'canceled_failed' => 'Shipment cancel failed',
     'cancel_shippment_status_updated' => 'Shipment No :tracking_number canceled successfully and shipment cost has been refunded. Previous balance: :previous SAR, Current balance: :current SAR',
+    'shipping_settings' => 'Shipping Settings',
+    'senders' => 'Senders',
 ];

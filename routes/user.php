@@ -3,12 +3,13 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\User\Auth\AuthController;
 use App\Http\Controllers\User\Home\HomeController;
+use App\Http\Controllers\User\Sender\SenderController;
 use App\Http\Controllers\User\Profile\ProfileController;
+use App\Http\Controllers\User\Reciever\RecieverController;
 use App\Http\Controllers\User\Shipping\ShippingController;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use App\Http\Controllers\User\WalletLogs\WalletLogsController;
 use App\Http\Controllers\User\Transaction\TransactionController;
-use App\Http\Controllers\User\Reciever\RecieverController;
 use App\Http\Controllers\User\Notification\NotificationController;
 
 
@@ -139,6 +140,24 @@ Route::middleware(['web'])->group(function () {
                     ->name('recievers.delete');
                 Route::get('/recievers/search', 'search')
                     ->name('recievers.search');
+            });
+
+        Route::controller(SenderController::class)
+            ->group(function () {
+                Route::get('/senders', 'index')
+                    ->name('senders.index');
+                Route::get('/senders/create', 'create')
+                    ->name('senders.create');
+                Route::post('/senders/store', 'store')
+                    ->name('senders.store');
+                Route::get('/senders/edit/{sender}', 'edit')
+                    ->name('senders.edit');
+                Route::post('/senders/update/{sender}', 'update')
+                    ->name('senders.update');
+                Route::delete('/senders/delete/{sender}', 'delete')
+                    ->name('senders.delete');
+                Route::get('/senders/search', 'search')
+                    ->name('senders.search');
             });
     });
 });

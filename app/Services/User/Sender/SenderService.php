@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Services\User\Reciever;
+namespace App\Services\User\Sender;
 
-use App\Models\Reciever;
+use App\Models\Sender;
 use App\Filters\EmailFilter;
 use App\Filters\PhoneFilter;
 use Illuminate\Http\Request;
@@ -10,13 +10,13 @@ use App\Traits\TranslateTrait;
 use Illuminate\Pipeline\Pipeline;
 use App\Filters\NameFilter;
 
-class RecieverService
+class SenderService
 {
     use TranslateTrait;
 
     public function index()
     {
-        return Reciever::withAllRelations()
+        return Sender::withAllRelations()
             ->where('user_id', auth()->id())
             ->orderBy('id', 'desc')
             ->paginate();
@@ -25,7 +25,7 @@ class RecieverService
     {
         $request->validated();
         return app(Pipeline::class)
-            ->send(Reciever::query())
+            ->send(Sender::query())
             ->through([
                 NameFilter::class,
                 EmailFilter::class,
@@ -43,20 +43,20 @@ class RecieverService
     {
         $data = $request->validated();
         $data['user_id'] = auth()->id();
-        $reciever = Reciever::create($data);
-        return $reciever;
+        $sender = Sender::create($data);
+        return $sender;
     }
 
-    public function update($request, Reciever $reciever)
+    public function update($request, Sender $sender)
     {
         $data = $request->validated();
-        $reciever->update($data);
-        return $reciever;
+        $sender->update($data);
+        return $sender;
     }
 
-    public function delete(Reciever $reciever)
+    public function delete(Sender $sender)
     {
-        $reciever->delete();
+        $sender->delete();
         return true;
     }
 }
