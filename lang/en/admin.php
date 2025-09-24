@@ -666,4 +666,5 @@ return [
     'new_description' => 'New Description',
     'select_existing_description' => 'Select Existing Description',
     'select_description' => 'Select Description',
+    'package_description_required' => 'Package description is required',
 ];

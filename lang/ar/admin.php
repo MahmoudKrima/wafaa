@@ -669,4 +669,5 @@ return [
     'new_description' => 'وصف جديد',
     'select_existing_description' => 'اختر وصف موجود',
     'select_description' => 'اختر الوصف',
+    'package_description_required' => 'وصف الطرد مطلوب',
 ];
