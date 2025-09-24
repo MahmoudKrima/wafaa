@@ -151,11 +151,6 @@
             </ul>
         </div>
 
-
-    </div>
-
-    <div id="compact_submenuSidebar" class="submenu-sidebar">
-
         <div class="submenu" id="transactions_settings">
             <div class="category-info">
                 <h5>{{ __('admin.user_transactions') }}</h5>
@@ -189,7 +184,8 @@
             </ul>
         </div>
 
-
     </div>
+
+ 
 
 </div>
