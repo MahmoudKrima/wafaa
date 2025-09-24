@@ -240,7 +240,18 @@ class ShippingController extends Controller
             ], 500);
         }
 
-        return response()->download($outputPath, 'waybills.pdf')->deleteFileAfterSend(true);
+        $response =  response()->download($outputPath, 'waybills.pdf')->deleteFileAfterSend(true);
+        
+        // delete temp files
+        foreach ($localFiles as $file) {
+            $filePath = str_replace("'", "", $file);
+        
+            if (file_exists($filePath)) {
+                unlink($filePath);
+            }
+        }
+        
+        return $response;
 
     }
 
