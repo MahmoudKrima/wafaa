@@ -62,4 +62,10 @@ class SenderController extends Controller
             ->route('user.senders.index')
             ->with('Success', __('admin.deleted_successfully'));
     }
+
+    public function getSenders()
+    {
+        $senders = $this->senderService->getSenders();
+        return response()->json($senders);
+    }
 }

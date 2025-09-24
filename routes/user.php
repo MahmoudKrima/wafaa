@@ -11,6 +11,7 @@ use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use App\Http\Controllers\User\WalletLogs\WalletLogsController;
 use App\Http\Controllers\User\Transaction\TransactionController;
 use App\Http\Controllers\User\Notification\NotificationController;
+use App\Http\Controllers\User\UserDescription\UserDescriptionController;
 
 
 Route::controller(ShippingController::class)
@@ -158,6 +159,26 @@ Route::middleware(['web'])->group(function () {
                     ->name('senders.delete');
                 Route::get('/senders/search', 'search')
                     ->name('senders.search');
+                Route::get('/senders/getSenders', 'getSenders')
+                    ->name('senders.getSenders');
+            });
+
+        Route::controller(UserDescriptionController::class)
+            ->group(function () {
+                Route::get('/user-descriptions', 'index')
+                    ->name('user-descriptions.index');
+                Route::get('/user-descriptions/create', 'create')
+                    ->name('user-descriptions.create');
+                Route::post('/user-descriptions/store', 'store')
+                    ->name('user-descriptions.store');
+                Route::get('/user-descriptions/edit/{userDescription}', 'edit')
+                    ->name('user-descriptions.edit');
+                Route::post('/user-descriptions/update/{userDescription}', 'update')
+                    ->name('user-descriptions.update');
+                Route::delete('/user-descriptions/delete/{userDescription}', 'delete')
+                    ->name('user-descriptions.delete');
+                Route::get('/user-descriptions/getUserDescriptions', 'getUserDescriptions')
+                    ->name('user-descriptions.getUserDescriptions');
             });
     });
 });

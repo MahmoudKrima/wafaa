@@ -31,7 +31,7 @@
     function unfreezeNextButton() {
         const btn = getNextBtn();
         if (!btn) return;
-        btn.dataset.frozen = ""; // release lock
+        btn.dataset.frozen = "";
         if (nextBtnObserver) {
             nextBtnObserver.disconnect();
             nextBtnObserver = null;
@@ -55,7 +55,6 @@
                 showMethodSelection();
 
             if (step === 3) {
-                // once you leave step-2, we release the lock (step-3 has its own validation)
                 unfreezeNextButton();
 
                 const hiddenMethod = document.getElementById("shipping_method");
@@ -178,17 +177,12 @@
         if (methodInput) methodInput.value = method;
 
         const btnNext = getNextBtn();
-        if (btnNext) freezeNextButton(); // <-- lock it ON now
+        if (btnNext) freezeNextButton();
 
         document.dispatchEvent(
             new CustomEvent("shippingMethodSelected", { detail: { method } })
         );
 
-        if (typeof window.updateShippingStepIndicator === "function")
-            window.updateShippingStepIndicator(2);
-
-        // If user already added receivers in later steps and came back,
-        // allow any step-2 specific updates without touching the next button state.
         if (
             typeof window.currentStep !== "undefined" &&
             window.currentStep >= 4
@@ -208,7 +202,6 @@
 
             const btnNext = getNextBtn();
             if (btnNext) {
-                // when user changes company, we truly reset step-2 and release the lock
                 unfreezeNextButton();
                 btnNext.disabled = true;
                 btnNext.classList.add("btn-secondary");
@@ -228,7 +221,6 @@
         if (window.currentStep === 2) showMethodSelection();
     });
 
-    // expose
     window.showMethodSelection = showMethodSelection;
     window.selectMethod = selectMethod;
     window.clearStepData = clearStepData;

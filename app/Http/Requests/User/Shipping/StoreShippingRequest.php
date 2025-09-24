@@ -28,6 +28,7 @@ class StoreShippingRequest extends FormRequest
             'sender_city_id'     => ['required', 'string'],
             'sender_city_name'   => ['required', 'string'],
             'sender_postal_code'         => ['nullable', 'string', 'max:20'],
+            'sender_additional_phone'    => ['nullable', 'regex:/^05\d{8}$/'],
             'selected_receivers'         => ['required', 'string', 'json'],
             'receivers_count'            => ['required', 'integer', 'min:1'],
             'package_type'               => ['required', 'in:box,document'],
@@ -36,7 +37,7 @@ class StoreShippingRequest extends FormRequest
             'width'                      => ['required', 'numeric', 'min:0.1'],
             'height'                     => ['required', 'numeric', 'min:0.1'],
             'weight'                     => ['required', 'numeric', 'min:0.1'],
-            'cod_amount'                     => ['sometimes', 'nullable','numeric', 'min:0'],
+            'cod_amount'                     => ['sometimes', 'nullable', 'numeric', 'min:0'],
             'package_description'        => ['nullable', 'string', 'max:1000'],
             'payment_method'             => ['required', 'in:wallet,cod'],
             'shipping_price_per_receiver' => ['required', 'numeric', 'min:0'],
@@ -50,6 +51,10 @@ class StoreShippingRequest extends FormRequest
             'extra_kg'                   => ['required', 'numeric', 'min:0'],
             'accept_terms'               => ['accepted'],
             'shipment_image'             => ['sometimes', 'nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+            'description_type'           => ['required', 'in:existing,new'],
+            'sender_kind' => ["required", "in:existing,auth,new"],
+            'description_id' => ['nullable', 'exists:user_descriptions,id'],
+
         ];
     }
 

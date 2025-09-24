@@ -58,7 +58,12 @@
    'user.recievers.index',
    'user.recievers.create',
    'user.recievers.edit',
-   'user.recievers.search'
+   'user.recievers.search',
+   'user.user-descriptions.index',
+   'user.user-descriptions.create',
+   'user.user-descriptions.edit',
+   'user.user-descriptions.search'
+
 ])
     ? 'active'
     : '' }}">
@@ -70,7 +75,11 @@
    'user.recievers.index',
    'user.recievers.create',
    'user.recievers.edit',
-   'user.recievers.search'
+   'user.recievers.search',
+   'user.user-descriptions.index',
+   'user.user-descriptions.create',
+   'user.user-descriptions.edit',
+   'user.user-descriptions.search'
 ])
     ? 'true'
     : 'false' }}" class="menu-toggle">
@@ -133,6 +142,11 @@
                     <a href="{{ route('user.recievers.index') }}">
                         <i class="fa fa-money-check-alt" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
                         {{ __('admin.recievers') }} </a>
+                </li>
+                <li class="{{ isRoute(['user.user-descriptions.index']) ? 'active' : '' }}" style="margin-bottom:5px;">
+                    <a href="{{ route('user.user-descriptions.index') }}">
+                        <i class="fa fa-money-check-alt" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
+                        {{ __('admin.shipping_descriptions') }} </a>
                 </li>
             </ul>
         </div>

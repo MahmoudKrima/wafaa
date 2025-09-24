@@ -1,5 +1,5 @@
 (() => {
-    const STEP = document.getElementById("step-3");
+    const STEP = document.getElementById("step-2");
     const LOCALE = (STEP?.dataset?.appLocale || "en").toLowerCase();
     const DEFAULT_KSA_ID = "65fd1a1c1fdbc094e3369b29";
 
@@ -328,26 +328,45 @@
 
     function validateStep3Form() {
         const root = STEP || document;
-        const invalid = root.querySelector("#step-3 :invalid");
+        const invalid = root.querySelector("#step-2 :invalid");
         if (invalid) return false;
+        const type =
+            document.querySelector('input[name="sender_type"]:checked')
+                ?.value || "auth";
+        if (type === "existing") {
+            const sel = document.getElementById("sender_select");
+            if (!sel || !sel.value) return false;
+        }
 
+        const requiredIds = [
+            "user_name",
+            "user_phone",
+            "user_email",
+            "user_country",
+            "user_state",
+            "user_city",
+            "user_address",
+        ];
         for (const id of requiredIds) {
             const el = document.getElementById(id);
-            const val = String(el?.value || "").trim();
+            if (!el) return false;
+            const val = String(el.value || "").trim();
             if (!val) return false;
         }
         return true;
     }
+
     window.validateStep3Form = validateStep3Form;
+    window.validateStep2Form = validateStep3Form;
 
     document.addEventListener("DOMContentLoaded", () => {
         ensureAdditionalPhoneOptional();
 
         const root = STEP || document;
         root.querySelectorAll(
-            "#step-3 input, #step-3 select, #step-3 textarea"
+            "#step-2 input, #step-2 select, #step-2 textarea"
         ).forEach((el) => {
-            if (!el.dataset.boundStep3Live) {
+            if (!el.dataset.boundStep2Live) {
                 el.addEventListener("input", () => {
                     if (typeof window.hardEnableNext === "function")
                         window.hardEnableNext(validateStep3Form());
@@ -356,9 +375,13 @@
                     if (typeof window.hardEnableNext === "function")
                         window.hardEnableNext(validateStep3Form());
                 });
-                el.dataset.boundStep3Live = "1";
+                el.dataset.boundStep2Live = "1";
             }
         });
+
+        // Initial validation
+        if (typeof window.hardEnableNext === "function")
+            window.hardEnableNext(validateStep3Form());
     });
 
     document.addEventListener("shippingCompanySelected", setupLocationFields);

@@ -16,6 +16,7 @@ class AdminSettingSeeder extends Seeder
             [
                 'extra_weight_price' => 0,
                 'cash_on_delivery_price' => 0,
+                'international_shipping' => 'yes',
                 'phone' => '0512312584',
                 'email' => 'admin@gmail.com',
                 'whatsapp' => '0512312586',
@@ -24,6 +25,7 @@ class AdminSettingSeeder extends Seeder
             [
                 'extra_weight_price' => 0,
                 'cash_on_delivery_price' => 0,
+                'international_shipping' => 'yes',
                 'phone' => '0512312585',
                 'email' => 'admin2@gmail.com',
                 'whatsapp' => '0512312587',

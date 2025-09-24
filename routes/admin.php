@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\Auth\AuthController;
 use App\Http\Controllers\Admin\Bank\BankController;
 use App\Http\Controllers\Admin\Home\HomeController;
+use App\Http\Controllers\Admin\Sender\SenderController;
 use App\Http\Controllers\Admin\Contact\ContactController;
 use App\Http\Controllers\Admin\Partner\PartnerController;
 use App\Http\Controllers\Admin\Profile\ProfileController;
@@ -484,6 +485,16 @@ Route::middleware(['web'])->group(function () {
                 Route::get('/recievers-search/{user?}', 'search')
                     ->name('recievers.search')
                     ->middleware('has.permission:recievers.view');
+            });
+
+            Route::controller(SenderController::class)
+            ->group(function () {
+                Route::get('/senders/{user?}', 'index')
+                    ->name('senders.index')
+                    ->middleware('has.permission:senders.view');
+                Route::get('/senders-search/{user?}', 'search')
+                    ->name('senders.search')
+                    ->middleware('has.permission:senders.view');
             });
 
         Route::controller(AdminShippingController::class)

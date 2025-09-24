@@ -59,4 +59,12 @@ class SenderService
         $sender->delete();
         return true;
     }
+
+    public function getSenders()
+    {
+        return Sender::withAllRelations()
+            ->where('user_id', auth()->id())
+            ->orderBy('id', 'desc')
+            ->get();
+    }
 }
