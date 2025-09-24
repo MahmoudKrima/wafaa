@@ -7,6 +7,8 @@
 @else
 <link rel="stylesheet" href="{{ asset('user/shipping-styles_en.css') }}">
 @endif
+<!-- Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 @endpush
 
 <style>
@@ -856,6 +858,8 @@
     window.translations = translations;
 </script>
 
+<!-- Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="{{ asset('user/step1.js') }}"></script>
 <script src="{{ asset('user/step2.js') }}"></script>
 <script src="{{ asset('user/step3.js') }}"></script>
@@ -1110,8 +1114,35 @@
 
             qsa('input[name="sender_type"]').forEach(r => r.addEventListener('change', toggleUI));
 
-            if (selectEl && !selectEl.dataset.bound) {
-                selectEl.addEventListener('change', () => {
+            // Event binding is now handled in Select2 initialization
+        });
+
+        document.addEventListener('stepChanged', e => {
+            if (e && e.detail && (e.detail.currentStep === 2 || e.detail.currentStep === '2')) {
+                setSenderKindHidden();
+                pushValidityToNext();
+            }
+        });
+
+        // Initialize Select2 on sender select
+        function initializeSelect2() {
+            if (selectEl && !selectEl.dataset.select2Initialized) {
+                $(selectEl).select2({
+                    placeholder: '{{ __("admin.choose_sender") }}',
+                    allowClear: true,
+                    width: '100%',
+                    language: {
+                        noResults: function() {
+                            return '{{ __("admin.no_senders_found") }}';
+                        },
+                        searching: function() {
+                            return '{{ __("admin.searching") }}';
+                        }
+                    }
+                });
+
+                // Re-bind the change event after Select2 initialization
+                $(selectEl).on('change', function() {
                     const opt = selectEl.options[selectEl.selectedIndex];
                     if (opt && opt.dataset.payload) {
                         try {
@@ -1124,14 +1155,77 @@
                     }
                     pushValidityToNext();
                 });
-                selectEl.dataset.bound = '1';
+
+                selectEl.dataset.select2Initialized = '1';
             }
+        }
+
+        // Initialize Select2 when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeSelect2();
         });
 
+        // Re-initialize Select2 when step 2 is shown
         document.addEventListener('stepChanged', e => {
             if (e && e.detail && (e.detail.currentStep === 2 || e.detail.currentStep === '2')) {
-                setSenderKindHidden();
-                pushValidityToNext();
+                setTimeout(() => {
+                    initializeSelect2();
+                }, 100);
+            }
+        });
+    })();
+
+    // Initialize Select2 for receiver select
+    (function() {
+        const receiverSelectEl = document.getElementById('receiver_select');
+        const newSection = document.getElementById('new_receiver_section');
+        const existingRadio = document.getElementById('existing_receiver');
+
+        function initializeReceiverSelect2() {
+            if (receiverSelectEl && !receiverSelectEl.dataset.select2Initialized) {
+                $(receiverSelectEl).select2({
+                    placeholder: '{{ __("admin.choose_receiver") }}',
+                    allowClear: true,
+                    width: '100%',
+                    language: {
+                        noResults: function() {
+                            return '{{ __("admin.no_receivers_found") }}';
+                        },
+                        searching: function() {
+                            return '{{ __("admin.searching") }}';
+                        }
+                    }
+                });
+
+                // Re-bind the change event after Select2 initialization
+                $(receiverSelectEl).on('change', function() {
+                    const id = receiverSelectEl.value;
+                    if (id && existingRadio?.checked) {
+                        if (newSection) newSection.style.display = "block";
+                        if (typeof window.populateReceiverForm === 'function') {
+                            window.populateReceiverForm(id);
+                        }
+                    }
+                    if (typeof window.updateAddButtonState === 'function') {
+                        window.updateAddButtonState();
+                    }
+                });
+
+                receiverSelectEl.dataset.select2Initialized = '1';
+            }
+        }
+
+        // Initialize Select2 when DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeReceiverSelect2();
+        });
+
+        // Re-initialize Select2 when step 3 is shown
+        document.addEventListener('stepChanged', e => {
+            if (e && e.detail && (e.detail.currentStep === 3 || e.detail.currentStep === '3')) {
+                setTimeout(() => {
+                    initializeReceiverSelect2();
+                }, 100);
             }
         });
     })();
@@ -1227,11 +1321,48 @@
                 revalidate();
             }
 
+            // Initialize Select2 for description dropdown
+            function initializeDescriptionSelect2() {
+                if (dropdown && !dropdown.dataset.select2Initialized) {
+                    $(dropdown).select2({
+                        placeholder: '{{ __("admin.select_description") }}',
+                        allowClear: true,
+                        width: '100%',
+                        language: {
+                            noResults: function() {
+                                return '{{ __("admin.no_descriptions_found") }}';
+                            },
+                            searching: function() {
+                                return '{{ __("admin.searching") }}';
+                            }
+                        }
+                    });
+
+                    // Re-bind the change event after Select2 initialization
+                    $(dropdown).on('change', function() {
+                        handleDropdownChange();
+                    });
+
+                    dropdown.dataset.select2Initialized = '1';
+                }
+            }
+
             newRadio.addEventListener('change', handleTypeChange);
             existingRadio.addEventListener('change', handleTypeChange);
-            dropdown.addEventListener('change', handleDropdownChange);
+            // Remove the original change event listener since it's now handled by Select2
+            // dropdown.addEventListener('change', handleDropdownChange);
             textarea.addEventListener('input', revalidate);
             handleTypeChange();
+
+            // Initialize Select2 when descriptions are loaded
+            const originalPopulateDescriptionsDropdown = populateDescriptionsDropdown;
+            populateDescriptionsDropdown = function() {
+                originalPopulateDescriptionsDropdown();
+                // Initialize Select2 after populating the dropdown
+                setTimeout(() => {
+                    initializeDescriptionSelect2();
+                }, 100);
+            };
         }
 
 
@@ -1243,6 +1374,56 @@
         document.addEventListener('stepChanged', function(e) {
             if (e && e.detail && e.detail.currentStep === 4) {
                 loadUserDescriptions();
+                // Initialize Select2 when step 4 is shown
+                setTimeout(() => {
+                    const dropdown = document.getElementById('existing_descriptions');
+                    if (dropdown && !dropdown.dataset.select2Initialized) {
+                        $(dropdown).select2({
+                            placeholder: '{{ __("admin.select_description") }}',
+                            allowClear: true,
+                            width: '100%',
+                            language: {
+                                noResults: function() {
+                                    return '{{ __("admin.no_descriptions_found") }}';
+                                },
+                                searching: function() {
+                                    return '{{ __("admin.searching") }}';
+                                }
+                            }
+                        });
+
+                        // Re-bind the change event after Select2 initialization
+                        $(dropdown).on('change', function() {
+                            const opt = dropdown.options[dropdown.selectedIndex];
+                            if (opt && opt.value) {
+                                const textarea = document.getElementById('package_description');
+                                const descriptionIdInput = document.getElementById('description_id');
+                                if (textarea) {
+                                    textarea.disabled = true;
+                                    textarea.readOnly = true;
+                                    textarea.value = opt.dataset.description || '';
+                                }
+                                if (descriptionIdInput) {
+                                    descriptionIdInput.value = opt.value;
+                                }
+                            } else {
+                                const textarea = document.getElementById('package_description');
+                                const descriptionIdInput = document.getElementById('description_id');
+                                if (textarea) {
+                                    textarea.value = '';
+                                }
+                                if (descriptionIdInput) {
+                                    descriptionIdInput.value = '';
+                                }
+                            }
+                            if (typeof window.syncNextBtnStep5 === 'function') {
+                                window.syncNextBtnStep5();
+                            }
+                        });
+
+                        dropdown.dataset.select2Initialized = '1';
+                    }
+                }, 200);
             }
         });
     })();

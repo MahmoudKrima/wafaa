@@ -591,6 +591,9 @@ return [
     'contact' => 'تواصل معنا',
     'about_us' => 'من نحن',
     'our_clients' => 'عملائنا',
+    'no_senders_found' => 'لا يوجد نتائج',
+    'no_receivers_found' => 'لا يوجد نتائج',
+    'searching' => 'جاري البحث',
     'last_updated' => 'تاريخ اخر تحديث',
     'faqs' => 'الأسئلة الشائعة',
     'terms_coming_soon' => 'سيتم إضافة الشروط والأحكام قريباً',
@@ -671,4 +674,6 @@ return [
     'select_existing_description' => 'اختر وصف موجود',
     'select_description' => 'اختر الوصف',
     'package_description_required' => 'وصف الطرد مطلوب',
+    'no_descriptions_found' => 'لا يوجد نتائح',
+    'loading_tracking_number' => 'اعد تحميل الصفحة',
 ];
