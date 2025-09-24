@@ -139,6 +139,13 @@
 
         methodOptions.innerHTML = methodsHTML;
 
+        if (!window.selectedMethod && shippingMethods.includes("local")) {
+            const localCard = methodOptions.querySelector(`[onclick*="'local'"]`);
+            if (localCard) {
+                selectMethod(localCard, 'local');
+            }
+        }
+
         const btnNext = getNextBtn();
         if (btnNext) {
             const enable = !!window.selectedMethod;
