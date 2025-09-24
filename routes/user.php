@@ -3,13 +3,15 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\User\Auth\AuthController;
 use App\Http\Controllers\User\Home\HomeController;
+use App\Http\Controllers\User\Sender\SenderController;
 use App\Http\Controllers\User\Profile\ProfileController;
+use App\Http\Controllers\User\Reciever\RecieverController;
 use App\Http\Controllers\User\Shipping\ShippingController;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use App\Http\Controllers\User\WalletLogs\WalletLogsController;
 use App\Http\Controllers\User\Transaction\TransactionController;
-use App\Http\Controllers\User\Reciever\RecieverController;
 use App\Http\Controllers\User\Notification\NotificationController;
+use App\Http\Controllers\User\UserDescription\UserDescriptionController;
 
 
 Route::controller(ShippingController::class)
@@ -139,6 +141,44 @@ Route::middleware(['web'])->group(function () {
                     ->name('recievers.delete');
                 Route::get('/recievers/search', 'search')
                     ->name('recievers.search');
+            });
+
+        Route::controller(SenderController::class)
+            ->group(function () {
+                Route::get('/senders', 'index')
+                    ->name('senders.index');
+                Route::get('/senders/create', 'create')
+                    ->name('senders.create');
+                Route::post('/senders/store', 'store')
+                    ->name('senders.store');
+                Route::get('/senders/edit/{sender}', 'edit')
+                    ->name('senders.edit');
+                Route::post('/senders/update/{sender}', 'update')
+                    ->name('senders.update');
+                Route::delete('/senders/delete/{sender}', 'delete')
+                    ->name('senders.delete');
+                Route::get('/senders/search', 'search')
+                    ->name('senders.search');
+                Route::get('/senders/getSenders', 'getSenders')
+                    ->name('senders.getSenders');
+            });
+
+        Route::controller(UserDescriptionController::class)
+            ->group(function () {
+                Route::get('/user-descriptions', 'index')
+                    ->name('user-descriptions.index');
+                Route::get('/user-descriptions/create', 'create')
+                    ->name('user-descriptions.create');
+                Route::post('/user-descriptions/store', 'store')
+                    ->name('user-descriptions.store');
+                Route::get('/user-descriptions/edit/{userDescription}', 'edit')
+                    ->name('user-descriptions.edit');
+                Route::post('/user-descriptions/update/{userDescription}', 'update')
+                    ->name('user-descriptions.update');
+                Route::delete('/user-descriptions/delete/{userDescription}', 'delete')
+                    ->name('user-descriptions.delete');
+                Route::get('/user-descriptions/getUserDescriptions', 'getUserDescriptions')
+                    ->name('user-descriptions.getUserDescriptions');
             });
     });
 });

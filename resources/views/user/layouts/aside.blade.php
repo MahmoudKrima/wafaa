@@ -32,7 +32,7 @@
 
             <li class="{{ isRoute(['user.shippings.index']) ? 'active' : '' }}">
                 <a href="{{ route('user.shippings.index') }}"
-                   data-active="{{ isRoute(['user.shippings.index']) ? 'true' : 'false' }}" class="menu-toggle">
+                    data-active="{{ isRoute(['user.shippings.index']) ? 'true' : 'false' }}" class="menu-toggle">
                     <div class="base-icons">
                         <i class="fa fa fa-shipping-fast" style="color:#1b6aab;font-size:35px;margin-bottom:10px;"></i>
                         <p class="side_links_theme">{{__('admin.shippings')}}</p>
@@ -40,12 +40,54 @@
                 </a>
             </li>
 
-            <li class="{{ isRoute(['user.recievers.index','user.recievers.create','user.recievers.edit','user.recievers.search']) ? 'active' : '' }}">
+            <!-- <li class="{{ isRoute(['user.recievers.index','user.recievers.create','user.recievers.edit','user.recievers.search']) ? 'active' : '' }}">
                 <a href="{{ route('user.recievers.index') }}"
                     data-active="{{ isRoute(['user.recievers.index','user.recievers.create','user.recievers.edit','user.recievers.search']) ? 'true' : 'false' }}" class="menu-toggle">
                     <div class="base-icons">
                         <i class="fa fa-users" style="color:#1b6aab;font-size:35px;margin-bottom:10px;"></i>
                         <p class="side_links_theme">{{__('admin.recievers')}}</p>
+                    </div>
+                </a>
+            </li> -->
+
+            <li class="menu {{ isRoute([
+    'user.senders.index',
+    'user.senders.create',
+    'user.senders.edit',
+    'user.senders.search',
+   'user.recievers.index',
+   'user.recievers.create',
+   'user.recievers.edit',
+   'user.recievers.search',
+   'user.user-descriptions.index',
+   'user.user-descriptions.create',
+   'user.user-descriptions.edit',
+   'user.user-descriptions.search'
+
+])
+    ? 'active'
+    : '' }}">
+                <a href="#shippings_settings" data-active="{{ isRoute([
+    'user.senders.index',
+    'user.senders.create',
+    'user.senders.edit',
+    'user.senders.search',
+   'user.recievers.index',
+   'user.recievers.create',
+   'user.recievers.edit',
+   'user.recievers.search',
+   'user.user-descriptions.index',
+   'user.user-descriptions.create',
+   'user.user-descriptions.edit',
+   'user.user-descriptions.search'
+])
+    ? 'true'
+    : 'false' }}" class="menu-toggle">
+                    <div class="base-menu">
+                        <div class="base-icons">
+                            <i class="fa fa-users" style="color:#1b6aab;font-size:35px;margin-bottom:10px;"></i>
+                            <p class="side_links_theme">{{__('admin.shipping_settings')}}</p>
+                        </div>
                     </div>
                 </a>
             </li>
@@ -83,6 +125,34 @@
         </ul>
 
     </nav>
+
+    <div id="compact_submenuSidebar" class="submenu-sidebar">
+
+        <div class="submenu" id="shippings_settings">
+            <div class="category-info">
+                <h5>{{ __('admin.shipping_settings') }}</h5>
+            </div>
+            <ul class="submenu-list" data-parent-element="#shippings_settings">
+                <li class="{{ isRoute(['user.senders.index']) ? 'active' : '' }}" style="margin-bottom:5px;">
+                    <a href="{{ route('user.senders.index') }}">
+                        <i class="fa fa-bank" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
+                        {{ __('admin.senders') }} </a>
+                </li>
+                <li class="{{ isRoute(['user.recievers.index']) ? 'active' : '' }}" style="margin-bottom:5px;">
+                    <a href="{{ route('user.recievers.index') }}">
+                        <i class="fa fa-money-check-alt" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
+                        {{ __('admin.recievers') }} </a>
+                </li>
+                <li class="{{ isRoute(['user.user-descriptions.index']) ? 'active' : '' }}" style="margin-bottom:5px;">
+                    <a href="{{ route('user.user-descriptions.index') }}">
+                        <i class="fa fa-money-check-alt" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
+                        {{ __('admin.shipping_descriptions') }} </a>
+                </li>
+            </ul>
+        </div>
+
+
+    </div>
 
     <div id="compact_submenuSidebar" class="submenu-sidebar">
 

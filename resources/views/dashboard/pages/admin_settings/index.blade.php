@@ -29,17 +29,24 @@
                                 @csrf
                                 <div class="form-group">
                                     <div class="row">
-                                        <div class="col-md-6 mb-3">
+                                        <div class="col-md-4 mb-3">
                                             <label for="extra_weight_price" class="text-dark">{{ __('admin.extra_weight_price') }}</label>
                                             <input type="number" step="0.01" name="extra_weight_price" id="extra_weight_price"
                                                 class="form-control" placeholder="{{ __('admin.extra_weight_price') }}"
                                                 value="{{ old('extra_weight_price', $adminSetting->extra_weight_price) }}">
                                         </div>
-                                        <div class="col-md-6 mb-3">
+                                        <div class="col-md-4 mb-3">
                                             <label for="cash_on_delivery_price" class="text-dark">{{ __('admin.cash_on_delivery_price') }}</label>
                                             <input type="number" step="0.01" name="cash_on_delivery_price" id="cash_on_delivery_price"
                                                 class="form-control" placeholder="{{ __('admin.cash_on_delivery_price') }}"
                                                 value="{{ old('cash_on_delivery_price', $adminSetting->cash_on_delivery_price) }}">
+                                        </div>
+                                        <div class="col-md-4 mb-3">
+                                            <label for="international_shipping" class="text-dark">{{ __('admin.international_shipping') }}</label>
+                                            <select name="international_shipping" id="international_shipping" class="form-control">
+                                                <option value="yes" {{ old('international_shipping', $adminSetting->international_shipping) == 'yes' ? 'selected' : '' }}>{{ __('admin.yes') }}</option>
+                                                <option value="no" {{ old('international_shipping', $adminSetting->international_shipping) == 'no' ? 'selected' : '' }}>{{ __('admin.no') }}</option>
+                                            </select>
                                         </div>
                                     </div>
 

@@ -142,7 +142,7 @@
                                     </td>
                                     <td>{{ $user->addedByAdmin?->name}}</td>
                                     <td>{{ optional($user->wallet)->balance .' '. __('admin.currency_symbol')  ?? __('admin.n/a')}}</td>
-                                    @if (auth('admin')->user()->hasAnyPermission(['users.update', 'users.delete', 'user_shipping_prices.view', 'wallet_logs.view']))
+                                    @if (auth('admin')->user()->hasAnyPermission(['users.update', 'users.delete', 'user_shipping_prices.view', 'wallet_logs.view', 'senders.view', 'recievers.view', 'shippings.view']))
                                     <td class="text-center">
                                         <div class="action-btns d-flex justify-content-center">
                                             @haspermission('shippings.view', 'admin')
@@ -152,6 +152,15 @@
                                                 data-toggle="tooltip" data-placement="top" aria-label="Edit"
                                                 data-bs-original-title="Edit">
                                                 <i class="fa fa-truck"></i>
+                                            </a>
+                                            @endhaspermission
+                                            @haspermission('senders.view', 'admin')
+                                            <a href="{{ route('admin.senders.index', $user->id) }}"
+                                                class="action-btn btn-edit bs-tooltip me-2 badge rounded-pill bg-info"
+                                                style="padding:7px;margin:0 5px;" title="{{ __('admin.senders') }}"
+                                                data-toggle="tooltip" data-placement="top" aria-label="Edit"
+                                                data-bs-original-title="Edit">
+                                                <i class="fa fa-user"></i>
                                             </a>
                                             @endhaspermission
                                             @haspermission('recievers.view', 'admin')

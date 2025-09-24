@@ -117,7 +117,6 @@ class ShippingController extends Controller
         );
 
         $companies = $this->shippingService->getShippingCompanies();
-
         return view('user.pages.shippings.index', compact('shipments', 'companies'));
     }
 
@@ -135,6 +134,7 @@ class ShippingController extends Controller
 
     public function store(StoreShippingRequest $request)
     {
+        // dd($request->all());
         return $this->shippingService->store($request);
     }
 

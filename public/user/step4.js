@@ -17,32 +17,31 @@
     let fetchedOnce = false;
 
     const API_KEY =
-    document.querySelector('meta[name="ghaya-api-key"]')?.content ||
-    (window.GHAYA_API_KEY ?? "xwqn5mb5mpgf5u3vpro09i8pmw9fhkuu");
+        document.querySelector('meta[name="ghaya-api-key"]')?.content ||
+        (window.GHAYA_API_KEY ?? "xwqn5mb5mpgf5u3vpro09i8pmw9fhkuu");
 
-  const API_BASE =
-    document.querySelector('meta[name="ghaya-api-base"]')?.content ||
-    (window.GHAYA_API_BASE ?? "https://ghaya-express-staging-af597af07557.herokuapp.com/api");
+    const API_BASE =
+        document.querySelector('meta[name="ghaya-api-base"]')?.content ||
+        (window.GHAYA_API_BASE ??
+            "https://ghaya-express-staging-af597af07557.herokuapp.com/api");
 
-  const API = {
-    countries:
-      window.API_ENDPOINTS?.countries ||
-      `${API_BASE}/countries?page=0&pageSize=500`,
-
-    states: (countryId, companyId) =>
-      window.API_ENDPOINTS?.states?.(countryId, companyId) ||
-      `${API_BASE}/states?pageSize=500&page=0&countryId=${encodeURIComponent(
-        countryId
-      )}&shippingCompanyId=${encodeURIComponent(companyId)}`,
-
-    cities: (countryId, stateId, companyId) =>
-      window.API_ENDPOINTS?.cities?.(countryId, stateId, companyId) ||
-      `${API_BASE}/cities?pageSize=500&page=0&countryId=${encodeURIComponent(
-        countryId
-      )}&stateId=${encodeURIComponent(
-        stateId
-      )}&shippingCompanyId=${encodeURIComponent(companyId)}`,
-  };
+    const API = {
+        countries:
+            window.API_ENDPOINTS?.countries ||
+            `${API_BASE}/countries?page=0&pageSize=500`,
+        states: (countryId, companyId) =>
+            window.API_ENDPOINTS?.states?.(countryId, companyId) ||
+            `${API_BASE}/states?pageSize=500&page=0&countryId=${encodeURIComponent(
+                countryId
+            )}&shippingCompanyId=${encodeURIComponent(companyId)}`,
+        cities: (countryId, stateId, companyId) =>
+            window.API_ENDPOINTS?.cities?.(countryId, stateId, companyId) ||
+            `${API_BASE}/cities?pageSize=500&page=0&countryId=${encodeURIComponent(
+                countryId
+            )}&stateId=${encodeURIComponent(
+                stateId
+            )}&shippingCompanyId=${encodeURIComponent(companyId)}`,
+    };
 
     const $country = () => document.getElementById("country");
     const $state = () => document.getElementById("state");
@@ -98,10 +97,8 @@
             box.style.top = "20px";
             if (appLocale === "ar") {
                 box.style.left = "20px";
-                box.style.right = "auto";
             } else {
                 box.style.right = "20px";
-                box.style.left = "auto";
             }
             document.body.appendChild(box);
         }
@@ -153,7 +150,6 @@
         "state_id",
         "city_id",
     ];
-
     function validateReceiverFields(r) {
         const missing = REQUIRED_KEYS.filter(
             (k) => !String(r?.[k] ?? "").trim()
@@ -420,7 +416,7 @@
                     "No receivers found"
                 )}</option>`;
             });
-        wireUI();
+
         refreshSelectedReceiversView();
         syncNextButton();
         updateAddButtonState();
@@ -596,21 +592,21 @@
         window.selectedReceivers.forEach((r, idx) => {
             const cityTxt = displayName(r.city_name);
             html += `
-          <div class="card mb-2">
-            <div class="card-body">
-              <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
-                <div>
-                  <div><strong>${titleR} #${idx + 1}:</strong> ${r.name || ""}${
+        <div class="card mb-2">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+              <div>
+                <div><strong>${titleR} #${idx + 1}:</strong> ${r.name || ""}${
                 r.isNew ? " • NEW" : ""
             }</div>
-                  <div><strong>${phoneL}:</strong> ${r.phone || ""}</div>
-                  <div><strong>${cityL}:</strong> ${cityTxt}</div>
-                  <div><strong>${addrL}:</strong> ${r.address || ""}</div>
-                </div>
-                <button type="button" class="btn btn-sm btn-outline-danger" data-index="${idx}">&times;</button>
+                <div><strong>${phoneL}:</strong> ${r.phone || ""}</div>
+                <div><strong>${cityL}:</strong> ${cityTxt}</div>
+                <div><strong>${addrL}:</strong> ${r.address || ""}</div>
               </div>
+              <button type="button" class="btn btn-sm btn-outline-danger" data-index="${idx}">&times;</button>
             </div>
-          </div>`;
+          </div>
+        </div>`;
         });
         box.innerHTML = html;
         box.querySelectorAll("button.btn-outline-danger").forEach((btn) => {
@@ -822,8 +818,10 @@
             existingRadio.addEventListener("change", function () {
                 if (!this.checked) return;
                 if (existingSection) existingSection.style.display = "block";
+                if (newSection) newSection.style.display = "none";
                 forceClearNewForm();
                 resetExistingSelect();
+                loadReceivers(); // <-- load list when choosing "Existing"
                 ensureAdditionalPhoneOptional();
                 updateAddButtonState();
             });
@@ -870,12 +868,23 @@
         Array.isArray(window.selectedReceivers) &&
         window.selectedReceivers.length > 0;
 
+    // Bind immediately so radios work as soon as Step 3 is shown
     document.addEventListener("DOMContentLoaded", () => {
+        wireUI(); // <-- crucial: bind the radio handlers now
         resetFormCompletely();
         if (window.selectedMethod) setupReceiverFormByShippingType();
         ensureAdditionalPhoneOptional();
         updateAddButtonState();
         syncNextButton();
+    });
+
+    // Also (optionally) re-bind when step changes to 3
+    document.addEventListener("stepChanged", (e) => {
+        if (e?.detail?.currentStep === 3 || e?.detail?.currentStep === "3") {
+            wireUI();
+            updateAddButtonState();
+            syncNextButton();
+        }
     });
 
     document.addEventListener("shippingMethodSelected", () => {

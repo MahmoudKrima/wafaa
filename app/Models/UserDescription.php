@@ -2,15 +2,12 @@
 
 namespace App\Models;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 
-class Reciever extends Model
+class UserDescription extends Model
 {
-    use HasFactory;
-    public static $permissions = [
-        'recievers.view',
-    ];
+    protected $guarded = ['created_at', 'updated_at'];
 
     public static $relatio = [
         'user',
@@ -21,7 +18,6 @@ class Reciever extends Model
     {
         return $query->with(self::$relatio);
     }
-    protected $guarded = ['created_at', 'updated_at'];
 
     public function user()
     {

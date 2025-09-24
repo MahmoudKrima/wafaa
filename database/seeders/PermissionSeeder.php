@@ -22,6 +22,7 @@ use App\Models\Transaction;
 use App\Models\WhyChooseUs;
 use App\Models\AdminSetting;
 use App\Models\AllowedCompany;
+use App\Models\Sender;
 use Illuminate\Database\Seeder;
 use App\Models\UserShippingPrice;
 use Spatie\Permission\Models\Permission;
@@ -68,6 +69,7 @@ class PermissionSeeder extends Seeder
             ...Faq::$permissions,
             ...$rolePermission,
             ...WhyChooseUs::$permissions,
+            ...Sender::$permissions,
         ];
 
         foreach ($permissions as $permission) {

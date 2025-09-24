@@ -11,11 +11,13 @@ use App\Models\AdminSetting;
 use App\Models\CancelRequest;
 use App\Models\AllowedCompany;
 use App\Traits\TranslateTrait;
+use App\Models\UserDescription;
 use App\Enum\NotificationTypeEnum;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use App\Http\Requests\User\Shipping\SearchShippingRequest;
+use App\Models\Sender;
 
 class ShippingService
 {
@@ -412,6 +414,23 @@ class ShippingService
         }
 
         session()->forget('Error');
+        if ($data['description_type'] == 'new') {
+            UserDescription::create([
+                'user_id' => $user->id,
+                'description' => $data['package_description'],
+            ]);
+        }
+        if ($data['sender_kind'] == 'new') {
+            Sender::create([
+                'user_id' => $user->id,
+                'name' => $data['sender_name'],
+                'email' => $data['sender_email'],
+                'phone' => $data['sender_phone'],
+                'additional_phone' => $data['sender_additional_phone'] ?? null,
+                'postal_code' => $data['sender_postal_code'] ?? null,
+            ]);
+        }
+
         return redirect()
             ->route('user.shippings.index')
             ->with('Success', __('admin.shippment_created_successfully'));
@@ -987,10 +1006,13 @@ class ShippingService
 
             $extraWeightPricePerKg = 0;
             $codFeePerReceiver     = 0;
+            $allowInternational = true;
+
             if ($adminId) {
                 $adminSettings = AdminSetting::where('admin_id', $adminId)->first();
                 $extraWeightPricePerKg = (float) ($adminSettings?->extra_weight_price ?? 0);
                 $codFeePerReceiver     = (float) ($adminSettings?->cash_on_delivery_price ?? 0);
+                $allowInternational = strtolower((string) ($adminSettings?->international_shipping ?? 'yes')) !== 'no';
             }
 
             $resp = $this->ghayaRequest()->get($this->ghayaUrl('shipping-companies'), [
@@ -1028,7 +1050,7 @@ class ShippingService
                 if ($hasAnyAllowed) {
                     $enforceAllowed = true;
                     $activeAllowedIds = AllowedCompany::where('admin_id', $adminId)
-                        ->where('status', 'active') // use 1 if your column is boolean
+                        ->where('status', 'active')
                         ->pluck('company_id')
                         ->map(fn($v) => (string) $v)
                         ->all();
@@ -1055,12 +1077,17 @@ class ShippingService
                     $isActive = (bool) data_get($company, 'isActive', true);
                     return $isActive && in_array($id, $targetIds, true);
                 })
-                ->map(function ($company) use ($userPriceMap, $extraWeightPricePerKg, $codFeePerReceiver) {
+                ->map(function ($company) use ($userPriceMap, $extraWeightPricePerKg, $codFeePerReceiver, $allowInternational) {
                     $id      = (string) data_get($company, 'id', '');
                     $methods = (array) data_get($company, 'shippingMethods', []);
 
                     $price = $userPriceMap->get($id);
                     if (!$price) return null;
+
+                    if (!$allowInternational) {
+                        $methods = array_values(array_filter($methods, fn($m) => $m !== 'international'));
+                        $company['shippingMethods'] = $methods;
+                    }
 
                     $company['userLocalPrice']         = (float) $price->local_price;
                     $company['userInternationalPrice'] = (float) $price->international_price;
@@ -1095,6 +1122,7 @@ class ShippingService
             return ['results' => []];
         }
     }
+
 
 
 

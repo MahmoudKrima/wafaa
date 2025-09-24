@@ -2,6 +2,16 @@
     let _submittingStep5 = false;
     const t = window.step5Translations || window.translations || {};
 
+    // Ensure length/width/height default to "1" when empty/invalid
+    function ensureDimensionDefaults() {
+        const lengthField = document.getElementById("length");
+        const widthField = document.getElementById("width");
+        const heightField = document.getElementById("height");
+        [lengthField, widthField, heightField].forEach((f) => {
+            if (f && (!f.value || Number(f.value) <= 0)) f.value = "1";
+        });
+    }
+
     function showErrorStep5(message) {
         if (!_submittingStep5) return;
         if (typeof toastr !== "undefined") {
@@ -30,6 +40,10 @@
 
     window.populateShippingFormFields = function populateShippingFormFields() {
         setupPackageTypeHandling();
+
+        // Set defaults on first load if they’re empty/invalid
+        ensureDimensionDefaults();
+
         const ids = [
             "package_type",
             "package_number",
@@ -103,6 +117,9 @@
         if (lengthField) lengthField.required = true;
         if (widthField) widthField.required = true;
         if (heightField) heightField.required = true;
+
+        // Whenever dimensions become visible, ensure defaults are applied
+        ensureDimensionDefaults();
     }
 
     function hideDimensionsSection(clearValues = false) {

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\User\Reciever;
+namespace App\Http\Requests\User\UserDescription;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class SearchRecieverRequest extends FormRequest
+class UpdateUserDescriptionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,9 +22,7 @@ class SearchRecieverRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['sometimes', 'nullable', 'string', 'max:255'],
-            'email' => ['sometimes', 'nullable', 'string', 'max:255'],
-            'phone' => ['sometimes', 'nullable', 'string', 'regex:/^(05|5|9665|96605|009665|\+9665)[0-9]{8}$/'],
+            'description' => ['required', 'string', 'max:9999'],
         ];
     }
 }

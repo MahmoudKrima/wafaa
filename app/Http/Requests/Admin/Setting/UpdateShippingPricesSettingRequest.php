@@ -16,6 +16,7 @@ class UpdateShippingPricesSettingRequest extends FormRequest
         return [
             'extra_weight_price' => ['required', 'numeric', 'min:0'],
             'cash_on_delivery_price' => ['required', 'numeric', 'min:0'],
+            'international_shipping' => ['required', 'in:yes,no'],
             'email' => [
                 'required',
                 'email:dns,filter',

@@ -22,27 +22,31 @@ function isStep1Valid() {
     return !!window.selectedCompany;
 }
 
+// ✅ Use the actual Step 2 validation from your step-2 script
 function isStep2Valid() {
-    return !!window.selectedMethod;
+    if (typeof window.validateStep2Form === "function") {
+        return window.validateStep2Form();
+    }
+    if (typeof window.validateStep3Form === "function") {
+        return window.validateStep3Form();
+    }
+    return false;
 }
 
 function isStep3Valid() {
-    return typeof window.validateStep3Form === "function"
-        ? window.validateStep3Form()
+    return typeof window.canProceedToNextStep === "function"
+        ? window.canProceedToNextStep()
         : true;
 }
 
 function isStep4Valid() {
-    return (
-        Array.isArray(window.selectedReceivers) &&
-        window.selectedReceivers.length > 0
-    );
-}
-
-function isStep5Valid() {
     return typeof window.validatePackageDetails === "function"
         ? window.validatePackageDetails()
         : false;
+}
+
+function isStep5Valid() {
+    return true; // Payment step - always valid
 }
 
 function setNextForStep(step) {
@@ -82,8 +86,7 @@ function handleNextStep() {
     if (currentStep === 1 && !isStep1Valid()) return;
     if (currentStep === 2 && !isStep2Valid()) return;
     if (currentStep === 3 && !isStep3Valid()) return;
-    if (currentStep === 4 && !isStep4Valid()) return;
-    if (currentStep === 5 && !isStep5Valid()) {
+    if (currentStep === 4 && !isStep4Valid()) {
         if (typeof window.toast === "function") {
             window.toast(
                 (window.translations &&
@@ -94,6 +97,7 @@ function handleNextStep() {
         }
         return;
     }
+    if (currentStep === 5 && !isStep5Valid()) return;
     currentStep += 1;
     showStep(currentStep);
 }
@@ -116,42 +120,42 @@ function showStep(step) {
     const btnNext = document.getElementById("btn-next");
     if (btnPrev) btnPrev.style.display = step === 1 ? "none" : "inline-block";
     if (btnNext) {
-        btnNext.style.display = step === 7 ? "none" : "inline-block";
+        btnNext.style.display = step === 6 ? "none" : "inline-block";
         setNextForStep(step);
     }
     if (step === 2 && typeof window.showMethodSelection === "function")
         window.showMethodSelection();
-    if (step === 3) {
+    if (step === 2) {
         if (typeof window.setupLocationFields === "function")
             window.setupLocationFields();
         if (typeof window.handleCompanyRequirements === "function")
             window.handleCompanyRequirements();
         const inputs = document.querySelectorAll(
-            "#step-3 input, #step-3 select, #step-3 textarea"
+            "#step-2 input, #step-2 select, #step-2 textarea"
         );
         inputs.forEach((inp) => {
-            if (!inp.dataset.boundStep3) {
-                const sync = () => hardEnableNext(isStep3Valid());
+            if (!inp.dataset.boundStep2) {
+                const sync = () => hardEnableNext(isStep2Valid());
                 inp.addEventListener("input", sync);
                 inp.addEventListener("change", sync);
-                inp.dataset.boundStep3 = "1";
+                inp.dataset.boundStep2 = "1";
             }
         });
     }
-    if (step === 4) {
+    if (step === 3) {
         if (typeof window.loadReceivers === "function") window.loadReceivers();
         if (typeof window.setupReceiverFormByShippingType === "function")
             window.setupReceiverFormByShippingType();
-        setNextForStep(4);
+        setNextForStep(3);
     }
-    if (step === 5) {
+    if (step === 4) {
         if (typeof window.populateShippingFormFields === "function")
             window.populateShippingFormFields();
-        setNextForStep(5);
+        setNextForStep(4);
     }
-    if (step === 6 && typeof window.setupPaymentDetails === "function")
+    if (step === 5 && typeof window.setupPaymentDetails === "function")
         window.setupPaymentDetails();
-    if (step === 7 && typeof window.setupStep7 === "function")
+    if (step === 6 && typeof window.setupStep7 === "function")
         window.setupStep7();
     window.currentStep = step;
     document.dispatchEvent(
@@ -168,7 +172,7 @@ document.addEventListener("shippingMethodSelected", () => {
 });
 
 document.addEventListener("receiversChanged", () => {
-    if (currentStep === 4) hardEnableNext(isStep4Valid());
+    if (currentStep === 3) hardEnableNext(isStep3Valid());
 });
 
 function initShippingForm() {
