@@ -1,7 +1,411 @@
 (function () {
+    // ----------------- helpers -----------------
     const $$ = (id) => document.getElementById(id);
     const toNum = (v, d = 0) => (isFinite(+v) ? +v : d);
+    const t = (k, fb) =>
+        (window.translations && window.translations[k]) || fb || "";
 
+    // ----------------- STEP 4: dimensions & validation -----------------
+    let _submittingStep5 = false;
+
+    function ensureDimensionDefaults() {
+        const lengthField = $$("length");
+        const widthField = $$("width");
+        const heightField = $$("height");
+        [lengthField, widthField, heightField].forEach((f) => {
+            if (f && (!f.value || Number(f.value) <= 0)) f.value = "1";
+        });
+    }
+
+    function showErrorStep5(message) {
+        if (!_submittingStep5) return;
+        if (typeof toastr !== "undefined") {
+            toastr.error(message);
+            return;
+        }
+        const errorContainer = $$("receiver-error-msg");
+        if (errorContainer) {
+            errorContainer.innerHTML = `
+          <div class="alert alert-danger">
+            <i class="fas fa-exclamation-triangle"></i> ${message}
+          </div>`;
+            errorContainer.style.display = "block";
+            setTimeout(() => (errorContainer.style.display = "none"), 5000);
+        } else {
+            alert("Error: " + message);
+        }
+    }
+
+    function syncNextBtnStep5() {
+        if (typeof window.hardEnableNext === "function") {
+            window.hardEnableNext(window.validatePackageDetails());
+        } else {
+            const btnNext = document.getElementById("btn-next");
+            if (!btnNext) return;
+            const ok = window.validatePackageDetails();
+            btnNext.disabled = !ok;
+            btnNext.classList.toggle("btn-secondary", !ok);
+            btnNext.classList.toggle("btn-primary", ok);
+        }
+    }
+
+    function showDimensionsSection() {
+        const section = $$("dimensions_section");
+        if (!section) return;
+        section.style.display = "block";
+
+        const lengthField = $$("length");
+        const widthField = $$("width");
+        const heightField = $$("height");
+        if (lengthField) lengthField.required = true;
+        if (widthField) widthField.required = true;
+        if (heightField) heightField.required = true;
+
+        ensureDimensionDefaults();
+    }
+
+    function hideDimensionsSection(clearValues = false) {
+        const section = $$("dimensions_section");
+        if (!section) return;
+        section.style.display = "none";
+
+        const lengthField = $$("length");
+        const widthField = $$("width");
+        const heightField = $$("height");
+
+        if (lengthField) {
+            lengthField.required = false;
+            if (clearValues) lengthField.value = "";
+        }
+        if (widthField) {
+            widthField.required = false;
+            if (clearValues) widthField.value = "";
+        }
+        if (heightField) {
+            heightField.required = false;
+            if (clearValues) heightField.value = "";
+        }
+    }
+
+    function setupPackageTypeHandling() {
+        const packageTypeSelect = $$("package_type");
+        if (!packageTypeSelect) return;
+
+        packageTypeSelect.required = true;
+
+        const showDim = ["box", "document"].includes(packageTypeSelect.value);
+        if (showDim) showDimensionsSection();
+        else hideDimensionsSection(true);
+
+        if (!packageTypeSelect.dataset.bound) {
+            packageTypeSelect.addEventListener("change", function () {
+                if (["box", "document"].includes(this.value)) {
+                    showDimensionsSection();
+                } else {
+                    hideDimensionsSection(true);
+                }
+                syncNextBtnStep5();
+            });
+            packageTypeSelect.dataset.bound = "1";
+        }
+    }
+
+    // Public: used by Next/Submit gating
+    window.validatePackageDetails = function validatePackageDetails() {
+        const packageType = $$("package_type");
+        const packageNumber = $$("package_number");
+        const weight = $$("weight");
+        const acceptTerms = $$("accept_terms");
+        const packageDescription = $$("package_description");
+        if (
+            !packageType ||
+            !packageNumber ||
+            !weight ||
+            !acceptTerms ||
+            !packageDescription
+        ) {
+            return false;
+        }
+
+        if (!packageType.value) {
+            showErrorStep5(
+                t("package_type_required", "Package type is required")
+            );
+            return false;
+        }
+
+        const num = Number(packageNumber.value);
+        if (!packageNumber.value || isNaN(num) || num < 1) {
+            showErrorStep5(
+                t("package_number_invalid", "Invalid package number")
+            );
+            return false;
+        }
+
+        const w = Number(weight.value);
+        if (!weight.value || isNaN(w) || w <= 0) {
+            showErrorStep5(t("weight_invalid", "Invalid weight"));
+            return false;
+        }
+
+        const length = $$("length");
+        const width = $$("width");
+        const height = $$("height");
+        if (!length || !width || !height) {
+            showErrorStep5(t("dimensions_missing", "Dimensions missing"));
+            return false;
+        }
+
+        const L = Number(length.value);
+        const W = Number(width.value);
+        const H = Number(height.value);
+        if (!length.value || !width.value || !height.value) {
+            showErrorStep5(t("dimensions_required", "Dimensions required"));
+            return false;
+        }
+        if (isNaN(L) || isNaN(W) || isNaN(H) || L <= 0 || W <= 0 || H <= 0) {
+            showErrorStep5(t("dimensions_invalid", "Invalid dimensions"));
+            return false;
+        }
+
+        // Description required
+        if (
+            !packageDescription.value ||
+            packageDescription.value.trim() === ""
+        ) {
+            showErrorStep5(
+                t(
+                    "package_description_required",
+                    "Package description is required"
+                )
+            );
+            return false;
+        }
+
+        // If COD selected, ensure amount > 0
+        if (window.selectedPaymentMethod === "cod") {
+            const codInput = $$("cod-amount-input");
+            const v = codInput ? +codInput.value : 0;
+            if (!codInput || !isFinite(v) || v <= 0) {
+                showErrorStep5(
+                    t("cod_amount_required", "Amount must be greater than 0")
+                );
+                return false;
+            }
+        }
+
+        if (!acceptTerms.checked) {
+            showErrorStep5(
+                t("accept_terms_required", "You must accept the terms")
+            );
+            return false;
+        }
+
+        return true;
+    };
+
+    // Initialize Step 5 fields & listeners
+    window.populateShippingFormFields = function populateShippingFormFields() {
+        setupPackageTypeHandling();
+        ensureDimensionDefaults(); // on first load
+
+        const ids = [
+            "package_type",
+            "package_number",
+            "weight",
+            "length",
+            "width",
+            "height",
+            "accept_terms",
+            "package_description",
+        ];
+        ids.forEach((id) => {
+            const el = $$(id);
+            if (el && !el.dataset.boundStep5) {
+                const evt = el.type === "checkbox" ? "change" : "input";
+                el.addEventListener(evt, syncNextBtnStep5);
+                el.dataset.boundStep5 = "1";
+            }
+        });
+
+        const btnNext = $$("btn-next");
+        if (btnNext && !btnNext.dataset.boundStep5Submit) {
+            btnNext.addEventListener(
+                "click",
+                () => {
+                    _submittingStep5 = true;
+                    setTimeout(() => {
+                        _submittingStep5 = false;
+                    }, 0);
+                },
+                true
+            );
+            btnNext.dataset.boundStep5Submit = "1";
+        }
+
+        syncNextBtnStep5();
+    };
+
+    // ----------------- STEP 4: description toggle (clear/reset) -----------------
+    (function setupDescriptionHandling() {
+        let userDescriptions = [];
+        let descriptionsLoaded = false;
+
+        function loadUserDescriptions() {
+            if (descriptionsLoaded) return;
+            const url =
+                window.API_ENDPOINTS?.userDescriptions ||
+                "/user/user-descriptions/getUserDescriptions";
+            fetch(url)
+                .then((r) => r.json())
+                .then((data) => {
+                    userDescriptions = Array.isArray(data)
+                        ? data
+                        : data.descriptions || [];
+                    populateDescriptionsDropdown();
+                    descriptionsLoaded = true;
+                })
+                .catch(() => {});
+        }
+
+        function populateDescriptionsDropdown() {
+            const dropdown = $$("existing_descriptions");
+            if (!dropdown) return;
+            dropdown.innerHTML = `<option value="">${t(
+                "select_description",
+                "Select description"
+            )}</option>`;
+            userDescriptions.forEach((desc) => {
+                const option = document.createElement("option");
+                option.value = desc.id;
+                option.textContent =
+                    desc.description || desc.title || "Untitled Description";
+                option.dataset.description = desc.description || "";
+                dropdown.appendChild(option);
+            });
+        }
+
+        function clearDescriptionInputs() {
+            const textarea = $$("package_description");
+            const dropdown = $$("existing_descriptions");
+            const descriptionIdInput = $$("description_id");
+            const isNewInput = $$("is_new_description");
+
+            if (textarea) {
+                textarea.value = "";
+                textarea.readOnly = false;
+                textarea.disabled = false;
+                textarea.style.backgroundColor = "";
+                textarea.placeholder = t(
+                    "enter_package_description",
+                    "Enter package description"
+                );
+            }
+            if (dropdown) dropdown.value = "";
+            if (descriptionIdInput) descriptionIdInput.value = "";
+            if (isNewInput) isNewInput.value = "1";
+
+            syncNextBtnStep5();
+        }
+
+        function handleTypeChange() {
+            const newRadio = $$("description_new");
+            const existingRadio = $$("description_existing");
+            const container = $$("existing_descriptions_container");
+            const textarea = $$("package_description");
+            const isNewInput = $$("is_new_description");
+
+            if (
+                !newRadio ||
+                !existingRadio ||
+                !container ||
+                !textarea ||
+                !isNewInput
+            )
+                return;
+
+            if (newRadio.checked) {
+                // switching to new: hide dropdown, enable textarea, clear everything
+                container.style.display = "none";
+                textarea.readOnly = false;
+                textarea.disabled = false;
+                textarea.style.backgroundColor = "";
+                textarea.value = "";
+                $$("description_id") && ($$("description_id").value = "");
+                isNewInput.value = "1";
+            } else if (existingRadio.checked) {
+                // switching to existing: show dropdown, disable typing, clear textarea & id
+                container.style.display = "block";
+                textarea.readOnly = true;
+                textarea.disabled = true;
+                textarea.style.backgroundColor = "#f8f9fa";
+                textarea.value = "";
+                $$("existing_descriptions") &&
+                    ($$("existing_descriptions").value = "");
+                $$("description_id") && ($$("description_id").value = "");
+                isNewInput.value = "0";
+            }
+            syncNextBtnStep5();
+        }
+
+        function handleDropdownChange() {
+            const dropdown = $$("existing_descriptions");
+            const textarea = $$("package_description");
+            const descriptionIdInput = $$("description_id");
+            if (!dropdown || !textarea || !descriptionIdInput) return;
+
+            const opt = dropdown.options[dropdown.selectedIndex];
+            if (opt && opt.value) {
+                textarea.value = opt.dataset.description || "";
+                descriptionIdInput.value = opt.value;
+            } else {
+                textarea.value = "";
+                descriptionIdInput.value = "";
+            }
+            syncNextBtnStep5();
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const newRadio = $$("description_new");
+            const existingRadio = $$("description_existing");
+            const dropdown = $$("existing_descriptions");
+            const textarea = $$("package_description");
+
+            if (newRadio && !newRadio.dataset.bound) {
+                newRadio.addEventListener("change", () => {
+                    handleTypeChange();
+                    clearDescriptionInputs();
+                });
+                newRadio.dataset.bound = "1";
+            }
+            if (existingRadio && !existingRadio.dataset.bound) {
+                existingRadio.addEventListener("change", () => {
+                    handleTypeChange();
+                    clearDescriptionInputs();
+                });
+                existingRadio.dataset.bound = "1";
+            }
+            if (dropdown && !dropdown.dataset.bound) {
+                dropdown.addEventListener("change", handleDropdownChange);
+                dropdown.dataset.bound = "1";
+            }
+            if (textarea && !textarea.dataset.bound) {
+                textarea.addEventListener("input", syncNextBtnStep5);
+                textarea.dataset.bound = "1";
+            }
+
+            handleTypeChange();
+            loadUserDescriptions();
+        });
+
+        document.addEventListener("stepChanged", function (e) {
+            if (e && e.detail && e.detail.currentStep === 4) {
+                loadUserDescriptions();
+            }
+        });
+    })();
+
+    // ----------------- STEP 5: payment (COD min=1 & >0) -----------------
     function companySupportsCOD(company) {
         if (!company) return false;
         if (
@@ -13,7 +417,7 @@
         )
             return true;
 
-        const methods = Array.isArray(company.shippingMethods)
+        const methods = Array.isArray(company?.shippingMethods)
             ? company.shippingMethods.map((m) => String(m).toLowerCase().trim())
             : [];
         const aliases = new Set([
@@ -35,51 +439,6 @@
         return 0;
     }
 
-    function getCompanyCodFee() {
-        const c = window.selectedCompany || {};
-        const p =
-            window.companyPricing ||
-            window.pricingSummary ||
-            window.currentQuote ||
-            {};
-        const candidates = [
-            c.codPrice,
-            c.cod_fee,
-            c.codFee,
-            c.cash_on_delivery_fee,
-            c.cashOnDeliveryFee,
-            c?.cash_on_delivery?.fee,
-            c?.cod?.fee,
-            p.cod_fee,
-            p.codFee,
-            p?.fees?.cod,
-        ];
-        for (const v of candidates) if (isFinite(+v)) return +v;
-        return 0;
-    }
-
-    function getBaseTotal() {
-        const p =
-            window.companyPricing ||
-            window.pricingSummary ||
-            window.currentQuote ||
-            {};
-        const candidates = [
-            p.total_without_cod,
-            p.totalWithoutCod,
-            p.base_total,
-            p.baseTotal,
-            p.total,
-        ];
-        for (const v of candidates) if (isFinite(+v)) return +v;
-        const n = Array.isArray(window.selectedReceivers)
-            ? window.selectedReceivers.length
-            : 0;
-        const perRec = toNum(p?.per_receiver_fee, 0);
-        const base = toNum(p?.base, 0);
-        return base + perRec * n;
-    }
-
     function getCurrencySymbol() {
         const c = window.selectedCompany || {};
         const p = window.companyPricing || window.pricingSummary || {};
@@ -88,8 +447,7 @@
             c.currencySymbol ||
             p.currency_symbol ||
             p.currencySymbol ||
-            (window.translations && window.translations.currency_symbol) ||
-            "SAR"
+            t("currency_symbol", "SAR")
         );
     }
 
@@ -99,7 +457,6 @@
             : 0;
     }
 
-    // ---- styles ---------------------------------------------------------------
     function ensureStyles() {
         if ($$("pay-cards-style")) return;
         const css = document.createElement("style");
@@ -119,12 +476,11 @@
         document.head.appendChild(css);
     }
 
-    // Ensure a hidden field exists to mirror the chosen method
     function ensureHiddenPaymentInput() {
         const form =
             document.querySelector('form[enctype="multipart/form-data"]') ||
             document.querySelector("form");
-        let hidden = document.getElementById("payment_method_hidden");
+        let hidden = $$("payment_method_hidden");
         if (!hidden) {
             hidden = document.createElement("input");
             hidden.type = "hidden";
@@ -135,8 +491,7 @@
         return hidden;
     }
 
-    // ---- UI builders ----------------------------------------------------------
-    function buildCard({ value, icon, title, desc, badge, extraHtml }) {
+    function buildCard({ value, icon, title, badge, extraHtml }) {
         const badgeHTML = badge ? `<span class="cod-pill">${badge}</span>` : "";
         return `
         <label class="pay-card" data-value="${value}">
@@ -155,7 +510,6 @@
       `;
     }
 
-    // ---- behavior -------------------------------------------------------------
     function renderPaymentOptions() {
         const container = document.querySelector(".payment-options-container");
         if (!container) return;
@@ -170,41 +524,27 @@
         const supportsCOD = companySupportsCOD(window.selectedCompany);
         const adminCodFee = getAdminCodFee();
         const cur = getCurrencySymbol();
-        const t = (k, fb) =>
-            (window.translations && window.translations[k]) || fb;
 
         let html = `<div class="payment-grid">`;
 
-        // Wallet
+        // Wallet card
         html += buildCard({
             value: "wallet",
             icon: "fas fa-wallet text-primary",
             title: t("normal_shipment", "شحنة عادية"),
         });
 
-        // COD
+        // COD card (if supported)
         if (supportsCOD) {
-            const desc =
-                adminCodFee > 0
-                    ? `${t(
-                          "cod_fee_per_receiver",
-                          "رسوم الدفع عند الاستلام (لكل مستلم)"
-                      )} : ${adminCodFee} ${cur}`
-                    : t("cod_information", "الدفع عند الاستلام متاح");
-
             const codExtraHtml = `
           <div id="cod-extra" class="cod-extra">
             <label for="cod-amount-input" class="form-label small mb-1">
-              ${
-                  (window.translations && window.translations.cod_amount) ||
-                  "مبلغ التحصيل"
-              }
+              ${t("cod_amount", "مبلغ التحصيل")}
             </label>
             <div class="input-group">
-              <input type="number" min="0" step="0.01" class="form-control" id="cod-amount-input" placeholder="0.00" autocomplete="off" inputmode="decimal">
+              <input type="number" min="1" step="0.01" class="form-control" id="cod-amount-input" placeholder="1.00" autocomplete="off" inputmode="decimal" required>
               <span class="input-group-text" id="cod-currency">${cur}</span>
             </div>
-            <!-- submit-friendly hidden field -->
             <input type="hidden" name="cod_amount" id="cod-amount-hidden" value="">
           </div>
         `;
@@ -213,7 +553,6 @@
                 value: "cod",
                 icon: "fas fa-money-bill-wave text-success",
                 title: t("cash_on_delivery_shippment", "الدفع عند الاستلام"),
-                desc,
                 badge: t("cash_on_delivery_available", "متاح"),
                 extraHtml: codExtraHtml,
             });
@@ -225,7 +564,7 @@
         html += `</div>`;
         container.insertAdjacentHTML("afterbegin", html);
 
-        // Wire up
+        // Wire up behavior
         const grid = container.querySelector(".payment-grid");
         const cards = grid.querySelectorAll(".pay-card");
         const radios = grid.querySelectorAll('input[name="payment_method"]');
@@ -235,10 +574,30 @@
             const box = $$("cod-extra");
             if (!box) return;
             box.classList.toggle("show", !!show);
-            if (show) {
-                const input = $$("cod-amount-input");
-                if (input && !input.value) input.focus();
+
+            const input = $$("cod-amount-input");
+            const hidden = $$("cod-amount-hidden");
+            if (input) {
+                if (show) {
+                    input.min = "1";
+                    input.required = true;
+                    input.setCustomValidity(
+                        input.value && +input.value > 0
+                            ? ""
+                            : t(
+                                  "cod_amount_required",
+                                  "Amount must be greater than 0"
+                              )
+                    );
+                    if (!input.value) input.focus();
+                } else {
+                    input.required = false;
+                    input.setCustomValidity("");
+                    input.value = "";
+                    if (hidden) hidden.value = "";
+                }
             }
+            syncNextBtnStep5();
         }
 
         function updateCodNote() {
@@ -253,14 +612,11 @@
             }
             const count = Math.max(1, selectedReceiversCount());
             const fee = getAdminCodFee();
-            const cur = getCurrencySymbol();
-            const t = (k, fb) =>
-                (window.translations && window.translations[k]) || fb;
             const total = (fee * count).toFixed(2);
             noteEl.textContent = `${count} × ${t(
                 "cod_fee_per_receiver",
                 "رسوم الدفع عند الاستلام (لكل مستلم)"
-            )} = ${total} ${cur}`;
+            )} = ${total} ${getCurrencySymbol()}`;
         }
 
         function select(value) {
@@ -271,8 +627,10 @@
             window.selectedPaymentMethod = value;
             hiddenMethod.value = value;
             toggleCodDetails(value === "cod");
-            const codCheckbox = $$("cash_on_delivery"); // legacy (if exists)
+
+            const codCheckbox = $$("cash_on_delivery"); // legacy (if present)
             if (codCheckbox) codCheckbox.checked = value === "cod";
+
             updateCodNote();
 
             document.dispatchEvent(
@@ -282,51 +640,48 @@
             );
         }
 
-        cards.forEach((card) =>
-            card.addEventListener("click", () => select(card.dataset.value))
-        );
-
-        // ---------- NEW: Restore previous COD amount on render ----------
-        const restoreCodAmount = () => {
-            const codInput = $$("cod-amount-input");
-            const codHidden = $$("cod-amount-hidden");
-            if (!codInput || !codHidden) return;
-
-            const existing = toNum(
-                (window.OLD_INPUT && window.OLD_INPUT.cod_amount) ??
-                    (codHidden.value !== "" ? codHidden.value : undefined) ??
-                    window.codAmount,
-                0
-            );
-
-            if (!isNaN(existing) && existing >= 0) {
-                codInput.value = existing;
-                codHidden.value = existing;
-                window.codAmount = existing;
-            }
-        };
-        restoreCodAmount();
+        // restore selected method if any
         const initial =
             (window.OLD_INPUT && window.OLD_INPUT.payment_method) ||
             hiddenMethod.value ||
             "wallet";
         select(initial);
 
+        // click binding
+        cards.forEach((card) =>
+            card.addEventListener("click", () => select(card.dataset.value))
+        );
+
+        // legacy checkbox binding (optional)
         const codCheckbox = $$("cash_on_delivery");
         if (codCheckbox && !codCheckbox.dataset.bound) {
-            codCheckbox.addEventListener("change", () => {
-                select(codCheckbox.checked ? "cod" : "wallet");
-            });
+            codCheckbox.addEventListener("change", () =>
+                select(codCheckbox.checked ? "cod" : "wallet")
+            );
             codCheckbox.dataset.bound = "1";
         }
 
+        // COD input validation (enforce > 0)
         const codInput = $$("cod-amount-input");
         if (codInput && !codInput.dataset.bound) {
             const sync = () => {
                 const v = isFinite(+codInput.value) ? +codInput.value : 0;
                 const hidden = $$("cod-amount-hidden");
-                if (hidden) hidden.value = v;
-                window.codAmount = v;
+                if (v > 0) {
+                    codInput.setCustomValidity("");
+                    if (hidden) hidden.value = v;
+                    window.codAmount = v;
+                } else {
+                    codInput.setCustomValidity(
+                        t(
+                            "cod_amount_required",
+                            "Amount must be greater than 0"
+                        )
+                    );
+                    if (hidden) hidden.value = "";
+                    window.codAmount = undefined;
+                }
+                syncNextBtnStep5();
             };
             codInput.addEventListener("input", sync);
             codInput.addEventListener("change", sync);
@@ -336,6 +691,7 @@
         updateCodNote();
         document.addEventListener("receiversChanged", () => {
             updateCodNote();
+            syncNextBtnStep5();
         });
     }
 
@@ -348,5 +704,8 @@
             "#step-6 .payment-options-container"
         );
         if (hasStep6) renderPaymentOptions();
+        if (document.getElementById("step-4")) {
+            window.populateShippingFormFields();
+        }
     });
 })();
