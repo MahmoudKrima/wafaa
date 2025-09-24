@@ -1170,47 +1170,62 @@
 
             if (!newRadio || !existingRadio || !container || !dropdown || !textarea || !descriptionIdInput || !isNewInput) return;
 
+            function revalidate() {
+                if (typeof window.syncNextBtnStep5 === 'function') window.syncNextBtnStep5();
+            }
+
+            function hardResetFields() {
+                // wipe everything so nothing carries over between modes
+                textarea.value = '';
+                descriptionIdInput.value = '';
+                dropdown.value = ''; // clear any previously chosen description
+                revalidate();
+            }
+
             function handleTypeChange() {
+                hardResetFields();
+                
                 if (newRadio.checked) {
                     container.style.display = 'none';
                     textarea.disabled = false;
                     textarea.readOnly = false;
                     textarea.style.backgroundColor = '';
-                    textarea.placeholder = window.translations?.enter_package_description || 'Enter package description';
-                    descriptionIdInput.value = '';
+                    textarea.placeholder = (window.translations?.enter_package_description) || 'Enter package description';
                     isNewInput.value = '1';
-                } else if (existingRadio.checked) {
+                } else {
                     container.style.display = 'block';
+                    textarea.disabled = true;
                     textarea.readOnly = true;
                     textarea.style.backgroundColor = '#f8f9fa';
-                    textarea.value = '';
-                    textarea.placeholder = 'Select a description from the dropdown above';
+                    textarea.placeholder = (window.translations?.select_description) || 'Select a description from the dropdown above';
                     isNewInput.value = '0';
                 }
+
+                revalidate();
             }
 
             function handleDropdownChange() {
-                const selectedOption = dropdown.options[dropdown.selectedIndex];
-                if (selectedOption && selectedOption.value) {
-                    textarea.value = selectedOption.dataset.description || '';
-                    descriptionIdInput.value = selectedOption.value;
+                const opt = dropdown.options[dropdown.selectedIndex];
+                if (opt && opt.value) {
+                    textarea.disabled = true;
+                    textarea.readOnly = true;
+                    textarea.value = opt.dataset.description || '';
+                    descriptionIdInput.value = opt.value;
                 } else {
                     textarea.value = '';
                     descriptionIdInput.value = '';
                 }
+                revalidate();
             }
 
             newRadio.addEventListener('change', handleTypeChange);
             existingRadio.addEventListener('change', handleTypeChange);
             dropdown.addEventListener('change', handleDropdownChange);
-            textarea.addEventListener('input', function() {
-                if (typeof window.syncNextBtnStep5 === 'function') {
-                    window.syncNextBtnStep5();
-                }
-            });
-
+            textarea.addEventListener('input', revalidate);
             handleTypeChange();
         }
+
+
         document.addEventListener('DOMContentLoaded', function() {
             setupDescriptionHandling();
             loadUserDescriptions();

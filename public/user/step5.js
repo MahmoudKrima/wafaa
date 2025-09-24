@@ -37,6 +37,8 @@
             window.hardEnableNext(window.validatePackageDetails());
         }
     }
+    window.syncNextBtnStep5 = syncNextBtnStep5;
+
 
     window.populateShippingFormFields = function populateShippingFormFields() {
         setupPackageTypeHandling();
