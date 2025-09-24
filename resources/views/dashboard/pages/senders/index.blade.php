@@ -86,7 +86,7 @@
                             <thead>
                                 <tr>
                                     <th scope="col">{{ __('admin.user') }}</th>
-                                    <th scope="col">{{ __('admin.name') }}</th>
+                                    <th scope="col">{{ __('admin.sender_name') }}</th>
                                     <th scope="col">{{ __('admin.phone') }}</th>
                                     <th scope="col">{{ __('admin.additional_phone') }}</th>
                                     <th scope="col">{{ __('admin.email') }}</th>
