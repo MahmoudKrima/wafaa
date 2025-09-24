@@ -28,7 +28,7 @@
 <body style="margin:0; padding:0; background-color:#f5f6f8;font-family:{{$fontFamily}}">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f5f6f8;">
     <tr>
-        <td align="center" style="padding:5px;">
+        <td style="padding:5px;">
             <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#ffffff; border-collapse:collapse; border-radius:8px; overflow:hidden;">
 
                 <tr>

@@ -26,6 +26,7 @@ return [
     'forget_password' => 'Forget Password ?',
     'email' => 'Email',
     'otp' => 'OTP',
+    'shipping_settings_center' => 'Shipping Center',
     'view' => 'View',
     'create' => 'Create',
     'update' => 'Update',

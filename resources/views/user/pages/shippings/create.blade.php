@@ -36,6 +36,7 @@
 <div class="layout-px-spacing">
     <div class="row layout-top-spacing">
         <div id="basic" class="col-12 layout-spacing">
+
             <div class="statbox widget box box-shadow">
                 <div class="widget-content widget-content-area">
                     <div class="row mb-4">
@@ -54,7 +55,7 @@
                                         <div class="step-number {{ $i===1 ? 'bg-primary' : 'bg-secondary' }} text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mx-sm-0" style="width:35px;height:35px;font-size:14px;font-weight:bold;margin-bottom:10px;">{{ $i }}</div>
                                         <span class="d-block d-sm-inline ms-0 ms-sm-2 text-center text-sm-start mt-2 small step_text">
                                             @switch($i)
-                                            @case(1) {{ __('admin.select_company') }} — {{ __('admin.choose_shipping_method') }} @break
+                                            @case(1) {{ __('admin.select_company') }} @break
                                             @case(2) {{ __('admin.sender_information') }} @break
                                             @case(3) {{ __('admin.receivers') }} @break
                                             @case(4) {{ __('admin.shipping_details') }} @break
@@ -75,12 +76,15 @@
                                     </button>
                                 </div>
                             </div>
+
+
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
+
+
+
 
     <div class="step-content" id="step-1">
         <h5 class="text-center mb-4">{{ __('admin.choose_shipping_company') }}</h5>
@@ -97,11 +101,16 @@
         </div>
         <div id="company-selected-summary" class="mt-4" style="display:none;"></div>
         <div id="company-pricing-display" class="mt-4" style="display:none;"></div>
+
+        <div>
+            <hr>
+        </div>
         <div id="inline-step2-under-step1" class="mt-5" style="display:none;">
             <h5 class="text-center mb-4">{{ __('admin.choose_shipping_method') }}</h5>
             <p class="text-center text-muted mb-4">
                 {{ __('admin.select_shipping_method_for') }} <strong id="selected-company-name"></strong>
             </p>
+
             <div id="method-options" class="row" style="display:flex;justify-content:center;"></div>
         </div>
     </div>
@@ -110,7 +119,7 @@
         <h5 class="text-center mb-4">{{ __('admin.user_information') }}</h5>
 
         <div class="row mb-4">
-            <div class="col-12 col-md-6">
+            <div class="col-12 col-md-12">
                 <label class="text-dark">{{ __('admin.sender_type') }}</label>
                 <div class="form-check">
                     <input class="form-check-input" type="radio" name="sender_type" id="sender_auth" value="auth" checked>
@@ -133,9 +142,7 @@
             </div>
         </div>
 
-        <div class="alert alert-info">
-            <i class="fas fa-info-circle"></i> {{ __('admin.user_info_note') }}
-        </div>
+        
         <div id="language-note" class="alert alert-warning" style="display:none;"></div>
 
         <div id="sender_form_container">
@@ -632,6 +639,8 @@
             </div>
         </div>
     </div>
+</div>
+</div>
 </div>
 </div>
 </div>

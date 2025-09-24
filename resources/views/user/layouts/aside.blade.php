@@ -85,8 +85,8 @@
     : 'false' }}" class="menu-toggle">
                     <div class="base-menu">
                         <div class="base-icons">
-                            <i class="fa fa-users" style="color:#1b6aab;font-size:35px;margin-bottom:10px;"></i>
-                            <p class="side_links_theme">{{__('admin.shipping_settings')}}</p>
+                            <i class="fa fa-arrows-split-up-and-left" style="color:#1b6aab;font-size:35px;margin-bottom:10px;"></i>
+                            <p class="side_links_theme">{{__('admin.shipping_settings_center')}}</p>
                         </div>
                     </div>
                 </a>
@@ -130,22 +130,22 @@
 
         <div class="submenu" id="shippings_settings">
             <div class="category-info">
-                <h5>{{ __('admin.shipping_settings') }}</h5>
+                <h5>{{ __('admin.shipping_settings_center') }}</h5>
             </div>
             <ul class="submenu-list" data-parent-element="#shippings_settings">
                 <li class="{{ isRoute(['user.senders.index']) ? 'active' : '' }}" style="margin-bottom:5px;">
                     <a href="{{ route('user.senders.index') }}">
-                        <i class="fa fa-bank" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
+                        <i class="fa fa-users" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
                         {{ __('admin.senders') }} </a>
                 </li>
                 <li class="{{ isRoute(['user.recievers.index']) ? 'active' : '' }}" style="margin-bottom:5px;">
                     <a href="{{ route('user.recievers.index') }}">
-                        <i class="fa fa-money-check-alt" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
+                        <i class="fa fa-users-cog" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
                         {{ __('admin.recievers') }} </a>
                 </li>
                 <li class="{{ isRoute(['user.user-descriptions.index']) ? 'active' : '' }}" style="margin-bottom:5px;">
                     <a href="{{ route('user.user-descriptions.index') }}">
-                        <i class="fa fa-money-check-alt" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
+                        <i class="fa fa-info-circle" style="color:#fe9400;font-size:15px;margin:0 5px;"></i>
                         {{ __('admin.shipping_descriptions') }} </a>
                 </li>
             </ul>
