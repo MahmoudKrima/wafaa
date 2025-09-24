@@ -365,48 +365,51 @@
                 </div>
             </div>
 
-            <div class="row" id="dimensions_section">
-                <div class="col-12 col-md-4 mb-3 ">
+            <div class="row d-flex" id="dimensions_section">
+                <div class="col-4 mb-3">
                     <label for="length" class="text-dark">{{ __('admin.length_cm') }}</label>
                     <input id="length" type="number" name="length" class="form-control" placeholder="0" min="0" step="0.1" value="{{ old('length',1) }}" required>
                 </div>
-                <div class="col-12 col-md-4 mb-3">
+                <div class="col-4 mb-3">
                     <label for="width" class="text-dark">{{ __('admin.width_cm') }}</label>
                     <input id="width" type="number" name="width" class="form-control" placeholder="0" min="0" step="0.1" value="{{ old('width',1) }}" required>
                 </div>
-                <div class="col-12 col-md-4 mb-3">
+                <div class="col-4 mb-3">
                     <label for="height" class="text-dark">{{ __('admin.height_cm') }}</label>
                     <input id="height" type="number" name="height" class="form-control" placeholder="0" min="0" step="0.1" value="{{ old('height',1) }}" required>
                 </div>
             </div>
 
+
             <div class="row">
                 <div class="col-12 mb-3">
                     <label for="package_description" class="text-dark">{{ __('admin.package_description') }}</label>
+
                     <div class="mb-2">
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="description_type" id="description_new" value="new" checked>
-                            <label class="form-check-label" for="description_new">
-                                {{ __('admin.new_description') }}
-                            </label>
+                            <label class="form-check-label" for="description_new">{{ __('admin.new_description') }}</label>
                         </div>
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="description_type" id="description_existing" value="existing">
-                            <label class="form-check-label" for="description_existing">
-                                {{ __('admin.select_existing_description') }}
-                            </label>
+                            <label class="form-check-label" for="description_existing">{{ __('admin.select_existing_description') }}</label>
                         </div>
                     </div>
+
                     <div id="existing_descriptions_container" style="display: none;" class="mb-2">
                         <select id="existing_descriptions" class="form-control">
                             <option value="">{{ __('admin.select_description') }}</option>
                         </select>
                     </div>
-                    <textarea id="package_description" name="package_description" class="form-control" rows="3" placeholder="{{ __('admin.enter_package_description') }}">{{ old('package_description') }}</textarea>
+
+                    <textarea id="package_description" name="package_description" class="form-control" rows="3"
+                        placeholder="{{ __('admin.enter_package_description') }}" required>{{ old('package_description') }}</textarea>
+
                     <input type="hidden" id="description_id" name="description_id" value="">
                     <input type="hidden" id="is_new_description" name="is_new_description" value="1">
                 </div>
             </div>
+
 
             <div class="row">
                 <div class="col-12 mb-5 mt-2">
@@ -832,6 +835,7 @@
         new_description: '{{ __("admin.new_description") }}',
         select_existing_description: '{{ __("admin.select_existing_description") }}',
         select_description: '{{ __("admin.select_description") }}',
+        package_description_required: '{{ __("admin.package_description_required") }}',
     };
     const API_ENDPOINTS = {
         shippingCompanies: '{{ route("user.shippings.companies") }}',
@@ -1067,7 +1071,7 @@
                 if (formWrap) formWrap.style.display = 'none';
                 fetchSenders();
                 if (selectEl) selectEl.value = '';
-            } else { 
+            } else {
                 if (existingWrap) existingWrap.style.display = 'none';
                 if (formWrap) formWrap.style.display = '';
                 clearForm();
@@ -1199,6 +1203,12 @@
             newRadio.addEventListener('change', handleTypeChange);
             existingRadio.addEventListener('change', handleTypeChange);
             dropdown.addEventListener('change', handleDropdownChange);
+            textarea.addEventListener('input', function() {
+                if (typeof window.syncNextBtnStep5 === 'function') {
+                    window.syncNextBtnStep5();
+                }
+            });
+
             handleTypeChange();
         }
         document.addEventListener('DOMContentLoaded', function() {

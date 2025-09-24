@@ -52,6 +52,7 @@
             "width",
             "height",
             "accept_terms",
+            "package_description",
         ];
         ids.forEach((id) => {
             const el = document.getElementById(id);
@@ -83,18 +84,15 @@
     function setupPackageTypeHandling() {
         const packageTypeSelect = document.getElementById("package_type");
         if (!packageTypeSelect) return;
-
         packageTypeSelect.required = true;
-
-        if (packageTypeSelect.value === "box") {
+        if (["box", "document"].includes(packageTypeSelect.value)) {
             showDimensionsSection();
         } else {
             hideDimensionsSection(true);
         }
-
         if (!packageTypeSelect.dataset.bound) {
             packageTypeSelect.addEventListener("change", function () {
-                if (this.value === "box") {
+                if (["box", "document"].includes(this.value)) {
                     showDimensionsSection();
                 } else {
                     hideDimensionsSection(true);
@@ -150,7 +148,16 @@
         const packageNumber = document.getElementById("package_number");
         const weight = document.getElementById("weight");
         const acceptTerms = document.getElementById("accept_terms");
-        if (!packageType || !packageNumber || !weight || !acceptTerms) {
+        const packageDescription = document.getElementById(
+            "package_description"
+        );
+        if (
+            !packageType ||
+            !packageNumber ||
+            !weight ||
+            !acceptTerms ||
+            !packageDescription
+        ) {
             return false;
         }
 
@@ -196,6 +203,19 @@
             showErrorStep5(t.accept_terms_required);
             return false;
         }
+
+        // Validate package description
+        if (
+            !packageDescription.value ||
+            packageDescription.value.trim() === ""
+        ) {
+            showErrorStep5(
+                t.package_description_required ||
+                    "Package description is required"
+            );
+            return false;
+        }
+
         return true;
     };
 })();
