@@ -189,7 +189,7 @@
                                     <td>
                                         <img src="{{ $shipment['shippingCompany']['logoUrl'] }}" style="width:70px;height:auto;">
                                     </td>
-                                    <td>{{ $shipment['trackingNumber'] ?? __('admin.n/a') }}</td>
+                                    <td>{{ $shipment['trackingNumber'] ?? __('admin.loading_tracking_number') }}</td>
                                     <td>{{ $shipment['shipmentDetails']['senderName'] ?? __('admin.n/a') }}</td>
                                     <td>{{ $shipment['shipmentDetails']['receiverName'] ?? __('admin.n/a') }}</td>
                                     <td>{{ optional($shipment['shipmentDetails'])['weight'] .' '. __('admin.kg') ?? __('admin.n/a') }}</td>
