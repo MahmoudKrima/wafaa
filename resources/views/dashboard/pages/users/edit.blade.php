@@ -107,7 +107,7 @@
                                                     <div class="d-flex align-items-center mb-3">
                                                         @if(!empty($company['logoUrl']))
                                                         <img src="{{ $company['logoUrl'] }}" alt="{{ $company['name'] ?? 'Company' }}"
-                                                            class="me-3" style="height: 40px;">
+                                                            class="me-3" style="height:90px;width:130px;object-fit: contain;">
                                                         @endif
                                                     </div>
                                                     <input type="hidden" name="shipping_prices[{{ $idx }}][id]" value="{{ $cid }}">
