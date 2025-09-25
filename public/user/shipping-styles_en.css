@@ -22,6 +22,41 @@
     }
 }
 
+.select2-container--default .select2-selection--single {
+    background-color: #ffffff !important;
+    border: 1px solid #b2b2b2 !important;
+    border-radius: 5px !important;
+    height: 44px !important;
+    font-size: 15px !important;
+    color: #111827 !important;
+    display: flex !important;
+    align-items: center !important;
+    direction: ltr !important;
+}
+
+/* النص داخل الصندوق */
+.select2-container--default
+    .select2-selection--single
+    .select2-selection__rendered {
+    color: #111827 !important;
+    padding-right: 12px !important;
+    text-align: left !important;
+}
+
+/* السهم */
+.select2-container--default
+    .select2-selection--single
+    .select2-selection__arrow {
+    height: 100% !important;
+    left: auto !important;
+    right: 10px !important;
+}
+
+/* القائمة المنسدلة */
+.select2-container--default .select2-dropdown {
+    background-color: #ffffff !important;
+}
+
 /* Card Styling */
 .company-card .card {
     background: #ffffff;
@@ -41,7 +76,8 @@
 }
 
 .company-card .card.selected {
-    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25), 0 8px 25px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.25),
+        0 8px 25px rgba(0, 0, 0, 0.15);
     background: #f8f9ff;
 }
 
@@ -160,25 +196,25 @@
     font-weight: 500;
 }
 
-.my_box_one{
+.my_box_one {
     background: #198ae9;
     border-top-left-radius: 15px;
     color: #fff;
 }
 
-.my_box_two{
+.my_box_two {
     background: #fe9400;
     border-top-right-radius: 15px;
     color: #fff;
 }
 
-.my_box_three{
+.my_box_three {
     background: #fe9400;
     border-bottom-left-radius: 15px;
     color: #fff;
 }
 
-.my_box_four{
+.my_box_four {
     background: #198ae9;
     border-bottom-right-radius: 15px;
     color: #fff;
@@ -223,12 +259,12 @@
     }
 }
 @media screen and (max-width: 1025px) {
-    .step{
+    .step {
         display: none !important;
     }
 }
 
-.step_theme{
+.step_theme {
     border: 1px solid #ccc;
     border-radius: 11px;
     padding: 15px 10px;
@@ -244,13 +280,12 @@
     }
 }
 @media screen and (max-width: 1025px) {
-    .prev_next_btn{
+    .prev_next_btn {
         display: block !important;
     }
 }
 
-
-.card_step2{
+.card_step2 {
     background: #ffffff;
     border: 1px solid #e9ecef;
     border-radius: 12px;
@@ -450,7 +485,6 @@
 
 /* Accessibility */
 
-
 /* Responsive Adjustments */
 @media (max-width: 575.98px) {
     .companies-grid {
@@ -489,12 +523,12 @@
     }
 }
 
-.receiver_theme{
+.receiver_theme {
     background: #efefef;
     padding: 11px 11px;
     border-radius: 10px;
     display: flex;
-    align-items:center;
+    align-items: center;
     margin: 0px;
 }
 
@@ -600,7 +634,9 @@
     }
 
     /* Header styling */
-    h4, h5, h6 {
+    h4,
+    h5,
+    h6 {
         color: #000 !important;
         font-weight: bold !important;
         page-break-after: avoid;

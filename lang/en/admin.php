@@ -673,4 +673,9 @@ return [
     'select_existing_description' => 'Select Existing Description',
     'select_description' => 'Select Description',
     'package_description_required' => 'Package description is required',
+    'choose_country' => 'Choose country',
+    'no_countries_found' => 'No data found',
+    'choose_state' => 'Choose state',
+    'no_states_found' => 'No data found',
+    'no_cities_available' => 'No data found',
 ];

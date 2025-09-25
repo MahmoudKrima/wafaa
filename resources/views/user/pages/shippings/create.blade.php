@@ -9,6 +9,7 @@
 @endif
 <!-- Select2 CSS -->
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
 @endpush
 
 <style>
@@ -1131,6 +1132,9 @@
                     placeholder: '{{ __("admin.choose_sender") }}',
                     allowClear: true,
                     width: '100%',
+                    minimumInputLength: 0,
+                    closeOnSelect: true,
+                    cache: true,
                     language: {
                         noResults: function() {
                             return '{{ __("admin.no_senders_found") }}';
@@ -1187,6 +1191,9 @@
                     placeholder: '{{ __("admin.choose_receiver") }}',
                     allowClear: true,
                     width: '100%',
+                    minimumInputLength: 0,
+                    closeOnSelect: true,
+                    cache: true,
                     language: {
                         noResults: function() {
                             return '{{ __("admin.no_receivers_found") }}';
@@ -1228,6 +1235,288 @@
                 }, 100);
             }
         });
+    })();
+
+    // Initialize Select2 for location selects (country, state, city) in receiver section
+    (function() {
+        const countrySelect = document.getElementById('country');
+        const stateSelect = document.getElementById('state');
+        const citySelect = document.getElementById('city');
+
+        function initializeLocationSelect2() {
+            // Initialize country select
+            if (countrySelect && !countrySelect.dataset.select2Initialized) {
+                
+                $(countrySelect).select2({
+                    placeholder: '{{ __("admin.select_country") }}',
+                    allowClear: true,
+                    width: '100%',
+                    minimumInputLength: 0,
+                    closeOnSelect: true,
+                    cache: true,
+                    language: {
+                        noResults: function() {
+                            return '{{ __("admin.no_countries_found") }}';
+                        },
+                        searching: function() {
+                            return '{{ __("admin.searching") }}';
+                        }
+                    }
+                });
+
+                // Re-bind the change event after Select2 initialization
+                $(countrySelect).on('select2:select', function(e) {
+                    // Set the underlying select value
+                    countrySelect.value = e.params.data.id;
+                    // Trigger native change event to maintain cascading logic
+                    countrySelect.dispatchEvent(new Event('change', { bubbles: true }));
+                });
+
+                // Handle clear events
+                $(countrySelect).on('select2:clear', function() {
+                    countrySelect.value = '';
+                    countrySelect.dispatchEvent(new Event('change', { bubbles: true }));
+                });
+
+                countrySelect.dataset.select2Initialized = '1';
+            }
+
+            // Initialize state select
+            if (stateSelect && !stateSelect.dataset.select2Initialized) {
+                
+                $(stateSelect).select2({
+                    placeholder: '{{ __("admin.select_state") }}',
+                    allowClear: true,
+                    width: '100%',
+                    minimumInputLength: 0,
+                    closeOnSelect: true,
+                    cache: true,
+                    language: {
+                        noResults: function() {
+                            return '{{ __("admin.no_states_found") }}';
+                        },
+                        searching: function() {
+                            return '{{ __("admin.searching") }}';
+                        }
+                    }
+                });
+
+                // Re-bind the change event after Select2 initialization
+                $(stateSelect).on('select2:select', function(e) {
+                    // Set the underlying select value
+                    stateSelect.value = e.params.data.id;
+                    // Trigger native change event to maintain cascading logic
+                    stateSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                });
+
+                // Handle clear events
+                $(stateSelect).on('select2:clear', function() {
+                    stateSelect.value = '';
+                    stateSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                });
+
+                stateSelect.dataset.select2Initialized = '1';
+            }
+
+            // Initialize city select
+            if (citySelect && !citySelect.dataset.select2Initialized) {
+                $(citySelect).select2({
+                    placeholder: '{{ __("admin.select_city") }}',
+                    allowClear: true,
+                    width: '100%',
+                    minimumInputLength: 0,
+                    closeOnSelect: true,
+                    cache: true,
+                    language: {
+                        noResults: function() {
+                            return '{{ __("admin.no_cities_available") }}';
+                        },
+                        searching: function() {
+                            return '{{ __("admin.searching") }}';
+                        }
+                    }
+                });
+
+                // Ensure the underlying select value is properly set
+                $(citySelect).on('select2:select', function(e) {
+                    // Get the selected value from Select2
+                    const selectedValue = e.params.data.id;
+                    // Set the underlying select value
+                    citySelect.value = selectedValue;
+                    // Trigger native change event
+                    citySelect.dispatchEvent(new Event('change', { bubbles: true }));
+                });
+
+                // Also handle clear events
+                $(citySelect).on('select2:clear', function() {
+                    citySelect.value = '';
+                    citySelect.dispatchEvent(new Event('change', { bubbles: true }));
+                });
+
+                citySelect.dataset.select2Initialized = '1';
+            }
+        }
+
+        // Initialize Select2 when step 3 is shown (after original event listeners are bound)
+        document.addEventListener('stepChanged', e => {
+            if (e && e.detail && (e.detail.currentStep === 3 || e.detail.currentStep === '3')) {
+                setTimeout(() => {
+                    initializeLocationSelect2();
+                }, 1000); // Wait longer to ensure original listeners are bound
+            }
+        });
+
+        // Also initialize when the page loads if step 3 is already active
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                // Check if we're on step 3
+                const step3 = document.getElementById('step-3');
+                if (step3 && step3.style.display !== 'none') {
+                    initializeLocationSelect2();
+                }
+            }, 1500);
+        });
+
+    })();
+
+    // Initialize Select2 for sender location selects (user_country, user_state, user_city)
+    (function() {
+        const userCountrySelect = document.getElementById('user_country');
+        const userStateSelect = document.getElementById('user_state');
+        const userCitySelect = document.getElementById('user_city');
+
+        function initializeSenderLocationSelect2() {
+            // Initialize user country select
+            if (userCountrySelect && !userCountrySelect.dataset.select2Initialized) {
+                $(userCountrySelect).select2({
+                    placeholder: '{{ __("admin.choose_country") }}',
+                    allowClear: true,
+                    width: '100%',
+                    minimumInputLength: 0,
+                    closeOnSelect: true,
+                    cache: true,
+                    language: {
+                        noResults: function() {
+                            return '{{ __("admin.no_countries_found") }}';
+                        },
+                        searching: function() {
+                            return '{{ __("admin.searching") }}';
+                        }
+                    }
+                });
+
+                // Re-bind the change event after Select2 initialization
+                $(userCountrySelect).on('select2:select', function(e) {
+                    // Set the underlying select value
+                    userCountrySelect.value = e.params.data.id;
+                    // Trigger native change event to maintain cascading logic
+                    userCountrySelect.dispatchEvent(new Event('change', { bubbles: true }));
+                });
+
+                // Handle clear events
+                $(userCountrySelect).on('select2:clear', function() {
+                    userCountrySelect.value = '';
+                    userCountrySelect.dispatchEvent(new Event('change', { bubbles: true }));
+                });
+
+                userCountrySelect.dataset.select2Initialized = '1';
+            }
+
+            // Initialize user state select
+            if (userStateSelect && !userStateSelect.dataset.select2Initialized) {
+                $(userStateSelect).select2({
+                    placeholder: '{{ __("admin.choose_state") }}',
+                    allowClear: true,
+                    width: '100%',
+                    minimumInputLength: 0,
+                    closeOnSelect: true,
+                    cache: true,
+                    language: {
+                        noResults: function() {
+                            return '{{ __("admin.no_states_found") }}';
+                        },
+                        searching: function() {
+                            return '{{ __("admin.searching") }}';
+                        }
+                    }
+                });
+
+                // Re-bind the change event after Select2 initialization
+                $(userStateSelect).on('select2:select', function(e) {
+                    // Set the underlying select value
+                    userStateSelect.value = e.params.data.id;
+                    // Trigger native change event to maintain cascading logic
+                    userStateSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                });
+
+                // Handle clear events
+                $(userStateSelect).on('select2:clear', function() {
+                    userStateSelect.value = '';
+                    userStateSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                });
+
+                userStateSelect.dataset.select2Initialized = '1';
+            }
+
+            // Initialize user city select
+            if (userCitySelect && !userCitySelect.dataset.select2Initialized) {
+                $(userCitySelect).select2({
+                    placeholder: '{{ __("admin.choose_city") }}',
+                    allowClear: true,
+                    width: '100%',
+                    minimumInputLength: 0,
+                    closeOnSelect: true,
+                    cache: true,
+                    language: {
+                        noResults: function() {
+                            return '{{ __("admin.no_cities_available") }}';
+                        },
+                        searching: function() {
+                            return '{{ __("admin.searching") }}';
+                        }
+                    }
+                });
+
+                // Ensure the underlying select value is properly set
+                $(userCitySelect).on('select2:select', function(e) {
+                    // Get the selected value from Select2
+                    const selectedValue = e.params.data.id;
+                    // Set the underlying select value
+                    userCitySelect.value = selectedValue;
+                    // Trigger native change event
+                    userCitySelect.dispatchEvent(new Event('change', { bubbles: true }));
+                });
+
+                // Also handle clear events
+                $(userCitySelect).on('select2:clear', function() {
+                    userCitySelect.value = '';
+                    userCitySelect.dispatchEvent(new Event('change', { bubbles: true }));
+                });
+
+                userCitySelect.dataset.select2Initialized = '1';
+            }
+        }
+
+        // Initialize Select2 when step 2 is shown (after original event listeners are bound)
+        document.addEventListener('stepChanged', e => {
+            if (e && e.detail && (e.detail.currentStep === 2 || e.detail.currentStep === '2')) {
+                setTimeout(() => {
+                    initializeSenderLocationSelect2();
+                }, 1000); // Wait longer to ensure original listeners are bound
+            }
+        });
+
+        // Also initialize when the page loads if step 2 is already active
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                // Check if we're on step 2
+                const step2 = document.getElementById('step-2');
+                if (step2 && step2.style.display !== 'none') {
+                    initializeSenderLocationSelect2();
+                }
+            }, 1500);
+        });
+
     })();
 
     (function() {
@@ -1382,6 +1671,9 @@
                             placeholder: '{{ __("admin.select_description") }}',
                             allowClear: true,
                             width: '100%',
+                            minimumInputLength: 0,
+                            closeOnSelect: true,
+                            cache: true,
                             language: {
                                 noResults: function() {
                                     return '{{ __("admin.no_descriptions_found") }}';
