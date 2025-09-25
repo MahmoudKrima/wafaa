@@ -5,10 +5,9 @@
     $align = $isRtl ? 'right' : 'left';
     $oppAlign = $isRtl ? 'left' : 'right';
     $fontFamily = $isRtl ? 'Almarai' : 'sans-serif';
-
 @endphp
     <!doctype html>
-<html lang="{{ $locale }}" dir="{{ $dir }}">
+<html>
 
 <head>
     <meta charset="utf-8">
@@ -39,7 +38,7 @@
 
                 <tr>
                     <td style="padding:20px; font-family:{{$fontFamily}};color:#1f2937;text-align:{{ $align }};">
-                        <p style="margin:0 0 12px; font-size:16px;font-family:{{$fontFamily}};text-align:{{ $align }};">
+                        <p style="margin:0 0 12px; font-size:16px;font-family:{{$fontFamily}};text-align:{{ $align }};direction:{{ $dir }}">
                             {{ __('admin.hello_name', ['name' => $user->name ?? __('admin.user')]) }}
                         </p>
 
@@ -56,55 +55,54 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td
-                                    style="padding:12px 16px; font-family:{{$fontFamily}}; font-size:14px; color:#374151;">
+                                
                                     <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
-                                           style="border-collapse:collapse;">
-                                        <tr>
-                                            <td style="padding:6px 0; width:40%; text-align:{{ $align }};font-family:{{$fontFamily}};">
-                                                <strong style="font-family:{{$fontFamily}};">{{ __('admin.name') }}</strong>
+                                           style="border-collapse:collapse;direction: {{ $dir }}";>
+                                        <tr style="direction: {{ $dir }}">
+                                            <td style="padding:6px 5px; width:40%; text-align:{{ $align }};font-family:{{$fontFamily}};">
+                                                <strong style="font-family:{{$fontFamily}};">{{ __('admin.name') }} : </strong>
                                             </td>
-                                            <td style="padding:6px 0; text-align:{{ $oppAlign }};font-family:{{$fontFamily}};">
+                                            <td style="padding:6px 5px; text-align:{{ $oppAlign }};font-family:{{$fontFamily}};">
                                                 {{ $user->name }}
                                             </td>
                                         </tr>
-                                        <tr>
-                                            <td style="padding:6px 0; width:40%; text-align:{{ $align }};font-family:{{$fontFamily}};">
-                                                <strong style="font-family:{{$fontFamily}};">{{ __('admin.email') }}</strong>
+                                        <tr style="direction: {{ $dir }}">
+                                            <td style="padding:6px 5px; width:40%; text-align:{{ $align }};font-family:{{$fontFamily}};">
+                                                <strong style="font-family:{{$fontFamily}};">{{ __('admin.email') }} : </strong>
                                             </td>
-                                            <td style="padding:6px 0; text-align:{{ $oppAlign }};font-family:{{$fontFamily}};">
+                                            <td style="padding:6px 5px; text-align:{{ $oppAlign }};font-family:{{$fontFamily}};">
                                                 {{ $user->email }}
                                             </td>
                                         </tr>
-                                        <tr>
-                                            <td style="padding:6px 0; width:40%; text-align:{{ $align }};font-family:{{$fontFamily}};">
-                                                <strong style="font-family:{{$fontFamily}};">{{ __('admin.phone') }}</strong>
+                                        <tr style="direction: {{ $dir }}">
+                                            <td style="padding:6px 5px; width:40%; text-align:{{ $align }};font-family:{{$fontFamily}};">
+                                                <strong style="font-family:{{$fontFamily}};">{{ __('admin.phone') }} : </strong>
                                             </td>
-                                            <td style="padding:6px 0; text-align:{{ $oppAlign }};font-family:{{$fontFamily}};">
+                                            <td style="padding:6px 5px; text-align:{{ $oppAlign }};font-family:{{$fontFamily}};">
                                                 {{ $user->phone }}
                                             </td>
                                         </tr>
-                                        <tr>
-                                            <td style="padding:6px 0; width:40%; text-align:{{ $align }};font-family:{{$fontFamily}};">
-                                                <strong style="font-family:{{$fontFamily}};">{{ __('admin.password') }}</strong>
+                                        <tr style="direction: {{ $dir }}">
+                                            <td style="padding:6px 5px; width:40%; text-align:{{ $align }};font-family:{{$fontFamily}};">
+                                                <strong style="font-family:{{$fontFamily}};">{{ __('admin.password') }} : </strong>
                                             </td>
-                                            <td style="padding:6px 0; text-align:{{ $oppAlign }};font-family:{{$fontFamily}};">
+                                            <td style="padding:6px 5px; text-align:{{ $oppAlign }};font-family:{{$fontFamily}};">
                                                 {{ $plainPassword }}
                                             </td>
                                         </tr>
 
-                                        <tr style="margin:20px 0;">
+                                        <tr style="margin:20px 0;direction: {{ $dir }}">
 
-                                            <td style="padding:15px 0; width:40%; text-align:{{ $align }};font-family:{{$fontFamily}};">
-                                                <strong style="font-family:{{$fontFamily}};">{{ __('admin.login_url') }}</strong>
+                                            <td style="padding:15px 5px; width:40%; text-align:{{ $align }};font-family:{{$fontFamily}};">
+                                                <strong style="font-family:{{$fontFamily}};">{{ __('admin.login_url') }} : </strong>
                                             </td>
-                                            <td style="padding:15px 0; text-align:{{ $oppAlign }};font-family:{{$fontFamily}};">
+                                            <td style="padding:15px 5px; text-align:{{ $oppAlign }};font-family:{{$fontFamily}};">
                                                 <a style="background:#1b6aab;color:#fff;font-family:{{$fontFamily}};border-radius:5px;padding:10px;text-decoration:none;"
                                                    href="{{route('user.auth.loginForm')}}">{{ __('admin.login_now') }}</a>
                                             </td>
                                         </tr>
                                     </table>
-                                </td>
+                                
                             </tr>
 
                             <tr>
