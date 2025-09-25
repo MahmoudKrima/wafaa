@@ -18,12 +18,12 @@
 
     const API_KEY =
         document.querySelector('meta[name="ghaya-api-key"]')?.content ||
-        (window.GHAYA_API_KEY ?? "xwqn5mb5mpgf5u3vpro09i8pmw9fhkuu");
+        (window.GHAYA_API_KEY ?? "qp4dz7u6m8ro8jx0txg9eqh7mcu5vvg0");
 
     const API_BASE =
         document.querySelector('meta[name="ghaya-api-base"]')?.content ||
         (window.GHAYA_API_BASE ??
-            "https://ghaya-express-staging-af597af07557.herokuapp.com/api");
+            "https://ghaya-express-api-server-74ddc24b4e63.herokuapp.com/api");
 
     const API = {
         countries:
