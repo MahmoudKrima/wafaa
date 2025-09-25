@@ -29,6 +29,29 @@ class UserService
 {
     use TranslateTrait;
 
+
+    private function resolveGhayaApiKey(): string
+    {
+        $ownerId = getAdminIdOrCreatedBy();
+        return (string) ((string)$ownerId === '1'
+            ? config('services.ghaya.key')
+            : config('services.ghaya.key_two'));
+    }
+
+    private function ghayaRequest()
+    {
+        return Http::withHeaders([
+            'accept'    => '*/*',
+            'x-api-key' => $this->resolveGhayaApiKey(),
+        ]);
+    }
+
+    private function ghayaUrl(string $endpoint): string
+    {
+        return rtrim(config('services.ghaya.base_url'), '/') . '/' . ltrim($endpoint, '/');
+    }
+
+    
     public function index()
     {
         return User::withAllRelations()
@@ -77,12 +100,12 @@ class UserService
 
         $headers = [
             'accept' => '*/*',
-            'x-api-key' => env('GHAYA_API_KEY', 'xwqn5mb5mpgf5u3vpro09i8pmw9fhkuu'),
+            'x-api-key' => env('GHAYA_API_KEY', 'qp4dz7u6m8ro8jx0txg9eqh7mcu5vvg0'),
         ];
         $responses = Http::pool(function (Pool $pool) use ($ids, $headers) {
             return array_map(
                 fn($id) => $pool->withHeaders($headers)
-                    ->get('https://ghaya-express-staging-af597af07557.herokuapp.com/api/shipping-companies/' . $id),
+                    ->get('https://ghaya-express-api-server-74ddc24b4e63.herokuapp.com/api/shipping-companies/' . $id),
                 $ids
             );
         });
