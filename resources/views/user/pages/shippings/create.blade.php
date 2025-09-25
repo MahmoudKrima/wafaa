@@ -121,29 +121,39 @@
     <div class="step-content" id="step-2" style="display:none;" data-app-locale="{{ app()->getLocale() }}" data-senders-url="{{ route('user.senders.getSenders') }}">
         <h5 class="text-center mb-4">{{ __('admin.user_information') }}</h5>
 
+        <!-------->
+
         <div class="row mb-4">
             <div class="col-12 col-md-12">
-                <label class="text-dark">{{ __('admin.sender_type') }}</label>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="sender_type" id="sender_auth" value="auth" checked>
-                    <label class="form-check-label" for="sender_auth">{{ __('admin.authenticated_user') }}</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="sender_type" id="sender_existing" value="existing">
-                    <label class="form-check-label" for="sender_existing">{{ __('admin.existing_sender') }}</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="sender_type" id="sender_new" value="new">
-                    <label class="form-check-label" for="sender_new">{{ __('admin.new_sender') }}</label>
+                {{--<strong class="text-dark mb-4">{{ __('admin.sender_type') }}</strong>--}}
+                
+                <div class="selector">
+                    <div class="selector-item">
+                        <input type="radio" class="selector-item_radio" type="radio" name="sender_type" id="sender_auth" value="auth" checked>
+                        <label for="sender_auth" class="selector-item_label">{{ __('admin.authenticated_user') }}</label>
+                    </div>
+                    <div class="selector-item">
+                        <input type="radio" class="selector-item_radio" name="sender_type" id="sender_existing" value="existing">
+                        <label for="sender_existing" class="selector-item_label">{{ __('admin.existing_sender') }}</label>
+                    </div>
+                    <div class="selector-item">
+                        <input type="radio" class="selector-item_radio" name="sender_type" id="sender_new" value="new">
+                        <label for="sender_new" class="selector-item_label">{{ __('admin.new_sender') }}</label>
+                    </div>
                 </div>
             </div>
-            <div class="col-12 col-md-6 mt-2" id="existing_sender_select_wrap" style="display:none;">
+
+            <div class="col-12 col-md-6 mt-4" id="existing_sender_select_wrap" style="display:none;margin-top:15px;font-weight:700">
                 <label for="sender_select" class="text-dark">{{ __('admin.select_sender') }}</label>
                 <select id="sender_select" class="form-control">
                     <option value="">{{ __('admin.choose_sender') }}</option>
                 </select>
             </div>
+
         </div>
+
+        <!------->
+        
 
         
         <div id="language-note" class="alert alert-warning" style="display:none;"></div>
