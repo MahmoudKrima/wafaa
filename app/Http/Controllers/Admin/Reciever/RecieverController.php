@@ -12,8 +12,7 @@ class RecieverController extends Controller
 {
     public function __construct(
         private RecieverService $recieverService,
-    ) {
-    }
+    ) {}
 
     public function index(User $user)
     {

@@ -11,3 +11,5 @@ Route::post('/contact', [HomeController::class, 'contact'])->name('front.contact
 
 require_once "admin.php";
 require_once "user.php";
+
+

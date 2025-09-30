@@ -55,7 +55,7 @@ class AllowedCompaniesService
                 $toInsert[] = [
                     'company_id'   => $companyId,
                     'company_name' => $name,
-                    'status'       => 'deactive',
+                    'status'       => 'active',
                     'image'        => data_get($company, 'logoUrl'),
                     'admin_id'     => $adminId,
                     'created_at'   => now(),

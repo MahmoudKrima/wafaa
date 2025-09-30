@@ -22,7 +22,6 @@ function isStep1Valid() {
     return !!window.selectedCompany;
 }
 
-// ✅ Use the actual Step 2 validation from your step-2 script
 function isStep2Valid() {
     if (typeof window.validateStep2Form === "function") {
         return window.validateStep2Form();
@@ -87,14 +86,6 @@ function handleNextStep() {
     if (currentStep === 2 && !isStep2Valid()) return;
     if (currentStep === 3 && !isStep3Valid()) return;
     if (currentStep === 4 && !isStep4Valid()) {
-        if (typeof window.toast === "function") {
-            window.toast(
-                (window.translations &&
-                    window.translations["fix_package_details"]) ||
-                    "Please complete the package details before continuing",
-                "error"
-            );
-        }
         return;
     }
     if (currentStep === 5 && !isStep5Valid()) return;
@@ -151,7 +142,9 @@ function showStep(step) {
     if (step === 4) {
         if (typeof window.populateShippingFormFields === "function")
             window.populateShippingFormFields();
-        setNextForStep(4);
+        setTimeout(() => {
+            setNextForStep(4);
+        }, 100);
     }
     if (step === 5 && typeof window.setupPaymentDetails === "function")
         window.setupPaymentDetails();

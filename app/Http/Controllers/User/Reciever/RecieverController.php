@@ -30,7 +30,8 @@ class RecieverController extends Controller
 
     public function create()
     {
-        return view('user.pages.recievers.create');
+        $shippingCompanies = $this->recieverService->getShippingCompanies();
+        return view('user.pages.recievers.create', compact('shippingCompanies'));
     }
 
     public function store(StoreRecieverRequest $request)
@@ -43,7 +44,9 @@ class RecieverController extends Controller
 
     public function edit(Reciever $reciever)
     {
-        return view('user.pages.recievers.edit', compact('reciever'));
+        $shippingCompanies = $this->recieverService->getShippingCompanies();
+        $reciever->load('shippingCompanies');
+        return view('user.pages.recievers.edit', compact('reciever', 'shippingCompanies'));
     }
 
 
@@ -61,5 +64,13 @@ class RecieverController extends Controller
         return redirect()
             ->route('user.recievers.index')
             ->with('Success', __('admin.deleted_successfully'));
+    }
+
+    public function getCitiesByCompanyAndCountry($shippingCompanyId)
+    {
+        $countryId = '65fd1a1c1fdbc094e3369b29';
+        $cities = $this->recieverService->getCitiesByCompanyAndCountry($shippingCompanyId, $countryId);
+        
+        return response()->json($cities);
     }
 }

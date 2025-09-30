@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\RecieverCity;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -14,6 +15,7 @@ class Reciever extends Model
 
     public static $relatio = [
         'user',
+        'shippingCompanies',
     ];
 
 
@@ -26,5 +28,10 @@ class Reciever extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function shippingCompanies()
+    {
+        return $this->hasMany(RecieverCity::class, 'reciever_id', 'id');
     }
 }
