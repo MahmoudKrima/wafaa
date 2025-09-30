@@ -25,7 +25,8 @@ class StoreRecieverRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => [
-                'required',
+                'sometimes',
+                'nullable',
                 'email:dns,filter',
                 Rule::unique('recievers', 'email'),
                 Rule::unique('users', 'email'),
@@ -48,6 +49,7 @@ class StoreRecieverRequest extends FormRequest
             ],
             'additional_phone' => [
                 'nullable',
+                'sometimes',
                 'string',
                 'regex:/^(05|5|9665|96605|009665|\+9665)[0-9]{8}$/',
                 Rule::unique('recievers', 'additional_phone'),
@@ -57,6 +59,10 @@ class StoreRecieverRequest extends FormRequest
                 Rule::unique('users', 'additional_phone'),
             ],
             'postal_code' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'address' => ['required', 'string', 'max:99999'],
+            'shipping_companies' => ['required', 'array', 'min:1'],
+            'shipping_companies.*.company_id' => ['required', 'string'],
+            'shipping_companies.*.city_id' => ['required', 'string'],
         ];
     }
 

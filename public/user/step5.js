@@ -2,7 +2,6 @@
     let _submittingStep5 = false;
     const t = window.step5Translations || window.translations || {};
 
-    // Ensure length/width/height default to "1" when empty/invalid
     function ensureDimensionDefaults() {
         const lengthField = document.getElementById("length");
         const widthField = document.getElementById("width");
@@ -43,7 +42,6 @@
     window.populateShippingFormFields = function populateShippingFormFields() {
         setupPackageTypeHandling();
 
-        // Set defaults on first load if they’re empty/invalid
         ensureDimensionDefaults();
 
         const ids = [
@@ -71,9 +69,13 @@
                 "click",
                 () => {
                     _submittingStep5 = true;
+                    if (!window.validatePackageDetails(true)) {
+                        _submittingStep5 = false;
+                        return false;
+                    }
                     setTimeout(() => {
                         _submittingStep5 = false;
-                    }, 0);
+                    }, 100);
                 },
                 true
             );
@@ -118,7 +120,6 @@
         if (widthField) widthField.required = true;
         if (heightField) heightField.required = true;
 
-        // Whenever dimensions become visible, ensure defaults are applied
         ensureDimensionDefaults();
     }
 
@@ -145,7 +146,7 @@
         }
     }
 
-    window.validatePackageDetails = function validatePackageDetails() {
+    window.validatePackageDetails = function validatePackageDetails(showErrors = false) {
         const packageType = document.getElementById("package_type");
         const packageNumber = document.getElementById("package_number");
         const weight = document.getElementById("weight");
@@ -164,19 +165,19 @@
         }
 
         if (!packageType.value) {
-            showErrorStep5(t.package_type_required);
+            if (showErrors || _submittingStep5) showErrorStep5(t.package_type_required || "Please select a package type (Boxes or Documents).");
             return false;
         }
 
         const num = Number(packageNumber.value);
         if (!packageNumber.value || isNaN(num) || num < 1) {
-            showErrorStep5(t.package_number_invalid);
+            if (showErrors || _submittingStep5) showErrorStep5(t.package_number_invalid);
             return false;
         }
 
         const w = Number(weight.value);
         if (!weight.value || isNaN(w) || w <= 0) {
-            showErrorStep5(t.weight_invalid);
+            if (showErrors || _submittingStep5) showErrorStep5(t.weight_invalid);
             return false;
         }
 
@@ -184,7 +185,7 @@
         const width = document.getElementById("width");
         const height = document.getElementById("height");
         if (!length || !width || !height) {
-            showErrorStep5(t.dimensions_missing);
+            if (showErrors || _submittingStep5) showErrorStep5(t.dimensions_missing);
             return false;
         }
 
@@ -193,25 +194,24 @@
         const H = Number(height.value);
 
         if (!length.value || !width.value || !height.value) {
-            showErrorStep5(t.dimensions_required);
+            if (showErrors || _submittingStep5) showErrorStep5(t.dimensions_required);
             return false;
         }
         if (isNaN(L) || isNaN(W) || isNaN(H) || L <= 0 || W <= 0 || H <= 0) {
-            showErrorStep5(t.dimensions_invalid);
+            if (showErrors || _submittingStep5) showErrorStep5(t.dimensions_invalid);
             return false;
         }
 
         if (!acceptTerms.checked) {
-            showErrorStep5(t.accept_terms_required);
+            if (showErrors || _submittingStep5) showErrorStep5(t.accept_terms_required);
             return false;
         }
 
-        // Validate package description
         if (
             !packageDescription.value ||
             packageDescription.value.trim() === ""
         ) {
-            showErrorStep5(
+            if (showErrors || _submittingStep5) showErrorStep5(
                 t.package_description_required ||
                     "Package description is required"
             );

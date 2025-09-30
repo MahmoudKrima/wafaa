@@ -119,9 +119,6 @@ class ShippingController extends Controller
         $companies = $this->shippingService->getShippingCompanies();
         return view('user.pages.shippings.index', compact('shipments', 'companies'));
     }
-
-
-
     public function export(SearchShippingRequest $request)
     {
         return $this->shippingService->export($request);
@@ -134,7 +131,6 @@ class ShippingController extends Controller
 
     public function store(StoreShippingRequest $request)
     {
-        // dd($request->all());
         return $this->shippingService->store($request);
     }
 
@@ -156,10 +152,9 @@ class ShippingController extends Controller
         }
     }
 
-
-    public function receivers()
+    public function receivers($shippingCompanyId)
     {
-        $recievers = $this->shippingService->receivers();
+        $recievers = $this->shippingService->receivers($shippingCompanyId);
         return response()->json($recievers);
     }
 
@@ -168,7 +163,6 @@ class ShippingController extends Controller
         $companies = $this->shippingService->getUserShippingCompanies();
         return response()->json($companies);
     }
-
 
     public function getStates()
     {
@@ -255,6 +249,18 @@ class ShippingController extends Controller
 
     }
 
+    public function receiversByCompany($shippingCompanyId)
+    {
+        $receivers = $this->shippingService->receivers($shippingCompanyId);
+        return response()->json($receivers);
+    }
 
+    public function getCitiesByCompanyAndCountry($shippingCompanyId)
+    {
+        $countryId = '65fd1a1c1fdbc094e3369b29';
+        $cities = $this->shippingService->getCitiesByCompanyAndCountry($shippingCompanyId, $countryId);
+        
+        return response()->json($cities);
+    }
 
 }

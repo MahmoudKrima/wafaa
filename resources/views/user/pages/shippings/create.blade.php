@@ -124,9 +124,7 @@
         <!-------->
 
         <div class="row mb-4">
-            <div class="col-12 col-md-12">
-                {{--<strong class="text-dark mb-4">{{ __('admin.sender_type') }}</strong>--}}
-                
+            <div class="col-12 col-md-12">                
                 <div class="selector">
                     <div class="selector-item">
                         <input type="radio" class="selector-item_radio" type="radio" name="sender_type" id="sender_auth" value="auth" checked>
@@ -287,9 +285,10 @@
                     <input id="additional_phone" type="input" name="additional_phone" class="form-control" placeholder="{{ __('admin.enter_additional_phone') }}" pattern="05[0-9]{8}">
                 </div>
                 <div class="col-12 col-md-6 mb-3">
-                    <label for="email" class="text-dark">{{ __('admin.email') }}</label>
-                    <input id="email" type="email" name="email" class="form-control" placeholder="{{ __('admin.enter_email') }}">
+                    <label for="address" class="text-dark">{{ __('admin.full_address') }}</label>
+                    <textarea id="address" name="address" class="form-control" rows="3" placeholder="{{ __('admin.enter_full_address') }}" required></textarea>
                 </div>
+                
             </div>
 
             <div class="row">
@@ -300,30 +299,10 @@
                     </select>
                 </div>
                 <div class="col-12 col-md-6 mb-3">
-                    <label for="state" class="text-dark">{{ __('admin.state') }}</label>
-                    <select id="state" name="state" class="form-control" required>
-                        <option value="">{{ __('admin.select_state') }}</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-12 col-md-6 mb-3">
                     <label for="city" class="text-dark">{{ __('admin.city') }}</label>
                     <select id="city" name="city" class="form-control" required>
                         <option value="">{{ __('admin.select_city') }}</option>
                     </select>
-                </div>
-                <div class="col-12 col-md-6 mb-3">
-                    <label for="postal_code" class="text-dark">{{ __('admin.postal_code') }}</label>
-                    <input id="postal_code" type="text" name="postal_code" class="form-control" placeholder="{{ __('admin.enter_postal_code') }}">
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-12 mb-3">
-                    <label for="address" class="text-dark">{{ __('admin.full_address') }}</label>
-                    <textarea id="address" name="address" class="form-control" rows="3" placeholder="{{ __('admin.enter_full_address') }}" required></textarea>
                 </div>
             </div>
         </div>

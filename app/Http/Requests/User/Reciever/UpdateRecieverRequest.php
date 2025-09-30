@@ -26,7 +26,8 @@ class UpdateRecieverRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => [
-                'required',
+                'sometimes',
+                'nullable',
                 'email:dns,filter',
                 Rule::unique('recievers', 'email')->ignore($this->route('reciever')->id),
                 Rule::unique('users', 'email'),
@@ -58,6 +59,10 @@ class UpdateRecieverRequest extends FormRequest
                 Rule::unique('users', 'additional_phone'),
             ],
             'postal_code' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'address' => ['required', 'string', 'max:99999'],
+            'shipping_companies' => ['required', 'array', 'min:1'],
+            'shipping_companies.*.company_id' => ['required', 'string'],
+            'shipping_companies.*.city_id' => ['required', 'string'],
         ];
     }
 

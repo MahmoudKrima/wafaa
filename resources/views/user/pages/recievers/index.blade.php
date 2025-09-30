@@ -53,13 +53,6 @@
                                                             name="phone" id="phone" class="form-control"
                                                             placeholder="{{ __('admin.phone') }}">
                                                     </div>
-                                                    <div class="col-md-4 mb-3">
-                                                        <label for="email">{{ __('admin.email') }}</label>
-                                                        <input type="text" value="{{ request()->get('email') }}"
-                                                            name="email" id="email" class="form-control"
-                                                            placeholder="{{ __('admin.email') }}">
-                                                    </div>
-
                                                 </div>
                                                 <div class="row mt-2">
                                                     <div class="col-md-3 mb-3">
@@ -96,8 +89,7 @@
                                     <th scope="col">{{ __('admin.name') }}</th>
                                     <th scope="col">{{ __('admin.phone') }}</th>
                                     <th scope="col">{{ __('admin.additional_phone') }}</th>
-                                    <th scope="col">{{ __('admin.email') }}</th>
-                                    <th scope="col">{{ __('admin.postal_code') }}</th>
+                                    <th scope="col">{{ __('admin.address') }}</th>
                                     <th class="text-center" scope="col">{{ trans('admin.actions') }}</th>
                                 </tr>
                             </thead>
@@ -107,8 +99,7 @@
                                     <td>{{ $reciever->name }}</td>
                                     <td>{{ $reciever->phone }}</td>
                                     <td>{{ $reciever->additional_phone ?? __('admin.n/a') }}</td>
-                                    <td>{{ $reciever->email }}</td>
-                                    <td>{{ $reciever->postal_code ?? __('admin.n/a') }}</td>
+                                    <td>{{ $reciever->address ?? __('admin.n/a') }}</td>
                                     <td class="text-center">
                                         <div class="action-btns d-flex justify-content-center">
                                             <a href="{{ route('user.recievers.edit', $reciever->id) }}"

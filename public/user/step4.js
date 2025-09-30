@@ -29,22 +29,9 @@
         countries:
             window.API_ENDPOINTS?.countries ||
             `${API_BASE}/countries?page=0&pageSize=500`,
-        states: (countryId, companyId) =>
-            window.API_ENDPOINTS?.states?.(countryId, companyId) ||
-            `${API_BASE}/states?pageSize=500&page=0&countryId=${encodeURIComponent(
-                countryId
-            )}&shippingCompanyId=${encodeURIComponent(companyId)}`,
-        cities: (countryId, stateId, companyId) =>
-            window.API_ENDPOINTS?.cities?.(countryId, stateId, companyId) ||
-            `${API_BASE}/cities?pageSize=500&page=0&countryId=${encodeURIComponent(
-                countryId
-            )}&stateId=${encodeURIComponent(
-                stateId
-            )}&shippingCompanyId=${encodeURIComponent(companyId)}`,
     };
 
     const $country = () => document.getElementById("country");
-    const $state = () => document.getElementById("state");
     const $city = () => document.getElementById("city");
     const $addBtn = () => document.getElementById("add-receiver-btn");
     const $existingRadio = () => document.getElementById("existing_receiver");
@@ -141,15 +128,7 @@
         });
     }
 
-    const REQUIRED_KEYS = [
-        "name",
-        "phone",
-        "email",
-        "address",
-        "country_id",
-        "state_id",
-        "city_id",
-    ];
+    const REQUIRED_KEYS = ["name", "phone", "address", "country_id", "city_id"];
     function validateReceiverFields(r) {
         const missing = REQUIRED_KEYS.filter(
             (k) => !String(r?.[k] ?? "").trim()
@@ -159,7 +138,6 @@
 
     function normalizeReceiver(r) {
         const countryName = r.country?.name || r.country_name;
-        const stateName = r.state?.name || r.state_name;
         const cityName = r.city?.name || r.city_name;
         const id =
             r.id ||
@@ -173,8 +151,6 @@
             r.country ||
             (r.country && r.country.id) ||
             "";
-        const state_id =
-            r.state_id || r.stateId || r.state || (r.state && r.state.id) || "";
         const city_id =
             r.city_id || r.cityId || r.city || (r.city && r.city.id) || "";
         return {
@@ -186,10 +162,8 @@
             address: r.address || "",
             postal_code: r.postal_code || "",
             country_id: toStr(country_id),
-            state_id: toStr(state_id),
             city_id: toStr(city_id),
             country_name: displayName(countryName),
-            state_name: displayName(stateName),
             city_name: displayName(cityName),
         };
     }
@@ -227,84 +201,40 @@
         else if (getMethod() === "local") el.value = SAUDI_ID;
         if (!el.dataset.bound) {
             el.addEventListener("change", async () => {
-                $state().innerHTML = `<option value="">${t(
-                    "select_state",
-                    "Select State"
-                )}</option>`;
                 $city().innerHTML = `<option value="">${t(
                     "select_city",
                     "Select City"
                 )}</option>`;
-                $state().disabled = true;
                 $city().disabled = true;
-                if (el.value) await loadStates(el.value);
-                updateAddButtonState();
-            });
-            el.dataset.bound = "1";
-        }
-        if (el.value) await loadStates(el.value);
-    }
-
-    async function loadStates(countryId, selectedId = "") {
-        const el = $state();
-        if (!el) return;
-        const companyId = getCompanyId();
-        if (!countryId || !companyId) {
-            el.innerHTML = `<option value="">${t(
-                "select_state",
-                "Select State"
-            )}</option>`;
-            el.disabled = true;
-            return;
-        }
-        el.innerHTML = `<option value="">${t(
-            "loading_states",
-            "Loading states..."
-        )}</option>`;
-        el.disabled = true;
-        const data = await getJSON(API.states(countryId, companyId)).catch(
-            () => null
-        );
-        const items = Array.isArray(data?.results)
-            ? data.results
-            : Array.isArray(data)
-            ? data
-            : [];
-        el.innerHTML = `<option value="">${t(
-            "select_state",
-            "Select State"
-        )}</option>`;
-        items.forEach((s) => {
-            const opt = document.createElement("option");
-            opt.value = s.id || s._id;
-            opt.textContent = displayName(s.name) || "";
-            el.appendChild(opt);
-        });
-        el.disabled = false;
-        el.value = selectedId || "";
-        if (!el.dataset.bound) {
-            el.addEventListener("change", async () => {
-                const cityEl = $city();
-                if (cityEl) {
-                    cityEl.innerHTML = `<option value="">${t(
-                        "select_city",
-                        "Select City"
-                    )}</option>`;
-                    cityEl.disabled = true;
+                if (el.value) {
+                    const companyId = getCompanyId();
+                    if (companyId) {
+                        await loadCitiesByCompanyAndCountry(
+                            companyId,
+                            el.value
+                        );
+                    }
                 }
-                if (el.value) await loadCities($country().value, el.value);
                 updateAddButtonState();
             });
             el.dataset.bound = "1";
         }
-        if (el.value) await loadCities(countryId, el.value);
+        if (el.value) {
+            const companyId = getCompanyId();
+            if (companyId) {
+                await loadCitiesByCompanyAndCountry(companyId, el.value);
+            }
+        }
     }
 
-    async function loadCities(countryId, stateId, selectedId = "") {
+    async function loadCitiesByCompanyAndCountry(
+        companyId,
+        countryId,
+        selectedId = ""
+    ) {
         const el = $city();
         if (!el) return;
-        const companyId = getCompanyId();
-        if (!countryId || !stateId || !companyId) {
+        if (!countryId || !companyId) {
             el.innerHTML = `<option value="">${t(
                 "select_city",
                 "Select City"
@@ -317,48 +247,119 @@
             "Loading cities..."
         )}</option>`;
         el.disabled = true;
-        const data = await getJSON(
-            API.cities(countryId, stateId, companyId)
-        ).catch(() => null);
-        const items = Array.isArray(data?.results)
-            ? data.results
-            : Array.isArray(data)
-            ? data
-            : [];
-        el.innerHTML = `<option value="">${t(
-            "select_city",
-            "Select City"
-        )}</option>`;
-        items.forEach((c) => {
-            const opt = document.createElement("option");
-            opt.value = c.id || c._id;
-            opt.textContent = displayName(c.name) || "";
-            el.appendChild(opt);
-        });
-        el.disabled = false;
-        el.value = selectedId || "";
+        
+        // Update Select2 if it's being used
+        if (typeof $ !== "undefined" && $(el).hasClass("select2-hidden-accessible")) {
+            $(el).trigger("change.select2");
+        }
+
+        try {
+            const response = await fetch(
+                `/cities-by-company-and-country/${companyId}`,
+                {
+                    headers: {
+                        "X-CSRF-TOKEN":
+                            document.querySelector('meta[name="csrf-token"]')
+                                ?.content || "",
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                    },
+                    credentials: "same-origin",
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Failed to fetch cities");
+            }
+
+            const data = await response.json();
+            const items = Array.isArray(data?.results)
+                ? data.results
+                : Array.isArray(data)
+                ? data
+                : [];
+
+            el.innerHTML = `<option value="">${t(
+                "select_city",
+                "Select City"
+            )}</option>`;
+            items.forEach((c) => {
+                const opt = document.createElement("option");
+                opt.value = c.id || c._id;
+                opt.textContent = displayName(c.name) || "";
+                el.appendChild(opt);
+            });
+            el.disabled = false;
+            
+            // Update Select2 if it's being used
+            if (typeof $ !== "undefined" && $(el).hasClass("select2-hidden-accessible")) {
+                $(el).trigger("change.select2");
+            }
+            
+            updateAddButtonState();
+
+            if (selectedId) {
+                setTimeout(() => {
+                    el.value = selectedId;
+
+                    if (el.value !== selectedId) {
+                        const options = Array.from(el.options);
+                        const partialMatch = options.find(
+                            (opt) =>
+                                opt.value.includes(selectedId) ||
+                                selectedId.includes(opt.value)
+                        );
+                        if (partialMatch) {
+                            el.value = partialMatch.value;
+                        }
+                    }
+
+                    // Trigger Select2 update if it's being used
+                    if (
+                        typeof $ !== "undefined" &&
+                        $(el).hasClass("select2-hidden-accessible")
+                    ) {
+                        $(el).trigger("change.select2");
+                        // Update the button state after Select2 update
+                        setTimeout(() => {
+                            updateAddButtonState();
+                        }, 100);
+                    } else {
+                        // If not using Select2, update button state immediately
+                        updateAddButtonState();
+                    }
+                }, 200);
+            }
+        } catch (error) {
+            el.innerHTML = `<option value="">${t(
+                "error_loading_cities",
+                "Error loading cities"
+            )}</option>`;
+            el.disabled = false;
+            
+            // Update Select2 if it's being used
+            if (typeof $ !== "undefined" && $(el).hasClass("select2-hidden-accessible")) {
+                $(el).trigger("change.select2");
+            }
+            
+            updateAddButtonState();
+        }
     }
 
     async function setupReceiverFormByShippingType() {
         const c = $country(),
-            s = $state(),
             ci = $city();
-        if (!c || !s || !ci) return;
-        c.required = s.required = ci.required = true;
+        if (!c || !ci) return;
+        c.required = ci.required = true;
         await loadCountries();
-        if (getMethod() === "local") await loadStates(SAUDI_ID);
+        if (getMethod() === "local") {
+            const companyId = getCompanyId();
+            if (companyId) {
+                await loadCitiesByCompanyAndCountry(companyId, SAUDI_ID);
+            }
+        }
         ensureAdditionalPhoneOptional();
         updateAddButtonState();
-    }
-
-    function ensureReceiverStateFieldVisible() {
-        const stateField = $state();
-        if (stateField) {
-            stateField.style.display = "block";
-            stateField.style.visibility = "visible";
-            stateField.style.opacity = "1";
-            stateField.disabled = false;
-        }
     }
 
     function populateReceiverSelect(receivers) {
@@ -395,11 +396,19 @@
     function loadReceivers() {
         const select = $receiverSelect();
         if (!select) return;
-        fetchJson("/receivers")
+
+        const companyId = getCompanyId();
+        if (!companyId) {
+            select.innerHTML = `<option value="">${t(
+                "select_company_first",
+                "Please select a shipping company first"
+            )}</option>`;
+            return;
+        }
+
+        fetchJson(`/receivers-by-company/${companyId}`)
             .then((data) => {
-                const arr = Array.isArray(data)
-                    ? data
-                    : (data && data.results) || [];
+                const arr = Array.isArray(data) ? data : [];
                 if (!fetchedOnce) {
                     initialExistingMap = {};
                     arr.forEach((r) => {
@@ -454,10 +463,8 @@
             address: valueOf("address"),
             postal_code: valueOf("postal_code"),
             country_id: valueOf("country"),
-            state_id: valueOf("state"),
             city_id: valueOf("city"),
             country_name: displayName(textOf("country")),
-            state_name: displayName(textOf("state")),
             city_name: displayName(textOf("city")),
         };
     }
@@ -650,15 +657,27 @@
         setIf("email", n.email);
         setIf("address", n.address);
         setIf("postal_code", n.postal_code);
-        await loadCountries(n.country_id || "");
-        if (n.country_id) {
-            await loadStates(n.country_id, n.state_id || "");
-            if (n.state_id)
-                await loadCities(n.country_id, n.state_id, n.city_id || "");
-        } else if (getMethod() === "local") {
-            await loadStates(SAUDI_ID);
+
+        await loadCountries(SAUDI_ID);
+
+        const companyId = getCompanyId();
+        let receiverCityId = null;
+
+        if (r.shipping_companies && Array.isArray(r.shipping_companies)) {
+            const matchingCompany = r.shipping_companies.find(
+                (sc) => toStr(sc.shipping_company_id) === toStr(companyId)
+            );
+            if (matchingCompany) {
+                receiverCityId = matchingCompany.city_id;
+            }
         }
-        ensureReceiverStateFieldVisible();
+
+        await loadCitiesByCompanyAndCountry(
+            companyId,
+            SAUDI_ID,
+            receiverCityId
+        );
+
         ensureAdditionalPhoneOptional();
         const formSection = $newSection();
         if (formSection) formSection.style.display = "block";
@@ -678,7 +697,6 @@
             if (el) el.value = "";
         });
         const c = $country(),
-            s = $state(),
             ci = $city();
         if (c) {
             c.innerHTML = `<option value="">${t(
@@ -686,14 +704,6 @@
                 "Select Country"
             )}</option>`;
             c.value = "";
-        }
-        if (s) {
-            s.innerHTML = `<option value="">${t(
-                "select_state",
-                "Select State"
-            )}</option>`;
-            s.value = "";
-            s.disabled = true;
         }
         if (ci) {
             ci.innerHTML = `<option value="">${t(
@@ -732,16 +742,28 @@
     }
 
     function isFormComplete() {
-        const requiredIds = [
-            "name",
-            "phone",
-            "email",
-            "address",
-            "country",
-            "state",
-            "city",
-        ];
-        return requiredIds.every((id) => String(valueOf(id) || "").trim());
+        const requiredIds = ["name", "phone", "address", "country", "city"];
+        const results = requiredIds.map((id) => {
+            const el = document.getElementById(id);
+            let value = String(valueOf(id) || "").trim();
+            if (
+                el &&
+                typeof $ !== "undefined" &&
+                $(el).hasClass("select2-hidden-accessible")
+            ) {
+                const select2Value = $(el).val();
+                if (select2Value && select2Value !== value) {
+                    value = String(select2Value).trim();
+                }
+            }
+
+            const isValid = value !== "";
+            console.log(`Field ${id}: "${value}" - ${isValid ? 'VALID' : 'INVALID'}`);
+            return isValid;
+        });
+        const allValid = results.every((r) => r);
+        console.log(`Form complete: ${allValid}`);
+        return allValid;
     }
 
     function updateAddButtonState() {
@@ -752,11 +774,15 @@
         let enable = false;
         if (modeExisting) {
             const selectedId = $receiverSelect()?.value || "";
-            enable = !!selectedId && isFormComplete();
+            const formComplete = isFormComplete();
+            enable = !!selectedId && formComplete;
+            console.log(`Existing mode - selectedId: "${selectedId}", formComplete: ${formComplete}, enable: ${enable}`);
         } else if (modeNew) {
             enable = isFormComplete();
+            console.log(`New mode - enable: ${enable}`);
         } else {
             enable = false;
+            console.log(`No mode selected - enable: ${enable}`);
         }
         btn.disabled = !enable;
         btn.classList.toggle("btn-secondary", !enable);
@@ -821,7 +847,7 @@
                 if (newSection) newSection.style.display = "none";
                 forceClearNewForm();
                 resetExistingSelect();
-                loadReceivers(); // <-- load list when choosing "Existing"
+                loadReceivers();
                 ensureAdditionalPhoneOptional();
                 updateAddButtonState();
             });
@@ -836,7 +862,6 @@
                 forceClearNewForm();
                 resetExistingSelect();
                 await setupReceiverFormByShippingType();
-                ensureReceiverStateFieldVisible();
                 ensureAdditionalPhoneOptional();
                 updateAddButtonState();
             });
@@ -862,15 +887,13 @@
 
     window.loadReceivers = loadReceivers;
     window.populateReceiverForm = populateReceiverForm;
-    window.ensureReceiverStateFieldVisible = ensureReceiverStateFieldVisible;
     window.setupReceiverFormByShippingType = setupReceiverFormByShippingType;
     window.canProceedToNextStep = () =>
         Array.isArray(window.selectedReceivers) &&
         window.selectedReceivers.length > 0;
 
-    // Bind immediately so radios work as soon as Step 3 is shown
     document.addEventListener("DOMContentLoaded", () => {
-        wireUI(); // <-- crucial: bind the radio handlers now
+        wireUI();
         resetFormCompletely();
         if (window.selectedMethod) setupReceiverFormByShippingType();
         ensureAdditionalPhoneOptional();
@@ -878,7 +901,6 @@
         syncNextButton();
     });
 
-    // Also (optionally) re-bind when step changes to 3
     document.addEventListener("stepChanged", (e) => {
         if (e?.detail?.currentStep === 3 || e?.detail?.currentStep === "3") {
             wireUI();
@@ -892,5 +914,11 @@
         ensureAdditionalPhoneOptional();
         updateAddButtonState();
         syncNextButton();
+    });
+
+    document.addEventListener("shippingCompanySelected", () => {
+        if ($existingRadio()?.checked) {
+            loadReceivers();
+        }
     });
 })();

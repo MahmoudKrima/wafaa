@@ -14,19 +14,23 @@ use App\Http\Controllers\User\Notification\NotificationController;
 use App\Http\Controllers\User\UserDescription\UserDescriptionController;
 
 
-Route::controller(ShippingController::class)
-    ->group(function () {
-        Route::get('/states', 'getStates')
-            ->name('shippings.states');
-        Route::get('/receivers', 'receivers')
-            ->name('recievers.index');
-        Route::get('/cities', 'getCities')
-            ->name('shippings.cities');
-        Route::get('/cities-by-state', 'getCitiesByState')
-            ->name('shippings.citiesByState');
-        Route::get('/wallet/balance', 'walletBalance')
-            ->name('wallet.balance');
-    });
+        Route::controller(ShippingController::class)
+            ->group(function () {
+                Route::get('/states', 'getStates')
+                    ->name('shippings.states');
+                Route::get('/receivers', 'receivers')
+                    ->name('recievers.index');
+                Route::get('/receivers-by-company/{shippingCompanyId}', 'receiversByCompany')
+                    ->name('shippings.receiversByCompany');
+                Route::get('/cities', 'getCities')
+                    ->name('shippings.cities');
+                Route::get('/cities-by-state', 'getCitiesByState')
+                    ->name('shippings.citiesByState');
+                Route::get('/wallet/balance', 'walletBalance')
+                    ->name('wallet.balance');
+                Route::get('/cities-by-company-and-country/{shippingCompanyId}', 'getCitiesByCompanyAndCountry')
+                    ->name('shippings.citiesByCompanyAndCountry');
+            });
 
 Route::middleware(['web'])->group(function () {
     Route::controller(AuthController::class)
@@ -141,6 +145,8 @@ Route::middleware(['web'])->group(function () {
                     ->name('recievers.delete');
                 Route::get('/recievers/search', 'search')
                     ->name('recievers.search');
+                Route::get('/recievers/getCitiesByCompanyAndCountry/{shippingCompanyId}', 'getCitiesByCompanyAndCountry')
+                    ->name('recievers.getCitiesByCompanyAndCountry');
             });
 
         Route::controller(SenderController::class)

@@ -377,7 +377,7 @@ class ShippingService
             $data['shipment_image_path'] = ImageTrait::uploadImage($request->file('shipment_image'), 'shipments');
         }
 
-        $sync = $this->syncNewReceivers($data['selected_receivers'], $user);
+        $sync = $this->syncNewReceivers($data['selected_receivers'], $user,$company);
         $data['selected_receivers'] = $sync['receivers'];
 
         try {
@@ -753,7 +753,7 @@ class ShippingService
         return $sender;
     }
 
-    private function syncNewReceivers(array $selectedReceivers, $user): array
+    private function syncNewReceivers(array $selectedReceivers, $user, $company)
     {
         $createdIds   = [];
         $existingIds  = [];
@@ -762,7 +762,7 @@ class ShippingService
         $stateCache   = [];
         $cityCache    = [];
 
-        DB::transaction(function () use ($selectedReceivers, $user, &$createdIds, &$existingIds, &$final, &$countryCache, &$stateCache, &$cityCache) {
+        DB::transaction(function () use ($selectedReceivers, $user, $company, &$createdIds, &$existingIds, &$final, &$countryCache, &$stateCache, &$cityCache) {
             foreach ($selectedReceivers as $r) {
                 $r = is_object($r) ? get_object_vars($r) : (array) $r;
 
@@ -859,12 +859,11 @@ class ShippingService
                     'email'             => $email ?: null,
                     'address'           => $r['address'] ?? null,
                     'postal_code'       => $r['postal_code'] ?? null,
-                    'country_id'        => $countryId,
-                    'state_id'          => $stateId,
-                    'city_id'           => $cityId,
-                    'country_name'      => $countryName,
-                    'state_name'        => $stateName,
-                    'city_name'         => $cityName,
+                   
+                ]);
+                $new->shippingCompanies()->create([
+                    'shipping_company_id' => $company['id'],
+                    'city_id' => $cityId,
                 ]);
 
                 $createdIds[] = $new->id;
@@ -987,10 +986,15 @@ class ShippingService
         return (float) (optional($user->wallet)->balance ?? 0);
     }
 
-    public function receivers()
+    public function receivers($shippingCompanyId)
     {
         return Reciever::where('user_id', auth()->user()->id)
-            ->withAllRelations()
+        ->whereHas('shippingCompanies', function ($query) use ($shippingCompanyId) {
+            $query->where('shipping_company_id', $shippingCompanyId);
+        })
+            ->with(['shippingCompanies' => function($query) use ($shippingCompanyId) {
+                $query->where('shipping_company_id', $shippingCompanyId);
+            }])
             ->get();
     }
 
@@ -1236,8 +1240,6 @@ class ShippingService
             ->asJson()
             ->post($this->ghayaUrl('requests'), $payload);
 
-
-            //dd($response);
         if ($response->successful()) {
             CancelRequest::create([
                 'user_id' => auth()->id(),
@@ -1247,5 +1249,35 @@ class ShippingService
             return 'canceled';
         }
         return 'failed';
+    }
+
+    public function getCitiesByCompanyAndCountry(
+        string $shippingCompanyId,
+        string $countryId,
+        int $page = 0,
+        int $pageSize = 10,
+        string $orderColumn = 'createdAt',
+        string $orderDirection = 'desc'
+    ): array {
+        try {
+            $query = [
+                'page'              => $page,
+                'pageSize'          => $pageSize,
+                'orderColumn'       => $orderColumn,
+                'orderDirection'    => $orderDirection,
+                'countryId'         => $countryId,
+                'shippingCompanyId' => $shippingCompanyId,
+            ];
+
+            $response = $this->ghayaRequest()
+                ->get($this->ghayaUrl('cities'), $query);
+
+            if ($response->successful()) {
+                return $response->json();
+            }
+            return [];
+        } catch (\Throwable $e) {
+            return [];
+        }
     }
 }
