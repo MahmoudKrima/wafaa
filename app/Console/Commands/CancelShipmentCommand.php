@@ -36,7 +36,7 @@ class CancelShipmentCommand extends Command
         $shipments = CancelRequest::where('status', 'cancelShipment')->get();
         if ($shipments) {
             foreach ($shipments as $shipment) {
-                $shipmentt = $this->getShipmentById($shipment->shipment_id);
+                $shipmentt = $this->getShipmentById($shipment->shipment_id, $shipment->user_id);
                 if ($shipmentt['status'] == 'canceled') {
                     $data['method'] = $shipmentt['method'];
                     $data['userId'] = $shipmentt['externalAppId'];
@@ -53,30 +53,7 @@ class CancelShipmentCommand extends Command
         $this->info('Shipment cancel job executed.');
     }
 
-    //function confirmCancel used as main function in handler function -- so this function has no usage you can delete it
-    public function confirmCancel()
-    {
-        $shipments = CancelRequest::where('status', 'cancelShipment')->get();
-        if ($shipments) {
-            foreach ($shipments as $shipment) {
-                $shipment = $this->getShipmentById($shipment->shipment_id);
-                if ($shipment['status'] == 'canceled') {
-                    $data['method'] = $shipment['method'];
-                    $data['userId'] = $shipment['externalAppId'];
-                    $data['companyId'] = $shipment['shippingCompanyId'];
-                    $data['extraWeight'] = $shipment['shipmentPrice']['extraWeight'];
-                    $data['isCod'] = $shipment['isCod'];
-                    $data['trackingNumber'] = $shipment['trackingNumber'];
-                    $this->userCancelShipment($data);
-                    $shipment->delete();
-                }
-            }
-        }
-    }
-    //end
-
-
-
+  
     public function userCancelShipment($data)
     {
         $user = User::find($data['userId']);
@@ -146,9 +123,9 @@ class CancelShipmentCommand extends Command
         ]);
     }
 
-    public function getShipmentById(string $id): array
+    public function getShipmentById(string $id, int $userId = null): array
     {
-        $response = $this->ghayaRequest()->get($this->ghayaUrl("shipments/{$id}"));
+        $response = $this->ghayaRequest($userId)->get($this->ghayaUrl("shipments/{$id}"));
 
         if ($response->status() === 404) {
             abort(404, 'Shipment not found');
@@ -157,19 +134,22 @@ class CancelShipmentCommand extends Command
         return $response->json();
     }
 
-    private function resolveGhayaApiKey(): string
+    private function resolveGhayaApiKey(int $userId = null): string
     {
-        $ownerId = auth()->user()->created_by;
+        if ($userId) {
+            $user = User::find($userId);
+            $ownerId = $user ? $user->created_by : 2;
+        }
         return (string) ((string)$ownerId == '1'
             ? config('services.ghaya.key')
             : config('services.ghaya.key_two'));
     }
 
-    public function ghayaRequest()
+    public function ghayaRequest(int $userId = null)
     {
         return Http::withHeaders([
             'accept'    => '*/*',
-            'x-api-key' => $this->resolveGhayaApiKey(),
+            'x-api-key' => $this->resolveGhayaApiKey($userId),
         ]);
     }
 
