@@ -685,7 +685,6 @@
                 const requiredFields = {
                     user_name: "Sender Name",
                     user_phone: "Sender Phone",
-                    user_email: "Sender Email",
                     user_address: "Sender Address",
                     user_city: "Sender City",
                     package_type: "Package Type",
@@ -694,8 +693,21 @@
                 const missing = [];
                 for (const [id, label] of Object.entries(requiredFields)) {
                     const field = document.getElementById(id);
-                    if (!field || !String(field.value || "").trim())
+                    if (!field) {
                         missing.push(label);
+                        continue;
+                    }
+                    
+                    let value = "";
+                    if (field.tagName === "SELECT" && typeof $ !== "undefined" && $(field).data('select2')) {
+                        value = String($(field).val() || "").trim();
+                    } else {
+                        value = String(field.value || "").trim();
+                    }
+                    
+                    if (!value) {
+                        missing.push(label);
+                    }
                 }
                 if (missing.length > 0) {
                     alert(

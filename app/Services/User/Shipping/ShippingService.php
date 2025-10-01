@@ -421,13 +421,17 @@ class ShippingService
             ]);
         }
         if ($data['sender_kind'] == 'new') {
-            Sender::create([
+           $sender= Sender::create([
                 'user_id' => $user->id,
                 'name' => $data['sender_name'],
-                'email' => $data['sender_email'],
+                'email' => $data['sender_email'] ?? null,
                 'phone' => $data['sender_phone'],
                 'additional_phone' => $data['sender_additional_phone'] ?? null,
                 'postal_code' => $data['sender_postal_code'] ?? null,
+            ]);
+            $sender->shippingCompanies()->create([
+                'shipping_company_id' => $data['shipping_company_id'],
+                'city_id' => $data['sender_city_id'],
             ]);
         }
 
@@ -470,7 +474,6 @@ class ShippingService
             $receiver = [
                 'id'           => (string) $receiverId,
                 'name'         => (string)($r['name'] ?? $receiverModel?->name ?? ''),
-                'email'        => (string)($r['email'] ?? $receiverModel?->email ?? ''),
                 'phone'        => (string)($r['phone'] ?? $receiverModel?->phone ?? ''),
                 'phone1'       => (string)($r['additional_phone'] ?? $receiverModel?->additional_phone ?? ''),
                 'country_id'   => (string)($r['country_id'] ?? $receiverModel?->country_id ?? ''),
@@ -642,7 +645,6 @@ class ShippingService
         };
 
         $senderName        = (string)($requestData['sender_name']         ?? $sender['name']         ?? '');
-        $senderEmail       = (string)($requestData['sender_email']        ?? $sender['email']        ?? '');
         $senderPhone       = $normalizePhone($requestData['sender_phone'] ?? ($sender['phone'] ?? ''));
         $senderPhone1Raw   = $requestData['sender_additional_phone'] ?? ($sender['phone1'] ?? '');
         $senderPhone1      = $senderPhone1Raw !== '' ? $normalizePhone($senderPhone1Raw) : '';
@@ -669,7 +671,6 @@ class ShippingService
 
         // ----- RECEIVER (Ghaya minimal) -----
         $receiverName        = (string)($receiver['name'] ?? '');
-        $receiverEmail       = (string)($receiver['email'] ?? '');
         $receiverPhone       = $normalizePhone($receiver['phone'] ?? '');
         $receiverPhone1Raw   = (string)($receiver['phone1'] ?? '');
         $receiverPhone1      = $receiverPhone1Raw !== '' ? $normalizePhone($receiverPhone1Raw) : '';
@@ -688,7 +689,6 @@ class ShippingService
             "method"            => (string) $method,
 
             "senderName"        => $senderName,
-            "senderEmail"       => $senderEmail,
             "senderPhone"       => $senderPhone,
             "senderPhone1"      => $senderPhone1,
             "senderCountryId"   => $senderCountryId,
@@ -711,7 +711,6 @@ class ShippingService
             "senderCityName"    => $senderCityName,
 
             "receiverName"        => $receiverName,
-            "receiverEmail"       => $receiverEmail,
             "receiverPhone"       => $receiverPhone,
             "receiverPhone1"      => $receiverPhone1,
             "receiverCountryId"   => $receiverCountryId,
@@ -998,6 +997,18 @@ class ShippingService
             ->get();
     }
 
+    public function senders($shippingCompanyId)
+    {
+        return Sender::where('user_id', auth()->user()->id)
+        ->whereHas('shippingCompanies', function ($query) use ($shippingCompanyId) {
+            $query->where('shipping_company_id', $shippingCompanyId);
+        })
+            ->with(['shippingCompanies' => function($query) use ($shippingCompanyId) {
+                $query->where('shipping_company_id', $shippingCompanyId);
+            }])
+            ->get();
+    }
+
     public function getUserShippingCompanies()
     {
         try {
@@ -1126,9 +1137,6 @@ class ShippingService
             return ['results' => []];
         }
     }
-
-
-
 
     public function getStates()
     {

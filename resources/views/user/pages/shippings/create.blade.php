@@ -89,550 +89,524 @@
 
 
 
-    <div class="step-content" id="step-1">
-        <h5 class="text-center mb-4">{{ __('admin.choose_shipping_company') }}</h5>
-        <div id="companies-container">
-            <div class="text-center">
-                <div class="mb-3">
-                    <img src="{{ asset('front/assets/img/preload.png') }}" alt="Logo" class="img-fluid" style="max-height:60px;max-width:150px;">
-                </div>
-                <div class="spinner-border text-primary" role="status" style="width:2rem;height:2rem;">
-                    <span class="visually-hidden"></span>
-                </div>
-                <p class="mt-2">{{ __('admin.loading_companies') }}</p>
-            </div>
-        </div>
-        <div id="company-selected-summary" class="mt-4" style="display:none;"></div>
-        <div id="company-pricing-display" class="mt-4" style="display:none;"></div>
-
-        <div>
-            <hr>
-        </div>
-        <div id="inline-step2-under-step1" class="mt-5" style="display:none;">
-            <h5 class="text-center mb-4">{{ __('admin.choose_shipping_method') }}</h5>
-            <p class="text-center text-muted mb-4">
-                {{ __('admin.select_shipping_method_for') }} <strong id="selected-company-name"></strong>
-            </p>
-
-            <div id="method-options" class="row" style="display:flex;justify-content:center;"></div>
-        </div>
-    </div>
-
-    <div class="step-content" id="step-2" style="display:none;" data-app-locale="{{ app()->getLocale() }}" data-senders-url="{{ route('user.senders.getSenders') }}">
-        <h5 class="text-center mb-4">{{ __('admin.user_information') }}</h5>
-
-        <!-------->
-
-        <div class="row mb-4">
-            <div class="col-12 col-md-12">                
-                <div class="selector">
-                    <div class="selector-item">
-                        <input type="radio" class="selector-item_radio" type="radio" name="sender_type" id="sender_auth" value="auth" checked>
-                        <label for="sender_auth" class="selector-item_label">{{ __('admin.authenticated_user') }}</label>
-                    </div>
-                    <div class="selector-item">
-                        <input type="radio" class="selector-item_radio" name="sender_type" id="sender_existing" value="existing">
-                        <label for="sender_existing" class="selector-item_label">{{ __('admin.existing_sender') }}</label>
-                    </div>
-                    <div class="selector-item">
-                        <input type="radio" class="selector-item_radio" name="sender_type" id="sender_new" value="new">
-                        <label for="sender_new" class="selector-item_label">{{ __('admin.new_sender') }}</label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-12 col-md-6 mt-4" id="existing_sender_select_wrap" style="display:none;margin-top:15px;font-weight:700">
-                <label for="sender_select" class="text-dark">{{ __('admin.select_sender') }}</label>
-                <select id="sender_select" class="form-control">
-                    <option value="">{{ __('admin.choose_sender') }}</option>
-                </select>
-            </div>
-
-        </div>
-
-        <!------->
-        
-
-        
-        <div id="language-note" class="alert alert-warning" style="display:none;"></div>
-
-        <div id="sender_form_container">
-            <div class="row">
-                <div class="col-12 col-md-6 mb-3">
-                    <label for="user_name" class="text-dark">{{ __('admin.full_name') }}</label>
-                    <input id="user_name" name="user_name" type="text" class="form-control" required
-                        value="{{ old('user_name', auth()->user()->name ?? '') }}"
-                        placeholder="{{ __('admin.full_name') }}"
-                        data-auth-value="{{ auth()->user()->name ?? '' }}">
-                </div>
-                <div class="col-12 col-md-6 mb-3">
-                    <label for="user_phone" class="text-dark">{{ __('admin.phone_number') }}</label>
-                    <input id="user_phone" name="user_phone" type="text" class="form-control" required
-                        value="{{ old('user_phone', auth()->user()->phone ?? '') }}"
-                        placeholder="{{ __('admin.phone_number') }}"
-                        data-auth-value="{{ auth()->user()->phone ?? '' }}">
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-12 col-md-6 mb-3">
-                    <label for="user_additional_phone" class="text-dark">{{ __('admin.additional_phone') }}</label>
-                    <input id="user_additional_phone" name="user_additional_phone" type="text" class="form-control"
-                        value="{{ old('user_additional_phone', auth()->user()->additional_phone ?? '') }}"
-                        placeholder="{{ __('admin.additional_phone') }}"
-                        data-auth-value="{{ auth()->user()->additional_phone ?? '' }}">
-                </div>
-                <div class="col-12 col-md-6 mb-3">
-                    <label for="user_email" class="text-dark">{{ __('admin.email') }}</label>
-                    <input id="user_email" name="user_email" type="email" class="form-control" required
-                        value="{{ old('user_email', auth()->user()->email ?? '') }}"
-                        placeholder="email@example.com"
-                        data-auth-value="{{ auth()->user()->email ?? '' }}">
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-12 col-md-6 mb-3">
-                    <label for="user_country" class="text-dark">{{ __('admin.country') }}</label>
-                    <select id="user_country" name="country_id" class="form-control" required
-                        data-selected="{{ old('country_id') }}">
-                        <option value="">{{ __('admin.choose_country') }}</option>
-                    </select>
-                </div>
-                <div class="col-12 col-md-6 mb-3">
-                    <label for="user_state" class="text-dark">{{ __('admin.state') }}</label>
-                    <select id="user_state" name="state_id" class="form-control" required
-                        data-selected="{{ old('state_id') }}">
-                        <option value="">{{ __('admin.choose_state') }}</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-12 col-md-6 mb-3">
-                    <label for="user_city" class="text-dark">{{ __('admin.city') }}</label>
-                    <select id="user_city" name="city_id" class="form-control" required
-                        data-selected="{{ old('city_id') }}">
-                        <option value="">{{ __('admin.choose_city') }}</option>
-                    </select>
-                </div>
-                <div class="col-12 col-md-6 mb-3">
-                    <label for="user_postal_code" class="text-dark">{{ __('admin.postal_code') }}</label>
-                    <input id="user_postal_code" type="text" name="postal_code" class="form-control"
-                        value="{{ old('postal_code') }}"
-                        placeholder="{{ __('admin.postal_code') }}">
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-12 mb-3">
-                    <label for="user_address" class="text-dark">{{ __('admin.full_address') }}</label>
-                    <textarea id="user_address" name="address" class="form-control" rows="3" required
-                        placeholder="{{ __('admin.full_address') }}"
-                        data-auth-value="{{ auth()->user()->address ?? '' }}">{{ old('address') }}</textarea>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="step-content" id="step-3" style="display:none;">
-        <h5 class="text-center mb-4">{{ __('admin.receiver_information') }}</h5>
-        <div class="row mb-4 receiver_theme">
-            <div class="col-12 col-md-6">
-                <label class="text-dark">{{ __('admin.receiver_type') }}</label>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="receiver_type" id="existing_receiver" value="existing">
-                    <label class="form-check-label" for="existing_receiver">{{ __('admin.existing_receiver') }}</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="receiver_type" id="new_receiver" value="new">
-                    <label class="form-check-label" for="new_receiver">{{ __('admin.new_receiver') }}</label>
-                </div>
-            </div>
-            <div class="col-12 col-md-6 mt-2">
-                <button type="button" id="add-receiver-btn" class="btn btn-success">
-                    <i class="fas fa-plus"></i> {{ __('admin.add_receiver') }}
-                </button>
-            </div>
-        </div>
-
-        <div id="existing_receiver_section">
-            <div class="row mb-3">
-                <div class="col-12 col-md-6">
-                    <label for="receiver_select" class="text-dark">{{ __('admin.select_receiver') }}</label>
-                    <select id="receiver_select" name="receiver_id" class="form-control">
-                        <option value="">{{ __('admin.choose_receiver') }}</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-
-        <div id="new_receiver_section" style="display:none;">
-            <div class="row">
-                <div class="col-12 col-md-6 mb-3">
-                    <label for="name" class="text-dark">{{ __('admin.full_name') }}</label>
-                    <input id="name" type="text" name="name" class="form-control" placeholder="{{ __('admin.enter_full_name') }}" required>
-                </div>
-                <div class="col-12 col-md-6 mb-3">
-                    <label for="phone" class="text-dark">{{ __('admin.phone_number') }}</label>
-                    <input id="phone" type="input" name="phone" class="form-control" placeholder="{{ __('admin.enter_phone_number') }}" pattern="05[0-9]{8}" title="Phone must start with 05 followed by 8 digits (e.g., 0512345678)" required>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-12 col-md-6 mb-3">
-                    <label for="additional_phone" class="text-dark">{{ __('admin.additional_phone') }}</label>
-                    <input id="additional_phone" type="input" name="additional_phone" class="form-control" placeholder="{{ __('admin.enter_additional_phone') }}" pattern="05[0-9]{8}">
-                </div>
-                <div class="col-12 col-md-6 mb-3">
-                    <label for="address" class="text-dark">{{ __('admin.full_address') }}</label>
-                    <textarea id="address" name="address" class="form-control" rows="3" placeholder="{{ __('admin.enter_full_address') }}" required></textarea>
-                </div>
-                
-            </div>
-
-            <div class="row">
-                <div class="col-12 col-md-6 mb-3">
-                    <label for="country" class="text-dark">{{ __('admin.country') }}</label>
-                    <select id="country" name="country" class="form-control" required>
-                        <option value="">{{ __('admin.select_country') }}</option>
-                    </select>
-                </div>
-                <div class="col-12 col-md-6 mb-3">
-                    <label for="city" class="text-dark">{{ __('admin.city') }}</label>
-                    <select id="city" name="city" class="form-control" required>
-                        <option value="">{{ __('admin.select_city') }}</option>
-                    </select>
-                </div>
-            </div>
-        </div>
-
-        <div id="receivers-container" class="mt-4" style="display:none;"></div>
-        <div id="receiver-success-msg" class="mt-3" style="display:none;"></div>
-        <div id="receiver-error-msg" class="mt-3" style="display:none;"></div>
-    </div>
-
-    <div class="step-content" id="step-4" style="display:none;">
-        <h5 class="text-center mb-4">{{ __('admin.shipping_details') }}</h5>
-
-        <form action="{{ route('user.shippings.store') }}" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
-            @csrf
-            <input type="hidden" name="sender_kind" id="sender_kind_hidden">
-            <input type="hidden" name="shipping_company_id" id="shipping_company_id">
-            <input type="hidden" name="shipping_method" id="shipping_method">
-            <input type="hidden" name="selected_receivers" id="selected_receivers_hidden">
-            <input type="hidden" name="sender_name" id="sender_name_hidden">
-            <input type="hidden" name="sender_phone" id="sender_phone_hidden">
-            <input type="hidden" name="sender_additional_phone" id="sender_additional_phone_hidden">
-            <input type="hidden" name="sender_email" id="sender_email_hidden">
-            <input type="hidden" name="sender_address" id="sender_address_hidden">
-            <input type="hidden" name="sender_country_id" id="sender_country_id_hidden">
-            <input type="hidden" name="sender_country_name" id="sender_country_name_hidden">
-            <input type="hidden" name="sender_state_id" id="sender_state_id_hidden">
-            <input type="hidden" name="sender_state_name" id="sender_state_name_hidden">
-            <input type="hidden" name="sender_city_id" id="sender_city_id_hidden">
-            <input type="hidden" name="sender_city_name" id="sender_city_name_hidden">
-            <input type="hidden" name="sender_postal_code" id="sender_postal_code_hidden">
-            <input type="hidden" name="payment_method" id="payment_method_hidden">
-            <input type="hidden" name="shipping_price_per_receiver" id="shipping_price_per_receiver_hidden">
-            <input type="hidden" name="extra_weight_per_receiver" id="extra_weight_per_receiver_hidden">
-            <input type="hidden" name="cod_price_per_receiver" id="cod_price_per_receiver_hidden">
-            <input type="hidden" name="total_per_receiver" id="total_per_receiver_hidden">
-            <input type="hidden" name="total_amount" id="total_amount_hidden">
-            <input type="hidden" name="receivers_count" id="receivers_count_hidden">
-            <input type="hidden" name="currency" id="currency_hidden">
-            <input type="hidden" name="max_weight" id="max_weight_hidden">
-            <input type="hidden" name="entered_weight" id="entered_weight_hidden">
-            <input type="hidden" name="extra_kg" id="extra_kg_hidden">
-
-            <div class="row mb-4">
-                <div class="col-12 col-md-4 mb-3 mb-md-0">
-                    <label for="package_type" class="text-dark mb-2">{{ __('admin.package_type') }}</label>
-                    <select id="package_type" name="package_type" class="form-control" required>
-                        <option value="">{{ __('admin.select_package_type') }}</option>
-                        <option value="box" {{ old('package_type')=='box' ? 'selected' : '' }}>{{ __('admin.boxes') }}</option>
-                        <option value="document" {{ old('package_type')=='document' ? 'selected' : '' }}>{{ __('admin.documents') }}</option>
-                    </select>
-                </div>
-                <div class="col-12 col-md-4 mb-3">
-                    <label for="package_number" class="text-dark mb-2">{{ __('admin.number') }}</label>
-                    <input id="package_number" type="number" name="package_number" class="form-control" placeholder="1" min="1" value="{{ old('package_number', 1) }}" required>
-                </div>
-                <div class="col-12 col-md-4 mb-3">
-                    <label for="weight" class="text-dark">{{ __('admin.weight_kg') }}</label>
-                    <input id="weight" type="number" name="weight" placeholder="{{ __('admin.weight_kg') }}" class="form-control" value="{{ old('weight') }}" step="0.1" min="0.1" required>
-                </div>
-            </div>
-
-            <div class="row d-flex" id="dimensions_section">
-                <div class="col-4 mb-3">
-                    <label for="length" class="text-dark">{{ __('admin.length_cm') }}</label>
-                    <input id="length" type="number" name="length" class="form-control" placeholder="0" min="0" step="0.1" value="{{ old('length',1) }}" required>
-                </div>
-                <div class="col-4 mb-3">
-                    <label for="width" class="text-dark">{{ __('admin.width_cm') }}</label>
-                    <input id="width" type="number" name="width" class="form-control" placeholder="0" min="0" step="0.1" value="{{ old('width',1) }}" required>
-                </div>
-                <div class="col-4 mb-3">
-                    <label for="height" class="text-dark">{{ __('admin.height_cm') }}</label>
-                    <input id="height" type="number" name="height" class="form-control" placeholder="0" min="0" step="0.1" value="{{ old('height',1) }}" required>
-                </div>
-            </div>
-
-
-            <div class="row">
-                <div class="col-12 mb-3">
-                    <label for="package_description" class="text-dark">{{ __('admin.package_description') }}</label>
-
-                    <div class="mb-2">
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="description_type" id="description_new" value="new" checked>
-                            <label class="form-check-label" for="description_new">{{ __('admin.new_description') }}</label>
+            <div class="step-content" id="step-1">
+                <h5 class="text-center mb-4">{{ __('admin.choose_shipping_company') }}</h5>
+                <div id="companies-container">
+                    <div class="text-center">
+                        <div class="mb-3">
+                            <img src="{{ asset('front/assets/img/preload.png') }}" alt="Logo" class="img-fluid" style="max-height:60px;max-width:150px;">
                         </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="description_type" id="description_existing" value="existing">
-                            <label class="form-check-label" for="description_existing">{{ __('admin.select_existing_description') }}</label>
+                        <div class="spinner-border text-primary" role="status" style="width:2rem;height:2rem;">
+                            <span class="visually-hidden"></span>
+                        </div>
+                        <p class="mt-2">{{ __('admin.loading_companies') }}</p>
+                    </div>
+                </div>
+                <div id="company-selected-summary" class="mt-4" style="display:none;"></div>
+                <div id="company-pricing-display" class="mt-4" style="display:none;"></div>
+
+                <div>
+                    <hr>
+                </div>
+                <div id="inline-step2-under-step1" class="mt-5" style="display:none;">
+                    <h5 class="text-center mb-4">{{ __('admin.choose_shipping_method') }}</h5>
+                    <p class="text-center text-muted mb-4">
+                        {{ __('admin.select_shipping_method_for') }} <strong id="selected-company-name"></strong>
+                    </p>
+
+                    <div id="method-options" class="row" style="display:flex;justify-content:center;"></div>
+                </div>
+            </div>
+
+            <div class="step-content" id="step-2" style="display:none;" data-app-locale="{{ app()->getLocale() }}" data-senders-url="{{ route('user.senders.getSenders') }}">
+                <h5 class="text-center mb-4">{{ __('admin.user_information') }}</h5>
+
+                <!-------->
+
+                <div class="row mb-4">
+                    <div class="col-12 col-md-12">
+                        <div class="selector">
+                            <div class="selector-item">
+                                <input type="radio" class="selector-item_radio" type="radio" name="sender_type" id="sender_auth" value="auth" checked>
+                                <label for="sender_auth" class="selector-item_label">{{ __('admin.authenticated_user') }}</label>
+                            </div>
+                            <div class="selector-item">
+                                <input type="radio" class="selector-item_radio" name="sender_type" id="sender_existing" value="existing">
+                                <label for="sender_existing" class="selector-item_label">{{ __('admin.existing_sender') }}</label>
+                            </div>
+                            <div class="selector-item">
+                                <input type="radio" class="selector-item_radio" name="sender_type" id="sender_new" value="new">
+                                <label for="sender_new" class="selector-item_label">{{ __('admin.new_sender') }}</label>
+                            </div>
                         </div>
                     </div>
 
-                    <div id="existing_descriptions_container" style="display: none;" class="mb-2">
-                        <select id="existing_descriptions" class="form-control">
-                            <option value="">{{ __('admin.select_description') }}</option>
+                    <div class="col-12 col-md-6 mt-4" id="existing_sender_select_wrap" style="display:none;margin-top:15px;font-weight:700">
+                        <label for="sender_select" class="text-dark">{{ __('admin.select_sender') }}</label>
+                        <select id="sender_select" class="form-control">
+                            <option value="">{{ __('admin.choose_sender') }}</option>
                         </select>
                     </div>
 
-                    <textarea id="package_description" name="package_description" class="form-control" rows="3"
-                        placeholder="{{ __('admin.enter_package_description') }}" required>{{ old('package_description') }}</textarea>
+                </div>
 
-                    <input type="hidden" id="description_id" name="description_id" value="">
-                    <input type="hidden" id="is_new_description" name="is_new_description" value="1">
+                <!------->
+
+
+
+                <div id="language-note" class="alert alert-warning" style="display:none;"></div>
+
+                <div id="sender_form_container">
+                    <div class="row">
+                        <div class="col-12 col-md-6 mb-3">
+                            <label for="user_name" class="text-dark">{{ __('admin.full_name') }}</label>
+                            <input id="user_name" name="user_name" type="text" class="form-control" required
+                                value="{{ old('user_name', auth()->user()->name ?? '') }}"
+                                placeholder="{{ __('admin.full_name') }}"
+                                data-auth-value="{{ auth()->user()->name ?? '' }}">
+                        </div>
+                        <div class="col-12 col-md-6 mb-3">
+                            <label for="user_phone" class="text-dark">{{ __('admin.phone_number') }}</label>
+                            <input id="user_phone" name="user_phone" type="text" class="form-control" required
+                                value="{{ old('user_phone', auth()->user()->phone ?? '') }}"
+                                placeholder="{{ __('admin.phone_number') }}"
+                                data-auth-value="{{ auth()->user()->phone ?? '' }}">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12 col-md-6 mb-3">
+                            <label for="user_additional_phone" class="text-dark">{{ __('admin.additional_phone') }}</label>
+                            <input id="user_additional_phone" name="user_additional_phone" type="text" class="form-control"
+                                value="{{ old('user_additional_phone', auth()->user()->additional_phone ?? '') }}"
+                                placeholder="{{ __('admin.additional_phone') }}"
+                                data-auth-value="{{ auth()->user()->additional_phone ?? '' }}">
+                        </div>
+                        <div class="col-12 col-md-6 mb-3">
+                            <label for="user_address" class="text-dark">{{ __('admin.full_address') }}</label>
+                            <textarea id="user_address" name="address" class="form-control" rows="3" required
+                                placeholder="{{ __('admin.full_address') }}"
+                                data-auth-value="{{ auth()->user()->address ?? '' }}">{{ old('address') }}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12 col-md-6 mb-3">
+                            <label for="user_country" class="text-dark">{{ __('admin.country') }}</label>
+                            <select id="user_country" name="country_id" class="form-control" required
+                                data-selected="{{ old('country_id') }}">
+                                <option value="">{{ __('admin.choose_country') }}</option>
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-6 mb-3">
+                            <label for="user_city" class="text-dark">{{ __('admin.city') }}</label>
+                            <select id="user_city" name="city_id" class="form-control" required
+                                data-selected="{{ old('city_id') }}">
+                                <option value="">{{ __('admin.choose_city') }}</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-
-            <div class="row">
-                <div class="col-12 mb-5 mt-2">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="accept_terms" name="accept_terms" {{ old('accept_terms') ? 'checked' : '' }} required>
-                        <label class="form-check-label" for="accept_terms">
-                            <a href="{{ route('front.terms') }}" target="_blank" class="text-primary">{{ __('admin.i_accept_terms') }}</a>
-                        </label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row">
-                <div class="col-12 mb-3 custom-file-container" data-upload-id="myFirstImage">
-                    <label>
-                        {{ __('admin.shipment_image') }}
-                        <a href="javascript:void(0)" class="custom-file-container__image-clear" title="{{ __('admin.clear_image') }}">
-                            <span style="background:#ababab;padding:5px;border-radius:50%;margin:0 10px;">X</span>
-                        </a>
-                    </label>
-                    <label class="custom-file-container__custom-file">
-                        <input type="file" id="shipmentImage" class="custom-file-container__custom-file__custom-file-input" name="shipment_image" accept="image/*" data-max-file-size="2M" data-max-files="1">
-                        <div class="mt-2"><small class="text-muted">{{ __('admin.upload_shipment_image_help') }}</small></div>
-                        <span class="custom-file-container__custom-file__custom-file-control"></span>
-                    </label>
-                    <div class="custom-file-container__image-preview"></div>
-                </div>
-            </div>
-        </form>
-    </div>
-
-    <div class="step-content" id="step-5" style="display:none;">
-        <h5 class="text-center mb-4">{{ __('admin.shippment_type') }}</h5>
-        <div class="row">
-            <div class="col-12">
-                <div class="payment-options-container"></div>
-            </div>
-        </div>
-    </div>
-
-    <div id="step-6" class="step-content" style="display:none;">
-        <div class="row">
-            <div class="col-12">
-                <h4 class="mb-4">{{ __('admin.final_shipment_review') }}</h4>
-                <div id="step6-errors" class="mb-3"></div>
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="card mb-4" style="border-radius:15px;">
-                            <div class="card-header bg-primary text-white" style="border-top-left-radius:15px;border-top-right-radius:15px;">
-                                <h5 class="mb-0" style="color:#fff;"><i class="fa fa-user-tie" style="margin:0 5px;"></i>{{ __('admin.sender_information') }}</h5>
-                            </div>
-                            <div class="card-body">
-                                <p><strong>{{ __('admin.name') . ' : ' }}</strong> <span id="sender-name-preview">{{ __('admin.name') }}</span></p>
-                                <p><strong>{{ __('admin.phone') . ' : ' }}</strong> <span id="sender-phone-preview">{{ __('admin.phone') }}</span></p>
-                                <p><strong>{{ __('admin.city') . ' : ' }}</strong> <span id="sender-city-preview">{{ __('admin.city') }}</span></p>
-                                <p><strong>{{ __('admin.address') . ' : ' }}</strong> <span id="sender-address-preview">{{ __('admin.address') }}</span></p>
-                            </div>
+            <div class="step-content" id="step-3" style="display:none;">
+                <h5 class="text-center mb-4">{{ __('admin.receiver_information') }}</h5>
+                <div class="row mb-4 receiver_theme">
+                    <div class="col-12 col-md-6">
+                        <label class="text-dark">{{ __('admin.receiver_type') }}</label>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="receiver_type" id="existing_receiver" value="existing">
+                            <label class="form-check-label" for="existing_receiver">{{ __('admin.existing_receiver') }}</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="receiver_type" id="new_receiver" value="new">
+                            <label class="form-check-label" for="new_receiver">{{ __('admin.new_receiver') }}</label>
                         </div>
                     </div>
-                    <div class="col-md-6">
-                        <div class="card mb-4" style="border-radius:15px;">
-                            <div class="card-header bg-primary text-white" style="border-top-left-radius:15px;border-top-right-radius:15px;">
-                                <h5 class="mb-0" style="color:#fff;"><i class="fa fa-house-flood-water-circle-arrow-right" style="margin:0 5px;"></i>{{ __('admin.shipping_company_details') }}</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                        <div>
-                                            <img id="company-logo-preview" src="" alt="Company Logo" class="me-3" style="width:80px;height:60px;object-fit:contain;">
-                                            <div>
-                                                <h6 id="company-name-preview" style="margin:5px 15px;" class="mb-1">{{ __('admin.company_name') }}</h6>
-                                                <small id="company-service-preview" style="margin:5px 15px;" class="text-muted">{{ __('admin.service_type') }}</small>
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <span class="badge bg-info fs-6" id="shipping-method-preview">{{ __('admin.shipping_method') }}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="card mb-4" style="border-radius:15px;">
-                            <div class="card-header bg-primary text-white" style="border-top-left-radius:15px;border-top-right-radius:15px;">
-                                <h5 class="mb-0" style="color:#fff;"><i class="fa fa-user-friends" style="margin:0 5px;"></i>{{ __('admin.receivers_info') }} (<span id="receivers-count-preview">0</span>)</h5>
-                            </div>
-                            <div class="card-body">
-                                <div id="receivers-summary-container"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="card mb-4" style="border-radius:15px;">
-                            <div class="card-header bg-primary text-white" style="border-top-left-radius:15px;border-top-right-radius:15px;">
-                                <h5 class="mb-0" style="color:#fff;"><i class="fa fa-truck-fast" style="margin:0 5px;"></i>{{ __('admin.package_details') }}</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <p><strong>{{ __('admin.package_type') . ': ' }}</strong> <span id="package-type-preview">{{ __('admin.package_type') }}</span></p>
-                                        <p><strong>{{ __('admin.package_count') . ': ' }}</strong> <span id="package-count-preview">{{ __('admin.package_count') }}</span></p>
-                                        <p><strong>{{ __('admin.weight_summary') . ': ' }}</strong> <span id="package-weight-preview">{{ __('admin.weight_kg') }}</span> {{ __('admin.kg') }}</p>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <p><strong>{{ __('admin.length_summary') . ': ' }}</strong> <span id="package-length-preview">{{ __('admin.length_cm') }}</span> {{ __('admin.cm') }}</p>
-                                        <p><strong>{{ __('admin.width_summary') . ': ' }}</strong> <span id="package-width-preview">{{ __('admin.width_cm') }}</span> {{ __('admin.cm') }}</p>
-                                        <p><strong>{{ __('admin.height_summary') . ': ' }}</strong> <span id="package-height-preview">{{ __('admin.height_cm') }}</span> {{ __('admin.cm') }}</p>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12">
-                                        <p><strong class="mb-1">{{ __('admin.package_description') }}</strong></p>
-                                        <div id="package-description-preview" class="text-muted"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="card mb-4" style="border-radius:15px;">
-                            <div class="card-header bg-primary text-white" style="border-top-left-radius:15px;border-top-right-radius:15px;">
-                                <h5 class="mb-0" style="color:#fff;"><i class="fa fa-info-circle" style="margin:0 5px;"></i>{{ __('admin.shipment_price_details') }}</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                        <strong class="mb-3 text-black">{{__('admin.shipping_price_per_receiver') }}: </strong>
-                                        <div class="text-muted" id="price-base-per-receiver"></div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                        <strong class="mb-1 text-black">{{__('admin.extra_weight_per_receiver') }}: </strong>
-                                        <div class="text-muted" id="price-extra-per-receiver"></div>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <div class="small mb-3 text-muted mt-0" id="extra-weight-note">{{__('admin.no_extra_weight') }}</div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                        <strong class="mb-3 text-black">{{__('admin.shippment_type') }}: </strong>
-                                        <div class="mb-0 text-muted" id="payment-method-preview">{{__('admin.cash_on_delivery') }}</div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                        <strong class="mb-3 text-black">{{__('admin.cod_fee_per_one_receiver') }}: </strong>
-                                        <div class="mb-0 text-muted" id="cod-fee-per-one-receiver-preview"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="card mb-4" style="border-radius:15px;">
-                            <div class="card-header bg-primary text-white" style="border-top-left-radius:15px;border-top-right-radius:15px;">
-                                <h5 class="mb-0" style="color:#fff;"><i class="fa fa-money-bill" style="margin:0 5px;"></i>{{ __('admin.payment_details') }}</h5>
-                            </div>
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                        <strong class="mb-3 text-black">{{__('admin.shipping_fee') }}: </strong>
-                                        <div class="mb-0 text-primary" id="shipping-fee-preview"></div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                        <strong class="mb-3 text-black">{{__('admin.extra_fees_weight') }}: </strong>
-                                        <div class="mb-0 text-primary" id="extra-fees-preview"></div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                        <strong class="mb-3 text-black">{{__('admin.cod_fee') }}: </strong>
-                                        <div class="mb-0 text-primary" id="cod-fees-preview"></div>
-                                    </div>
-                                </div>
-                                <div class="row" id="wallet-balance-section" style="display:none;">
-                                    <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                        <strong class="mb-3 text-black">{{__('admin.wallet_balance') }}: </strong>
-                                        <div class="mb-0 text-primary" id="wallet-balance-display"></div>
-                                    </div>
-                                    <div class="col-md-12 alert alert-warning" id="wallet-balance-warning" style="display:none;">
-                                        <small><i class="fas fa-exclamation-triangle me-1"></i> {{__('admin.insufficient_balance_warning') }}</small>
-                                    </div>
-                                </div>
-                                <hr>
-                                <div class="row">
-                                    <div class="col-md-12" style="display:flex;justify-content:space-between;">
-                                        <strong class="mb-1 text-success">{{__('admin.total_amount_you_pay') }}: </strong>
-                                        <div class="h6 mb-0 text-success" id="total-amount-preview"></div>
-                                    </div>
-                                    <div class="col-md-12">
-                                        <span class="small mb-3 text-muted mt-0" id="receivers-count-display"></span> {{__('admin.receivers') }} ×
-                                        <span class="small mb-3 text-muted mt-0" id="per-receiver-total"></span> {{__('admin.per_receiver') }}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="d-flex justify-content-between align-items-center">
-                    <div class="d-flex gap-2">
-                        <button type="submit" class="btn btn-success btn-lg" id="btn-confirm-shipping" disabled>
-                            <i class="fas fa-check me-2" style="margin:0 5px;"></i> {{ __('admin.confirm_shipment') }}
+                    <div class="col-12 col-md-6 mt-2">
+                        <button type="button" id="add-receiver-btn" class="btn btn-success">
+                            <i class="fas fa-plus"></i> {{ __('admin.add_receiver') }}
                         </button>
                     </div>
                 </div>
 
+                <div id="existing_receiver_section">
+                    <div class="row mb-3">
+                        <div class="col-12 col-md-6">
+                            <label for="receiver_select" class="text-dark">{{ __('admin.select_receiver') }}</label>
+                            <select id="receiver_select" name="receiver_id" class="form-control">
+                                <option value="">{{ __('admin.choose_receiver') }}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="new_receiver_section" style="display:none;">
+                    <div class="row">
+                        <div class="col-12 col-md-6 mb-3">
+                            <label for="name" class="text-dark">{{ __('admin.full_name') }}</label>
+                            <input id="name" type="text" name="name" class="form-control" placeholder="{{ __('admin.enter_full_name') }}" required>
+                        </div>
+                        <div class="col-12 col-md-6 mb-3">
+                            <label for="phone" class="text-dark">{{ __('admin.phone_number') }}</label>
+                            <input id="phone" type="input" name="phone" class="form-control" placeholder="{{ __('admin.enter_phone_number') }}" pattern="05[0-9]{8}" title="Phone must start with 05 followed by 8 digits (e.g., 0512345678)" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12 col-md-6 mb-3">
+                            <label for="additional_phone" class="text-dark">{{ __('admin.additional_phone') }}</label>
+                            <input id="additional_phone" type="input" name="additional_phone" class="form-control" placeholder="{{ __('admin.enter_additional_phone') }}" pattern="05[0-9]{8}">
+                        </div>
+                        <div class="col-12 col-md-6 mb-3">
+                            <label for="address" class="text-dark">{{ __('admin.full_address') }}</label>
+                            <textarea id="address" name="address" class="form-control" rows="3" placeholder="{{ __('admin.enter_full_address') }}" required></textarea>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12 col-md-6 mb-3">
+                            <label for="country" class="text-dark">{{ __('admin.country') }}</label>
+                            <select id="country" name="country" class="form-control" required>
+                                <option value="">{{ __('admin.select_country') }}</option>
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-6 mb-3">
+                            <label for="city" class="text-dark">{{ __('admin.city') }}</label>
+                            <select id="city" name="city" class="form-control" required>
+                                <option value="">{{ __('admin.select_city') }}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="receivers-container" class="mt-4" style="display:none;"></div>
+                <div id="receiver-success-msg" class="mt-3" style="display:none;"></div>
+                <div id="receiver-error-msg" class="mt-3" style="display:none;"></div>
+            </div>
+
+            <div class="step-content" id="step-4" style="display:none;">
+                <h5 class="text-center mb-4">{{ __('admin.shipping_details') }}</h5>
+
+                <form action="{{ route('user.shippings.store') }}" method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
+                    @csrf
+                    <input type="hidden" name="sender_kind" id="sender_kind_hidden">
+                    <input type="hidden" name="shipping_company_id" id="shipping_company_id">
+                    <input type="hidden" name="shipping_method" id="shipping_method">
+                    <input type="hidden" name="selected_receivers" id="selected_receivers_hidden">
+                    <input type="hidden" name="sender_name" id="sender_name_hidden">
+                    <input type="hidden" name="sender_phone" id="sender_phone_hidden">
+                    <input type="hidden" name="sender_additional_phone" id="sender_additional_phone_hidden">
+                    <input type="hidden" name="sender_email" id="sender_email_hidden">
+                    <input type="hidden" name="sender_address" id="sender_address_hidden">
+                    <input type="hidden" name="sender_country_id" id="sender_country_id_hidden">
+                    <input type="hidden" name="sender_country_name" id="sender_country_name_hidden">
+                    <input type="hidden" name="sender_state_id" id="sender_state_id_hidden">
+                    <input type="hidden" name="sender_state_name" id="sender_state_name_hidden">
+                    <input type="hidden" name="sender_city_id" id="sender_city_id_hidden">
+                    <input type="hidden" name="sender_city_name" id="sender_city_name_hidden">
+                    <input type="hidden" name="sender_postal_code" id="sender_postal_code_hidden">
+                    <input type="hidden" name="payment_method" id="payment_method_hidden">
+                    <input type="hidden" name="shipping_price_per_receiver" id="shipping_price_per_receiver_hidden">
+                    <input type="hidden" name="extra_weight_per_receiver" id="extra_weight_per_receiver_hidden">
+                    <input type="hidden" name="cod_price_per_receiver" id="cod_price_per_receiver_hidden">
+                    <input type="hidden" name="total_per_receiver" id="total_per_receiver_hidden">
+                    <input type="hidden" name="total_amount" id="total_amount_hidden">
+                    <input type="hidden" name="receivers_count" id="receivers_count_hidden">
+                    <input type="hidden" name="currency" id="currency_hidden">
+                    <input type="hidden" name="max_weight" id="max_weight_hidden">
+                    <input type="hidden" name="entered_weight" id="entered_weight_hidden">
+                    <input type="hidden" name="extra_kg" id="extra_kg_hidden">
+
+                    <div class="row mb-4">
+                        <div class="col-12 col-md-4 mb-3 mb-md-0">
+                            <label for="package_type" class="text-dark mb-2">{{ __('admin.package_type') }}</label>
+                            <select id="package_type" name="package_type" class="form-control" required>
+                                <option value="">{{ __('admin.select_package_type') }}</option>
+                                <option value="box" {{ old('package_type')=='box' ? 'selected' : '' }}>{{ __('admin.boxes') }}</option>
+                                <option value="document" {{ old('package_type')=='document' ? 'selected' : '' }}>{{ __('admin.documents') }}</option>
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-4 mb-3">
+                            <label for="package_number" class="text-dark mb-2">{{ __('admin.number') }}</label>
+                            <input id="package_number" type="number" name="package_number" class="form-control" placeholder="1" min="1" value="{{ old('package_number', 1) }}" required>
+                        </div>
+                        <div class="col-12 col-md-4 mb-3">
+                            <label for="weight" class="text-dark">{{ __('admin.weight_kg') }}</label>
+                            <input id="weight" type="number" name="weight" placeholder="{{ __('admin.weight_kg') }}" class="form-control" value="{{ old('weight') }}" step="0.1" min="0.1" required>
+                        </div>
+                    </div>
+
+                    <div class="row d-flex" id="dimensions_section">
+                        <div class="col-4 mb-3">
+                            <label for="length" class="text-dark">{{ __('admin.length_cm') }}</label>
+                            <input id="length" type="number" name="length" class="form-control" placeholder="0" min="0" step="0.1" value="{{ old('length',1) }}" required>
+                        </div>
+                        <div class="col-4 mb-3">
+                            <label for="width" class="text-dark">{{ __('admin.width_cm') }}</label>
+                            <input id="width" type="number" name="width" class="form-control" placeholder="0" min="0" step="0.1" value="{{ old('width',1) }}" required>
+                        </div>
+                        <div class="col-4 mb-3">
+                            <label for="height" class="text-dark">{{ __('admin.height_cm') }}</label>
+                            <input id="height" type="number" name="height" class="form-control" placeholder="0" min="0" step="0.1" value="{{ old('height',1) }}" required>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label for="package_description" class="text-dark">{{ __('admin.package_description') }}</label>
+
+                            <div class="mb-2">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="description_type" id="description_new" value="new" checked>
+                                    <label class="form-check-label" for="description_new">{{ __('admin.new_description') }}</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="description_type" id="description_existing" value="existing">
+                                    <label class="form-check-label" for="description_existing">{{ __('admin.select_existing_description') }}</label>
+                                </div>
+                            </div>
+
+                            <div id="existing_descriptions_container" style="display: none;" class="mb-2">
+                                <select id="existing_descriptions" class="form-control">
+                                    <option value="">{{ __('admin.select_description') }}</option>
+                                </select>
+                            </div>
+
+                            <textarea id="package_description" name="package_description" class="form-control" rows="3"
+                                placeholder="{{ __('admin.enter_package_description') }}" required>{{ old('package_description') }}</textarea>
+
+                            <input type="hidden" id="description_id" name="description_id" value="">
+                            <input type="hidden" id="is_new_description" name="is_new_description" value="1">
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-12 mb-5 mt-2">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="accept_terms" name="accept_terms" {{ old('accept_terms') ? 'checked' : '' }} required>
+                                <label class="form-check-label" for="accept_terms">
+                                    <a href="{{ route('front.terms') }}" target="_blank" class="text-primary">{{ __('admin.i_accept_terms') }}</a>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12 mb-3 custom-file-container" data-upload-id="myFirstImage">
+                            <label>
+                                {{ __('admin.shipment_image') }}
+                                <a href="javascript:void(0)" class="custom-file-container__image-clear" title="{{ __('admin.clear_image') }}">
+                                    <span style="background:#ababab;padding:5px;border-radius:50%;margin:0 10px;">X</span>
+                                </a>
+                            </label>
+                            <label class="custom-file-container__custom-file">
+                                <input type="file" id="shipmentImage" class="custom-file-container__custom-file__custom-file-input" name="shipment_image" accept="image/*" data-max-file-size="2M" data-max-files="1">
+                                <div class="mt-2"><small class="text-muted">{{ __('admin.upload_shipment_image_help') }}</small></div>
+                                <span class="custom-file-container__custom-file__custom-file-control"></span>
+                            </label>
+                            <div class="custom-file-container__image-preview"></div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="step-content" id="step-5" style="display:none;">
+                <h5 class="text-center mb-4">{{ __('admin.shippment_type') }}</h5>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="payment-options-container"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="step-6" class="step-content" style="display:none;">
+                <div class="row">
+                    <div class="col-12">
+                        <h4 class="mb-4">{{ __('admin.final_shipment_review') }}</h4>
+                        <div id="step6-errors" class="mb-3"></div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card mb-4" style="border-radius:15px;">
+                                    <div class="card-header bg-primary text-white" style="border-top-left-radius:15px;border-top-right-radius:15px;">
+                                        <h5 class="mb-0" style="color:#fff;"><i class="fa fa-user-tie" style="margin:0 5px;"></i>{{ __('admin.sender_information') }}</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <p><strong>{{ __('admin.name') . ' : ' }}</strong> <span id="sender-name-preview">{{ __('admin.name') }}</span></p>
+                                        <p><strong>{{ __('admin.phone') . ' : ' }}</strong> <span id="sender-phone-preview">{{ __('admin.phone') }}</span></p>
+                                        <p><strong>{{ __('admin.city') . ' : ' }}</strong> <span id="sender-city-preview">{{ __('admin.city') }}</span></p>
+                                        <p><strong>{{ __('admin.address') . ' : ' }}</strong> <span id="sender-address-preview">{{ __('admin.address') }}</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card mb-4" style="border-radius:15px;">
+                                    <div class="card-header bg-primary text-white" style="border-top-left-radius:15px;border-top-right-radius:15px;">
+                                        <h5 class="mb-0" style="color:#fff;"><i class="fa fa-house-flood-water-circle-arrow-right" style="margin:0 5px;"></i>{{ __('admin.shipping_company_details') }}</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-12" style="display:flex;justify-content:space-between;">
+                                                <div>
+                                                    <img id="company-logo-preview" src="" alt="Company Logo" class="me-3" style="width:80px;height:60px;object-fit:contain;">
+                                                    <div>
+                                                        <h6 id="company-name-preview" style="margin:5px 15px;" class="mb-1">{{ __('admin.company_name') }}</h6>
+                                                        <small id="company-service-preview" style="margin:5px 15px;" class="text-muted">{{ __('admin.service_type') }}</small>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <span class="badge bg-info fs-6" id="shipping-method-preview">{{ __('admin.shipping_method') }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card mb-4" style="border-radius:15px;">
+                                    <div class="card-header bg-primary text-white" style="border-top-left-radius:15px;border-top-right-radius:15px;">
+                                        <h5 class="mb-0" style="color:#fff;"><i class="fa fa-user-friends" style="margin:0 5px;"></i>{{ __('admin.receivers_info') }} (<span id="receivers-count-preview">0</span>)</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div id="receivers-summary-container"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card mb-4" style="border-radius:15px;">
+                                    <div class="card-header bg-primary text-white" style="border-top-left-radius:15px;border-top-right-radius:15px;">
+                                        <h5 class="mb-0" style="color:#fff;"><i class="fa fa-truck-fast" style="margin:0 5px;"></i>{{ __('admin.package_details') }}</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <p><strong>{{ __('admin.package_type') . ': ' }}</strong> <span id="package-type-preview">{{ __('admin.package_type') }}</span></p>
+                                                <p><strong>{{ __('admin.package_count') . ': ' }}</strong> <span id="package-count-preview">{{ __('admin.package_count') }}</span></p>
+                                                <p><strong>{{ __('admin.weight_summary') . ': ' }}</strong> <span id="package-weight-preview">{{ __('admin.weight_kg') }}</span> {{ __('admin.kg') }}</p>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <p><strong>{{ __('admin.length_summary') . ': ' }}</strong> <span id="package-length-preview">{{ __('admin.length_cm') }}</span> {{ __('admin.cm') }}</p>
+                                                <p><strong>{{ __('admin.width_summary') . ': ' }}</strong> <span id="package-width-preview">{{ __('admin.width_cm') }}</span> {{ __('admin.cm') }}</p>
+                                                <p><strong>{{ __('admin.height_summary') . ': ' }}</strong> <span id="package-height-preview">{{ __('admin.height_cm') }}</span> {{ __('admin.cm') }}</p>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <p><strong class="mb-1">{{ __('admin.package_description') }}</strong></p>
+                                                <div id="package-description-preview" class="text-muted"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="card mb-4" style="border-radius:15px;">
+                                    <div class="card-header bg-primary text-white" style="border-top-left-radius:15px;border-top-right-radius:15px;">
+                                        <h5 class="mb-0" style="color:#fff;"><i class="fa fa-info-circle" style="margin:0 5px;"></i>{{ __('admin.shipment_price_details') }}</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-12" style="display:flex;justify-content:space-between;">
+                                                <strong class="mb-3 text-black">{{__('admin.shipping_price_per_receiver') }}: </strong>
+                                                <div class="text-muted" id="price-base-per-receiver"></div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12" style="display:flex;justify-content:space-between;">
+                                                <strong class="mb-1 text-black">{{__('admin.extra_weight_per_receiver') }}: </strong>
+                                                <div class="text-muted" id="price-extra-per-receiver"></div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <div class="small mb-3 text-muted mt-0" id="extra-weight-note">{{__('admin.no_extra_weight') }}</div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12" style="display:flex;justify-content:space-between;">
+                                                <strong class="mb-3 text-black">{{__('admin.shippment_type') }}: </strong>
+                                                <div class="mb-0 text-muted" id="payment-method-preview">{{__('admin.cash_on_delivery') }}</div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12" style="display:flex;justify-content:space-between;">
+                                                <strong class="mb-3 text-black">{{__('admin.cod_fee_per_one_receiver') }}: </strong>
+                                                <div class="mb-0 text-muted" id="cod-fee-per-one-receiver-preview"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card mb-4" style="border-radius:15px;">
+                                    <div class="card-header bg-primary text-white" style="border-top-left-radius:15px;border-top-right-radius:15px;">
+                                        <h5 class="mb-0" style="color:#fff;"><i class="fa fa-money-bill" style="margin:0 5px;"></i>{{ __('admin.payment_details') }}</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-12" style="display:flex;justify-content:space-between;">
+                                                <strong class="mb-3 text-black">{{__('admin.shipping_fee') }}: </strong>
+                                                <div class="mb-0 text-primary" id="shipping-fee-preview"></div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12" style="display:flex;justify-content:space-between;">
+                                                <strong class="mb-3 text-black">{{__('admin.extra_fees_weight') }}: </strong>
+                                                <div class="mb-0 text-primary" id="extra-fees-preview"></div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12" style="display:flex;justify-content:space-between;">
+                                                <strong class="mb-3 text-black">{{__('admin.cod_fee') }}: </strong>
+                                                <div class="mb-0 text-primary" id="cod-fees-preview"></div>
+                                            </div>
+                                        </div>
+                                        <div class="row" id="wallet-balance-section" style="display:none;">
+                                            <div class="col-md-12" style="display:flex;justify-content:space-between;">
+                                                <strong class="mb-3 text-black">{{__('admin.wallet_balance') }}: </strong>
+                                                <div class="mb-0 text-primary" id="wallet-balance-display"></div>
+                                            </div>
+                                            <div class="col-md-12 alert alert-warning" id="wallet-balance-warning" style="display:none;">
+                                                <small><i class="fas fa-exclamation-triangle me-1"></i> {{__('admin.insufficient_balance_warning') }}</small>
+                                            </div>
+                                        </div>
+                                        <hr>
+                                        <div class="row">
+                                            <div class="col-md-12" style="display:flex;justify-content:space-between;">
+                                                <strong class="mb-1 text-success">{{__('admin.total_amount_you_pay') }}: </strong>
+                                                <div class="h6 mb-0 text-success" id="total-amount-preview"></div>
+                                            </div>
+                                            <div class="col-md-12">
+                                                <span class="small mb-3 text-muted mt-0" id="receivers-count-display"></span> {{__('admin.receivers') }} ×
+                                                <span class="small mb-3 text-muted mt-0" id="per-receiver-total"></span> {{__('admin.per_receiver') }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-success btn-lg" id="btn-confirm-shipping" disabled>
+                                    <i class="fas fa-check me-2" style="margin:0 5px;"></i> {{ __('admin.confirm_shipment') }}
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-</div>
-</div>
 </div>
 </div>
 </div>
@@ -641,10 +615,17 @@
 @push('js')
 <script>
     const translations = {
+        loading: '{{ __("admin.loading") }}',
+        loading_senders: '{{ __("admin.loading") }}',
+        loading_cities: '{{ __("admin.loading_cities") }}',
+        loading_countries: '{{ __("admin.loading_countries") }}',
         local: '{{ __("admin.local") }}',
         international: '{{ __("admin.international") }}',
         local_delivery: '{{ __("admin.local_delivery") }}',
         worldwide_shipping: '{{ __("admin.worldwide_shipping") }}',
+        choose_sender: '{{ __("admin.choose_sender") }}',
+        select_company_first: '{{ __("admin.select_company_first") }}',
+        no_senders_found: '{{ __("admin.no_senders_found") }}',
         choose_receiver: '{{ __("admin.choose_receiver") }}',
         no_cities_available: '{{ __("admin.no_cities_available") }}',
         no_receivers_found: '{{ __("admin.no_receivers_found") }}',
@@ -987,11 +968,10 @@
         }
 
         function clearForm() {
-            ['user_name', 'user_phone', 'user_additional_phone', 'user_email', 'user_address', 'user_postal_code'].forEach(id => v(id, ''));
+            ['user_name', 'user_phone', 'user_additional_phone', 'user_address'].forEach(id => v(id, ''));
             setSel('user_country', '');
-            setSel('user_state', '');
             setSel('user_city', '');
-            ['user_country', 'user_state', 'user_city'].forEach(id => {
+            ['user_country', 'user_city'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.dispatchEvent(new Event('change'));
             });
@@ -1002,36 +982,17 @@
             v('user_name', p.name || '');
             v('user_phone', p.phone || '');
             v('user_additional_phone', p.additional_phone || '');
-            v('user_email', p.email || '');
-            v('user_postal_code', p.postal_code || '');
         }
 
-        async function fetchSenders() {
-            if (!stepEl || !selectEl) return;
-            const url = stepEl.getAttribute('data-senders-url');
-            if (!url) return;
-            selectEl.innerHTML = `<option value="">{{ __('admin.choose_sender') }}</option>`;
-            try {
-                const res = await fetch(url, {
-                    headers: {
-                        Accept: 'application/json'
-                    }
-                });
-                if (!res.ok) throw new Error();
-                const data = await res.json();
-                const list = Array.isArray(data) ? data : (data.data || []);
-                list.forEach(s => {
-                    const opt = document.createElement('option');
-                    opt.value = s.id;
-                    opt.textContent = s.name ? `${s.name}${s.phone ? ' - ' + s.phone : ''}` : `ID #${s.id}`;
-                    opt.dataset.payload = JSON.stringify(s);
-                    selectEl.appendChild(opt);
-                });
-            } catch (e) {}
+        // Use loadSendersByCompany from step3.js instead of duplicating
+        function fetchSenders() {
+            if (typeof window.loadSendersByCompany === 'function') {
+                window.loadSendersByCompany();
+            }
         }
 
         function requiredFilled() {
-            const reqIds = ['user_name', 'user_phone', 'user_email', 'user_country', 'user_state', 'user_city', 'user_address'];
+            const reqIds = ['user_name', 'user_phone', 'user_country', 'user_city', 'user_address'];
             for (const id of reqIds) {
                 const el = document.getElementById(id);
                 if (!el) return false;
@@ -1085,8 +1046,8 @@
 
         function bindRecalc() {
             const ids = [
-                'user_name', 'user_phone', 'user_email', 'user_country', 'user_state', 'user_city', 'user_address',
-                'user_additional_phone', 'user_postal_code'
+                'user_name', 'user_phone', 'user_country', 'user_city', 'user_address',
+                'user_additional_phone'
             ];
             ids.forEach(id => {
                 const el = document.getElementById(id);
@@ -1136,14 +1097,24 @@
 
                 // Re-bind the change event after Select2 initialization
                 $(selectEl).on('change', function() {
-                    const opt = selectEl.options[selectEl.selectedIndex];
-                    if (opt && opt.dataset.payload) {
-                        try {
-                            const payload = JSON.parse(opt.dataset.payload);
-                            applyPayload(payload);
-                            if (formWrap) formWrap.style.display = '';
-                        } catch {}
+                    const senderId = selectEl.value;
+                    if (senderId) {
+                        // Use the proper populateSenderForm from step3.js which handles cities
+                        if (typeof window.populateSenderForm === 'function') {
+                            window.populateSenderForm(senderId);
+                        } else {
+                            // Fallback to old method
+                            const opt = selectEl.options[selectEl.selectedIndex];
+                            if (opt && opt.dataset.payload) {
+                                try {
+                                    const payload = JSON.parse(opt.dataset.payload);
+                                    applyPayload(payload);
+                                } catch {}
+                            }
+                        }
+                        if (formWrap) formWrap.style.display = '';
                     } else {
+                        clearForm();
                         if (formWrap) formWrap.style.display = 'none';
                     }
                     pushValidityToNext();
@@ -1235,7 +1206,7 @@
         function initializeLocationSelect2() {
             // Initialize country select
             if (countrySelect && !countrySelect.dataset.select2Initialized) {
-                
+
                 $(countrySelect).select2({
                     placeholder: '{{ __("admin.select_country") }}',
                     allowClear: true,
@@ -1258,13 +1229,17 @@
                     // Set the underlying select value
                     countrySelect.value = e.params.data.id;
                     // Trigger native change event to maintain cascading logic
-                    countrySelect.dispatchEvent(new Event('change', { bubbles: true }));
+                    countrySelect.dispatchEvent(new Event('change', {
+                        bubbles: true
+                    }));
                 });
 
                 // Handle clear events
                 $(countrySelect).on('select2:clear', function() {
                     countrySelect.value = '';
-                    countrySelect.dispatchEvent(new Event('change', { bubbles: true }));
+                    countrySelect.dispatchEvent(new Event('change', {
+                        bubbles: true
+                    }));
                 });
 
                 countrySelect.dataset.select2Initialized = '1';
@@ -1272,7 +1247,7 @@
 
             // Initialize state select
             if (stateSelect && !stateSelect.dataset.select2Initialized) {
-                
+
                 $(stateSelect).select2({
                     placeholder: '{{ __("admin.select_state") }}',
                     allowClear: true,
@@ -1295,13 +1270,17 @@
                     // Set the underlying select value
                     stateSelect.value = e.params.data.id;
                     // Trigger native change event to maintain cascading logic
-                    stateSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                    stateSelect.dispatchEvent(new Event('change', {
+                        bubbles: true
+                    }));
                 });
 
                 // Handle clear events
                 $(stateSelect).on('select2:clear', function() {
                     stateSelect.value = '';
-                    stateSelect.dispatchEvent(new Event('change', { bubbles: true }));
+                    stateSelect.dispatchEvent(new Event('change', {
+                        bubbles: true
+                    }));
                 });
 
                 stateSelect.dataset.select2Initialized = '1';
@@ -1333,13 +1312,17 @@
                     // Set the underlying select value
                     citySelect.value = selectedValue;
                     // Trigger native change event
-                    citySelect.dispatchEvent(new Event('change', { bubbles: true }));
+                    citySelect.dispatchEvent(new Event('change', {
+                        bubbles: true
+                    }));
                 });
 
                 // Also handle clear events
                 $(citySelect).on('select2:clear', function() {
                     citySelect.value = '';
-                    citySelect.dispatchEvent(new Event('change', { bubbles: true }));
+                    citySelect.dispatchEvent(new Event('change', {
+                        bubbles: true
+                    }));
                 });
 
                 citySelect.dataset.select2Initialized = '1';
@@ -1368,10 +1351,9 @@
 
     })();
 
-    // Initialize Select2 for sender location selects (user_country, user_state, user_city)
+    // Initialize Select2 for sender location selects (user_country, user_city)
     (function() {
         const userCountrySelect = document.getElementById('user_country');
-        const userStateSelect = document.getElementById('user_state');
         const userCitySelect = document.getElementById('user_city');
 
         function initializeSenderLocationSelect2() {
@@ -1399,52 +1381,20 @@
                     // Set the underlying select value
                     userCountrySelect.value = e.params.data.id;
                     // Trigger native change event to maintain cascading logic
-                    userCountrySelect.dispatchEvent(new Event('change', { bubbles: true }));
+                    userCountrySelect.dispatchEvent(new Event('change', {
+                        bubbles: true
+                    }));
                 });
 
                 // Handle clear events
                 $(userCountrySelect).on('select2:clear', function() {
                     userCountrySelect.value = '';
-                    userCountrySelect.dispatchEvent(new Event('change', { bubbles: true }));
+                    userCountrySelect.dispatchEvent(new Event('change', {
+                        bubbles: true
+                    }));
                 });
 
                 userCountrySelect.dataset.select2Initialized = '1';
-            }
-
-            // Initialize user state select
-            if (userStateSelect && !userStateSelect.dataset.select2Initialized) {
-                $(userStateSelect).select2({
-                    placeholder: '{{ __("admin.choose_state") }}',
-                    allowClear: true,
-                    width: '100%',
-                    minimumInputLength: 0,
-                    closeOnSelect: true,
-                    cache: true,
-                    language: {
-                        noResults: function() {
-                            return '{{ __("admin.no_states_found") }}';
-                        },
-                        searching: function() {
-                            return '{{ __("admin.searching") }}';
-                        }
-                    }
-                });
-
-                // Re-bind the change event after Select2 initialization
-                $(userStateSelect).on('select2:select', function(e) {
-                    // Set the underlying select value
-                    userStateSelect.value = e.params.data.id;
-                    // Trigger native change event to maintain cascading logic
-                    userStateSelect.dispatchEvent(new Event('change', { bubbles: true }));
-                });
-
-                // Handle clear events
-                $(userStateSelect).on('select2:clear', function() {
-                    userStateSelect.value = '';
-                    userStateSelect.dispatchEvent(new Event('change', { bubbles: true }));
-                });
-
-                userStateSelect.dataset.select2Initialized = '1';
             }
 
             // Initialize user city select
@@ -1473,13 +1423,17 @@
                     // Set the underlying select value
                     userCitySelect.value = selectedValue;
                     // Trigger native change event
-                    userCitySelect.dispatchEvent(new Event('change', { bubbles: true }));
+                    userCitySelect.dispatchEvent(new Event('change', {
+                        bubbles: true
+                    }));
                 });
 
                 // Also handle clear events
                 $(userCitySelect).on('select2:clear', function() {
                     userCitySelect.value = '';
-                    userCitySelect.dispatchEvent(new Event('change', { bubbles: true }));
+                    userCitySelect.dispatchEvent(new Event('change', {
+                        bubbles: true
+                    }));
                 });
 
                 userCitySelect.dataset.select2Initialized = '1';
@@ -1565,7 +1519,7 @@
 
             function handleTypeChange() {
                 hardResetFields();
-                
+
                 if (newRadio.checked) {
                     container.style.display = 'none';
                     textarea.disabled = false;

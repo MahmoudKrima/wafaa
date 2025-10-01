@@ -25,7 +25,8 @@ class StoreSenderRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => [
-                'required',
+                'sometimes',
+                'nullable',
                 'email:dns,filter',
                 Rule::unique('senders', 'email'),
                 Rule::unique('users', 'email'),
@@ -60,6 +61,11 @@ class StoreSenderRequest extends FormRequest
                 Rule::unique('users', 'additional_phone'),
             ],
             'postal_code' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'address' => ['required', 'string', 'max:255'],
+            'shipping_companies' => ['required', 'array'],
+            'shipping_companies.*' => ['required', 'array'],
+            'shipping_companies.*.company_id' => ['required', 'string'],
+            'shipping_companies.*.city_id' => ['required', 'string'],
         ];
     }
 

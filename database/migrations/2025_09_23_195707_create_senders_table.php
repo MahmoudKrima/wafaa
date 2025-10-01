@@ -14,10 +14,13 @@ return new class extends Migration
         Schema::create('senders', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('email')->unique();
+            $table->string('email')
+            ->unique()
+            ->nullable();
             $table->string('phone')->unique();
             $table->string('postal_code')->nullable();
             $table->string('additional_phone')->nullable();
+            $table->string('address');
             $table->foreignId('user_id')
                 ->constrained('users')
                 ->cascadeOnDelete()

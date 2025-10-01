@@ -15,6 +15,7 @@ class Sender extends Model
 
     public static $relatio = [
         'user',
+        'shippingCompanies',
     ];
 
 
@@ -26,5 +27,10 @@ class Sender extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function shippingCompanies()
+    {
+        return $this->hasMany(SenderCity::class, 'sender_id', 'id');
     }
 }

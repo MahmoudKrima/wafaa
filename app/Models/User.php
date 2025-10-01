@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enum\ActivationStatusEnum;
 use Spatie\Permission\Traits\HasRoles;
 use Illuminate\Notifications\Notifiable;
@@ -14,7 +13,6 @@ use Illuminate\Notifications\DatabaseNotification;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasRoles, HasTranslations;
 
     protected $guarded = ['created_at', 'updated_at'];
@@ -26,22 +24,12 @@ class User extends Authenticatable
         'users.delete',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
     protected $translatable = ['name', 'city_name', 'state_name', 'country_name'];
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
@@ -58,7 +46,7 @@ class User extends Authenticatable
         'walletLogs',
         'shippingPrices',
         'notifications',
-        'reciverable'
+        'reciverable',
     ];
 
 
@@ -114,4 +102,5 @@ class User extends Authenticatable
     {
         return $this->morphMany(DatabaseNotification::class, 'reciverable')->latest();
     }
+
 }

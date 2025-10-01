@@ -240,6 +240,18 @@
                 "Select City"
             )}</option>`;
             el.disabled = true;
+            if (
+                typeof $ !== "undefined" &&
+                $(el).hasClass("select2-hidden-accessible")
+            ) {
+                $(el).select2("destroy");
+                $(el).select2({
+                    placeholder: t("select_city", "Select City"),
+                    allowClear: true,
+                    width: "100%",
+                    disabled: true,
+                });
+            }
             return;
         }
         el.innerHTML = `<option value="">${t(
@@ -247,10 +259,20 @@
             "Loading cities..."
         )}</option>`;
         el.disabled = true;
-        
-        // Update Select2 if it's being used
-        if (typeof $ !== "undefined" && $(el).hasClass("select2-hidden-accessible")) {
-            $(el).trigger("change.select2");
+
+        // Update Select2 to show loading state
+        if (
+            typeof $ !== "undefined" &&
+            $(el).hasClass("select2-hidden-accessible")
+        ) {
+            // Destroy and reinitialize to show loading text
+            $(el).select2("destroy");
+            $(el).select2({
+                placeholder: t("loading_cities", "Loading cities..."),
+                allowClear: false,
+                width: "100%",
+                disabled: true,
+            });
         }
 
         try {
@@ -290,58 +312,85 @@
                 el.appendChild(opt);
             });
             el.disabled = false;
-            
-            // Update Select2 if it's being used
-            if (typeof $ !== "undefined" && $(el).hasClass("select2-hidden-accessible")) {
-                $(el).trigger("change.select2");
-            }
-            
-            updateAddButtonState();
 
+            // Check if Select2 is initialized
+            const isSelect2 =
+                typeof $ !== "undefined" &&
+                $(el).hasClass("select2-hidden-accessible");
+
+            // Set the selected city if provided
             if (selectedId) {
-                setTimeout(() => {
-                    el.value = selectedId;
+                // First try exact match
+                el.value = selectedId;
 
-                    if (el.value !== selectedId) {
-                        const options = Array.from(el.options);
-                        const partialMatch = options.find(
-                            (opt) =>
-                                opt.value.includes(selectedId) ||
-                                selectedId.includes(opt.value)
-                        );
-                        if (partialMatch) {
-                            el.value = partialMatch.value;
-                        }
+                // If exact match didn't work, try partial matching
+                if (el.value !== selectedId) {
+                    const options = Array.from(el.options);
+                    const partialMatch = options.find(
+                        (opt) =>
+                            opt.value.includes(selectedId) ||
+                            selectedId.includes(opt.value)
+                    );
+                    if (partialMatch) {
+                        el.value = partialMatch.value;
                     }
-
-                    // Trigger Select2 update if it's being used
-                    if (
-                        typeof $ !== "undefined" &&
-                        $(el).hasClass("select2-hidden-accessible")
-                    ) {
-                        $(el).trigger("change.select2");
-                        // Update the button state after Select2 update
-                        setTimeout(() => {
-                            updateAddButtonState();
-                        }, 100);
-                    } else {
-                        // If not using Select2, update button state immediately
-                        updateAddButtonState();
-                    }
-                }, 200);
+                }
             }
+
+            // Reinitialize Select2 with new options and selected value
+            if (isSelect2) {
+                // Destroy and reinitialize Select2 to ensure options are properly loaded
+                $(el).select2("destroy");
+                $(el).select2({
+                    placeholder: t("select_city", "Select City"),
+                    allowClear: true,
+                    width: "100%",
+                    minimumInputLength: 0,
+                    closeOnSelect: true,
+                    cache: true,
+                    language: {
+                        noResults: function () {
+                            return t(
+                                "no_cities_available",
+                                "No cities available"
+                            );
+                        },
+                        searching: function () {
+                            return t("searching", "Searching...");
+                        },
+                    },
+                });
+
+                // Set the value again after reinitializing
+                if (el.value) {
+                    $(el).val(el.value).trigger("change.select2");
+                }
+            }
+
+            updateAddButtonState();
         } catch (error) {
             el.innerHTML = `<option value="">${t(
                 "error_loading_cities",
                 "Error loading cities"
             )}</option>`;
             el.disabled = false;
-            
-            // Update Select2 if it's being used
-            if (typeof $ !== "undefined" && $(el).hasClass("select2-hidden-accessible")) {
-                $(el).trigger("change.select2");
+
+            // Reinitialize Select2 to show error state
+            if (
+                typeof $ !== "undefined" &&
+                $(el).hasClass("select2-hidden-accessible")
+            ) {
+                $(el).select2("destroy");
+                $(el).select2({
+                    placeholder: t(
+                        "error_loading_cities",
+                        "Error loading cities"
+                    ),
+                    allowClear: true,
+                    width: "100%",
+                });
             }
-            
+
             updateAddButtonState();
         }
     }
@@ -694,7 +743,11 @@
             "postal_code",
         ].forEach((id) => {
             const el = document.getElementById(id);
-            if (el) el.value = "";
+            if (el) {
+                el.value = "";
+                el.disabled = false;
+                el.readOnly = false;
+            }
         });
         const c = $country(),
             ci = $city();
@@ -704,6 +757,7 @@
                 "Select Country"
             )}</option>`;
             c.value = "";
+            c.disabled = false;
         }
         if (ci) {
             ci.innerHTML = `<option value="">${t(
@@ -758,7 +812,9 @@
             }
 
             const isValid = value !== "";
-            console.log(`Field ${id}: "${value}" - ${isValid ? 'VALID' : 'INVALID'}`);
+            console.log(
+                `Field ${id}: "${value}" - ${isValid ? "VALID" : "INVALID"}`
+            );
             return isValid;
         });
         const allValid = results.every((r) => r);
@@ -776,7 +832,9 @@
             const selectedId = $receiverSelect()?.value || "";
             const formComplete = isFormComplete();
             enable = !!selectedId && formComplete;
-            console.log(`Existing mode - selectedId: "${selectedId}", formComplete: ${formComplete}, enable: ${enable}`);
+            console.log(
+                `Existing mode - selectedId: "${selectedId}", formComplete: ${formComplete}, enable: ${enable}`
+            );
         } else if (modeNew) {
             enable = isFormComplete();
             console.log(`New mode - enable: ${enable}`);
