@@ -205,7 +205,7 @@ class ShippingController extends Controller
             return back()->with('Error', ' لا تتوفر بوليصات لهذه الشحنات');
         }
         
-        
+            
         $localFiles = [];
 
         foreach ($urls as $key => $url) {
@@ -216,11 +216,7 @@ class ShippingController extends Controller
         }
 
         $outputPath = storage_path('app/merged_labels.pdf');
-
-        // secure the final path
         $outputPathEscaped = escapeshellarg($outputPath);
-
-        //  Ghostscript command
         $cmd = "gs -dBATCH -dNOPAUSE -q -sDEVICE=pdfwrite -sOutputFile={$outputPathEscaped} " . implode(" ", $localFiles);
 
         exec($cmd . " 2>&1", $output, $returnCode);
@@ -236,7 +232,6 @@ class ShippingController extends Controller
 
         $response =  response()->download($outputPath, 'waybills.pdf')->deleteFileAfterSend(true);
         
-        // delete temp files
         foreach ($localFiles as $file) {
             $filePath = str_replace("'", "", $file);
         
@@ -253,6 +248,12 @@ class ShippingController extends Controller
     {
         $receivers = $this->shippingService->receivers($shippingCompanyId);
         return response()->json($receivers);
+    }
+
+    public function sendersByCompany($shippingCompanyId)
+    {
+        $senders = $this->shippingService->senders($shippingCompanyId);
+        return response()->json($senders);
     }
 
     public function getCitiesByCompanyAndCountry($shippingCompanyId)

@@ -23,8 +23,6 @@ class StoreShippingRequest extends FormRequest
             'sender_address'             => ['required', 'string', 'max:500'],
             'sender_country_id'  => ['required', 'string'],
             'sender_country_name' => ['required', 'string'],
-            'sender_state_id'    => ['required', 'string'],
-            'sender_state_name'  => ['required', 'string'],
             'sender_city_id'     => ['required', 'string'],
             'sender_city_name'   => ['required', 'string'],
             'sender_postal_code'         => ['nullable', 'string', 'max:20'],

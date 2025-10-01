@@ -1,8 +1,13 @@
 (() => {
     let selectedMethod = null;
     let nextBtnObserver = null;
+    
     function getNextBtn() {
         return document.getElementById("btn-next");
+    }
+    
+    function validateStep2() {
+        return !!(window.selectedCompany && window.selectedMethod);
     }
 
     function freezeNextButton() {
@@ -73,12 +78,8 @@
         if (!window.selectedCompany) {
             const mo = document.getElementById("method-options");
             if (mo) mo.innerHTML = "";
-            const btnNext = getNextBtn();
-            if (btnNext) {
-                unfreezeNextButton();
-                btnNext.disabled = true;
-                btnNext.classList.add("btn-secondary");
-                btnNext.classList.remove("btn-primary");
+            if (typeof window.hardEnableNext === "function") {
+                window.hardEnableNext(false);
             }
             return;
         }
@@ -146,16 +147,9 @@
             }
         }
 
-        const btnNext = getNextBtn();
-        if (btnNext) {
-            const enable = !!window.selectedMethod;
-            if (enable) freezeNextButton();
-            else {
-                unfreezeNextButton();
-                btnNext.disabled = true;
-                btnNext.classList.add("btn-secondary");
-                btnNext.classList.remove("btn-primary");
-            }
+        // Validate and update Next button state
+        if (typeof window.hardEnableNext === "function") {
+            window.hardEnableNext(validateStep2());
         }
 
         if (window.selectedMethod) {
@@ -183,8 +177,10 @@
         const methodInput = document.getElementById("shipping_method");
         if (methodInput) methodInput.value = method;
 
-        const btnNext = getNextBtn();
-        if (btnNext) freezeNextButton();
+        // Enable Next button when method is selected
+        if (typeof window.hardEnableNext === "function") {
+            window.hardEnableNext(validateStep2());
+        }
 
         document.dispatchEvent(
             new CustomEvent("shippingMethodSelected", { detail: { method } })
@@ -207,12 +203,8 @@
             const methodInput = document.getElementById("shipping_method");
             if (methodInput) methodInput.value = "";
 
-            const btnNext = getNextBtn();
-            if (btnNext) {
-                unfreezeNextButton();
-                btnNext.disabled = true;
-                btnNext.classList.add("btn-secondary");
-                btnNext.classList.remove("btn-primary");
+            if (typeof window.hardEnableNext === "function") {
+                window.hardEnableNext(false);
             }
         }
     }
@@ -231,4 +223,5 @@
     window.showMethodSelection = showMethodSelection;
     window.selectMethod = selectMethod;
     window.clearStepData = clearStepData;
+    window.validateStep2Form = validateStep2;
 })();

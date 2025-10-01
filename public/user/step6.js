@@ -17,8 +17,9 @@
         });
     }
 
-    function showErrorStep5(message) {
-        if (!_submittingStep5) return;
+    function showErrorStep5(message, forceShow = false) {
+        if (!forceShow && !_submittingStep5) return;
+        
         if (typeof toastr !== "undefined") {
             toastr.error(message);
             return;
@@ -111,7 +112,7 @@
     }
 
     // Public: used by Next/Submit gating
-    window.validatePackageDetails = function validatePackageDetails() {
+    window.validatePackageDetails = function validatePackageDetails(showErrors = false) {
         const packageType = $$("package_type");
         const packageNumber = $$("package_number");
         const weight = $$("weight");
@@ -128,23 +129,25 @@
         }
 
         if (!packageType.value) {
-            showErrorStep5(
-                t("package_type_required", "Package type is required")
+            if (showErrors) showErrorStep5(
+                t("package_type_required", "Package type is required"),
+                true
             );
             return false;
         }
 
         const num = Number(packageNumber.value);
         if (!packageNumber.value || isNaN(num) || num < 1) {
-            showErrorStep5(
-                t("package_number_invalid", "Invalid package number")
+            if (showErrors) showErrorStep5(
+                t("package_number_invalid", "Invalid package number"),
+                true
             );
             return false;
         }
 
         const w = Number(weight.value);
         if (!weight.value || isNaN(w) || w <= 0) {
-            showErrorStep5(t("weight_invalid", "Invalid weight"));
+            if (showErrors) showErrorStep5(t("weight_invalid", "Invalid weight"), true);
             return false;
         }
 
@@ -152,7 +155,7 @@
         const width = $$("width");
         const height = $$("height");
         if (!length || !width || !height) {
-            showErrorStep5(t("dimensions_missing", "Dimensions missing"));
+            if (showErrors) showErrorStep5(t("dimensions_missing", "Dimensions missing"), true);
             return false;
         }
 
@@ -160,11 +163,11 @@
         const W = Number(width.value);
         const H = Number(height.value);
         if (!length.value || !width.value || !height.value) {
-            showErrorStep5(t("dimensions_required", "Dimensions required"));
+            if (showErrors) showErrorStep5(t("dimensions_required", "Dimensions required"), true);
             return false;
         }
         if (isNaN(L) || isNaN(W) || isNaN(H) || L <= 0 || W <= 0 || H <= 0) {
-            showErrorStep5(t("dimensions_invalid", "Invalid dimensions"));
+            if (showErrors) showErrorStep5(t("dimensions_invalid", "Invalid dimensions"), true);
             return false;
         }
 
@@ -173,11 +176,12 @@
             !packageDescription.value ||
             packageDescription.value.trim() === ""
         ) {
-            showErrorStep5(
+            if (showErrors) showErrorStep5(
                 t(
                     "package_description_required",
                     "Package description is required"
-                )
+                ),
+                true
             );
             return false;
         }
@@ -187,16 +191,18 @@
             const codInput = $$("cod-amount-input");
             const v = codInput ? +codInput.value : 0;
             if (!codInput || !isFinite(v) || v <= 0) {
-                showErrorStep5(
-                    t("cod_amount_required", "Amount must be greater than 0")
+                if (showErrors) showErrorStep5(
+                    t("cod_amount_required", "Amount must be greater than 0"),
+                    true
                 );
                 return false;
             }
         }
 
         if (!acceptTerms.checked) {
-            showErrorStep5(
-                t("accept_terms_required", "You must accept the terms")
+            if (showErrors) showErrorStep5(
+                t("accept_terms_required", "You must accept the terms"),
+                true
             );
             return false;
         }
@@ -206,6 +212,9 @@
 
     // Initialize Step 5 fields & listeners
     window.populateShippingFormFields = function populateShippingFormFields() {
+        // Reset submitting flag when entering the step
+        _submittingStep5 = false;
+        
         setupPackageTypeHandling();
         ensureDimensionDefaults(); // on first load
 
@@ -234,15 +243,20 @@
                 "click",
                 () => {
                     _submittingStep5 = true;
+                    if (!window.validatePackageDetails(true)) {
+                        _submittingStep5 = false;
+                        return false;
+                    }
                     setTimeout(() => {
                         _submittingStep5 = false;
-                    }, 0);
+                    }, 100);
                 },
                 true
             );
             btnNext.dataset.boundStep5Submit = "1";
         }
 
+        // Call validation without showing errors
         syncNextBtnStep5();
     };
 
@@ -704,8 +718,7 @@
             "#step-6 .payment-options-container"
         );
         if (hasStep6) renderPaymentOptions();
-        if (document.getElementById("step-4")) {
-            window.populateShippingFormFields();
-        }
+        // Don't call populateShippingFormFields on page load
+        // It will be called when step 4 is shown via utilities.js
     });
 })();

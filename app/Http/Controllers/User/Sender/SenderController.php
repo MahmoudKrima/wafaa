@@ -30,7 +30,8 @@ class SenderController extends Controller
 
     public function create()
     {
-        return view('user.pages.senders.create');
+        $shippingCompanies = $this->senderService->getShippingCompanies();
+        return view('user.pages.senders.create', compact('shippingCompanies'));
     }
 
     public function store(StoreSenderRequest $request)
@@ -43,7 +44,9 @@ class SenderController extends Controller
 
     public function edit(Sender $sender)
     {
-        return view('user.pages.senders.edit', compact('sender'));
+        $shippingCompanies = $this->senderService->getShippingCompanies();
+        $sender->load('shippingCompanies');
+        return view('user.pages.senders.edit', compact('sender', 'shippingCompanies'));
     }
 
 
@@ -67,5 +70,22 @@ class SenderController extends Controller
     {
         $senders = $this->senderService->getSenders();
         return response()->json($senders);
+    }
+
+    public function getCitiesByCompanyAndCountry($shippingCompanyId)
+    {
+        $countryId = '65fd1a1c1fdbc094e3369b29';
+        $cities = $this->senderService->getCitiesByCompanyAndCountry($shippingCompanyId, $countryId);
+        
+        return response()->json($cities);
+    }
+
+    public function show(Sender $sender)
+    {
+        if ($sender->user_id !== auth()->id()) {
+            abort(404);
+        }
+        $sender->load('shippingCompanies');
+        return response()->json($sender);
     }
 }

@@ -39,15 +39,13 @@
     };
 
     const $country = () => document.getElementById("user_country");
-    const $state = () => document.getElementById("user_state");
     const $city = () => document.getElementById("user_city");
+    const $senderSelect = () => document.getElementById("sender_select");
 
     const requiredIds = [
         "user_name",
         "user_phone",
-        "user_email",
         "user_country",
-        "user_state",
         "user_city",
         "user_address",
     ];
@@ -130,6 +128,339 @@
         return (window.selectedMethod || "").toLowerCase();
     }
 
+    function fillSenderSelect(senders) {
+        const select = $senderSelect();
+        if (!select) return;
+        select.innerHTML = `<option value="">${
+            window.translations?.choose_sender || "Choose sender"
+        }</option>`;
+        senders.forEach((sender) => {
+            const opt = document.createElement("option");
+            opt.value = sender.id || sender._id || "";
+            opt.textContent = sender.name || sender.full_name || "";
+            select.appendChild(opt);
+        });
+    }
+
+    function loadSendersByCompany() {
+        const select = $senderSelect();
+        if (!select) return;
+
+        const companyIdValue = companyId();
+        if (!companyIdValue) {
+            select.innerHTML = `<option value="">${
+                window.translations?.select_company_first ||
+                "Please select a shipping company first"
+            }</option>`;
+            select.disabled = true;
+            return;
+        }
+
+        // Show loading state
+        select.innerHTML = `<option value="">${
+            window.translations?.loading || "Loading..."
+        }</option>`;
+        select.disabled = true;
+
+        fetch(`/senders-by-company/${companyIdValue}`, {
+            headers: {
+                "X-CSRF-TOKEN":
+                    document.querySelector('meta[name="csrf-token"]')
+                        ?.content || "",
+                Accept: "application/json",
+                "Content-Type": "application/json",
+            },
+            credentials: "same-origin",
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                const senders = Array.isArray(data) ? data : [];
+                fillSenderSelect(senders);
+                select.disabled = false;
+            })
+            .catch(() => {
+                select.innerHTML = `<option value="">${
+                    window.translations?.no_senders_found || "No senders found"
+                }</option>`;
+                select.disabled = false;
+            });
+    }
+
+    async function populateSenderForm(senderId) {
+        const select = $senderSelect();
+        if (!select) return;
+
+        try {
+            // Fetch full sender details
+            const response = await fetch(`/user/senders/${senderId}`, {
+                headers: {
+                    "X-CSRF-TOKEN":
+                        document.querySelector('meta[name="csrf-token"]')
+                            ?.content || "",
+                    Accept: "application/json",
+                    "Content-Type": "application/json",
+                },
+                credentials: "same-origin",
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to fetch sender details");
+            }
+
+            const sender = await response.json();
+            
+            // Populate basic fields
+            const nameField = document.getElementById("user_name");
+            const phoneField = document.getElementById("user_phone");
+            const additionalPhoneField = document.getElementById(
+                "user_additional_phone"
+            );
+            const addressField = document.getElementById("user_address");
+
+            if (nameField) nameField.value = sender.name || "";
+            if (phoneField) phoneField.value = sender.phone || "";
+            if (additionalPhoneField)
+                additionalPhoneField.value = sender.additional_phone || "";
+            if (addressField) addressField.value = sender.address || "";
+            
+            await loadCountries();
+
+            const countrySelect = $country();
+            if (countrySelect) {
+                countrySelect.value = DEFAULT_KSA_ID;
+            }
+
+            const companyIdValue = companyId();
+            let senderCityId = null;
+            
+            if (
+                sender.shipping_companies &&
+                Array.isArray(sender.shipping_companies)
+            ) {
+                const matchingCompany = sender.shipping_companies.find(
+                    (sc) =>
+                        String(sc.shipping_company_id) ===
+                        String(companyIdValue)
+                );
+
+                if (matchingCompany && matchingCompany.city_id) {
+                    senderCityId = matchingCompany.city_id;
+                }
+            }
+
+            if (companyIdValue) {
+                await loadCitiesByCompanyAndCountry(
+                    companyIdValue,
+                    DEFAULT_KSA_ID,
+                    senderCityId
+                );
+            }
+            
+            // Preserve the sender selection in the dropdown
+            select.value = senderId;
+            
+            // Update Select2 if it's initialized
+            if (typeof $ !== "undefined" && $(select).data('select2')) {
+                $(select).val(senderId).trigger('change.select2');
+            }
+        } catch (error) {
+            console.error("Error populating sender form:", error);
+            const selectedOption = select.querySelector(
+                `option[value="${senderId}"]`
+            );
+            if (selectedOption) {
+                const nameField = document.getElementById("user_name");
+                if (nameField) nameField.value = selectedOption.textContent;
+            }
+            
+            // Still preserve the selection even on error
+            select.value = senderId;
+            if (typeof $ !== "undefined" && $(select).data('select2')) {
+                $(select).val(senderId).trigger('change.select2');
+            }
+        } finally {
+            // Trigger validation multiple times to ensure it catches all updates
+            if (typeof window.hardEnableNext === "function") {
+                // First immediate validation
+                setTimeout(() => {
+                    const isValid = validateStep3Form();
+                    window.hardEnableNext(isValid);
+                }, 100);
+                
+                // Second validation after Select2 updates
+                setTimeout(() => {
+                    const isValid = validateStep3Form();
+                    window.hardEnableNext(isValid);
+                }, 400);
+                
+                // Final validation to be sure
+                setTimeout(() => {
+                    const isValid = validateStep3Form();
+                    window.hardEnableNext(isValid);
+                }, 800);
+            }
+        }
+    }
+
+    async function loadCitiesByCompanyAndCountry(
+        companyId,
+        countryId,
+        selectedCityId = ""
+    ) {
+        const citySelect = $city();
+        if (!citySelect) return;
+
+        if (!companyId || !countryId) {
+            citySelect.innerHTML = `<option value="">${
+                window.translations?.select_city || "Select City"
+            }</option>`;
+            citySelect.disabled = true;
+            
+            // Reinitialize Select2 if initialized
+            if (typeof $ !== "undefined" && $(citySelect).data('select2')) {
+                $(citySelect).select2('destroy');
+                $(citySelect).select2({
+                    placeholder: window.translations?.select_city || 'Select City',
+                    allowClear: true,
+                    width: '100%',
+                    disabled: true
+                });
+            }
+            return;
+        }
+
+        citySelect.innerHTML = `<option value="">${
+            window.translations?.loading_cities || "Loading cities..."
+        }</option>`;
+        citySelect.disabled = true;
+        
+        // Update Select2 to show loading state
+        if (typeof $ !== "undefined" && $(citySelect).data('select2')) {
+            // Destroy and reinitialize to show loading text
+            $(citySelect).select2('destroy');
+            $(citySelect).select2({
+                placeholder: window.translations?.loading_cities || 'Loading cities...',
+                allowClear: false,
+                width: '100%',
+                disabled: true
+            });
+        }
+
+        try {
+            const response = await fetch(
+                `/cities-by-company-and-country/${companyId}`,
+                {
+                    headers: {
+                        "X-CSRF-TOKEN":
+                            document.querySelector('meta[name="csrf-token"]')
+                                ?.content || "",
+                        Accept: "application/json",
+                        "Content-Type": "application/json",
+                    },
+                    credentials: "same-origin",
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("Failed to fetch cities");
+            }
+
+            const data = await response.json();
+            const cities = Array.isArray(data?.results)
+                ? data.results
+                : Array.isArray(data)
+                ? data
+                : [];
+
+            citySelect.innerHTML = `<option value="">${
+                window.translations?.select_city || "Select City"
+            }</option>`;
+
+            cities.forEach((city) => {
+                const opt = document.createElement("option");
+                opt.value = city.id || city._id || "";
+                opt.textContent = labelFrom(city);
+                citySelect.appendChild(opt);
+            });
+
+            citySelect.disabled = false;
+
+            // Check if Select2 is initialized
+            const isSelect2 = typeof $ !== "undefined" && $(citySelect).data('select2');
+
+            // Set the selected city if provided
+            if (selectedCityId) {
+                // First try exact match
+                citySelect.value = selectedCityId;
+                
+                // If exact match didn't work, try partial matching
+                if (citySelect.value !== selectedCityId) {
+                    const options = Array.from(citySelect.options);
+                    const partialMatch = options.find(
+                        (opt) =>
+                            opt.value.includes(selectedCityId) ||
+                            selectedCityId.includes(opt.value)
+                    );
+                    if (partialMatch) {
+                        citySelect.value = partialMatch.value;
+                    }
+                }
+            }
+
+            // Reinitialize Select2 with new options and selected value
+            if (isSelect2) {
+                // Destroy and reinitialize Select2 to ensure options are properly loaded
+                $(citySelect).select2('destroy');
+                $(citySelect).select2({
+                    placeholder: window.translations?.choose_city || 'Choose City',
+                    allowClear: true,
+                    width: '100%',
+                    minimumInputLength: 0,
+                    closeOnSelect: true,
+                    cache: true,
+                    language: {
+                        noResults: function() {
+                            return window.translations?.no_cities_available || 'No cities available';
+                        },
+                        searching: function() {
+                            return window.translations?.searching || 'Searching...';
+                        }
+                    }
+                });
+                
+                // Set the value again after reinitializing
+                if (citySelect.value) {
+                    $(citySelect).val(citySelect.value).trigger('change.select2');
+                }
+            }
+            
+            // Trigger validation after city is set
+            setTimeout(() => {
+                if (typeof window.hardEnableNext === "function") {
+                    const isValid = validateStep3Form();
+                    window.hardEnableNext(isValid);
+                }
+            }, 200);
+        } catch (error) {
+            console.error("Error loading cities:", error);
+            citySelect.innerHTML = `<option value="">${
+                window.translations?.error_loading_cities ||
+                "Error loading cities"
+            }</option>`;
+            citySelect.disabled = false;
+            
+            // Reinitialize Select2 to show error state
+            if (typeof $ !== "undefined" && $(citySelect).data('select2')) {
+                $(citySelect).select2('destroy');
+                $(citySelect).select2({
+                    placeholder: window.translations?.error_loading_cities || 'Error loading cities',
+                    allowClear: true,
+                    width: '100%'
+                });
+            }
+        }
+    }
+
     async function loadCountries() {
         const el = $country();
         if (!el) return;
@@ -157,7 +488,11 @@
                 const ksaId = findKSAId(items);
                 if ([...el.options].some((o) => o.value === ksaId)) {
                     el.value = ksaId;
-                    await loadStates();
+                    // Load cities directly after setting country
+                    const comp = companyId();
+                    if (comp) {
+                        await loadCitiesByCompanyAndCountry(comp, ksaId);
+                    }
                 }
             }
         } catch {
@@ -170,115 +505,17 @@
         }
     }
 
-    async function loadStates() {
-        const el = $state(),
-            countryEl = $country();
-        if (!el || !countryEl) return;
-
-        el.required = true;
-        const cid = String(countryEl.value || "");
-        const comp = companyId();
-
-        if (!cid || !comp) {
-            fillSelect(el, [], {
-                placeholder: window.translations?.select_state,
-            });
-            return;
-        }
-
-        // ⬇️ show loading
-        fillSelect(el, [], {
-            placeholder:
-                window.translations?.loading_states ||
-                (LOCALE === "ar"
-                    ? "جاري تحميل المناطق..."
-                    : "Loading states..."),
-        });
-        el.disabled = true;
-
-        try {
-            const data = await getJSON(API.states(cid, comp));
-            const items = Array.isArray(data?.results)
-                ? data.results
-                : Array.isArray(data)
-                ? data
-                : [];
-            fillSelect(el, items, {
-                placeholder: window.translations?.select_state,
-            });
-            if (items.length === 1) el.value = String(items[0].id);
-            await loadCities();
-        } catch {
-            fillSelect(el, [], {
-                placeholder:
-                    window.translations?.no_states_found || "No states",
-            });
-            fillSelect($city(), [], {
-                placeholder:
-                    window.translations?.no_cities_available || "No cities",
-            });
-        } finally {
-            el.disabled = false;
-        }
-    }
-
-    async function loadCities() {
-        const el = $city(),
-            s = $state(),
-            c = $country();
-        if (!el || !s || !c) return;
-
-        el.required = true;
-        const cid = String(c.value || "");
-        const sid = String(s.value || "");
-        const comp = companyId();
-
-        if (!cid || !sid || !comp) {
-            fillSelect(el, [], {
-                placeholder: window.translations?.select_city,
-            });
-            return;
-        }
-
-        // ⬇️ show loading
-        fillSelect(el, [], {
-            placeholder:
-                window.translations?.loading_cities ||
-                (LOCALE === "ar" ? "جاري تحميل المدن..." : "Loading cities..."),
-        });
-        el.disabled = true;
-
-        try {
-            const data = await getJSON(API.cities(cid, sid, comp));
-            const items = Array.isArray(data?.results)
-                ? data.results
-                : Array.isArray(data)
-                ? data
-                : [];
-            fillSelect(el, items, {
-                placeholder: window.translations?.select_city,
-            });
-            if (items.length === 1) el.value = String(items[0].id);
-        } catch {
-            fillSelect(el, [], {
-                placeholder:
-                    window.translations?.no_cities_available || "No cities",
-            });
-        } finally {
-            el.disabled = false;
-        }
-    }
-
     function bindLocationChangeHandlers() {
-        const c = $country(),
-            s = $state();
+        const c = $country();
         if (c && !c.dataset.bound) {
-            c.addEventListener("change", loadStates);
+            c.addEventListener("change", async () => {
+                const comp = companyId();
+                const countryId = c.value;
+                if (comp && countryId) {
+                    await loadCitiesByCompanyAndCountry(comp, countryId);
+                }
+            });
             c.dataset.bound = "1";
-        }
-        if (s && !s.dataset.bound) {
-            s.addEventListener("change", loadCities);
-            s.dataset.bound = "1";
         }
     }
 
@@ -293,7 +530,7 @@
 
     function handleCompanyRequirements() {
         enableInputs();
-        [$country(), $state(), $city()].forEach((el) => {
+        [$country(), $city()].forEach((el) => {
             if (el) {
                 el.required = true;
                 el.disabled = false;
@@ -318,13 +555,14 @@
         handleCompanyRequirements();
         bindLocationChangeHandlers();
         await loadCountries();
-        if ($country()?.value) await loadStates();
-        if ($state()?.value) await loadCities();
         ensureAdditionalPhoneOptional();
+        loadSendersByCompany();
     }
 
     window.setupLocationFields = setupLocationFields;
     window.handleCompanyRequirements = handleCompanyRequirements;
+    window.populateSenderForm = populateSenderForm;
+    window.loadSendersByCompany = loadSendersByCompany;
 
     function validateStep3Form() {
         const root = STEP || document;
@@ -341,15 +579,13 @@
         const requiredIds = [
             "user_name",
             "user_phone",
-            "user_email",
             "user_country",
-            "user_state",
             "user_city",
             "user_address",
         ];
         for (const id of requiredIds) {
             const el = document.getElementById(id);
-            if (!el) return false;
+            if (!el) continue;
             const val = String(el.value || "").trim();
             if (!val) return false;
         }
@@ -379,11 +615,21 @@
             }
         });
 
-        // Initial validation
         if (typeof window.hardEnableNext === "function")
             window.hardEnableNext(validateStep3Form());
     });
 
     document.addEventListener("shippingCompanySelected", setupLocationFields);
     document.addEventListener("shippingMethodSelected", setupLocationFields);
+
+    document.addEventListener("DOMContentLoaded", () => {
+        const senderSelect = $senderSelect();
+        if (senderSelect) {
+            senderSelect.addEventListener("change", function () {
+                if (this.value) {
+                    populateSenderForm(this.value);
+                }
+            });
+        }
+    });
 })();

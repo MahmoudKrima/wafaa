@@ -22,6 +22,8 @@ use App\Http\Controllers\User\UserDescription\UserDescriptionController;
                     ->name('recievers.index');
                 Route::get('/receivers-by-company/{shippingCompanyId}', 'receiversByCompany')
                     ->name('shippings.receiversByCompany');
+                Route::get('/senders-by-company/{shippingCompanyId}', 'sendersByCompany')
+                    ->name('shippings.sendersByCompany');
                 Route::get('/cities', 'getCities')
                     ->name('shippings.cities');
                 Route::get('/cities-by-state', 'getCitiesByState')
@@ -167,6 +169,10 @@ Route::middleware(['web'])->group(function () {
                     ->name('senders.search');
                 Route::get('/senders/getSenders', 'getSenders')
                     ->name('senders.getSenders');
+                Route::get('/senders/getCitiesByCompanyAndCountry/{shippingCompanyId}', 'getCitiesByCompanyAndCountry')
+                    ->name('senders.getCitiesByCompanyAndCountry');
+                Route::get('/senders/{sender}', 'show')
+                    ->name('senders.show');
             });
 
         Route::controller(UserDescriptionController::class)

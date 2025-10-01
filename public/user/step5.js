@@ -11,8 +11,9 @@
         });
     }
 
-    function showErrorStep5(message) {
-        if (!_submittingStep5) return;
+    function showErrorStep5(message, forceShow = false) {
+        if (!forceShow && !_submittingStep5) return;
+        
         if (typeof toastr !== "undefined") {
             toastr.error(message);
             return;
@@ -40,6 +41,9 @@
 
 
     window.populateShippingFormFields = function populateShippingFormFields() {
+        // Reset submitting flag when entering the step
+        _submittingStep5 = false;
+        
         setupPackageTypeHandling();
 
         ensureDimensionDefaults();
@@ -82,6 +86,7 @@
             btnNext.dataset.boundStep5Submit = "1";
         }
 
+        // Call validation without showing errors
         syncNextBtnStep5();
     };
 
@@ -165,19 +170,19 @@
         }
 
         if (!packageType.value) {
-            if (showErrors || _submittingStep5) showErrorStep5(t.package_type_required || "Please select a package type (Boxes or Documents).");
+            if (showErrors) showErrorStep5(t.package_type_required || "Please select a package type (Boxes or Documents).", true);
             return false;
         }
 
         const num = Number(packageNumber.value);
         if (!packageNumber.value || isNaN(num) || num < 1) {
-            if (showErrors || _submittingStep5) showErrorStep5(t.package_number_invalid);
+            if (showErrors) showErrorStep5(t.package_number_invalid, true);
             return false;
         }
 
         const w = Number(weight.value);
         if (!weight.value || isNaN(w) || w <= 0) {
-            if (showErrors || _submittingStep5) showErrorStep5(t.weight_invalid);
+            if (showErrors) showErrorStep5(t.weight_invalid, true);
             return false;
         }
 
@@ -185,7 +190,7 @@
         const width = document.getElementById("width");
         const height = document.getElementById("height");
         if (!length || !width || !height) {
-            if (showErrors || _submittingStep5) showErrorStep5(t.dimensions_missing);
+            if (showErrors) showErrorStep5(t.dimensions_missing, true);
             return false;
         }
 
@@ -194,16 +199,16 @@
         const H = Number(height.value);
 
         if (!length.value || !width.value || !height.value) {
-            if (showErrors || _submittingStep5) showErrorStep5(t.dimensions_required);
+            if (showErrors) showErrorStep5(t.dimensions_required, true);
             return false;
         }
         if (isNaN(L) || isNaN(W) || isNaN(H) || L <= 0 || W <= 0 || H <= 0) {
-            if (showErrors || _submittingStep5) showErrorStep5(t.dimensions_invalid);
+            if (showErrors) showErrorStep5(t.dimensions_invalid, true);
             return false;
         }
 
         if (!acceptTerms.checked) {
-            if (showErrors || _submittingStep5) showErrorStep5(t.accept_terms_required);
+            if (showErrors) showErrorStep5(t.accept_terms_required, true);
             return false;
         }
 
@@ -211,9 +216,10 @@
             !packageDescription.value ||
             packageDescription.value.trim() === ""
         ) {
-            if (showErrors || _submittingStep5) showErrorStep5(
+            if (showErrors) showErrorStep5(
                 t.package_description_required ||
-                    "Package description is required"
+                    "Package description is required",
+                true
             );
             return false;
         }

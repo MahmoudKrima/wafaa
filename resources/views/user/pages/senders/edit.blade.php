@@ -1,5 +1,21 @@
 @extends('user.layouts.app')
 @section('title', __('admin.update'))
+@push('css')
+<style>
+    .shipping-company-row {
+        background-color: #f8f9fa;
+        border: 1px solid #dee2e6 !important;
+    }
+
+    .shipping-company-row:hover {
+        background-color: #e9ecef;
+    }
+
+    .remove-shipping-company {
+        margin-top: 25px;
+    }
+</style>
+@endpush
 @push('breadcrumb')
 <nav class="breadcrumb-one" aria-label="breadcrumb">
     <ol class="breadcrumb">
@@ -52,18 +68,24 @@
                                                 class="form-control" value="{{ old('additional_phone', $sender->additional_phone) }}">
                                         </div>
                                         <div class="col-md-6 mb-3">
-                                            <label for="emailInput" class="text-dark">{{ __('admin.email') }}</label>
-                                            <input id="emailInput" type="text" placeholder="example@example.com"
-                                                name="email" placeholder="{{ __('admin.email') }}"
-                                                class="form-control" value="{{ old('email', $sender->email) }}">
+                                            <label for="addressInput" class="text-dark">{{ __('admin.address') }}</label>
+                                            <textarea id="addressInput" name="address" rows="3"
+                                                placeholder="{{ __('admin.address') }}" class="form-control">{{ old('address', $sender->address) }}</textarea>
                                         </div>
                                     </div>
                                     <div class="row">
-                                        <div class="col-md-6 mb-3">
-                                            <label for="postal_codeInput" class="text-dark">{{ __('admin.postal_code') }}</label>
-                                            <input id="postal_codeInput" type="text" placeholder="123456"
-                                                name="postal_code" placeholder="{{ __('admin.postal_code') }}"
-                                                class="form-control" value="{{ old('postal_code', $sender->postal_code) }}">
+                                        <div class="col-12 mb-3">
+                                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                                <label class="text-dark">{{ __('admin.shipping_companies') }}</label>
+                                                <button type="button" id="addShippingCompany" class="btn btn-sm btn-success">
+                                                    <i class="fa fa-plus"></i> {{ __('admin.add_shipping_company') }}
+                                                </button>
+                                            </div>
+                                            @error('shipping_companies')
+                                            <div class="alert alert-danger">{{ $message }}</div>
+                                            @enderror
+                                            <div id="shippingCompaniesContainer">
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -83,3 +105,295 @@
     </div>
 </div>
 @endsection
+
+@push('js')
+<script>
+    $(document).ready(function() {
+        let shippingCompanyCounter = 0;
+        const shippingCompanies = @json($shippingCompanies['results'] ?? []);
+        const locale = @json(app()->getLocale());
+        const oldShippingCompanies = @json(old('shipping_companies', []));
+        const existingShippingCompanies = @json($sender->shippingCompanies ?? []);
+
+        // If there's old data (validation errors), restore it
+        if (oldShippingCompanies && oldShippingCompanies.length > 0) {
+            oldShippingCompanies.forEach(function(shippingCompany, index) {
+                addShippingCompanyRow();
+                const lastRow = $('.shipping-company-row').last();
+                const companySelect = lastRow.find('.shipping-company-select');
+                const citySelect = lastRow.find('.city-select');
+
+                if (shippingCompany.company_id) {
+                    companySelect.val(shippingCompany.company_id);
+
+                    if (shippingCompany.city_id) {
+                        citySelect.data('pending-city-value', shippingCompany.city_id);
+                    }
+
+                    // Add delay to ensure proper loading
+                    setTimeout(function() {
+                        companySelect.trigger('change');
+                    }, index * 200);
+                }
+            });
+        } else if (existingShippingCompanies && existingShippingCompanies.length > 0) {
+            existingShippingCompanies.forEach(function(shippingCompany, index) {
+                addShippingCompanyRow();
+                const lastRow = $('.shipping-company-row').last();
+                const companySelect = lastRow.find('.shipping-company-select');
+                const citySelect = lastRow.find('.city-select');
+
+                // Check both possible field names for company ID
+                const companyId = shippingCompany.shipping_company_id || shippingCompany.company_id;
+                const cityId = shippingCompany.city_id;
+
+                if (companyId) {
+                    companySelect.val(companyId);
+
+                    if (cityId) {
+                        citySelect.data('pending-city-value', cityId);
+                    }
+
+                    // Add a delay for each row to ensure proper loading
+                    setTimeout(function() {
+                        companySelect.trigger('change');
+                    }, index * 200); // 200ms delay between each row
+                }
+            });
+        } else {
+            addShippingCompanyRow();
+        }
+
+        $('#addShippingCompany').on('click', function(e) {
+            e.preventDefault();
+            addShippingCompanyRow();
+        });
+
+        function addShippingCompanyRow() {
+            const rowId = 'shipping_company_' + shippingCompanyCounter;
+            const selectedCompanyIds = [];
+            $('.shipping-company-select').each(function() {
+                const selectedValue = $(this).val();
+                if (selectedValue) {
+                    selectedCompanyIds.push(selectedValue);
+                }
+            });
+
+            const availableCompanies = shippingCompanies.filter(company =>
+                !selectedCompanyIds.includes(company.id)
+            );
+
+            const optionsHtml = availableCompanies.map(company => {
+                const label = (company.name && typeof company.name === 'object') ?
+                    (company.name[locale] || company.name.en || '') :
+                    (company.name || '');
+                return '<option value="' + company.id + '">' + label + '</option>';
+            }).join('');
+
+            const shippingCompanyLabel = @json(__('admin.shipping_company'));
+            const selectShippingCompanyLabel = @json(__('admin.select_shipping_company'));
+            const cityLabel = @json(__('admin.city'));
+            const selectCityLabel = @json(__('admin.select_city'));
+
+            const rowHtml =
+                '<div class="shipping-company-row mb-3 p-3 border rounded" data-row-id="' + rowId + '">' +
+                '<div class="row">' +
+                '<div class="col-md-5">' +
+                '<label class="text-dark">' + shippingCompanyLabel + '</label>' +
+                '<select name="shipping_companies[' + shippingCompanyCounter + '][company_id]" class="form-control shipping-company-select" data-row="' + rowId + '">' +
+                '<option value="">' + selectShippingCompanyLabel + '</option>' +
+                optionsHtml +
+                '</select>' +
+                '</div>' +
+                '<div class="col-md-5">' +
+                '<label class="text-dark">' + cityLabel + '</label>' +
+                '<select name="shipping_companies[' + shippingCompanyCounter + '][city_id]" class="form-control city-select" data-row="' + rowId + '" disabled>' +
+                '<option value="">' + selectCityLabel + '</option>' +
+                '</select>' +
+                '</div>' +
+                '<div class="col-md-2 d-flex align-items-end">' +
+                '<button type="button" class="btn btn-sm btn-danger remove-shipping-company" data-row="' + rowId + '">' +
+                '<i class="fa fa-trash"></i>' +
+                '</button>' +
+                '</div>' +
+                '</div>' +
+                '</div>';
+
+            $('#shippingCompaniesContainer').append(rowHtml);
+            shippingCompanyCounter++;
+            updateRemoveButtons();
+        }
+
+        $(document).on('click', '.remove-shipping-company', function() {
+            $(this).closest('.shipping-company-row').remove();
+            updateRemoveButtons();
+            updateAllDropdowns();
+        });
+
+        $(document).on('change', '.shipping-company-select', function() {
+            const rowId = $(this).data('row');
+            const companyId = $(this).val();
+            const citySelect = $('.city-select[data-row="' + rowId + '"]');
+            const loadingText = @json(__('admin.loading'));
+            const selectCityText = @json(__('admin.select_city'));
+            const errorText = @json(__('admin.error_loading_cities'));
+
+            if (companyId) {
+                updateOtherDropdowns(rowId, companyId);
+                citySelect.prop('disabled', true).html('<option value="">' + loadingText + '...</option>');
+                const baseUrl = @json(route('user.senders.getCitiesByCompanyAndCountry', ['shippingCompanyId' => '__COMPANY_ID__']));
+                const url = baseUrl.replace('__COMPANY_ID__', encodeURIComponent(companyId));
+
+                const currentCityValue = citySelect.data('pending-city-value');
+
+                $.ajax({
+                    url: url,
+                    method: 'GET',
+                    cache: true,
+                    success: function(response) {
+                        let options = '<option value="">' + selectCityText + '</option>';
+                        const results = Array.isArray(response?.results) ? response.results : [];
+                        results.forEach(function(city) {
+                            const label = (city.name && typeof city.name === 'object') ?
+                                (city.name[locale] || city.name.en || '') :
+                                (city.name || '');
+                            options += '<option value="' + city.id + '">' + label + '</option>';
+                        });
+                        citySelect.html(options).prop('disabled', false);
+
+                        // Restore the pending city value with a small delay to ensure DOM is updated
+                        if (currentCityValue) {
+                            setTimeout(function() {
+                                // Try to set the value
+                                citySelect.val(currentCityValue);
+
+                                // Check if the value was actually set
+                                if (citySelect.val() !== currentCityValue) {
+                                    // Try to find by exact match first
+                                    const exactMatch = citySelect.find('option[value="' + currentCityValue + '"]');
+                                    if (exactMatch.length > 0) {
+                                        citySelect.val(currentCityValue);
+                                    } else {
+                                        // Try to find by partial match or similar ID
+                                        const allOptions = citySelect.find('option');
+                                        let found = false;
+                                        allOptions.each(function() {
+                                            const optionValue = $(this).val();
+                                            if (optionValue && optionValue.toString().includes(currentCityValue.toString().substring(0, 8))) {
+                                                citySelect.val(optionValue);
+                                                found = true;
+                                                return false; // break the loop
+                                            }
+                                        });
+
+                                        if (!found) {
+                                            console.log('No matching city found for ID:', currentCityValue);
+                                        }
+                                    }
+                                }
+
+                                citySelect.removeData('pending-city-value');
+                            }, 100);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        citySelect.html('<option value="">' + errorText + '</option>').prop('disabled', false);
+                    }
+                });
+            } else {
+                citySelect.html('<option value="">' + selectCityText + '</option>').prop('disabled', true);
+                updateOtherDropdowns(rowId, null);
+            }
+        });
+
+        function updateAllDropdowns() {
+            const selectedCompanyIds = [];
+            const selectShippingCompanyText = @json(__('admin.select_shipping_company'));
+            const selectCityText = @json(__('admin.select_city'));
+
+            $('.shipping-company-select').each(function() {
+                const selectedValue = $(this).val();
+                if (selectedValue) {
+                    selectedCompanyIds.push(selectedValue);
+                }
+            });
+
+            $('.shipping-company-select').each(function() {
+                const currentValue = $(this).val();
+                const $select = $(this);
+                const rowId = $select.data('row');
+                const wasSelected = currentValue;
+
+                $select.empty();
+                $select.append('<option value="">' + selectShippingCompanyText + '</option>');
+
+                shippingCompanies.forEach(company => {
+                    if (!selectedCompanyIds.includes(company.id) || company.id === wasSelected) {
+                        const label = (company.name && typeof company.name === 'object') ?
+                            (company.name[locale] || company.name.en || '') :
+                            (company.name || '');
+                        $select.append('<option value="' + company.id + '">' + label + '</option>');
+                    }
+                });
+
+                if (wasSelected) {
+                    $select.val(wasSelected);
+                }
+            });
+        }
+
+        function updateOtherDropdowns(currentRowId, selectedCompanyId) {
+            if (!selectedCompanyId) return;
+
+            const selectedCompanyIds = [];
+            const selectShippingCompanyText = @json(__('admin.select_shipping_company'));
+            const selectCityText = @json(__('admin.select_city'));
+
+            $('.shipping-company-select').each(function() {
+                const selectedValue = $(this).val();
+                if (selectedValue) {
+                    selectedCompanyIds.push(selectedValue);
+                }
+            });
+
+            $('.shipping-company-select').each(function() {
+                const rowId = $(this).data('row');
+                if (rowId !== currentRowId) {
+                    const currentValue = $(this).val();
+                    const $select = $(this);
+                    if (currentValue === selectedCompanyId) {
+                        $select.val('');
+                        const citySelect = $('.city-select[data-row="' + rowId + '"]');
+                        citySelect.html('<option value="">' + selectCityText + '</option>').prop('disabled', true);
+                    }
+
+                    $select.empty();
+                    $select.append('<option value="">' + selectShippingCompanyText + '</option>');
+
+                    shippingCompanies.forEach(company => {
+                        if (!selectedCompanyIds.includes(company.id) || company.id === currentValue) {
+                            const label = (company.name && typeof company.name === 'object') ?
+                                (company.name[locale] || company.name.en || '') :
+                                (company.name || '');
+                            $select.append('<option value="' + company.id + '">' + label + '</option>');
+                        }
+                    });
+
+                    if (currentValue && currentValue !== selectedCompanyId) {
+                        $select.val(currentValue);
+                    }
+                }
+            });
+        }
+
+        function updateRemoveButtons() {
+            const rows = $('.shipping-company-row');
+            if (rows.length <= 1) {
+                $('.remove-shipping-company').hide();
+            } else {
+                $('.remove-shipping-company').show();
+            }
+        }
+    });
+</script>
+@endpush
