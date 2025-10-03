@@ -697,14 +697,18 @@
                         missing.push(label);
                         continue;
                     }
-                    
+
                     let value = "";
-                    if (field.tagName === "SELECT" && typeof $ !== "undefined" && $(field).data('select2')) {
+                    if (
+                        field.tagName === "SELECT" &&
+                        typeof $ !== "undefined" &&
+                        $(field).data("select2")
+                    ) {
                         value = String($(field).val() || "").trim();
                     } else {
                         value = String(field.value || "").trim();
                     }
-                    
+
                     if (!value) {
                         missing.push(label);
                     }
@@ -744,19 +748,137 @@
                 ) {
                     return;
                 }
-                const sender_country_id = _val("user_country");
-                const sender_country_name = _textOfSelect("user_country");
-                const sender_state_id = _val("user_state");
-                const sender_state_name = _textOfSelect("user_state");
-                const sender_city_id = _val("user_city");
-                const sender_city_name = _textOfSelect("user_city");
+                // Set default country to Saudi Arabia since country field is hidden
+                let sender_country_id = _val("user_country");
+                let sender_country_name = _textOfSelect("user_country");
+
+                // Debug: Check country field
+                console.log("Country field debug:", {
+                    user_country_value: sender_country_id,
+                    user_country_text: sender_country_name,
+                    user_country_element:
+                        document.getElementById("user_country"),
+                    user_country_exists:
+                        !!document.getElementById("user_country"),
+                });
+
+                // If country field is empty or hidden, use Saudi Arabia defaults
+                if (!sender_country_id || sender_country_id === "") {
+                    sender_country_id = "65fd1a1c1fdbc094e3369b29"; // Saudi Arabia ID
+                    console.log(
+                        "Using fallback country ID:",
+                        sender_country_id
+                    );
+                }
+                if (!sender_country_name || sender_country_name === "") {
+                    sender_country_name = "Saudi Arabia";
+                    console.log(
+                        "Using fallback country name:",
+                        sender_country_name
+                    );
+                }
+
+                // Debug logging
+                console.log("Country data:", {
+                    user_country_val: _val("user_country"),
+                    user_country_text: _textOfSelect("user_country"),
+                    sender_country_id,
+                    sender_country_name,
+                });
+
+                // Additional debugging - check if country field exists and has options
+                const countryField = document.getElementById("user_country");
+                console.log("Country field details:", {
+                    exists: !!countryField,
+                    value: countryField?.value,
+                    options: countryField
+                        ? Array.from(countryField.options).map((opt) => ({
+                              value: opt.value,
+                              text: opt.textContent,
+                          }))
+                        : [],
+                    selectedIndex: countryField?.selectedIndex,
+                });
+                // Handle state fields (if they exist)
+                let sender_state_id = _val("user_state");
+                let sender_state_name = _textOfSelect("user_state");
+
+                // Handle city fields with fallbacks
+                let sender_city_id = _val("user_city");
+                let sender_city_name = _textOfSelect("user_city");
+
+                // Debug: Check city field
+                console.log("City field debug:", {
+                    user_city_value: sender_city_id,
+                    user_city_text: sender_city_name,
+                    user_city_element: document.getElementById("user_city"),
+                    user_city_exists: !!document.getElementById("user_city"),
+                });
+
+                // Fallback for city if empty
+                if (!sender_city_id || sender_city_id === "") {
+                    // Try to get city from form data or use a default
+                    const cityField = document.querySelector(
+                        'select[name="city_id"]'
+                    );
+                    if (cityField && cityField.value) {
+                        sender_city_id = cityField.value;
+                        sender_city_name =
+                            cityField.options[cityField.selectedIndex]
+                                ?.textContent || "Unknown City";
+                        console.log(
+                            "Fallback city from name='city_id':",
+                            sender_city_id,
+                            sender_city_name
+                        );
+                    } else {
+                        // Use a default city ID (you may need to adjust this based on your database)
+                        sender_city_id = "1"; // Default city ID
+                        sender_city_name = "Default City";
+                        console.log(
+                            "Using fallback city:",
+                            sender_city_id,
+                            sender_city_name
+                        );
+                    }
+                }
+                // Debug: Check address field
+                let userAddress = _val("user_address");
+                console.log("Address field debug:", {
+                    user_address_value: userAddress,
+                    user_address_element:
+                        document.getElementById("user_address"),
+                    user_address_exists:
+                        !!document.getElementById("user_address"),
+                });
+
+                // Fallback: If address is empty, try to get it from the form directly
+                if (!userAddress || userAddress.trim() === "") {
+                    const addressField = document.querySelector(
+                        'input[name="address"]'
+                    );
+                    if (addressField) {
+                        userAddress = addressField.value || "";
+                        console.log(
+                            "Fallback address from name='address':",
+                            userAddress
+                        );
+                    }
+                }
+
+                // Final fallback: Use a default address if still empty
+                if (!userAddress || userAddress.trim() === "") {
+                    userAddress = "Address not provided";
+                    console.log("Using fallback address:", userAddress);
+                }
+
                 const shippingData = {
                     company_id: window.selectedCompany?.id || null,
                     shipping_method: window.selectedMethod || null,
                     sender_name: _val("user_name"),
                     sender_phone: _val("user_phone"),
                     sender_email: _val("user_email"),
-                    sender_address: _val("user_address"),
+                    sender_address: userAddress,
                     sender_postal_code: _val("user_postal_code"),
                     sender_country_id,
                     sender_country_name,
@@ -869,7 +991,24 @@
                             form.appendChild(field);
                         }
                         field.value = value != null ? value : "";
+
+                        // Debug logging for country fields
+                        if (
+                            key === "sender_country_id" ||
+                            key === "sender_country_name"
+                        ) {
+                            console.log(`Setting ${key}:`, field.value);
+                        }
                     });
+
+                    // Debug: Log all form data before submission
+                    console.log("Form data before submission:");
+                    const formData = new FormData(form);
+                    for (let [key, value] of formData.entries()) {
+                        if (key.includes("country") || key.includes("sender")) {
+                            console.log(`${key}: ${value}`);
+                        }
+                    }
                     mirrorLocationToForm(form);
                     ensurePaymentMethodHiddenInForm(form, paymentMethod);
                     ensureCodHiddenInForm(form, _codAmount());

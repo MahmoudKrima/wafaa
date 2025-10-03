@@ -88,7 +88,6 @@
                                 <tr>
                                     <th scope="col">{{ __('admin.name') }}</th>
                                     <th scope="col">{{ __('admin.phone') }}</th>
-                                    <th scope="col">{{ __('admin.additional_phone') }}</th>
                                     <th scope="col">{{ __('admin.address') }}</th>
                                     <th class="text-center" scope="col">{{ trans('admin.actions') }}</th>
                                 </tr>
@@ -98,7 +97,6 @@
                                 <tr>
                                     <td>{{ $reciever->name }}</td>
                                     <td>{{ $reciever->phone }}</td>
-                                    <td>{{ $reciever->additional_phone ?? __('admin.n/a') }}</td>
                                     <td>{{ $reciever->address ?? __('admin.n/a') }}</td>
                                     <td class="text-center">
                                         <div class="action-btns d-flex justify-content-center">

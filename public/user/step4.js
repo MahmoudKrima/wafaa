@@ -198,7 +198,7 @@
         });
         el.disabled = false;
         if (selectedId) el.value = selectedId;
-        else if (getMethod() === "local") el.value = SAUDI_ID;
+        else el.value = SAUDI_ID; // Always set Saudi Arabia as default for receiver section
         if (!el.dataset.bound) {
             el.addEventListener("change", async () => {
                 $city().innerHTML = `<option value="">${t(
@@ -227,6 +227,7 @@
         }
     }
 
+    // Optimized city loading using global city management
     async function loadCitiesByCompanyAndCountry(
         companyId,
         countryId,
@@ -234,7 +235,8 @@
     ) {
         const el = $city();
         if (!el) return;
-        if (!countryId || !companyId) {
+
+        if (!countryId) {
             el.innerHTML = `<option value="">${t(
                 "select_city",
                 "Select City"
@@ -254,26 +256,35 @@
             }
             return;
         }
+
+        // Use global city management system
+        if (window.currentCities && window.currentCities().length > 0) {
+            populateReceiverCitySelect(el, window.currentCities(), selectedId);
+            return;
+        }
+
+        // If cities not loaded globally, try to load them
+        if (window.loadCitiesForCurrentCompany) {
+            try {
+                const cities = await window.loadCitiesForCurrentCompany();
+                if (cities.length > 0) {
+                    populateReceiverCitySelect(el, cities, selectedId);
+                    return;
+                }
+            } catch (error) {
+                console.error(
+                    "Error loading cities from global system:",
+                    error
+                );
+            }
+        }
+
+        // Fallback to local loading if global system fails
         el.innerHTML = `<option value="">${t(
             "loading_cities",
             "Loading cities..."
         )}</option>`;
         el.disabled = true;
-
-        // Update Select2 to show loading state
-        if (
-            typeof $ !== "undefined" &&
-            $(el).hasClass("select2-hidden-accessible")
-        ) {
-            // Destroy and reinitialize to show loading text
-            $(el).select2("destroy");
-            $(el).select2({
-                placeholder: t("loading_cities", "Loading cities..."),
-                allowClear: false,
-                width: "100%",
-                disabled: true,
-            });
-        }
 
         try {
             const response = await fetch(
@@ -301,98 +312,68 @@
                 ? data
                 : [];
 
-            el.innerHTML = `<option value="">${t(
-                "select_city",
-                "Select City"
-            )}</option>`;
-            items.forEach((c) => {
-                const opt = document.createElement("option");
-                opt.value = c.id || c._id;
-                opt.textContent = displayName(c.name) || "";
-                el.appendChild(opt);
-            });
-            el.disabled = false;
-
-            // Check if Select2 is initialized
-            const isSelect2 =
-                typeof $ !== "undefined" &&
-                $(el).hasClass("select2-hidden-accessible");
-
-            // Set the selected city if provided
-            if (selectedId) {
-                // First try exact match
-                el.value = selectedId;
-
-                // If exact match didn't work, try partial matching
-                if (el.value !== selectedId) {
-                    const options = Array.from(el.options);
-                    const partialMatch = options.find(
-                        (opt) =>
-                            opt.value.includes(selectedId) ||
-                            selectedId.includes(opt.value)
-                    );
-                    if (partialMatch) {
-                        el.value = partialMatch.value;
-                    }
-                }
-            }
-
-            // Reinitialize Select2 with new options and selected value
-            if (isSelect2) {
-                // Destroy and reinitialize Select2 to ensure options are properly loaded
-                $(el).select2("destroy");
-                $(el).select2({
-                    placeholder: t("select_city", "Select City"),
-                    allowClear: true,
-                    width: "100%",
-                    minimumInputLength: 0,
-                    closeOnSelect: true,
-                    cache: true,
-                    language: {
-                        noResults: function () {
-                            return t(
-                                "no_cities_available",
-                                "No cities available"
-                            );
-                        },
-                        searching: function () {
-                            return t("searching", "Searching...");
-                        },
-                    },
-                });
-
-                // Set the value again after reinitializing
-                if (el.value) {
-                    $(el).val(el.value).trigger("change.select2");
-                }
-            }
-
-            updateAddButtonState();
+            populateReceiverCitySelect(el, items, selectedId);
         } catch (error) {
+            console.error("Error loading cities:", error);
             el.innerHTML = `<option value="">${t(
                 "error_loading_cities",
                 "Error loading cities"
             )}</option>`;
             el.disabled = false;
-
-            // Reinitialize Select2 to show error state
-            if (
-                typeof $ !== "undefined" &&
-                $(el).hasClass("select2-hidden-accessible")
-            ) {
-                $(el).select2("destroy");
-                $(el).select2({
-                    placeholder: t(
-                        "error_loading_cities",
-                        "Error loading cities"
-                    ),
-                    allowClear: true,
-                    width: "100%",
-                });
-            }
-
             updateAddButtonState();
         }
+    }
+
+    // Helper function to populate receiver city select
+    function populateReceiverCitySelect(citySelect, cities, selectedId = "") {
+        citySelect.innerHTML = `<option value="">${t(
+            "select_city",
+            "Select City"
+        )}</option>`;
+
+        cities.forEach((c) => {
+            const opt = document.createElement("option");
+            opt.value = c.id || c._id;
+            opt.textContent = displayName(c.name) || "";
+            citySelect.appendChild(opt);
+        });
+
+        citySelect.disabled = false;
+
+        // Set the selected city if provided
+        if (selectedId) {
+            citySelect.value = selectedId;
+        }
+
+        // Reinitialize Select2
+        if (
+            typeof $ !== "undefined" &&
+            $(citySelect).hasClass("select2-hidden-accessible")
+        ) {
+            $(citySelect).select2("destroy");
+            $(citySelect).select2({
+                placeholder: t("select_city", "Select City"),
+                allowClear: true,
+                width: "100%",
+                minimumInputLength: 0,
+                closeOnSelect: true,
+                cache: true,
+                language: {
+                    noResults: function () {
+                        return t("no_cities_available", "No cities available");
+                    },
+                    searching: function () {
+                        return t("searching", "Searching...");
+                    },
+                },
+            });
+
+            if (citySelect.value) {
+                $(citySelect).val(citySelect.value).trigger("change.select2");
+            }
+        }
+
+        updateAddButtonState();
     }
 
     async function setupReceiverFormByShippingType() {
@@ -401,12 +382,13 @@
         if (!c || !ci) return;
         c.required = ci.required = true;
         await loadCountries();
-        if (getMethod() === "local") {
-            const companyId = getCompanyId();
-            if (companyId) {
-                await loadCitiesByCompanyAndCountry(companyId, SAUDI_ID);
-            }
+
+        // Always load cities for Saudi Arabia in receiver section
+        const companyId = getCompanyId();
+        if (companyId) {
+            await loadCitiesByCompanyAndCountry(companyId, SAUDI_ID);
         }
+
         ensureAdditionalPhoneOptional();
         updateAddButtonState();
     }
@@ -756,7 +738,7 @@
                 "select_country",
                 "Select Country"
             )}</option>`;
-            c.value = "";
+            c.value = SAUDI_ID; // Set Saudi Arabia as default
             c.disabled = false;
         }
         if (ci) {
@@ -767,6 +749,13 @@
             ci.value = "";
             ci.disabled = true;
         }
+
+        // Load cities for Saudi Arabia when country is set
+        const companyId = getCompanyId();
+        if (companyId) {
+            loadCitiesByCompanyAndCountry(companyId, SAUDI_ID);
+        }
+
         ensureAdditionalPhoneOptional();
         updateAddButtonState();
     }
@@ -959,6 +948,15 @@
         syncNextButton();
     });
 
+    // Listen for global cities loaded event
+    document.addEventListener("citiesLoaded", () => {
+        // Populate receiver city select if it exists and is visible
+        const citySelect = $city();
+        if (citySelect && citySelect.offsetParent !== null) {
+            populateReceiverCitySelect(citySelect, window.currentCities());
+        }
+    });
+
     document.addEventListener("stepChanged", (e) => {
         if (e?.detail?.currentStep === 3 || e?.detail?.currentStep === "3") {
             wireUI();
@@ -975,8 +973,22 @@
     });
 
     document.addEventListener("shippingCompanySelected", () => {
-        if ($existingRadio()?.checked) {
-            loadReceivers();
+        // Load receivers in background to avoid blocking company selection
+        if (window.requestIdleCallback) {
+            requestIdleCallback(
+                () => {
+                    if ($existingRadio()?.checked) {
+                        loadReceivers();
+                    }
+                },
+                { timeout: 50 }
+            );
+        } else {
+            setTimeout(() => {
+                if ($existingRadio()?.checked) {
+                    loadReceivers();
+                }
+            }, 0);
         }
     });
 })();

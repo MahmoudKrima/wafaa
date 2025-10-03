@@ -1,11 +1,11 @@
 (() => {
     let selectedMethod = null;
     let nextBtnObserver = null;
-    
+
     function getNextBtn() {
         return document.getElementById("btn-next");
     }
-    
+
     function validateStep2() {
         return !!(window.selectedCompany && window.selectedMethod);
     }
@@ -141,9 +141,10 @@
         methodOptions.innerHTML = methodsHTML;
 
         if (!window.selectedMethod && shippingMethods.includes("local")) {
-            const localCard = methodOptions.querySelector(`[onclick*="'local'"]`);
+            const localCard =
+                methodOptions.querySelector(`[onclick*="'local'"]`);
             if (localCard) {
-                selectMethod(localCard, 'local');
+                selectMethod(localCard, "local");
             }
         }
 
@@ -210,8 +211,22 @@
     }
 
     document.addEventListener("shippingCompanySelected", () => {
+        // Clear step data immediately (lightweight operation)
         clearStepData(2);
-        if (window.currentStep === 2) showMethodSelection();
+
+        // Show method selection in background to avoid blocking
+        if (window.requestIdleCallback) {
+            requestIdleCallback(
+                () => {
+                    if (window.currentStep === 2) showMethodSelection();
+                },
+                { timeout: 50 }
+            );
+        } else {
+            setTimeout(() => {
+                if (window.currentStep === 2) showMethodSelection();
+            }, 0);
+        }
     });
 
     if (!window.goToStep) ensureGoToStep();

@@ -55,27 +55,21 @@
                                         </div>
                                     </div>
                                     <div class="row">
+
+                                        <div class="col-md-6 mb-3">
+                                            <label for="additional_phoneInput" class="text-dark">{{ __('admin.additional_phone') }}</label>
+                                            <input id="additional_phoneInput" type="text" placeholder="05XXXXXXXX"
+                                                name="additional_phone" placeholder="{{ __('admin.additional_phone') }}"
+                                                class="form-control" value="{{ old('additional_phone') }}">
+                                        </div>
+                                        
                                         <div class="col-md-6 mb-3">
                                             <label for="addressInput" class="text-dark">{{ __('admin.address') }}</label>
-                                            <textarea id="addressInput" type="text" name="address" placeholder="{{ __('admin.address') }}" class="form-control">{{ old('address') }}</textarea>
+                                            <input type="text" id="addressInput" type="text" name="address" placeholder="{{ __('admin.address') }}" class="form-control" value="{{ old('address') }}">
                                         </div>
                                     </div>
 
-                                    <div class="row">
-                                        <div class="col-12 mb-3">
-                                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                                <label class="text-dark">{{ __('admin.shipping_companies') }}</label>
-                                                <button type="button" id="addShippingCompany" class="btn btn-sm btn-success">
-                                                    <i class="fa fa-plus"></i> {{ __('admin.add_shipping_company') }}
-                                                </button>
-                                            </div>
-                                            @error('shipping_companies')
-                                            <div class="alert alert-danger">{{ $message }}</div>
-                                            @enderror
-                                            <div id="shippingCompaniesContainer">
-                                            </div>
-                                        </div>
-                                    </div>
+                                    
                                 </div>
 
                                 <hr>

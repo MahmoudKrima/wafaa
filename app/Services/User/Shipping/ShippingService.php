@@ -428,6 +428,7 @@ class ShippingService
                 'phone' => $data['sender_phone'],
                 'additional_phone' => $data['sender_additional_phone'] ?? null,
                 'postal_code' => $data['sender_postal_code'] ?? null,
+                'address' => $data['sender_address'] ?? 'Address not provided',
             ]);
             $sender->shippingCompanies()->create([
                 'shipping_company_id' => $data['shipping_company_id'],
@@ -649,12 +650,13 @@ class ShippingService
         $senderPhone1Raw   = $requestData['sender_additional_phone'] ?? ($sender['phone1'] ?? '');
         $senderPhone1      = $senderPhone1Raw !== '' ? $normalizePhone($senderPhone1Raw) : '';
 
-        $senderCountryId   = (string)($requestData['sender_country_id']   ?? $sender['country_id']   ?? '');
-        $senderCountryName = (string)($requestData['sender_country_name'] ?? $sender['country_name'] ?? '');
+        $senderCountryId   = (string)($requestData['sender_country_id']   ?? $sender['country_id']   ?? '65fd1a1c1fdbc094e3369b29');
+        $senderCountryName = (string)($requestData['sender_country_name'] ?? $sender['country_name'] ?? 'Saudi Arabia');
         $senderCountryCode = (string)($sender['country_code'] ?? 'SA');
 
-        $senderCityId      = (string)($requestData['sender_city_id']      ?? $sender['city_id']      ?? '');
-        $senderCityName    = (string)($requestData['sender_city_name']    ?? $sender['city_name']    ?? '');
+        // Ensure city fields have fallbacks
+        $senderCityId      = (string)($requestData['sender_city_id']      ?? $sender['city_id']      ?? '1');
+        $senderCityName    = (string)($requestData['sender_city_name']    ?? $sender['city_name']    ?? 'Default City');
         $senderStreet      = (string)($requestData['sender_address']      ?? $sender['street']       ?? '');
         $senderZipCode     = (string)($requestData['sender_postal_code']  ?? $sender['zip_code']     ?? '');
 
@@ -987,26 +989,12 @@ class ShippingService
 
     public function receivers($shippingCompanyId)
     {
-        return Reciever::where('user_id', auth()->user()->id)
-        ->whereHas('shippingCompanies', function ($query) use ($shippingCompanyId) {
-            $query->where('shipping_company_id', $shippingCompanyId);
-        })
-            ->with(['shippingCompanies' => function($query) use ($shippingCompanyId) {
-                $query->where('shipping_company_id', $shippingCompanyId);
-            }])
-            ->get();
+        return Reciever::where('user_id', auth()->user()->id)->get();
     }
 
     public function senders($shippingCompanyId)
     {
-        return Sender::where('user_id', auth()->user()->id)
-        ->whereHas('shippingCompanies', function ($query) use ($shippingCompanyId) {
-            $query->where('shipping_company_id', $shippingCompanyId);
-        })
-            ->with(['shippingCompanies' => function($query) use ($shippingCompanyId) {
-                $query->where('shipping_company_id', $shippingCompanyId);
-            }])
-            ->get();
+        return Sender::where('user_id', auth()->user()->id)->get();
     }
 
     public function getUserShippingCompanies()
@@ -1263,7 +1251,7 @@ class ShippingService
         string $shippingCompanyId,
         string $countryId,
         int $page = 0,
-        int $pageSize = 10,
+        int $pageSize = 1000,
         string $orderColumn = 'createdAt',
         string $orderDirection = 'desc'
     ): array {

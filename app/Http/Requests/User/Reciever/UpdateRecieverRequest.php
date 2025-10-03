@@ -29,9 +29,7 @@ class UpdateRecieverRequest extends FormRequest
                 'sometimes',
                 'nullable',
                 'email:dns,filter',
-                Rule::unique('recievers', 'email')->ignore($this->route('reciever')->id),
-                Rule::unique('users', 'email'),
-                Rule::unique('admins', 'email'),
+                
                 function ($attribute, $value, $fail) {
                     if (!$this->validateEmailDeliverability($value)) {
                         $fail(__('admin.wrong_mail'));
@@ -42,27 +40,17 @@ class UpdateRecieverRequest extends FormRequest
                 'required',
                 'string',
                 'regex:/^(05|5|9665|96605|009665|\+9665)[0-9]{8}$/',
-                Rule::unique('recievers', 'phone')->ignore($this->route('reciever')->id),
-                Rule::unique('recievers', 'additional_phone'),
-                Rule::unique('users', 'phone'),
-                Rule::unique('users', 'additional_phone'),
-                Rule::unique('admins', 'phone'),
+               
             ],
             'additional_phone' => [
                 'nullable',
                 'string',
                 'regex:/^(05|5|9665|96605|009665|\+9665)[0-9]{8}$/',
-                Rule::unique('recievers', 'additional_phone')->ignore($this->route('reciever')->id),
-                Rule::unique('recievers', 'phone'),
-                Rule::unique('admins', 'phone'),
-                Rule::unique('users', 'phone'),
-                Rule::unique('users', 'additional_phone'),
+             
             ],
             'postal_code' => ['sometimes', 'nullable', 'string', 'max:255'],
             'address' => ['required', 'string', 'max:99999'],
-            'shipping_companies' => ['required', 'array', 'min:1'],
-            'shipping_companies.*.company_id' => ['required', 'string'],
-            'shipping_companies.*.city_id' => ['required', 'string'],
+           
         ];
     }
 
