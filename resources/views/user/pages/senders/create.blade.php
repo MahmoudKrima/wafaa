@@ -50,12 +50,12 @@
                                         <div class="col-md-6 mb-3">
                                             <label for="nameArInput" class="text-dark">{{ __('admin.name') }}</label>
                                             <input id="nameArInput" type="text" name="name"
-                                                placeholder="{{ __('admin.name') }}" class="form-control"
+                                                placeholder="{{ __('admin.name') }}" class="form-control" 
                                                 value="{{ old('name') }}">
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label for="phoneInput" class="text-dark">{{ __('admin.phone') }}</label>
-                                            <input id="phoneInput" type="text" placeholder="05XXXXXXXX"
+                                            <input id="phoneInput" type="text" placeholder="05XXXXXXXX" style="direction:ltr;"
                                                 name="phone" placeholder="{{ __('admin.phone') }}"
                                                 class="form-control" value="{{ old('phone') }}">
                                         </div>
@@ -63,7 +63,7 @@
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label for="additional_phoneInput" class="text-dark">{{ __('admin.additional_phone') }}</label>
-                                            <input id="additional_phoneInput" type="text" placeholder="05XXXXXXXX"
+                                            <input id="additional_phoneInput" type="text" placeholder="05XXXXXXXX" style="direction:ltr;"
                                                 name="additional_phone" placeholder="{{ __('admin.additional_phone') }}"
                                                 class="form-control" value="{{ old('additional_phone') }}">
                                         </div>

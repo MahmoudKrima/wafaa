@@ -50,7 +50,7 @@
                                                     <div class="col-md-4 mb-3">
                                                         <label for="phone">{{ __('admin.phone') }}</label>
                                                         <input type="text" value="{{ request()->get('phone') }}"
-                                                            name="phone" id="phone" class="form-control"
+                                                            name="phone" id="phone" class="form-control" style="direction:ltr;"
                                                             placeholder="{{ __('admin.phone') }}">
                                                     </div>
                                                 </div>

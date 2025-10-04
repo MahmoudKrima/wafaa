@@ -55,7 +55,7 @@
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label for="phoneInput" class="text-dark">{{ __('admin.phone') }}</label>
-                                            <input id="phoneInput" type="number" placeholder="05XXXXXXXX"
+                                            <input id="phoneInput" type="number" placeholder="05XXXXXXXX" style="direction:ltr;"
                                                 name="phone" placeholder="{{ __('admin.phone') }}"
                                                 class="form-control" value="{{ old('phone', $sender->phone) }}">
                                         </div>
@@ -63,7 +63,7 @@
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label for="additionalPhoneInput" class="text-dark">{{ __('admin.additional_phone') }}</label>
-                                            <input id="additionalPhoneInput" type="text" placeholder="05XXXXXXXX"
+                                            <input id="additionalPhoneInput" type="text" placeholder="05XXXXXXXX" style="direction:ltr;"
                                                 name="additional_phone" placeholder="{{ __('admin.additional_phone') }}"
                                                 class="form-control" value="{{ old('additional_phone', $sender->additional_phone) }}">
                                         </div>
