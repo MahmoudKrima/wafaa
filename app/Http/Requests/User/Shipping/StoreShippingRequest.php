@@ -30,7 +30,7 @@ class StoreShippingRequest extends FormRequest
             'selected_receivers'         => ['required', 'string', 'json'],
             'receivers_count'            => ['required', 'integer', 'min:1'],
             'package_type'               => ['required', 'in:box,document'],
-            'packagesCount'              => ['required', 'integer', 'min:1'],
+            'package_number'              => ['required', 'integer', 'min:1'],
             'length'                     => ['required', 'numeric', 'min:0.1'],
             'width'                      => ['required', 'numeric', 'min:0.1'],
             'height'                     => ['required', 'numeric', 'min:0.1'],

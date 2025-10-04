@@ -167,7 +167,7 @@
                         </div>
                         <div class="col-12 col-md-6 mb-3">
                             <label for="user_phone" class="text-dark">{{ __('admin.phone_number') }}</label>
-                            <input id="user_phone" name="user_phone" type="text" class="form-control" required
+                            <input id="user_phone" name="user_phone" type="text" style="direction:ltr;" class="form-control" required
                                 value="{{ old('user_phone', auth()->user()->phone ?? '') }}"
                                 placeholder="{{ __('admin.phone_number') }}"
                                 data-auth-value="{{ auth()->user()->phone ?? '' }}">
@@ -177,7 +177,7 @@
                     <div class="row">
                         <div class="col-12 col-md-6 mb-3" style="display:none;">
                             <label for="user_additional_phone" class="text-dark">{{ __('admin.additional_phone') }}</label>
-                            <input id="user_additional_phone" name="user_additional_phone" type="text" class="form-control"
+                            <input id="user_additional_phone" name="user_additional_phone" type="text" style="direction:ltr;" class="form-control"
                                 value="{{ old('user_additional_phone', auth()->user()->additional_phone ?? '') }}"
                                 placeholder="{{ __('admin.additional_phone') }}"
                                 data-auth-value="{{ auth()->user()->additional_phone ?? '' }}">
@@ -249,14 +249,14 @@
                         </div>
                         <div class="col-12 col-md-6 mb-3">
                             <label for="phone" class="text-dark">{{ __('admin.phone_number') }}</label>
-                            <input id="phone" type="input" name="phone" class="form-control" placeholder="{{ __('admin.enter_phone_number') }}" pattern="05[0-9]{8}" title="Phone must start with 05 followed by 8 digits (e.g., 0512345678)" required>
+                            <input id="phone" type="input" name="phone" class="form-control" style="direction:ltr;" placeholder="{{ __('admin.enter_phone_number') }}" pattern="05[0-9]{8}" title="Phone must start with 05 followed by 8 digits (e.g., 0512345678)" required>
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-12 col-md-6 mb-3" style="display:none;">
                             <label for="additional_phone" class="text-dark">{{ __('admin.additional_phone') }}</label>
-                            <input id="additional_phone" type="input" name="additional_phone" class="form-control" placeholder="{{ __('admin.enter_additional_phone') }}" pattern="05[0-9]{8}">
+                            <input id="additional_phone" type="input" name="additional_phone" style="direction:ltr;" class="form-control" placeholder="{{ __('admin.enter_additional_phone') }}" pattern="05[0-9]{8}">
                         </div>
 
                         <div class="col-12 col-md-6 mb-3" style="display:none;">
