@@ -96,7 +96,7 @@
                                 @foreach ($senders as $sender)
                                 <tr>
                                     <td>{{ $sender->name }}</td>
-                                    <td>{{ $sender->phone }}</td>
+                                    <td style="direction:ltr;">{{ $sender->phone }}</td>
                                     <td>{{ $sender->address }}</td>
                                     <td class="text-center">
                                         <div class="action-btns d-flex justify-content-center">

@@ -52,7 +52,7 @@
                                                     <div class="col-md-4 mb-3">
                                                         <label for="phone">{{ __('admin.phone') }}</label>
                                                         <input type="text" value="{{ request()->get('phone') }}"
-                                                            name="phone" id="phone" class="form-control"
+                                                            name="phone" id="phone" class="form-control" style="direction:ltr;"
                                                             placeholder="{{ __('admin.phone') }}">
                                                     </div>
                                                     <div class="col-md-4 mb-3">
@@ -124,7 +124,7 @@
                                 @foreach ($users as $user)
                                 <tr>
                                     <td>{{ $user->name }}</td>
-                                    <td>{{ $user->phone }}</td>
+                                    <td style="direction:ltr;">{{ $user->phone }}</td>
                                     <td>{{ $user->additional_phone ?? __('admin.n/a') }}</td>
                                     <td>{{ $user->email }}</td>
                                     <td>
