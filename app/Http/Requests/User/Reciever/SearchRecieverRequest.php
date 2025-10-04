@@ -24,7 +24,7 @@ class SearchRecieverRequest extends FormRequest
         return [
             'name' => ['sometimes', 'nullable', 'string', 'max:255'],
             'email' => ['sometimes', 'nullable', 'string', 'max:255'],
-            'phone' => ['sometimes', 'nullable', 'string', 'regex:/^(05|5|9665|96605|009665|\+9665)[0-9]{8}$/'],
+            'phone' => ['sometimes', 'nullable', 'string'],
         ];
     }
 }

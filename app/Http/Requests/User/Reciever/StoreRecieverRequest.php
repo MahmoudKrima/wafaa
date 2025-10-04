@@ -38,7 +38,7 @@ class StoreRecieverRequest extends FormRequest
             'phone' => [
                 'required',
                 'string',
-                'regex:/^(05|5|9665|96605|009665|\+9665)[0-9]{8}$/',
+                //'regex:/^(05|5|9665|96605|009665|\+9665)[0-9]{8}$/',
                 
               
             ],
@@ -46,7 +46,7 @@ class StoreRecieverRequest extends FormRequest
                 'nullable',
                 'sometimes',
                 'string',
-                'regex:/^(05|5|9665|96605|009665|\+9665)[0-9]{8}$/',
+                //'regex:/^(05|5|9665|96605|009665|\+9665)[0-9]{8}$/',
                 
                
             ],

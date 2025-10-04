@@ -39,13 +39,13 @@ class UpdateRecieverRequest extends FormRequest
             'phone' => [
                 'required',
                 'string',
-                'regex:/^(05|5|9665|96605|009665|\+9665)[0-9]{8}$/',
+                //'regex:/^(05|5|9665|96605|009665|\+9665)[0-9]{8}$/',
                
             ],
             'additional_phone' => [
                 'nullable',
                 'string',
-                'regex:/^(05|5|9665|96605|009665|\+9665)[0-9]{8}$/',
+                //'regex:/^(05|5|9665|96605|009665|\+9665)[0-9]{8}$/',
              
             ],
             'postal_code' => ['sometimes', 'nullable', 'string', 'max:255'],
