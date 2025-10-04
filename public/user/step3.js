@@ -177,6 +177,13 @@
             const opt = document.createElement("option");
             opt.value = sender.id || sender._id || "";
             opt.textContent = sender.name || sender.full_name || "";
+
+            // Store additional data as data attributes for instant population
+            if (sender.phone) opt.dataset.phone = sender.phone;
+            if (sender.additional_phone)
+                opt.dataset.additionalPhone = sender.additional_phone;
+            if (sender.address) opt.dataset.address = sender.address;
+
             select.appendChild(opt);
         });
     }
@@ -323,6 +330,8 @@
         if (senderFormCache.has(senderId)) {
             const cachedSender = senderFormCache.get(senderId);
             populateFormFields(cachedSender);
+            // Load location data in background without blocking
+            loadLocationDataInBackground(cachedSender);
             return;
         }
 
@@ -333,9 +342,41 @@
         if (selectedOption) {
             const nameField = document.getElementById("user_name");
             if (nameField) nameField.value = selectedOption.textContent;
+
+            // Try to populate additional fields from data attributes if available
+            const phoneField = document.getElementById("user_phone");
+            const additionalPhoneField = document.getElementById(
+                "user_additional_phone"
+            );
+            const addressField = document.getElementById("user_address");
+
+            if (phoneField && selectedOption.dataset.phone) {
+                phoneField.value = selectedOption.dataset.phone;
+            }
+            if (
+                additionalPhoneField &&
+                selectedOption.dataset.additionalPhone
+            ) {
+                additionalPhoneField.value =
+                    selectedOption.dataset.additionalPhone;
+            }
+            if (addressField && selectedOption.dataset.address) {
+                addressField.value = selectedOption.dataset.address;
+            }
         }
 
-        // Fetch full details in background
+        // Trigger validation immediately after basic population
+        if (typeof window.hardEnableNext === "function") {
+            const isValid = window.smartValidateStep();
+            window.hardEnableNext(isValid);
+        }
+
+        // Fetch full details in background without blocking UI
+        fetchSenderDetailsInBackground(senderId);
+    }
+
+    // Background sender details fetching - non-blocking
+    async function fetchSenderDetailsInBackground(senderId) {
         try {
             const response = await fetch(`/user/senders/${senderId}`, {
                 headers: {
@@ -384,68 +425,56 @@
         if (addressField) addressField.value = sender.address || "";
     }
 
-    // Background location data loading
-    async function loadLocationDataInBackground(sender) {
-        try {
-            await loadCountries();
+    // Background location data loading - completely non-blocking
+    function loadLocationDataInBackground(sender) {
+        // Run all location loading in background without blocking UI
+        setTimeout(async () => {
+            try {
+                await loadCountries();
 
-            const countrySelect = $country();
-            if (countrySelect) {
-                countrySelect.value = DEFAULT_KSA_ID;
-            }
+                const countrySelect = $country();
+                if (countrySelect) {
+                    countrySelect.value = DEFAULT_KSA_ID;
+                }
 
-            const companyIdValue = companyId();
-            let senderCityId = null;
+                const companyIdValue = companyId();
+                let senderCityId = null;
 
-            if (
-                sender.shipping_companies &&
-                Array.isArray(sender.shipping_companies)
-            ) {
-                const matchingCompany = sender.shipping_companies.find(
-                    (sc) =>
-                        String(sc.shipping_company_id) ===
-                        String(companyIdValue)
-                );
+                if (
+                    sender.shipping_companies &&
+                    Array.isArray(sender.shipping_companies)
+                ) {
+                    const matchingCompany = sender.shipping_companies.find(
+                        (sc) =>
+                            String(sc.shipping_company_id) ===
+                            String(companyIdValue)
+                    );
 
-                if (matchingCompany && matchingCompany.city_id) {
-                    senderCityId = matchingCompany.city_id;
+                    if (matchingCompany && matchingCompany.city_id) {
+                        senderCityId = matchingCompany.city_id;
+                    }
+                }
+
+                // Load cities for Saudi Arabia
+                if (companyIdValue) {
+                    await loadCitiesByCompanyAndCountry(
+                        companyIdValue,
+                        DEFAULT_KSA_ID,
+                        senderCityId
+                    );
+                } else {
+                    await preloadSaudiArabiaCities();
+                }
+            } catch (error) {
+                console.error("Error loading location data:", error);
+            } finally {
+                // Trigger validation after background loading completes
+                if (typeof window.hardEnableNext === "function") {
+                    const isValid = window.smartValidateStep();
+                    window.hardEnableNext(isValid);
                 }
             }
-
-            // Load cities for Saudi Arabia
-            if (companyIdValue) {
-                await loadCitiesByCompanyAndCountry(
-                    companyIdValue,
-                    DEFAULT_KSA_ID,
-                    senderCityId
-                );
-            } else {
-                await preloadSaudiArabiaCities();
-            }
-        } catch (error) {
-            console.error("Error loading location data:", error);
-        } finally {
-            // Trigger validation multiple times to ensure it catches all updates
-            if (typeof window.hardEnableNext === "function") {
-                // First immediate validation
-                setTimeout(() => {
-                    const isValid = window.smartValidateStep();
-                    window.hardEnableNext(isValid);
-                }, 100);
-
-                // Second validation after Select2 updates
-                setTimeout(() => {
-                    const isValid = window.smartValidateStep();
-                    window.hardEnableNext(isValid);
-                }, 400);
-
-                // Final validation to be sure
-                setTimeout(() => {
-                    const isValid = window.smartValidateStep();
-                    window.hardEnableNext(isValid);
-                }, 800);
-            }
-        }
+        }, 0); // Run immediately but asynchronously
     }
 
     // Ultra-optimized city loading with instant switching
@@ -632,11 +661,20 @@
             window.translations?.select_city || "Select City";
         fragment.appendChild(defaultOption);
 
-        // Add city options
+        // Add city options with state information stored in data attributes
         cities.forEach((city) => {
             const opt = document.createElement("option");
             opt.value = city.id || city._id || "";
             opt.textContent = labelFrom(city);
+
+            // Store state information in data attributes for later retrieval
+            if (city.state_id) {
+                opt.dataset.stateId = city.state_id;
+            }
+            if (city.state_name) {
+                opt.dataset.stateName = city.state_name;
+            }
+
             fragment.appendChild(opt);
         });
 
@@ -742,6 +780,52 @@
         }
     }
 
+    // Function to handle city selection and capture state information
+    function handleCitySelection(citySelect) {
+        const selectedOption = citySelect.options[citySelect.selectedIndex];
+        if (selectedOption && selectedOption.value) {
+            const stateId = selectedOption.dataset.stateId;
+            const stateName = selectedOption.dataset.stateName;
+
+            // Update hidden form fields for state information
+            const stateIdField = document.getElementById(
+                "sender_state_id_hidden"
+            );
+            const stateNameField = document.getElementById(
+                "sender_state_name_hidden"
+            );
+
+            if (stateIdField) {
+                stateIdField.value = stateId || "";
+            }
+            if (stateNameField) {
+                stateNameField.value = stateName || "";
+            }
+
+            console.log("City selected:", {
+                cityId: selectedOption.value,
+                cityName: selectedOption.textContent,
+                stateId: stateId,
+                stateName: stateName,
+            });
+        } else {
+            // Clear state information if no city selected
+            const stateIdField = document.getElementById(
+                "sender_state_id_hidden"
+            );
+            const stateNameField = document.getElementById(
+                "sender_state_name_hidden"
+            );
+
+            if (stateIdField) {
+                stateIdField.value = "";
+            }
+            if (stateNameField) {
+                stateNameField.value = "";
+            }
+        }
+    }
+
     // Optimized function to reinitialize Select2 for city select only
     function reinitializeCitySelect2(citySelect) {
         if (!citySelect) return;
@@ -772,6 +856,11 @@
                         return window.translations?.searching || "Searching...";
                     },
                 },
+            });
+
+            // Add event listener for city selection
+            $(citySelect).on("change", function () {
+                handleCitySelection(citySelect);
             });
 
             if (citySelect.value) {
@@ -1231,7 +1320,8 @@
 
         // Load cities immediately for instant switching
         const companyIdValue = companyId();
-        const countryIdValue = countryId();
+        const countrySelect = $country();
+        const countryIdValue = countrySelect ? countrySelect.value : null;
         if (companyIdValue && countryIdValue) {
             // Try to load cities instantly from cache
             loadCitiesByCompanyAndCountry(companyIdValue, countryIdValue);

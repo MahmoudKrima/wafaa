@@ -323,8 +323,29 @@ class ShippingService
 
     public function store($request)
     {
-        $data = $request->validated();
+        \Log::info('Shipment creation request received', [
+            'all_input' => $request->all(),
+            'validated_data' => $request->validated(),
+            'step' => 'request_received'
+        ]);
+        
+        try {
+            $data = $request->validated();
+            \Log::info('Validation passed', ['data_keys' => array_keys($data)]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('Validation failed', [
+                'errors' => $e->errors(),
+                'input' => $request->all()
+            ]);
+            throw $e;
+        }
+        
         $user = auth()->user();
+        
+        \Log::info('User authenticated', [
+            'user_id' => $user->id,
+            'user_email' => $user->email
+        ]);
 
         $company = $this->getShippingCompany($data['shipping_company_id'] ?? null);
         if (!$company) {
@@ -393,10 +414,16 @@ class ShippingService
                 companyPrice: $companyPrice
             );
         } catch (\Throwable $e) {
+            \Log::error('Shipment creation error: ' . $e->getMessage(), [
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'trace' => $e->getTraceAsString(),
+                'request_data' => $data
+            ]);
             session()->forget('Success');
             return redirect()
                 ->route('user.shippings.index')
-                ->with('Error', __('admin.something_wrong'));
+                ->with('Error', __('admin.something_wrong') . ': ' . $e->getMessage());
         }
 
         if (!empty($results['server_error'])) {
@@ -500,10 +527,21 @@ class ShippingService
                 $body["imageUrl"] = displayImage($shipmentImagePath);
             }
 
+            \Log::info('Sending shipment request to Ghaya API', [
+                'url' => $this->ghayaUrl('shipments'),
+                'body' => $body
+            ]);
+
             $resp = $this->ghayaRequest()
                 ->timeout(20)
                 ->retry(2, 200)
                 ->post($this->ghayaUrl('shipments'), $body);
+
+            \Log::info('Ghaya API response', [
+                'status' => $resp->status(),
+                'response' => $resp->json(),
+                'body' => $resp->body()
+            ]);
 
             if ($resp->serverError()) {
 
@@ -657,6 +695,8 @@ class ShippingService
         // Ensure city fields have fallbacks
         $senderCityId      = (string)($requestData['sender_city_id']      ?? $sender['city_id']      ?? '1');
         $senderCityName    = (string)($requestData['sender_city_name']    ?? $sender['city_name']    ?? 'Default City');
+        $senderStateId     = (string)($requestData['sender_state_id']     ?? $sender['state_id']     ?? '');
+        $senderStateName   = (string)($requestData['sender_state_name']   ?? $sender['state_name']   ?? '');
         $senderStreet      = (string)($requestData['sender_address']      ?? $sender['street']       ?? '');
         $senderZipCode     = (string)($requestData['sender_postal_code']  ?? $sender['zip_code']     ?? '');
 
@@ -666,7 +706,7 @@ class ShippingService
         $width         = (int) ($requestData['width']        ?? 0);
         $height        = (int) ($requestData['height']       ?? 0);
         $weight        = (int) ($requestData['entered_weight'] ?? $requestData['weight'] ?? 0);
-        $packagesCount = (int)   ($requestData['package_number'] ?? 1);
+        $packagesCount = (int)   ($requestData['packagesCount'] ?? 1);
         $description   = (string)($requestData['package_description'] ?? '');
         $isCommercial  = (bool)  ($requestData['is_commercial'] ?? false);
         $isWeightEdited = (bool) ($requestData['is_weight_edited'] ?? array_key_exists('entered_weight', $requestData));
@@ -683,6 +723,8 @@ class ShippingService
 
         $receiverCityId      = (string)($receiver['city_id'] ?? '');
         $receiverCityName    = (string)($receiver['city_name'] ?? '');
+        $receiverStateId     = (string)($receiver['state_id'] ?? '');
+        $receiverStateName   = (string)($receiver['state_name'] ?? '');
         $receiverStreet      = (string)($receiver['street'] ?? '');
         $receiverZipCode     = (string)($receiver['zip'] ?? '');
 
@@ -726,11 +768,96 @@ class ShippingService
             'externalAppId'       => $userId
         ];
 
+        // Always include state fields - some companies like J&T require them
+        // If state info is not available, we'll try to fetch it or use defaults
+        if (empty($senderStateId) || empty($senderStateName)) {
+            \Log::info('Fetching sender state info from city data', [
+                'city_id' => $senderCityId,
+                'shipping_company_id' => $shippingCompanyId
+            ]);
+            // Try to fetch state info from city data
+            $cityStateInfo = $this->getStateInfoFromCity($senderCityId, $shippingCompanyId);
+            if ($cityStateInfo) {
+                $senderStateId = $cityStateInfo['state_id'] ?? $senderStateId;
+                $senderStateName = $cityStateInfo['state_name'] ?? $senderStateName;
+                \Log::info('Sender state info fetched', [
+                    'state_id' => $senderStateId,
+                    'state_name' => $senderStateName
+                ]);
+            }
+        }
+        
+        if (empty($receiverStateId) || empty($receiverStateName)) {
+            \Log::info('Fetching receiver state info from city data', [
+                'city_id' => $receiverCityId,
+                'shipping_company_id' => $shippingCompanyId
+            ]);
+            // Try to fetch state info from city data
+            $cityStateInfo = $this->getStateInfoFromCity($receiverCityId, $shippingCompanyId);
+            if ($cityStateInfo) {
+                $receiverStateId = $cityStateInfo['state_id'] ?? $receiverStateId;
+                $receiverStateName = $cityStateInfo['state_name'] ?? $receiverStateName;
+                \Log::info('Receiver state info fetched', [
+                    'state_id' => $receiverStateId,
+                    'state_name' => $receiverStateName
+                ]);
+            }
+        }
+        
+        // Always include state fields (required by some companies like J&T)
+        $body["senderStateId"] = $senderStateId ?: 'default_state_id';
+        $body["senderStateName"] = $senderStateName ?: 'Default State';
+        $body["receiverStateId"] = $receiverStateId ?: 'default_state_id';
+        $body["receiverStateName"] = $receiverStateName ?: 'Default State';
+        
+        \Log::info('Final state fields for API request', [
+            'sender_state_id' => $body["senderStateId"],
+            'sender_state_name' => $body["senderStateName"],
+            'receiver_state_id' => $body["receiverStateId"],
+            'receiver_state_name' => $body["receiverStateName"]
+        ]);
+
         if ($isCod) {
             $body["codPrice"] = (int) $requestData['cod_amount'];
         }
 
         return $body;
+    }
+
+    private function getStateInfoFromCity($cityId, $shippingCompanyId)
+    {
+        try {
+            // Get cities data for the company and country
+            $citiesData = $this->getCitiesByCompanyAndCountry($shippingCompanyId, '65fd1a1c1fdbc094e3369b29');
+            
+            if (isset($citiesData['results']) && is_array($citiesData['results'])) {
+                foreach ($citiesData['results'] as $city) {
+                    if (($city['id'] ?? $city['_id'] ?? '') === $cityId) {
+                        return [
+                            'state_id' => $city['state_id'] ?? '',
+                            'state_name' => $city['state_name'] ?? ''
+                        ];
+                    }
+                }
+            } elseif (is_array($citiesData)) {
+                foreach ($citiesData as $city) {
+                    if (($city['id'] ?? $city['_id'] ?? '') === $cityId) {
+                        return [
+                            'state_id' => $city['state_id'] ?? '',
+                            'state_name' => $city['state_name'] ?? ''
+                        ];
+                    }
+                }
+            }
+        } catch (\Throwable $e) {
+            \Log::error('Error fetching state info from city', [
+                'city_id' => $cityId,
+                'shipping_company_id' => $shippingCompanyId,
+                'error' => $e->getMessage()
+            ]);
+        }
+        
+        return null;
     }
 
     private function resolveSenderPayload($user)
@@ -1269,7 +1396,61 @@ class ShippingService
                 ->get($this->ghayaUrl('cities'), $query);
 
             if ($response->successful()) {
-                return $response->json();
+                $data = $response->json();
+                
+                // Extract state information from city data
+                if (isset($data['results']) && is_array($data['results'])) {
+                    foreach ($data['results'] as &$city) {
+                        // Extract state information from city data based on actual API structure
+                        if (isset($city['state']) && is_array($city['state'])) {
+                            // State is a nested object with id and name
+                            $city['state_id'] = $city['state']['id'] ?? $city['state']['_id'] ?? null;
+                            
+                            // Handle multilingual state names
+                            if (isset($city['state']['name']) && is_array($city['state']['name'])) {
+                                $city['state_name'] = $city['state']['name']['en'] ?? $city['state']['name']['ar'] ?? '';
+                            } else {
+                                $city['state_name'] = $city['state']['name'] ?? '';
+                            }
+                        } elseif (isset($city['stateId'])) {
+                            // Fallback: stateId is directly on city object
+                            $city['state_id'] = $city['stateId'];
+                            $city['state_name'] = $city['stateName'] ?? '';
+                            
+                            // Handle multilingual state names if stateName is an array
+                            if (is_array($city['state_name'])) {
+                                $city['state_name'] = $city['state_name']['en'] ?? $city['state_name']['ar'] ?? '';
+                            }
+                        }
+                    }
+                } elseif (is_array($data)) {
+                    // Handle case where data is directly an array of cities
+                    foreach ($data as &$city) {
+                        // Extract state information from city data based on actual API structure
+                        if (isset($city['state']) && is_array($city['state'])) {
+                            // State is a nested object with id and name
+                            $city['state_id'] = $city['state']['id'] ?? $city['state']['_id'] ?? null;
+                            
+                            // Handle multilingual state names
+                            if (isset($city['state']['name']) && is_array($city['state']['name'])) {
+                                $city['state_name'] = $city['state']['name']['en'] ?? $city['state']['name']['ar'] ?? '';
+                            } else {
+                                $city['state_name'] = $city['state']['name'] ?? '';
+                            }
+                        } elseif (isset($city['stateId'])) {
+                            // Fallback: stateId is directly on city object
+                            $city['state_id'] = $city['stateId'];
+                            $city['state_name'] = $city['stateName'] ?? '';
+                            
+                            // Handle multilingual state names if stateName is an array
+                            if (is_array($city['state_name'])) {
+                                $city['state_name'] = $city['state_name']['en'] ?? $city['state_name']['ar'] ?? '';
+                            }
+                        }
+                    }
+                }
+                
+                return $data;
             }
             return [];
         } catch (\Throwable $e) {

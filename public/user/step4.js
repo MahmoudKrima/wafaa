@@ -153,6 +153,12 @@
             "";
         const city_id =
             r.city_id || r.cityId || r.city || (r.city && r.city.id) || "";
+
+        // Get state information from global variables or receiver data
+        const state_id = r.state_id || window.currentReceiverStateId || "";
+        const state_name =
+            r.state_name || window.currentReceiverStateName || "";
+
         return {
             id: toStr(id),
             name: r.name || r.full_name || "",
@@ -165,6 +171,8 @@
             city_id: toStr(city_id),
             country_name: displayName(countryName),
             city_name: displayName(cityName),
+            state_id: toStr(state_id),
+            state_name: state_name,
         };
     }
 
@@ -324,6 +332,31 @@
         }
     }
 
+    // Function to handle receiver city selection and capture state information
+    function handleReceiverCitySelection(citySelect) {
+        const selectedOption = citySelect.options[citySelect.selectedIndex];
+        if (selectedOption && selectedOption.value) {
+            const stateId = selectedOption.dataset.stateId;
+            const stateName = selectedOption.dataset.stateName;
+
+            // Store state information in a global variable for receiver
+            // This will be used when creating the receiver data
+            window.currentReceiverStateId = stateId || "";
+            window.currentReceiverStateName = stateName || "";
+
+            console.log("Receiver city selected:", {
+                cityId: selectedOption.value,
+                cityName: selectedOption.textContent,
+                stateId: stateId,
+                stateName: stateName,
+            });
+        } else {
+            // Clear state information if no city selected
+            window.currentReceiverStateId = "";
+            window.currentReceiverStateName = "";
+        }
+    }
+
     // Helper function to populate receiver city select
     function populateReceiverCitySelect(citySelect, cities, selectedId = "") {
         citySelect.innerHTML = `<option value="">${t(
@@ -335,6 +368,15 @@
             const opt = document.createElement("option");
             opt.value = c.id || c._id;
             opt.textContent = displayName(c.name) || "";
+
+            // Store state information in data attributes for later retrieval
+            if (c.state_id) {
+                opt.dataset.stateId = c.state_id;
+            }
+            if (c.state_name) {
+                opt.dataset.stateName = c.state_name;
+            }
+
             citySelect.appendChild(opt);
         });
 
@@ -366,6 +408,11 @@
                         return t("searching", "Searching...");
                     },
                 },
+            });
+
+            // Add event listener for receiver city selection
+            $(citySelect).on("change", function () {
+                handleReceiverCitySelection(citySelect);
             });
 
             if (citySelect.value) {
@@ -814,22 +861,49 @@
     function updateAddButtonState() {
         const btn = $addBtn();
         if (!btn) return;
-        const modeExisting = $existingRadio()?.checked;
-        const modeNew = $newRadio()?.checked;
+
+        // Only run receiver mode logic if we're on step 4 (receiver selection step)
+        const currentStep = window.currentStep || 1;
+        if (currentStep === 4) {
+            // Set default receiver type to "existing" if none is selected
+            const existingRadio = $existingRadio();
+            const newRadio = $newRadio();
+            if (
+                existingRadio &&
+                newRadio &&
+                !existingRadio.checked &&
+                !newRadio.checked
+            ) {
+                existingRadio.checked = true;
+                console.log(
+                    "Set default receiver type to 'existing' in updateAddButtonState"
+                );
+            }
+        }
+
+        // Only check receiver mode logic if we're on step 4
         let enable = false;
-        if (modeExisting) {
-            const selectedId = $receiverSelect()?.value || "";
-            const formComplete = isFormComplete();
-            enable = !!selectedId && formComplete;
-            console.log(
-                `Existing mode - selectedId: "${selectedId}", formComplete: ${formComplete}, enable: ${enable}`
-            );
-        } else if (modeNew) {
-            enable = isFormComplete();
-            console.log(`New mode - enable: ${enable}`);
+        if (currentStep === 4) {
+            const modeExisting = $existingRadio()?.checked;
+            const modeNew = $newRadio()?.checked;
+
+            if (modeExisting) {
+                const selectedId = $receiverSelect()?.value || "";
+                const formComplete = isFormComplete();
+                enable = !!selectedId && formComplete;
+                console.log(
+                    `Existing mode - selectedId: "${selectedId}", formComplete: ${formComplete}, enable: ${enable}`
+                );
+            } else if (modeNew) {
+                enable = isFormComplete();
+                console.log(`New mode - enable: ${enable}`);
+            } else {
+                enable = false;
+                console.log(`No mode selected - enable: ${enable}`);
+            }
         } else {
-            enable = false;
-            console.log(`No mode selected - enable: ${enable}`);
+            // For other steps, just enable the button (let other step logic handle it)
+            enable = true;
         }
         btn.disabled = !enable;
         btn.classList.toggle("btn-secondary", !enable);
@@ -960,6 +1034,12 @@
     document.addEventListener("stepChanged", (e) => {
         if (e?.detail?.currentStep === 3 || e?.detail?.currentStep === "3") {
             wireUI();
+            updateAddButtonState();
+            syncNextButton();
+        } else if (
+            e?.detail?.currentStep === 4 ||
+            e?.detail?.currentStep === "4"
+        ) {
             updateAddButtonState();
             syncNextButton();
         }

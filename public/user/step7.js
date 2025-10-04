@@ -800,8 +800,8 @@
                     selectedIndex: countryField?.selectedIndex,
                 });
                 // Handle state fields (if they exist)
-                let sender_state_id = _val("user_state");
-                let sender_state_name = _textOfSelect("user_state");
+                let sender_state_id = _val("sender_state_id_hidden");
+                let sender_state_name = _val("sender_state_name_hidden");
 
                 // Handle city fields with fallbacks
                 let sender_city_id = _val("user_city");
@@ -889,13 +889,15 @@
                     sender_city: sender_city_id,
                     receivers: window.selectedReceivers || [],
                     package_type: _val("package_type"),
-                    package_count: _val("package_number") || "1",
+                    packagesCount: _val("package_number") || "1",
                     weight: _val("weight") || "0",
                     length: _val("length") || "0",
                     width: _val("width") || "0",
                     height: _val("height") || "0",
                     package_description: _val("package_description") || "",
                     package_notes: _val("package_notes") || "",
+                    description_type: _val("description_type") || "new",
+                    sender_kind: _val("sender_kind_hidden") || "auth",
                     payment_method: paymentMethod,
                     shipping_price_per_receiver: extractNumericValue(
                         "price-base-per-receiver"
@@ -973,13 +975,15 @@
                         entered_weight: shippingData.entered_weight,
                         extra_kg: shippingData.extra_kg,
                         package_type: shippingData.package_type,
-                        package_count: shippingData.package_count,
+                        packagesCount: shippingData.packagesCount,
                         length: shippingData.length,
                         width: shippingData.width,
                         height: shippingData.height,
                         weight: shippingData.weight,
                         package_description: shippingData.package_description,
                         package_notes: shippingData.package_notes,
+                        description_type: shippingData.description_type,
+                        sender_kind: shippingData.sender_kind,
                     };
                     Object.entries(hiddenFields).forEach(([key, value]) => {
                         let field = form.querySelector(`#${key}_hidden`);
@@ -1005,22 +1009,139 @@
                     console.log("Form data before submission:");
                     const formData = new FormData(form);
                     for (let [key, value] of formData.entries()) {
-                        if (key.includes("country") || key.includes("sender")) {
-                            console.log(`${key}: ${value}`);
-                        }
+                        console.log(`${key}: ${value}`);
                     }
+
+                    // Debug: Log shipping data object
+                    console.log("Shipping data object:", shippingData);
+
+                    // Debug: Check for missing required fields
+                    const requiredFields = [
+                        "shipping_company_id",
+                        "shipping_method",
+                        "sender_name",
+                        "sender_phone",
+                        "sender_address",
+                        "sender_city_id",
+                        "sender_city_name",
+                        "selected_receivers",
+                        "receivers_count",
+                        "package_type",
+                        "packagesCount",
+                        "length",
+                        "width",
+                        "height",
+                        "weight",
+                        "payment_method",
+                        "shipping_price_per_receiver",
+                        "extra_weight_per_receiver",
+                        "total_per_receiver",
+                        "total_amount",
+                        "currency",
+                        "max_weight",
+                        "entered_weight",
+                        "extra_kg",
+                        "accept_terms",
+                        "description_type",
+                        "sender_kind",
+                    ];
+
+                    console.log("Checking required fields:");
+                    const missingFields = [];
+                    requiredFields.forEach((field) => {
+                        const value = formData.get(field);
+                        const isOk = value && value.trim() !== "";
+                        console.log(
+                            `${field}: ${value} (${isOk ? "OK" : "MISSING"})`
+                        );
+                        if (!isOk) {
+                            missingFields.push(field);
+                        }
+                    });
+
+                    if (missingFields.length > 0) {
+                        console.error(
+                            "MISSING REQUIRED FIELDS:",
+                            missingFields
+                        );
+                        alert(
+                            "Missing required fields: " +
+                                missingFields.join(", ")
+                        );
+                        return;
+                    }
+
+                    console.log("All required fields are present");
                     mirrorLocationToForm(form);
                     ensurePaymentMethodHiddenInForm(form, paymentMethod);
                     ensureCodHiddenInForm(form, _codAmount());
+
+                    console.log("About to submit form...");
+                    console.log("Form action:", form.action);
+                    console.log("Form method:", form.method);
+
                     const originalText = confirm.innerHTML;
                     confirm.innerHTML =
                         '<i class="fas fa-spinner fa-spin me-2"></i>' +
                         t("creating_shipment", "Creating Shipment...");
                     confirm.disabled = true;
+
                     if (typeof window.validateForm !== "function") {
                         window.validateForm = () => true;
                     }
-                    form.submit();
+
+                    // Test form validation before submission
+                    const validationResult = window.validateForm();
+                    console.log("Form validation result:", validationResult);
+                    if (!validationResult) {
+                        console.error(
+                            "Form validation failed - submission blocked"
+                        );
+                        alert(
+                            "Form validation failed. Please check all required fields."
+                        );
+                        return;
+                    }
+
+                    // Additional validation checks
+                    console.log("Additional validation checks:");
+                    console.log("- Selected company:", window.selectedCompany);
+                    console.log("- Selected method:", window.selectedMethod);
+                    console.log(
+                        "- Selected receivers:",
+                        window.selectedReceivers
+                    );
+                    console.log("- Current step:", window.currentStep);
+                    console.log("- Form action:", form.action);
+                    console.log("- Form method:", form.method);
+
+                    // Check if we have all required data
+                    if (!window.selectedCompany) {
+                        console.error("No company selected!");
+                        alert("Please select a shipping company.");
+                        return;
+                    }
+                    if (!window.selectedMethod) {
+                        console.error("No method selected!");
+                        alert("Please select a shipping method.");
+                        return;
+                    }
+                    if (
+                        !window.selectedReceivers ||
+                        window.selectedReceivers.length === 0
+                    ) {
+                        console.error("No receivers selected!");
+                        alert("Please select at least one receiver.");
+                        return;
+                    }
+
+                    console.log("Submitting form now...");
+
+                    // Add a small delay to ensure all form data is properly set
+                    setTimeout(() => {
+                        console.log("Final form submission...");
+                        form.submit();
+                    }, 100);
                 } else {
                     alert(
                         "Form not found. Please refresh the page and try again."
@@ -1046,8 +1167,107 @@
     window.setupStep7 = setupStep7;
     window.populateAllSummaries = populateAllSummaries;
     document.addEventListener("DOMContentLoaded", () => {
-        if (typeof window.validateForm !== "function")
-            window.validateForm = () => true;
+        // Add form submit event listener for debugging
+        const form =
+            document.querySelector('form[enctype="multipart/form-data"]') ||
+            document.querySelector("form");
+        if (form) {
+            form.addEventListener("submit", function (e) {
+                console.log("Form submit event triggered");
+                const validationResult = window.validateForm();
+                console.log("Form validation result:", validationResult);
+                if (!validationResult) {
+                    console.log("Form submission prevented by validation");
+                    e.preventDefault();
+                    return false;
+                }
+                console.log("Form submission allowed");
+
+                // Log form data being submitted
+                const formData = new FormData(form);
+                console.log("Form data being submitted:");
+                for (let [key, value] of formData.entries()) {
+                    console.log(`${key}: ${value}`);
+                }
+            });
+        }
+
+        if (typeof window.validateForm !== "function") {
+            window.validateForm = function () {
+                console.log("Running form validation...");
+
+                // Check essential fields
+                const requiredFields = [
+                    "shipping_company_id",
+                    "shipping_method",
+                    "sender_name",
+                    "sender_phone",
+                    "sender_address",
+                    "sender_city_id",
+                    "sender_city_name",
+                    "selected_receivers",
+                    "receivers_count",
+                    "package_type",
+                    "packagesCount",
+                    "length",
+                    "width",
+                    "height",
+                    "weight",
+                    "payment_method",
+                    "accept_terms",
+                ];
+
+                const form =
+                    document.querySelector(
+                        'form[enctype="multipart/form-data"]'
+                    ) || document.querySelector("form");
+                if (!form) {
+                    console.error("Form not found!");
+                    return false;
+                }
+
+                let isValid = true;
+                const missingFields = [];
+
+                requiredFields.forEach((fieldName) => {
+                    const field = form.querySelector(`[name="${fieldName}"]`);
+                    if (!field || !field.value || field.value.trim() === "") {
+                        missingFields.push(fieldName);
+                        isValid = false;
+                    }
+                });
+
+                if (!isValid) {
+                    console.error(
+                        "VALIDATION FAILED. Missing fields:",
+                        missingFields
+                    );
+                    console.error("Form validation details:", {
+                        form: form,
+                        missingFields: missingFields,
+                        allFormData: Array.from(new FormData(form).entries()),
+                    });
+                    alert(
+                        "Please fill in all required fields: " +
+                            missingFields.join(", ")
+                    );
+                    return false;
+                }
+
+                // Check if receivers are selected
+                if (
+                    !window.selectedReceivers ||
+                    window.selectedReceivers.length === 0
+                ) {
+                    console.error("No receivers selected");
+                    alert("Please select at least one receiver");
+                    return false;
+                }
+
+                console.log("Form validation passed");
+                return true;
+            };
+        }
         fetchUserWalletBalance();
         if (window.OLD_INPUT && Object.keys(window.OLD_INPUT).length > 0) {
             restoreFormStateFromValidationErrors();
