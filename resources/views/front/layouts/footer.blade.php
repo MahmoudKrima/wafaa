@@ -25,6 +25,8 @@
             <div class="social-area" style="text-align:center;margin:20px 0;">
                 
                 <p style="text-align:center;color:#ffffff;margin:15px 0;">تابعنا على شبكات التواصل الإجتماعي</p>
+
+                
                 
                 @if(isset(app('settings')['facebook']) && app('settings')['facebook'] != null)
                 <a href="{{app('settings')['facebook']}}"><i class="fa-brands fa-facebook-f"></i></a>
