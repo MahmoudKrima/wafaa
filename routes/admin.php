@@ -349,6 +349,11 @@ Route::middleware(['web'])->group(function () {
                 Route::get('/admin-shipping', 'index')
                     ->name('admin-shipping.index')
                     ->middleware('has.permission:admin_shipping.view');
+
+                //download waybill by its tracking number name directly
+                Route::get('/download-file', 'downloadWaybill')
+                    ->name('download.file');
+
                 Route::get('/admin-shipping/create', 'create')
                     ->name('admin-shipping.create')
                     ->middleware('has.permission:admin_shipping.create');

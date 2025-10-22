@@ -100,6 +100,11 @@ Route::middleware(['web'])->group(function () {
             ->group(function () {
                 Route::get('/shippings', 'index')
                     ->name('shippings.index');
+
+                //download waybill by its tracking number name directly
+                Route::get('/download-file', 'downloadWaybill')
+                    ->name('download.file');
+
                 Route::get('/shippings-export', 'export')
                     ->name('shippings.export');
                 Route::post('/shippings-print', 'printWaybills')

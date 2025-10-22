@@ -247,6 +247,14 @@
                                         <span class="{{ $class }}">{{ $label }}</span>
                                     </td>
                                     <td>
+
+                                        @if(!empty($shipment['labelUrl']))
+                                        <a href="{{ route('user.download.file', ['label_url' => $shipment['labelUrl'], 'tracking_number' => $shipment['trackingNumber'] ]) }}" target="_blank" class="badge bg-secondary text-white">
+                                            {{ __('admin.download') }}
+                                        </a>
+                                        @endif
+
+
                                         @if(!empty($shipment['labelUrl']))
                                         <a href="{{ $shipment['labelUrl'] }}" target="_blank" class="badge bg-primary text-white">
                                             {{ __('admin.shipment_file') }}

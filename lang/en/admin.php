@@ -17,6 +17,7 @@ return [
     'loading_tracking_number' => 'Reload page',
     'searching' => 'Searching...',
     'logout' => 'Logout',
+    'download'=>'Download',
     'admin_shipments_settings' => 'Shipments Setting',
     'admin_contacts_settings' => 'Contact Info',
     'admin_settings' => 'Shipment & Contact ',
