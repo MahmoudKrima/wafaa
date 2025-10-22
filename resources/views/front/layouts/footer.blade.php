@@ -1,19 +1,19 @@
 <div class="footer-area theme_right" data-background="{{ asset('front/assets/img/footer-bg.jpg') }}">
     <div class="container">
 
-        <div class="footer-bottom row">
-            <div class="col-lg-4 col-md-4">
+        <div class="footer-bottom row" style="text-align:center;">
+            <div class="col-lg-6 col-md-6">
                 <span>© {{app('settings')['app_name_' . assetLang()]}} {{date('Y')}} | {{ __('user.all_rights_reserved') }}</span>
             </div>
-            <div class="col-lg-4 col-md-4">
+            <div class="col-lg-6 col-md-6">
                 <ul>
                     <li><a href="{{ route('front.terms') }}">{{__('admin.terms_description')}}</a></li>
                     <li><a href="{{ route('front.policy') }}">{{__('admin.privacy_description')}}</a></li>
                 </ul>
             </div>
-            <div class="col-lg-4 col-md-4">
+            {{--<div class="col-lg-4 col-md-4">
                 <span>  مؤسسة بسنت سويت التجارية - السجل التجاري : 4030442974  </span>
-            </div>
+            </div>--}}
         </div>
         
         
