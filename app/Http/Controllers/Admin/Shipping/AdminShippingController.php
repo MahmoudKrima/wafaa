@@ -17,7 +17,7 @@ class AdminShippingController extends Controller
     public function index(SearchShippingRequest $request, ?User $user = null)
     {
         $page    = max(1, (int) $request->input('page', 1));
-        $perPage = (int) $request->input('pageSize', 10);
+        $perPage = (int) $request->input('pageSize', 30);
 
         $filters = $request->validated();
 
@@ -122,6 +122,54 @@ class AdminShippingController extends Controller
             'forcedUserId'
         ));
     }
+
+    public function downloadWaybill(Request $request)
+    {
+        $request->validate([
+            'label_url' => 'required',
+            'tracking_number' => 'required|max:255',
+        ]);
+
+        $fileUrl = $request->query('label_url');
+        $tracking_number = $request->query('tracking_number');
+
+        // نحاول نحمل الملف من الرابط
+        try {
+            $response = Http::get($fileUrl);
+
+            if ($response->failed()) {
+                return abort(404, 'تعذر تحميل الملف من الرابط المحدد.');
+            }
+
+            $contentType = $response->header('Content-Type', 'application/octet-stream');
+
+            $fileName = $tracking_number . '.' . self::getExtensionFromMime($contentType);
+
+            return response($response->body(), 200)
+                ->header('Content-Type', $contentType)
+                ->header('Content-Disposition', 'attachment; filename="'.$fileName.'"');
+        } catch (\Exception $e) {
+            return abort(500, 'حدث خطأ أثناء تحميل الملف.');
+        }
+    }
+
+
+    private static function getExtensionFromMime($mime)
+    {
+        $map = [
+            'application/pdf' => 'pdf',
+            'image/jpeg' => 'jpg',
+            'image/png' => 'png',
+            'application/zip' => 'zip',
+            'application/vnd.ms-excel' => 'xls',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'xlsx',
+        ];
+
+        return $map[$mime] ?? 'file';
+    }
+
+
+
 
     public function export(SearchShippingRequest $request)
     {

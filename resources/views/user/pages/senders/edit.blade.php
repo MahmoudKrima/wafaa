@@ -55,7 +55,7 @@
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label for="phoneInput" class="text-dark">{{ __('admin.phone') }}</label>
-                                            <input id="phoneInput" type="number" placeholder="05XXXXXXXX"
+                                            <input id="phoneInput" type="number" placeholder="05XXXXXXXX" style="direction:ltr;"
                                                 name="phone" placeholder="{{ __('admin.phone') }}"
                                                 class="form-control" value="{{ old('phone', $sender->phone) }}">
                                         </div>
@@ -63,31 +63,17 @@
                                     <div class="row">
                                         <div class="col-md-6 mb-3">
                                             <label for="additionalPhoneInput" class="text-dark">{{ __('admin.additional_phone') }}</label>
-                                            <input id="additionalPhoneInput" type="text" placeholder="05XXXXXXXX"
+                                            <input id="additionalPhoneInput" type="text" placeholder="05XXXXXXXX" style="direction:ltr;"
                                                 name="additional_phone" placeholder="{{ __('admin.additional_phone') }}"
                                                 class="form-control" value="{{ old('additional_phone', $sender->additional_phone) }}">
                                         </div>
                                         <div class="col-md-6 mb-3">
                                             <label for="addressInput" class="text-dark">{{ __('admin.address') }}</label>
-                                            <textarea id="addressInput" name="address" rows="3"
-                                                placeholder="{{ __('admin.address') }}" class="form-control">{{ old('address', $sender->address) }}</textarea>
+                                            <input type="text" id="addressInput" name="address" 
+                                                placeholder="{{ __('admin.address') }}" class="form-control" value="{{ old('address', $sender->address) }}">
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-12 mb-3">
-                                            <div class="d-flex justify-content-between align-items-center mb-3">
-                                                <label class="text-dark">{{ __('admin.shipping_companies') }}</label>
-                                                <button type="button" id="addShippingCompany" class="btn btn-sm btn-success">
-                                                    <i class="fa fa-plus"></i> {{ __('admin.add_shipping_company') }}
-                                                </button>
-                                            </div>
-                                            @error('shipping_companies')
-                                            <div class="alert alert-danger">{{ $message }}</div>
-                                            @enderror
-                                            <div id="shippingCompaniesContainer">
-                                            </div>
-                                        </div>
-                                    </div>
+                                    
                                 </div>
                                 <hr>
                                 <div class="row">

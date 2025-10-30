@@ -109,13 +109,13 @@
                                                     <div class="col-md-3 mb-3">
                                                         <label for="receiverName">{{ __('admin.receiver_name') }}</label>
                                                         <input type="text" value="{{ request()->get('receiverName') }}"
-                                                            name="receiverName" id="receiverName" class="form-control"
+                                                            name="receiverName" id="receiverName" class="form-control" style="direction:ltr;"
                                                             placeholder="{{ __('admin.receiver_name') }}">
                                                     </div>
                                                     <div class="col-md-3 mb-3">
                                                         <label for="receiverPhone">{{ __('admin.receiver_phone') }}</label>
                                                         <input type="text" value="{{ request()->get('receiverPhone') }}"
-                                                            name="receiverPhone" id="receiverPhone" class="form-control"
+                                                            name="receiverPhone" id="receiverPhone" class="form-control" style="direction:ltr;"
                                                             placeholder="{{ __('admin.receiver_phone') }}">
                                                     </div>
 
@@ -207,7 +207,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        {{ \Carbon\Carbon::parse($shipment['createdAt'], 'UTC')->tz('Africa/Cairo')->format('d/m/Y H:i') }}
+                                        {{ \Carbon\Carbon::parse($shipment['createdAt'], 'UTC')->tz('Asia/Riyadh')->format('d/m/Y H:i') }}
                                     </td>
                                     <td>
                                         @php
@@ -247,6 +247,14 @@
                                         <span class="{{ $class }}">{{ $label }}</span>
                                     </td>
                                     <td>
+
+                                        @if(!empty($shipment['labelUrl']))
+                                        <a href="{{ route('user.download.file', ['label_url' => $shipment['labelUrl'], 'tracking_number' => $shipment['trackingNumber'] ]) }}" target="_blank" class="badge bg-secondary text-white">
+                                            {{ __('admin.download') }}
+                                        </a>
+                                        @endif
+
+
                                         @if(!empty($shipment['labelUrl']))
                                         <a href="{{ $shipment['labelUrl'] }}" target="_blank" class="badge bg-primary text-white">
                                             {{ __('admin.shipment_file') }}

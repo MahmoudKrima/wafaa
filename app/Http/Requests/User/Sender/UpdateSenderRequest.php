@@ -28,10 +28,7 @@ class UpdateSenderRequest extends FormRequest
                 'sometimes',
                 'nullable',
                 'email:dns,filter',
-                Rule::unique('senders', 'email')->ignore($this->route('sender')->id),
-                Rule::unique('recievers', 'email'),
-                Rule::unique('users', 'email'),
-                Rule::unique('admins', 'email'),
+               
                 function ($attribute, $value, $fail) {
                     if (!$this->validateEmailDeliverability($value)) {
                         $fail(__('admin.wrong_mail'));
@@ -41,31 +38,18 @@ class UpdateSenderRequest extends FormRequest
             'phone' => [
                 'required',
                 'string',
-                'regex:/^(05|5|9665|96605|009665|\+9665)[0-9]{8}$/',
-                Rule::unique('senders', 'phone')->ignore($this->route('sender')->id),
-                Rule::unique('recievers', 'phone'),
-                Rule::unique('recievers', 'additional_phone'),
-                Rule::unique('users', 'phone'),
-                Rule::unique('users', 'additional_phone'),
-                Rule::unique('admins', 'phone'),
+                //'regex:/^(05|5|9665|96605|009665|\+9665)[0-9]{8}$/',
+                
             ],
             'additional_phone' => [
                 'nullable',
                 'string',
-                'regex:/^(05|5|9665|96605|009665|\+9665)[0-9]{8}$/',
-                Rule::unique('senders', 'additional_phone')->ignore($this->route('sender')->id),
-                Rule::unique('recievers', 'additional_phone'),
-                Rule::unique('recievers', 'phone'),
-                Rule::unique('admins', 'phone'),
-                Rule::unique('users', 'phone'),
-                Rule::unique('users', 'additional_phone'),
+                //'regex:/^(05|5|9665|96605|009665|\+9665)[0-9]{8}$/',
+                
             ],
             'postal_code' => ['sometimes', 'nullable', 'string', 'max:255'],
             'address' => ['required', 'string', 'max:255'],
-            'shipping_companies' => ['required', 'array'],
-            'shipping_companies.*' => ['required', 'array'],
-            'shipping_companies.*.company_id' => ['required', 'string'],
-            'shipping_companies.*.city_id' => ['required', 'string'],
+           
         ];
     }
 

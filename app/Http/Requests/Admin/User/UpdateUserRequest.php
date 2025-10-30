@@ -28,7 +28,7 @@ class UpdateUserRequest extends FormRequest
             'name_en' => ['required', 'string', 'max:255'],
             'email' => [
                 'required',
-                'email:dns,filter',
+                //'email:dns,filter',
                 Rule::unique('users', 'email')->ignore($this->route('user')->id),
                 Rule::unique('admins', 'email'),
                 function ($attribute, $value, $fail) {
@@ -42,16 +42,16 @@ class UpdateUserRequest extends FormRequest
                 'string',
                 'regex:/^(05|5|9665|96605|009665|\+9665)[0-9]{8}$/',
                 Rule::unique('users', 'phone')->ignore($this->route('user')->id),
-                Rule::unique('users', 'additional_phone'),
+                //Rule::unique('users', 'additional_phone'),
                 Rule::unique('admins', 'phone'),
             ],
             'additional_phone' => [
                 'nullable',
                 'string',
                 'regex:/^(05|5|9665|96605|009665|\+9665)[0-9]{8}$/',
-                Rule::unique('users', 'additional_phone')->ignore($this->route('user')->id),
+                //Rule::unique('users', 'additional_phone')->ignore($this->route('user')->id),
                 Rule::unique('admins', 'phone'),
-                Rule::unique('users', 'phone'),
+                //Rule::unique('users', 'phone'),
             ],
             'password' => ['nullable', 'string', 'min:8', Password::min(8)
                 ->max(50)

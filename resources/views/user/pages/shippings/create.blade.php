@@ -126,12 +126,12 @@
                 <div class="row mb-4">
                     <div class="col-12 col-md-12">
                         <div class="selector">
-                            <div class="selector-item">
-                                <input type="radio" class="selector-item_radio" type="radio" name="sender_type" id="sender_auth" value="auth" checked>
+                            <div class="selector-item" style="display:none;">
+                                <input type="radio" class="selector-item_radio" type="radio" name="sender_type" id="sender_auth" value="auth" >
                                 <label for="sender_auth" class="selector-item_label">{{ __('admin.authenticated_user') }}</label>
                             </div>
                             <div class="selector-item">
-                                <input type="radio" class="selector-item_radio" name="sender_type" id="sender_existing" value="existing">
+                                <input type="radio" class="selector-item_radio" name="sender_type" id="sender_existing" value="existing" checked>
                                 <label for="sender_existing" class="selector-item_label">{{ __('admin.existing_sender') }}</label>
                             </div>
                             <div class="selector-item">
@@ -167,7 +167,7 @@
                         </div>
                         <div class="col-12 col-md-6 mb-3">
                             <label for="user_phone" class="text-dark">{{ __('admin.phone_number') }}</label>
-                            <input id="user_phone" name="user_phone" type="text" class="form-control" required
+                            <input id="user_phone" name="user_phone" type="text" style="direction:ltr;" class="form-control" required
                                 value="{{ old('user_phone', auth()->user()->phone ?? '') }}"
                                 placeholder="{{ __('admin.phone_number') }}"
                                 data-auth-value="{{ auth()->user()->phone ?? '' }}">
@@ -175,25 +175,18 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-12 col-md-6 mb-3">
+                        <div class="col-12 col-md-6 mb-3" style="display:none;">
                             <label for="user_additional_phone" class="text-dark">{{ __('admin.additional_phone') }}</label>
-                            <input id="user_additional_phone" name="user_additional_phone" type="text" class="form-control"
+                            <input id="user_additional_phone" name="user_additional_phone" type="text" style="direction:ltr;" class="form-control"
                                 value="{{ old('user_additional_phone', auth()->user()->additional_phone ?? '') }}"
                                 placeholder="{{ __('admin.additional_phone') }}"
                                 data-auth-value="{{ auth()->user()->additional_phone ?? '' }}">
                         </div>
-                        <div class="col-12 col-md-6 mb-3">
-                            <label for="user_address" class="text-dark">{{ __('admin.full_address') }}</label>
-                            <textarea id="user_address" name="address" class="form-control" rows="3" required
-                                placeholder="{{ __('admin.full_address') }}"
-                                data-auth-value="{{ auth()->user()->address ?? '' }}">{{ old('address') }}</textarea>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-12 col-md-6 mb-3">
+                       
+                    
+                        <div class="col-12 col-md-6 mb-3" style="display:none;">
                             <label for="user_country" class="text-dark">{{ __('admin.country') }}</label>
-                            <select id="user_country" name="country_id" class="form-control" required
+                            <select id="user_country" name="country_id" class="form-control"
                                 data-selected="{{ old('country_id') }}">
                                 <option value="">{{ __('admin.choose_country') }}</option>
                             </select>
@@ -204,6 +197,13 @@
                                 data-selected="{{ old('city_id') }}">
                                 <option value="">{{ __('admin.choose_city') }}</option>
                             </select>
+                        </div>
+
+                         <div class="col-12 col-md-6 mb-3">
+                            <label for="user_address" class="text-dark">{{ __('admin.full_address') }}</label>
+                            <input type="text" id="user_address" name="address" class="form-control" required
+                                placeholder="{{ __('admin.full_address') }}"
+                                data-auth-value="{{ auth()->user()->address ?? '' }}">{{ old('address') }}</input>
                         </div>
                     </div>
                 </div>
@@ -249,24 +249,17 @@
                         </div>
                         <div class="col-12 col-md-6 mb-3">
                             <label for="phone" class="text-dark">{{ __('admin.phone_number') }}</label>
-                            <input id="phone" type="input" name="phone" class="form-control" placeholder="{{ __('admin.enter_phone_number') }}" pattern="05[0-9]{8}" title="Phone must start with 05 followed by 8 digits (e.g., 0512345678)" required>
+                            <input id="phone" type="input" name="phone" class="form-control" style="direction:ltr;" placeholder="{{ __('admin.enter_phone_number') }}" pattern="05[0-9]{8}" title="Phone must start with 05 followed by 8 digits (e.g., 0512345678)" required>
                         </div>
                     </div>
 
                     <div class="row">
-                        <div class="col-12 col-md-6 mb-3">
+                        <div class="col-12 col-md-6 mb-3" style="display:none;">
                             <label for="additional_phone" class="text-dark">{{ __('admin.additional_phone') }}</label>
-                            <input id="additional_phone" type="input" name="additional_phone" class="form-control" placeholder="{{ __('admin.enter_additional_phone') }}" pattern="05[0-9]{8}">
-                        </div>
-                        <div class="col-12 col-md-6 mb-3">
-                            <label for="address" class="text-dark">{{ __('admin.full_address') }}</label>
-                            <textarea id="address" name="address" class="form-control" rows="3" placeholder="{{ __('admin.enter_full_address') }}" required></textarea>
+                            <input id="additional_phone" type="input" name="additional_phone" style="direction:ltr;" class="form-control" placeholder="{{ __('admin.enter_additional_phone') }}" pattern="05[0-9]{8}">
                         </div>
 
-                    </div>
-
-                    <div class="row">
-                        <div class="col-12 col-md-6 mb-3">
+                        <div class="col-12 col-md-6 mb-3" style="display:none;">
                             <label for="country" class="text-dark">{{ __('admin.country') }}</label>
                             <select id="country" name="country" class="form-control" required>
                                 <option value="">{{ __('admin.select_country') }}</option>
@@ -278,6 +271,14 @@
                                 <option value="">{{ __('admin.select_city') }}</option>
                             </select>
                         </div>
+                        
+                        <div class="col-12 col-md-6 mb-3">
+                            <label for="address" class="text-dark">{{ __('admin.full_address') }}</label>
+                            <input type="text" id="address" name="address" class="form-control" placeholder="{{ __('admin.enter_full_address') }}" required>
+                        </div>
+
+                   
+                        
                     </div>
                 </div>
 
@@ -323,7 +324,7 @@
                         <div class="col-12 col-md-4 mb-3 mb-md-0">
                             <label for="package_type" class="text-dark mb-2">{{ __('admin.package_type') }}</label>
                             <select id="package_type" name="package_type" class="form-control" required>
-                                <option value="">{{ __('admin.select_package_type') }}</option>
+                                {{--<option value="">{{ __('admin.select_package_type') }}</option>--}}
                                 <option value="box" {{ old('package_type')=='box' ? 'selected' : '' }}>{{ __('admin.boxes') }}</option>
                                 <option value="document" {{ old('package_type')=='document' ? 'selected' : '' }}>{{ __('admin.documents') }}</option>
                             </select>
@@ -387,7 +388,7 @@
                     <div class="row">
                         <div class="col-12 mb-5 mt-2">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="accept_terms" name="accept_terms" {{ old('accept_terms') ? 'checked' : '' }} required>
+                                <input class="form-check-input" type="checkbox" id="accept_terms" name="accept_terms" {{ old('accept_terms') ? 'checked' : 'checked' }} required>
                                 <label class="form-check-label" for="accept_terms">
                                     <a href="{{ route('front.terms') }}" target="_blank" class="text-primary">{{ __('admin.i_accept_terms') }}</a>
                                 </label>
@@ -992,7 +993,7 @@
         }
 
         function requiredFilled() {
-            const reqIds = ['user_name', 'user_phone', 'user_country', 'user_city', 'user_address'];
+            const reqIds = ['user_name', 'user_phone', 'user_city', 'user_address'];
             for (const id of reqIds) {
                 const el = document.getElementById(id);
                 if (!el) return false;
@@ -1046,7 +1047,7 @@
 
         function bindRecalc() {
             const ids = [
-                'user_name', 'user_phone', 'user_country', 'user_city', 'user_address',
+                'user_name', 'user_phone', 'user_city', 'user_address',
                 'user_additional_phone'
             ];
             ids.forEach(id => {
@@ -1065,6 +1066,33 @@
 
             qsa('input[name="sender_type"]').forEach(r => r.addEventListener('change', toggleUI));
 
+            // Initialize hidden country field with Saudi Arabia default
+            const countryField = document.getElementById('user_country');
+            if (countryField) {
+                // Clear existing options first
+                countryField.innerHTML = '';
+                
+                // Add default option
+                const defaultOption = document.createElement('option');
+                defaultOption.value = '';
+                defaultOption.textContent = 'Choose Country';
+                countryField.appendChild(defaultOption);
+                
+                // Add Saudi Arabia option
+                const saudiOption = document.createElement('option');
+                saudiOption.value = '65fd1a1c1fdbc094e3369b29';
+                saudiOption.textContent = 'Saudi Arabia';
+                countryField.appendChild(saudiOption);
+                
+                // Set the value
+                countryField.value = '65fd1a1c1fdbc094e3369b29'; // Saudi Arabia ID
+                
+                console.log('Country field initialized:', {
+                    value: countryField.value,
+                    options: Array.from(countryField.options).map(opt => ({value: opt.value, text: opt.textContent}))
+                });
+            }
+
             // Event binding is now handled in Select2 initialization
         });
 
@@ -1072,6 +1100,33 @@
             if (e && e.detail && (e.detail.currentStep === 2 || e.detail.currentStep === '2')) {
                 setSenderKindHidden();
                 pushValidityToNext();
+                
+                // Ensure country field is initialized when step 2 is shown
+                const countryField = document.getElementById('user_country');
+                if (countryField) {
+                    // Clear existing options first
+                    countryField.innerHTML = '';
+                    
+                    // Add default option
+                    const defaultOption = document.createElement('option');
+                    defaultOption.value = '';
+                    defaultOption.textContent = 'Choose Country';
+                    countryField.appendChild(defaultOption);
+                    
+                    // Add Saudi Arabia option
+                    const saudiOption = document.createElement('option');
+                    saudiOption.value = '65fd1a1c1fdbc094e3369b29';
+                    saudiOption.textContent = 'Saudi Arabia';
+                    countryField.appendChild(saudiOption);
+                    
+                    // Set the value
+                    countryField.value = '65fd1a1c1fdbc094e3369b29'; // Saudi Arabia ID
+                    
+                    console.log('Country field re-initialized on step change:', {
+                        value: countryField.value,
+                        options: Array.from(countryField.options).map(opt => ({value: opt.value, text: opt.textContent}))
+                    });
+                }
             }
         });
 
@@ -1690,4 +1745,7 @@
     });
 </script>
 @endif
+
+
+</script>
 @endpush

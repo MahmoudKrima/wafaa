@@ -50,7 +50,7 @@
                                                     <div class="col-md-4 mb-3">
                                                         <label for="phone">{{ __('admin.phone') }}</label>
                                                         <input type="text" value="{{ request()->get('phone') }}"
-                                                            name="phone" id="phone" class="form-control"
+                                                            name="phone" id="phone" class="form-control" style="direction:ltr;"
                                                             placeholder="{{ __('admin.phone') }}">
                                                     </div>
                                                 </div>
@@ -88,7 +88,6 @@
                                 <tr>
                                     <th scope="col">{{ __('admin.name') }}</th>
                                     <th scope="col">{{ __('admin.phone') }}</th>
-                                    <th scope="col">{{ __('admin.additional_phone') }}</th>
                                     <th scope="col">{{ __('admin.address') }}</th>
                                     <th class="text-center" scope="col">{{ trans('admin.actions') }}</th>
                                 </tr>
@@ -97,8 +96,7 @@
                                 @foreach ($recievers as $reciever)
                                 <tr>
                                     <td>{{ $reciever->name }}</td>
-                                    <td>{{ $reciever->phone }}</td>
-                                    <td>{{ $reciever->additional_phone ?? __('admin.n/a') }}</td>
+                                    <td style="direction:ltr;">{{ $reciever->phone }}</td>
                                     <td>{{ $reciever->address ?? __('admin.n/a') }}</td>
                                     <td class="text-center">
                                         <div class="action-btns d-flex justify-content-center">

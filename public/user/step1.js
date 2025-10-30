@@ -336,9 +336,15 @@
 
         showSelectedCompanySummary(company);
         if (typeof updateStepIndicator === "function") updateStepIndicator(1);
-        document.dispatchEvent(
-            new CustomEvent("shippingCompanySelected", { detail: { company } })
-        );
+
+        // Dispatch event asynchronously to avoid blocking company selection
+        setTimeout(() => {
+            document.dispatchEvent(
+                new CustomEvent("shippingCompanySelected", {
+                    detail: { company },
+                })
+            );
+        }, 0);
     }
 
     function showSelectedCompanySummary(company) {
