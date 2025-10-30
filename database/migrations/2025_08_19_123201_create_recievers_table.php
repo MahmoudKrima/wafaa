@@ -18,9 +18,9 @@ return new class extends Migration
                 ->unique()
                 ->nullable();
             $table->string('phone')->unique();
-            $table->string('postal_code')->nullable();
             $table->string('address')->nullable();
-            $table->string('additional_phone')->nullable();
+            $table->string('city_id')
+                ->nullable();
             $table->foreignId('user_id')
                 ->constrained('users')
                 ->cascadeOnDelete()

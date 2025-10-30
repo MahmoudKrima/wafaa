@@ -14,10 +14,7 @@ return new class extends Migration
     {
         Schema::create('banks', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('admin_id')
-                ->constrained('admins')
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
+            $table->morphs('bankable');
             $table->foreignId('created_by')
                 ->nullable()
                 ->constrained('admins')

@@ -20,7 +20,7 @@ class RecieverFactory extends Factory
             'name' => $this->faker->name,
             'email' => $this->faker->unique()->safeEmail,
             'phone' => $this->faker->unique()->phoneNumber,
-            'additional_phone' => $this->faker->phoneNumber,
+            'address' => $this->faker->address(),
             'user_id' => rand(1, 10),
         ];
     }

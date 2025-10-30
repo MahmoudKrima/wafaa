@@ -47,6 +47,7 @@ class User extends Authenticatable
         'shippingPrices',
         'notifications',
         'reciverable',
+        'banks',
     ];
 
 
@@ -101,6 +102,11 @@ class User extends Authenticatable
     public function reciverable()
     {
         return $this->morphMany(DatabaseNotification::class, 'reciverable')->latest();
+    }
+
+    public function banks()
+    {
+        return $this->morphMany(Banks::class, 'bankable');
     }
 
 }

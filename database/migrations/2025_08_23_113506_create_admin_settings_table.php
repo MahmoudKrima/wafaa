@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->decimal('extra_weight_price', 10, 2)->default(0);
             $table->decimal('cash_on_delivery_price', 10, 2)->default(0);
-            $table->enum('international_shipping', ['yes', 'no'])->default('yes');
+            $table->enum('international_shipping', ['yes', 'no'])->default('no');
             $table->string('email');
             $table->string('phone');
             $table->string('whatsapp');
