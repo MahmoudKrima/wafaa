@@ -30,8 +30,4 @@ class Reciever extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function shippingCompanies()
-    {
-        return $this->hasMany(RecieverCity::class, 'reciever_id', 'id');
-    }
 }

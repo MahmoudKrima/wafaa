@@ -33,6 +33,7 @@ class Admin extends Authenticatable
         'roles',
         'addedByAdmin',
         'createdByAdmin',
+        'banks',
     ];
 
     public function scopeWithAllRelations($query)
@@ -66,6 +67,11 @@ class Admin extends Authenticatable
     public function adminSetting()
     {
         return $this->belongsTo(AdminSetting::class);
+    }
+
+    public function banks()
+    {
+        return $this->morphMany(Banks::class, 'bankable');
     }
 
 

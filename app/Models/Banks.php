@@ -25,7 +25,7 @@ class Banks extends Model
         'status' => ActivationStatusEnum::class
     ];
     public static $relatio = [
-        'admin',
+        'bankable',
         'createdBy'
     ];
 
@@ -39,9 +39,9 @@ class Banks extends Model
         return $query->where('status', 'active');
     }
 
-    public function admin()
+    public function bankable()
     {
-        return $this->belongsTo(Admin::class, 'admin_id');
+        return $this->morphTo();
     }
 
     public function createdBy()

@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\Enum\NotificationTypeEnum;
 use App\Models\AdminSetting;
 use App\Models\CancelRequest;
 use App\Models\User;
@@ -116,7 +115,6 @@ class CancelShipmentCommand extends Command
 
         $user->notifications()->create([
             'id'               => (string) Str::uuid(),
-            'type'             => NotificationTypeEnum::CANCELSHIPMENT->value,
             'data'             => $message,
             'reciverable_type' => null,
             'reciverable_id'   => null,

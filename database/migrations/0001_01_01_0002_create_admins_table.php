@@ -28,7 +28,8 @@ return new class extends Migration {
                 ->constrained('admins')
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
-            $table->string('image');
+            $table->string('image')
+            ->nullable();
             $table->enum('status', ActivationStatusEnum::vals());
             $table->string('token')
                 ->nullable();

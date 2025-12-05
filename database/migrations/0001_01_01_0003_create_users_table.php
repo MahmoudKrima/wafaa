@@ -17,8 +17,9 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->string('phone')->unique();
-            $table->string('postal_code')->nullable();
-            $table->string('additional_phone')->nullable();
+            $table->string('city_id')
+            ->nullable();
+            $table->string('address');
             $table->string('password');
             $table->foreignId('created_by')
                 ->constrained('admins')
@@ -29,6 +30,8 @@ return new class extends Migration
                 ->constrained('admins')
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
+                $table->string('token')
+                ->nullable();
             $table->enum('status', ActivationStatusEnum::vals());
             $table->rememberToken();
             $table->timestamps();
